@@ -80,7 +80,7 @@ export default function NavBar() {
         {loggedIn ? (
           <>
             <Link
-              href="/account"
+              href={isZh ? "/zh/account" : "/account"}
               className="text-sm transition-colors hover:text-white"
               style={{ color: "#7070a0" }}
             >
@@ -97,14 +97,14 @@ export default function NavBar() {
         ) : (
           <>
             <Link
-              href="/login"
+              href={isZh ? "/zh/login" : "/login"}
               className="text-sm transition-colors hover:text-white"
               style={{ color: "#7070a0" }}
             >
               {isZh ? "登录" : "Sign in"}
             </Link>
             <Link
-              href="/signup"
+              href={isZh ? "/zh/signup" : "/signup"}
               className="text-sm font-medium px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
               style={{ background: "#ff6b35", color: "#fff" }}
             >
