@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+// v2 — auth + billing
 const nextConfig: NextConfig = {
   // When NEXT_PUBLIC_API_URL is set (production), rewrites are not needed.
   // In local dev, rewrites proxy /api/* → localhost:8001 so no CORS headers needed.
