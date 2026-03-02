@@ -32,14 +32,14 @@ export default function NavBar() {
         { href: "/zh/audit",      label: "免费诊断" },
         { href: "/zh/categories", label: "行业指数" },
         { href: "/zh/history",    label: "历史报告" },
-        { href: "/zh/schedules",  label: "定时任务" },
+        { href: "/zh/schedules",  label: "自动监控" },
       ]
     : [
         { href: "/dashboard",  label: "Dashboard" },
         { href: "/audit",      label: "Free Audit" },
         { href: "/categories", label: "Index" },
         { href: "/history",    label: "History" },
-        { href: "/schedules",  label: "Schedules" },
+        { href: "/schedules",  label: "Auto Monitor" },
       ];
 
   return (
@@ -56,6 +56,15 @@ export default function NavBar() {
           {l.label}
         </Link>
       ))}
+
+      {/* Book Demo — highlighted */}
+      <Link
+        href={isZh ? "/zh/book-demo" : "/book-demo"}
+        className="text-sm font-medium px-3 py-1 rounded-lg transition-colors hover:opacity-90"
+        style={{ color: "#ff6b35", border: "1px solid #ff6b3560" }}
+      >
+        {isZh ? "预约演示" : "Book Demo"}
+      </Link>
 
       {/* Language toggle */}
       <Link
