@@ -3,22 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getToken, logout } from "@/lib/auth";
+import { getToken, isPaid, logout } from "@/lib/auth";
 
 export default function NavBar() {
   const pathname = usePathname();
   const isZh = pathname.startsWith("/zh");
   const [loggedIn, setLoggedIn] = useState(false);
+  const [paid, setPaid] = useState(false);
 
   useEffect(() => {
-    setLoggedIn(!!getToken());
-    // Re-check on storage events (e.g. login in another tab)
-    const onStorage = () => setLoggedIn(!!getToken());
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    const refresh = () => {
+      setLoggedIn(!!getToken());
+      setPaid(isPaid());
+    };
+    refresh();
+    window.addEventListener("storage", refresh);
+    return () => window.removeEventListener("storage", refresh);
   }, []);
 
-  // Smart language switch: /zh/dashboard ↔ /dashboard, /zh ↔ /
   const switchHref = isZh
     ? pathname.replace(/^\/zh/, "") || "/"
     : `/zh${pathname === "/" ? "" : pathname}`;
@@ -26,20 +28,31 @@ export default function NavBar() {
   const demoHref = isZh ? "/zh/company/techvision-pro" : "/company/techvision-pro";
   const homeHref = isZh ? "/zh" : "/";
 
-  const links = isZh
+  // Always visible
+  const publicLinks = isZh
     ? [
-        { href: "/zh/dashboard",  label: "数据看板" },
         { href: "/zh/audit",      label: "免费诊断" },
         { href: "/zh/categories", label: "行业指数" },
-        { href: "/zh/history",    label: "历史报告" },
-        { href: "/zh/schedules",  label: "自动监控" },
       ]
     : [
-        { href: "/dashboard",  label: "Dashboard" },
         { href: "/audit",      label: "Free Audit" },
         { href: "/categories", label: "Index" },
-        { href: "/history",    label: "History" },
-        { href: "/schedules",  label: "Auto Monitor" },
+      ];
+
+  // Logged-in (any tier)
+  const userLinks = isZh
+    ? [{ href: "/zh/dashboard", label: "数据看板" }]
+    : [{ href: "/dashboard",    label: "Dashboard" }];
+
+  // Paid only
+  const paidLinks = isZh
+    ? [
+        { href: "/zh/history",   label: "历史报告" },
+        { href: "/zh/schedules", label: "自动监控" },
+      ]
+    : [
+        { href: "/history",   label: "History" },
+        { href: "/schedules", label: "Auto Monitor" },
       ];
 
   return (
@@ -51,13 +64,28 @@ export default function NavBar() {
         AVANTI
       </Link>
 
-      {links.map((l) => (
+      {/* Public links — always visible */}
+      {publicLinks.map((l) => (
         <Link key={l.href} href={l.href} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
           {l.label}
         </Link>
       ))}
 
-      {/* Book Demo — highlighted */}
+      {/* Logged-in links */}
+      {loggedIn && userLinks.map((l) => (
+        <Link key={l.href} href={l.href} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
+          {l.label}
+        </Link>
+      ))}
+
+      {/* Paid-only links */}
+      {paid && paidLinks.map((l) => (
+        <Link key={l.href} href={l.href} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
+          {l.label}
+        </Link>
+      ))}
+
+      {/* Book Demo — always visible, highlighted */}
       <Link
         href={isZh ? "/zh/book-demo" : "/book-demo"}
         className="text-sm font-medium px-3 py-1 rounded-lg transition-colors hover:opacity-90"
@@ -76,59 +104,42 @@ export default function NavBar() {
       </Link>
 
       {/* Demo portal — subtle */}
-      <Link
-        href={demoHref}
-        className="text-xs transition-colors hover:text-white"
-        style={{ color: "#25253f" }}
-      >
+      <Link href={demoHref} className="text-xs transition-colors hover:text-white" style={{ color: "#25253f" }}>
         {isZh ? "演示门户" : "Demo Portal"}
       </Link>
 
-      {/* Auth section */}
+      {/* Auth + New Run */}
       <div className="ml-auto flex items-center gap-3">
         {loggedIn ? (
           <>
-            <Link
-              href={isZh ? "/zh/account" : "/account"}
-              className="text-sm transition-colors hover:text-white"
-              style={{ color: "#7070a0" }}
-            >
+            <Link href={isZh ? "/zh/account" : "/account"}
+              className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
               {isZh ? "账户" : "Account"}
             </Link>
-            <button
-              onClick={() => { logout(); setLoggedIn(false); }}
+            <button onClick={() => { logout(); setLoggedIn(false); setPaid(false); }}
               className="text-sm transition-colors hover:text-white"
-              style={{ background: "none", border: "none", cursor: "pointer", color: "#7070a0", padding: 0 }}
-            >
+              style={{ background: "none", border: "none", cursor: "pointer", color: "#7070a0", padding: 0 }}>
               {isZh ? "退出" : "Sign out"}
             </button>
+            <Link href={isZh ? "/zh/runs/new" : "/runs/new"}
+              className="text-sm font-medium px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
+              style={{ background: "#1a1a2e", border: "1px solid #25253f", color: "#f0f0f8" }}>
+              {isZh ? "+ 新建分析" : "+ New Run"}
+            </Link>
           </>
         ) : (
           <>
-            <Link
-              href={isZh ? "/zh/login" : "/login"}
-              className="text-sm transition-colors hover:text-white"
-              style={{ color: "#7070a0" }}
-            >
+            <Link href={isZh ? "/zh/login" : "/login"}
+              className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
               {isZh ? "登录" : "Sign in"}
             </Link>
-            <Link
-              href={isZh ? "/zh/signup" : "/signup"}
+            <Link href={isZh ? "/zh/signup" : "/signup"}
               className="text-sm font-medium px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
-              style={{ background: "#ff6b35", color: "#fff" }}
-            >
+              style={{ background: "#ff6b35", color: "#fff" }}>
               {isZh ? "免费开始 →" : "Start free →"}
             </Link>
           </>
         )}
-
-        <Link
-          href="/runs/new"
-          className="text-sm font-medium px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
-          style={{ background: "#1a1a2e", border: "1px solid #25253f", color: "#f0f0f8" }}
-        >
-          {isZh ? "+ 新建分析" : "+ New Run"}
-        </Link>
       </div>
     </nav>
   );

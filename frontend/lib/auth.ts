@@ -1,4 +1,5 @@
 const TOKEN_KEY = "avanti_token";
+const TIER_KEY  = "avanti_tier";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -11,10 +12,27 @@ export function setToken(token: string): void {
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(TIER_KEY);
 }
 
 export function isLoggedIn(): boolean {
   return !!getToken();
+}
+
+export function getTier(): string {
+  if (typeof window === "undefined") return "free";
+  return localStorage.getItem(TIER_KEY) ?? "free";
+}
+
+export function isPaid(): boolean {
+  const t = getTier();
+  return t === "growth" || t === "scale" || t === "enterprise";
+}
+
+function saveTierFromProfile(profile: UserProfile) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(TIER_KEY, profile.subscription_tier);
+  }
 }
 
 // ── API helpers ───────────────────────────────────────────────────────────────
@@ -65,7 +83,9 @@ export async function login(email: string, password: string) {
 }
 
 export async function fetchMe(): Promise<UserProfile> {
-  return apiFetch("/auth/me");
+  const profile = await apiFetch("/auth/me");
+  saveTierFromProfile(profile);
+  return profile;
 }
 
 export async function createCheckout(tier: "growth" | "scale", successUrl: string, cancelUrl: string) {
