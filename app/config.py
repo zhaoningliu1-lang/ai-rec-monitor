@@ -1,9 +1,18 @@
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 
 
 class Settings(BaseSettings):
     openai_api_key: str
     database_url: str  # postgresql+asyncpg://user:pass@host/db
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def fix_asyncpg_scheme(cls, v: str) -> str:
+        # Railway injects postgresql:// but SQLAlchemy async needs postgresql+asyncpg://
+        if v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return v
     openai_model: str = "gpt-4o-mini"
     openai_max_concurrency: int = 5
     openai_timeout: int = 30
