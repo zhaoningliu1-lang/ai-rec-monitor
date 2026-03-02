@@ -2,10 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getToken, logout } from "@/lib/auth";
 
 export default function NavBar() {
   const pathname = usePathname();
   const isZh = pathname.startsWith("/zh");
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(!!getToken());
+    // Re-check on storage events (e.g. login in another tab)
+    const onStorage = () => setLoggedIn(!!getToken());
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   // Smart language switch: /zh/dashboard ↔ /dashboard, /zh ↔ /
   const switchHref = isZh
@@ -64,13 +75,52 @@ export default function NavBar() {
         {isZh ? "演示门户" : "Demo Portal"}
       </Link>
 
-      <Link
-        href="/runs/new"
-        className="ml-auto text-sm font-medium px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
-        style={{ background: "#ff6b35", color: "#fff" }}
-      >
-        {isZh ? "+ 新建分析" : "+ New Run"}
-      </Link>
+      {/* Auth section */}
+      <div className="ml-auto flex items-center gap-3">
+        {loggedIn ? (
+          <>
+            <Link
+              href="/account"
+              className="text-sm transition-colors hover:text-white"
+              style={{ color: "#7070a0" }}
+            >
+              {isZh ? "账户" : "Account"}
+            </Link>
+            <button
+              onClick={() => { logout(); setLoggedIn(false); }}
+              className="text-sm transition-colors hover:text-white"
+              style={{ background: "none", border: "none", cursor: "pointer", color: "#7070a0", padding: 0 }}
+            >
+              {isZh ? "退出" : "Sign out"}
+            </button>
+          </>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="text-sm transition-colors hover:text-white"
+              style={{ color: "#7070a0" }}
+            >
+              {isZh ? "登录" : "Sign in"}
+            </Link>
+            <Link
+              href="/signup"
+              className="text-sm font-medium px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
+              style={{ background: "#ff6b35", color: "#fff" }}
+            >
+              {isZh ? "免费开始 →" : "Start free →"}
+            </Link>
+          </>
+        )}
+
+        <Link
+          href="/runs/new"
+          className="text-sm font-medium px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
+          style={{ background: "#1a1a2e", border: "1px solid #25253f", color: "#f0f0f8" }}
+        >
+          {isZh ? "+ 新建分析" : "+ New Run"}
+        </Link>
+      </div>
     </nav>
   );
 }

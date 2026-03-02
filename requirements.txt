@@ -31,3 +31,9 @@ python-dotenv==1.0.1
 
 # notion export
 notion-client==3.0.0
+
+# auth + payments
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+stripe==9.9.0
+python-multipart==0.0.9

@@ -31,6 +31,17 @@ class Settings(BaseSettings):
     notion_token: str | None = None
     notion_database_id: str | None = None
 
+    # Auth — JWT
+    jwt_secret_key: str = "change-me-in-production"
+    jwt_algorithm: str = "HS256"
+    jwt_expire_minutes: int = 60 * 24 * 30  # 30 days
+
+    # Stripe
+    stripe_secret_key: str | None = None
+    stripe_webhook_secret: str | None = None
+    stripe_price_growth: str | None = None   # price ID for $99/mo
+    stripe_price_scale: str | None = None    # price ID for $199/mo
+
     class Config:
         env_file = ".env"
         extra = "ignore"
