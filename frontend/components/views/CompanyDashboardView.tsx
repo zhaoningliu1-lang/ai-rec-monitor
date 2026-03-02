@@ -1,0 +1,290 @@
+import Link from "next/link";
+import { DEMO_COMPANIES, DemoBrand } from "@/lib/company-demo-data";
+import { tx, Lang } from "@/lib/i18n";
+
+function arrsColor(score: number) {
+  return score < 30 ? "#22c55e" : score < 60 ? "#f5a623" : "#ff4d6d";
+}
+
+function geoScoreColor(score: number) {
+  return score >= 70 ? "#22c55e" : score >= 45 ? "#f5a623" : "#ff4d6d";
+}
+
+function GeoScoreRing({ score }: { score: number }) {
+  const r = 22;
+  const circ = 2 * Math.PI * r;
+  const dash = (score / 100) * circ;
+  const color = geoScoreColor(score);
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56">
+      <circle cx="28" cy="28" r={r} fill="none" stroke="#25253f" strokeWidth="4" />
+      <circle
+        cx="28" cy="28" r={r} fill="none"
+        stroke={color} strokeWidth="4"
+        strokeDasharray={`${dash} ${circ}`}
+        strokeLinecap="round"
+        transform="rotate(-90 28 28)"
+      />
+      <text x="28" y="32" textAnchor="middle" fontSize="11" fontWeight="800" fill={color}>{score}</text>
+    </svg>
+  );
+}
+
+function TrendIcon({ trend }: { trend: DemoBrand["trend"] }) {
+  if (trend === "up")   return <span style={{ color: "#22c55e" }}>↑</span>;
+  if (trend === "down") return <span style={{ color: "#ff4d6d" }}>↓</span>;
+  return <span style={{ color: "#7070a0" }}>→</span>;
+}
+
+export default function CompanyDashboardView({
+  slug,
+  lang,
+}: {
+  slug: string;
+  lang: Lang;
+}) {
+  const company = DEMO_COMPANIES[slug];
+  const base = lang === "zh" ? `/zh/company/${slug}` : `/company/${slug}`;
+
+  if (!company) {
+    return (
+      <div className="text-center py-24" style={{ color: "#7070a0" }}>
+        {tx("company", "notFound", lang)}{" "}
+        <Link href={lang === "zh" ? "/zh" : "/"} className="underline" style={{ color: "#ff6b35" }}>
+          {tx("company", "back", lang)}
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <Link
+            href={lang === "zh" ? "/zh" : "/"}
+            className="text-sm hover:text-white transition-colors mb-3 inline-block"
+            style={{ color: "#7070a0" }}
+          >
+            {tx("company", "back", lang)}
+          </Link>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-black">{company.name}</h1>
+            <span
+              className="text-xs px-2.5 py-1 rounded-full font-semibold"
+              style={{
+                background: `${company.planColor}18`,
+                color: company.planColor,
+                border: `1px solid ${company.planColor}33`,
+              }}
+            >
+              {company.plan}
+            </span>
+          </div>
+          <p className="text-sm mt-1" style={{ color: "#7070a0" }}>
+            {company.brands.length} {tx("company", "brandsMonitored", lang)} · {tx("company", "privateWs", lang)}
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <Link
+            href="/runs/new"
+            className="text-sm px-4 py-2 rounded-xl transition-colors hover:text-white"
+            style={{ border: "1px solid #25253f", color: "#7070a0" }}
+          >
+            {tx("company", "runAnalysis", lang)}
+          </Link>
+          <Link
+            href={`${base}/execution`}
+            className="text-sm font-semibold px-4 py-2 rounded-xl transition-opacity hover:opacity-85"
+            style={{ background: "#ff6b35", color: "#fff" }}
+          >
+            {tx("company", "viewPlaybook", lang)}
+          </Link>
+        </div>
+      </div>
+
+      {/* KPI cards */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="rounded-xl p-5" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="text-2xl font-black mb-1" style={{ color: arrsColor(company.avgArrs) }}>
+            {company.avgArrs}
+          </div>
+          <div className="text-xs" style={{ color: "#7070a0" }}>{tx("company", "avgArrs", lang)}</div>
+        </div>
+        <div className="rounded-xl p-5" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="text-2xl font-black mb-1" style={{ color: "#22c55e" }}>
+            {company.brandsImproving}/{company.brands.length}
+          </div>
+          <div className="text-xs" style={{ color: "#7070a0" }}>{tx("company", "brandsImproving", lang)}</div>
+        </div>
+        <div className="rounded-xl p-5" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="text-2xl font-black mb-1" style={{ color: "#f5a623" }}>
+            {new Date(company.nextScheduledRun).toLocaleDateString(
+              lang === "zh" ? "zh-CN" : "en-US",
+              { month: "short", day: "numeric" }
+            )}
+          </div>
+          <div className="text-xs" style={{ color: "#7070a0" }}>{tx("company", "nextScheduled", lang)}</div>
+        </div>
+      </div>
+
+      {/* Brand cards */}
+      <div>
+        <h2 className="text-sm font-semibold mb-4 uppercase tracking-widest" style={{ color: "#7070a0" }}>
+          {tx("company", "trackedBrands", lang)}
+        </h2>
+        <div className="grid md:grid-cols-3 gap-4">
+          {company.brands.map((brand) => (
+            <div
+              key={brand.name}
+              className="rounded-2xl p-6 space-y-4"
+              style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+            >
+              {/* Brand header */}
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="font-bold text-lg">{brand.name}</div>
+                  <div className="text-xs mt-0.5" style={{ color: "#7070a0" }}>{brand.category}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-black" style={{ color: arrsColor(brand.arrs) }}>
+                    {brand.arrs}
+                  </div>
+                  <div className="text-xs" style={{ color: "#7070a0" }}>ARRS</div>
+                </div>
+              </div>
+
+              {/* SOV */}
+              <div>
+                <div className="flex justify-between text-xs mb-1" style={{ color: "#7070a0" }}>
+                  <span>{tx("company", "weightedSov", lang)}</span>
+                  <span style={{ color: "#f5a623" }}>{brand.weighted_sov.toFixed(1)}%</span>
+                </div>
+                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${Math.min(100, brand.weighted_sov * 2)}%`, background: "#f5a623" }}
+                  />
+                </div>
+              </div>
+
+              {/* Trend */}
+              <div className="flex items-center gap-1.5 text-sm">
+                <TrendIcon trend={brand.trend} />
+                <span
+                  style={{
+                    color: brand.trend === "up" ? "#22c55e" : brand.trend === "down" ? "#ff4d6d" : "#7070a0",
+                  }}
+                >
+                  {brand.trendDelta}
+                </span>
+              </div>
+
+              {/* GEO Score + Citation Rate */}
+              <div className="flex items-center gap-4 py-1" style={{ borderTop: "1px solid #1a1a2e", borderBottom: "1px solid #1a1a2e" }}>
+                <div className="flex items-center gap-2">
+                  <GeoScoreRing score={brand.geo_score} />
+                  <div>
+                    <div className="text-xs font-semibold" style={{ color: "#f0f0f8" }}>
+                      {tx("company", "geoScore", lang)}
+                    </div>
+                    <div className="text-xs" style={{ color: "#7070a0" }}>/100</div>
+                  </div>
+                </div>
+                <div className="ml-auto text-right">
+                  <div className="text-xl font-black" style={{ color: "#f5a623" }}>{brand.citation_rate}%</div>
+                  <div className="text-xs" style={{ color: "#7070a0" }}>{tx("company", "citationRate", lang)}</div>
+                </div>
+              </div>
+
+              {/* Sentiment */}
+              <div>
+                <div className="text-xs mb-2" style={{ color: "#7070a0" }}>{tx("company", "sentiment", lang)}</div>
+                <div className="flex gap-2">
+                  {[
+                    { key: "sentPositive" as const, pct: brand.sentiment.positive, color: "#22c55e" },
+                    { key: "sentNeutral" as const,  pct: brand.sentiment.neutral,  color: "#f5a623" },
+                    { key: "sentNegative" as const, pct: brand.sentiment.negative, color: "#ff4d6d" },
+                  ].map((s) => (
+                    <div key={s.key} className="flex-1 text-center rounded-lg py-1.5" style={{ background: `${s.color}12` }}>
+                      <div className="text-sm font-bold" style={{ color: s.color }}>{s.pct}%</div>
+                      <div className="text-xs" style={{ color: "#7070a0" }}>{tx("company", s.key, lang)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SOV by model */}
+              <div>
+                <div className="text-xs mb-1.5" style={{ color: "#7070a0" }}>{tx("company", "byModel", lang)}</div>
+                {[
+                  { label: "ChatGPT",    val: brand.by_model.chatgpt },
+                  { label: "Claude",     val: brand.by_model.claude },
+                  { label: "Perplexity", val: brand.by_model.perplexity },
+                ].map((m) => (
+                  <div key={m.label} className="flex items-center gap-2 mb-1">
+                    <div className="text-xs w-16 shrink-0" style={{ color: "#7070a0" }}>{m.label}</div>
+                    <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
+                      <div className="h-full rounded-full" style={{ width: `${Math.min(100, m.val * 2.5)}%`, background: "#f5a623" }} />
+                    </div>
+                    <div className="text-xs w-10 text-right" style={{ color: "#f5a623" }}>{m.val}%</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Competitors */}
+              <div>
+                <div className="text-xs mb-1.5" style={{ color: "#7070a0" }}>{tx("company", "vsCompetitors", lang)}</div>
+                <div className="flex flex-wrap gap-1">
+                  {brand.competitors.map((c) => (
+                    <span
+                      key={c}
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{ background: "#161625", color: "#7070a0", border: "1px solid #25253f" }}
+                    >
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Links */}
+              <div className="flex gap-3 pt-1">
+                <Link
+                  href={`/brands/${encodeURIComponent(brand.name)}`}
+                  className="text-xs underline hover:text-white transition-colors"
+                  style={{ color: "#7070a0" }}
+                >
+                  {tx("company", "brandDetail", lang)}
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div
+        className="rounded-2xl p-8 flex items-center justify-between gap-6"
+        style={{ background: "linear-gradient(135deg, #0f0f17 0%, #161625 100%)", border: "1px solid #25253f" }}
+      >
+        <div>
+          <p className="font-bold text-lg mb-1">{tx("company", "readyTitle", lang)}</p>
+          <p className="text-sm" style={{ color: "#7070a0" }}>
+            {tx("company", "readyDesc", lang)
+              .replace("{briefs}", "6")
+              .replace("{citations}", "8")}
+          </p>
+        </div>
+        <Link
+          href={`${base}/execution`}
+          className="shrink-0 px-6 py-3 rounded-xl text-sm font-semibold transition-opacity hover:opacity-85"
+          style={{ background: "#ff6b35", color: "#fff" }}
+        >
+          {tx("company", "openPlaybook", lang)}
+        </Link>
+      </div>
+    </div>
+  );
+}

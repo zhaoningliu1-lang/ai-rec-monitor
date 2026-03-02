@@ -1,0 +1,284 @@
+{
+  "chinese_3c": [
+    {
+      "brand_name": "Baseus",
+      "competitor_names": [
+        "Anker",
+        "Ugreen"
+      ],
+      "category": "USB-C accessories and charging",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $50",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Aukey",
+      "competitor_names": [
+        "Anker",
+        "Baseus"
+      ],
+      "category": "USB-C chargers and power banks",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $50",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "INIU",
+      "competitor_names": [
+        "Anker",
+        "Baseus"
+      ],
+      "category": "power banks and fast charging",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $50",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "ROMOSS",
+      "competitor_names": [
+        "Anker",
+        "Mophie"
+      ],
+      "category": "power banks",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $50",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Choetech",
+      "competitor_names": [
+        "Anker",
+        "Belkin"
+      ],
+      "category": "wireless charging pads",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $40",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Tozo",
+      "competitor_names": [
+        "Jabra",
+        "Soundcore"
+      ],
+      "category": "true wireless earbuds",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $60",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "QCY",
+      "competitor_names": [
+        "Tozo",
+        "EarFun"
+      ],
+      "category": "wireless earbuds and Bluetooth headphones",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $50",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "EarFun",
+      "competitor_names": [
+        "Tozo",
+        "Jabra"
+      ],
+      "category": "true wireless earbuds",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $80",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Edifier",
+      "competitor_names": [
+        "Audioengine",
+        "Klipsch"
+      ],
+      "category": "bookshelf speakers and studio monitors",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "$50-$300",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Mpow",
+      "competitor_names": [
+        "Jabra",
+        "Soundcore"
+      ],
+      "category": "Bluetooth headsets and headphones",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $50",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Haylou",
+      "competitor_names": [
+        "Tozo",
+        "QCY"
+      ],
+      "category": "true wireless earbuds and smartwatches",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $50",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Govee",
+      "competitor_names": [
+        "Philips Hue",
+        "Nanoleaf"
+      ],
+      "category": "smart ambient lighting and LED strips",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $80",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Meross",
+      "competitor_names": [
+        "Kasa",
+        "Wemo"
+      ],
+      "category": "smart home plugs and switches",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $40",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "SONOFF",
+      "competitor_names": [
+        "Kasa",
+        "Shelly"
+      ],
+      "category": "smart home automation devices",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $30",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Reolink",
+      "competitor_names": [
+        "Wyze",
+        "Eufy"
+      ],
+      "category": "home security cameras",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "$50-$200",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Amazfit",
+      "competitor_names": [
+        "Fitbit",
+        "Garmin"
+      ],
+      "category": "smartwatches and fitness trackers",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $150",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Insta360",
+      "competitor_names": [
+        "GoPro",
+        "DJI"
+      ],
+      "category": "action cameras and 360 cameras",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "$200-$500",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Dreame",
+      "competitor_names": [
+        "iRobot Roomba",
+        "Roborock"
+      ],
+      "category": "robot vacuums and cordless vacuums",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "$200-$600",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "OMOTON",
+      "competitor_names": [
+        "Lamicall",
+        "ESR"
+      ],
+      "category": "tablet and phone stands and mounts",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $30",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Lamicall",
+      "competitor_names": [
+        "OMOTON",
+        "Nulaxy"
+      ],
+      "category": "phone and tablet holders and mounts",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $30",
+      "providers": [
+        "openai"
+      ]
+    }
+  ]
+}

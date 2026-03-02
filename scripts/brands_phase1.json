@@ -1,0 +1,166 @@
+{
+  "chargers_10": [
+    {
+      "brand_name": "Anker",
+      "competitor_names": ["Belkin", "Ugreen"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Belkin",
+      "competitor_names": ["Anker", "Ugreen"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Ugreen",
+      "competitor_names": ["Anker", "Belkin"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Spigen",
+      "competitor_names": ["Anker", "Belkin"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "RAVPower",
+      "competitor_names": ["Anker", "Ugreen"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Baseus",
+      "competitor_names": ["Anker", "Ugreen"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Aukey",
+      "competitor_names": ["Anker", "Belkin"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Samsung",
+      "competitor_names": ["Anker", "Belkin"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Apple",
+      "competitor_names": ["Anker", "Belkin"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Nekteck",
+      "competitor_names": ["Anker", "Ugreen"],
+      "category": "USB-C chargers",
+      "region": "US",
+      "price_band": "under $50",
+      "providers": ["openai"]
+    }
+  ],
+  "powerstations_10": [
+    {
+      "brand_name": "Jackery",
+      "competitor_names": ["EcoFlow", "Bluetti"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "EcoFlow",
+      "competitor_names": ["Jackery", "Bluetti"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Bluetti",
+      "competitor_names": ["Jackery", "EcoFlow"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Goal Zero",
+      "competitor_names": ["Jackery", "EcoFlow"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Anker",
+      "competitor_names": ["Jackery", "EcoFlow"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Rockpals",
+      "competitor_names": ["Jackery", "EcoFlow"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "VTOMAN",
+      "competitor_names": ["Jackery", "EcoFlow"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Westinghouse",
+      "competitor_names": ["Jackery", "Bluetti"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Lion Energy",
+      "competitor_names": ["Jackery", "EcoFlow"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    },
+    {
+      "brand_name": "Renogy",
+      "competitor_names": ["Jackery", "EcoFlow"],
+      "category": "portable power stations",
+      "region": "US",
+      "price_band": "under $500",
+      "providers": ["openai"]
+    }
+  ]
+}

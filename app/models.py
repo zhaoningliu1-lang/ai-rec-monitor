@@ -1,0 +1,170 @@
+import enum
+import uuid
+from datetime import datetime
+
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    func,
+)
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.database import Base
+
+
+class RunStatus(str, enum.Enum):
+    queued = "queued"
+    running = "running"
+    done = "done"
+    failed = "failed"
+
+
+class Sentiment(str, enum.Enum):
+    positive = "positive"
+    neutral = "neutral"
+    negative = "negative"
+
+
+class Run(Base):
+    __tablename__ = "runs"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    brand_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    competitor_names: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    category: Mapped[str] = mapped_column(String(255), nullable=False)
+    region: Mapped[str] = mapped_column(String(10), nullable=False)
+    num_prompts: Mapped[int] = mapped_column(Integer, nullable=False, default=100)
+    status: Mapped[RunStatus] = mapped_column(
+        Enum(RunStatus), nullable=False, default=RunStatus.queued
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    finished_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    progress_total: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    progress_done: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    providers: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    price_band: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    results: Mapped[list["PromptResult"]] = relationship(
+        "PromptResult", back_populates="run", cascade="all, delete-orphan"
+    )
+    snapshot: Mapped["RunSnapshot | None"] = relationship(
+        "RunSnapshot", back_populates="run", uselist=False, cascade="all, delete-orphan"
+    )
+    recommendation: Mapped["Recommendation | None"] = relationship(
+        "Recommendation", back_populates="run", uselist=False, cascade="all, delete-orphan"
+    )
+
+
+class PromptResult(Base):
+    __tablename__ = "prompt_results"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    run_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("runs.id", ondelete="CASCADE"), nullable=False
+    )
+    prompt_text: Mapped[str] = mapped_column(Text, nullable=False)
+    raw_response: Mapped[str] = mapped_column(Text, nullable=False)
+    brand_mentioned: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    brand_mention_position: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    competitors_data: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    brand_sentiment: Mapped[Sentiment] = mapped_column(
+        Enum(Sentiment), nullable=False, default=Sentiment.neutral
+    )
+    provider: Mapped[str] = mapped_column(String(50), nullable=False, default="openai")
+    intent_type: Mapped[str] = mapped_column(String(50), nullable=False, default="high_intent")
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    processed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    run: Mapped["Run"] = relationship("Run", back_populates="results")
+
+
+# ── Scheduled recurring runs ──────────────────────────────────────────────────
+
+class ScheduledRun(Base):
+    __tablename__ = "scheduled_runs"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    brand_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    competitor_names: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    category: Mapped[str] = mapped_column(String(255), nullable=False)
+    region: Mapped[str] = mapped_column(String(10), nullable=False)
+    providers: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    price_band: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    cron_expr: Mapped[str] = mapped_column(String(100), nullable=False, default="0 9 * * 1")
+    num_prompts: Mapped[int] = mapped_column(Integer, nullable=False, default=60)
+    enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    last_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    next_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+# ── Per-run metrics snapshot (for trend charts) ───────────────────────────────
+
+class RunSnapshot(Base):
+    __tablename__ = "run_snapshots"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    run_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("runs.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
+    brand_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    sov_overall: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    sov_high: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    sov_comparison: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    sov_info: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    weighted_sov: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    arrs: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    mention_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    total_prompts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    snapshot_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+    run: Mapped["Run"] = relationship("Run", back_populates="snapshot")
+
+
+# ── AI-generated recommendations ──────────────────────────────────────────────
+
+class Recommendation(Base):
+    __tablename__ = "recommendations"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    run_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("runs.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
+    brand_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    items: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    generated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    model_used: Mapped[str] = mapped_column(String(100), nullable=False, default="claude-haiku-4-5-20251001")
+
+    run: Mapped["Run"] = relationship("Run", back_populates="recommendation")

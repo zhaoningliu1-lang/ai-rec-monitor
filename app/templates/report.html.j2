@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Rec Monitor — {{ run.brand_name }} Report</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f4f4f5; color: #18181b; line-height: 1.55; font-size: 15px; }
+    .container { max-width: 960px; margin: 2rem auto; padding: 0 1rem 3rem; }
+
+    h1 { font-size: 1.55rem; font-weight: 700; margin-bottom: 0.2rem; }
+    h2 { font-size: 1rem; font-weight: 600; color: #3f3f46; margin-bottom: 1rem; }
+    .subtitle { color: #71717a; font-size: 0.88rem; margin-bottom: 2rem; }
+
+    .card { background: #fff; border: 1px solid #e4e4e7; border-radius: 10px; padding: 1.4rem 1.5rem; margin-bottom: 1.25rem; }
+
+    /* ── Meta grid ── */
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.9rem; }
+    .meta-item label { display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #a1a1aa; margin-bottom: 0.2rem; }
+    .meta-item span { font-size: 0.93rem; font-weight: 500; }
+
+    /* ── Status / provider / confidence badges ── */
+    .badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .badge-done    { background: #dcfce7; color: #166534; }
+    .badge-running { background: #fef9c3; color: #854d0e; }
+    .badge-failed  { background: #fee2e2; color: #991b1b; }
+    .badge-queued  { background: #e0e7ff; color: #3730a3; }
+    .badge-high    { background: #dcfce7; color: #166534; }
+    .badge-low     { background: #fef9c3; color: #854d0e; }
+    .badge-mixed   { background: #f3f4f6; color: #374151; }
+    .badge-list    { background: #dbeafe; color: #1d4ed8; }
+    .badge-first   { background: #f3f4f6; color: #374151; }
+    .badge-openai  { background: #d1fae5; color: #065f46; }
+    .badge-gemini  { background: #fce7f3; color: #9d174d; }
+
+    /* ── Intent type badges ── */
+    .badge-intent-high { background: #ffedd5; color: #c2410c; }
+    .badge-intent-comp { background: #dbeafe; color: #1d4ed8; }
+    .badge-intent-info { background: #f3e8ff; color: #7e22ce; }
+
+    /* ── Per-provider section ── */
+    .provider-section { border: 1px solid #e4e4e7; border-radius: 8px; margin-bottom: 0.75rem; overflow: hidden; }
+    .provider-section > summary { padding: 0.7rem 1rem; background: #fafafa; cursor: pointer; font-size: 0.88rem; font-weight: 600; list-style: none; display: flex; align-items: center; gap: 0.5rem; user-select: none; }
+    .provider-section > summary::-webkit-details-marker { display: none; }
+    .provider-section > summary:hover { background: #f4f4f5; }
+    .provider-section[open] > summary { border-bottom: 1px solid #e4e4e7; background: #f4f4f5; }
+    .provider-section-body { padding: 1rem 1.1rem; }
+
+    /* ── Progress bar ── */
+    .progress-wrap { margin-top: 1rem; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: #71717a; margin-bottom: 0.3rem; }
+    .progress-track { height: 8px; background: #e4e4e7; border-radius: 4px; overflow: hidden; }
+    .progress-fill  { height: 100%; border-radius: 4px; transition: width 0.3s; background: #3b82f6; }
+    .progress-fill.done   { background: #22c55e; }
+    .progress-fill.failed { background: #ef4444; }
+    .warn-text { color: #b45309; }
+
+    .error-banner { background: #fee2e2; border: 1px solid #fca5a5; border-radius: 6px; padding: 0.6rem 0.9rem; color: #991b1b; font-size: 0.85rem; margin-top: 0.75rem; }
+
+    /* ── Brand table ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    thead th { background: #f4f4f5; text-align: left; padding: 0.55rem 0.75rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #71717a; border-bottom: 2px solid #e4e4e7; white-space: nowrap; }
+    tbody td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #f4f4f5; vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #fafafa; }
+    tr.primary-row td { font-weight: 600; background: #f0f7ff; }
+    tr.primary-row:hover td { background: #e8f2ff; }
+
+    .sov-bar-wrap { display: flex; align-items: center; gap: 0.5rem; }
+    .sov-bar-track { flex: 1; height: 6px; background: #e4e4e7; border-radius: 3px; overflow: hidden; min-width: 60px; }
+    .sov-bar-fill { height: 100%; border-radius: 3px; background: #6366f1; }
+    tr.primary-row .sov-bar-fill { background: #2563eb; }
+
+    .sent-chips { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    .chip { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; }
+    .chip-pos { background: #dcfce7; color: #166534; }
+    .chip-neu { background: #f3f4f6; color: #374151; }
+    .chip-neg { background: #fee2e2; color: #991b1b; }
+    .chip-na  { background: #f3f4f6; color: #9ca3af; font-weight: 400; }
+
+    /* ── ARRS leaderboard ── */
+    .arrs-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.65rem; }
+    .arrs-row:last-child { margin-bottom: 0; }
+    .arrs-rank { font-size: 0.75rem; font-weight: 700; color: #a1a1aa; width: 1.5rem; text-align: right; flex-shrink: 0; }
+    .arrs-label { font-size: 0.88rem; font-weight: 600; width: 110px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .arrs-primary { color: #2563eb; }
+    .arrs-track { flex: 1; height: 10px; background: #e4e4e7; border-radius: 5px; overflow: hidden; }
+    .arrs-fill { height: 100%; border-radius: 5px; background: #6366f1; }
+    .arrs-fill-primary { background: #2563eb; }
+    .arrs-value { font-size: 0.82rem; font-weight: 700; width: 3rem; text-align: right; flex-shrink: 0; }
+
+    /* ── Intent section tabs ── */
+    .intent-section { border: 1px solid #e4e4e7; border-radius: 8px; margin-bottom: 0.75rem; overflow: hidden; }
+    .intent-section > summary { padding: 0.65rem 1rem; background: #fafafa; cursor: pointer; font-size: 0.88rem; font-weight: 600; list-style: none; display: flex; align-items: center; gap: 0.55rem; user-select: none; }
+    .intent-section > summary::-webkit-details-marker { display: none; }
+    .intent-section > summary:hover { background: #f4f4f5; }
+    .intent-section[open] > summary { border-bottom: 1px solid #e4e4e7; }
+    .intent-section-body { padding: 0.85rem 1.1rem; }
+
+    /* ── Per-prompt details ── */
+    details { border: 1px solid #e4e4e7; border-radius: 7px; margin-bottom: 0.4rem; overflow: hidden; }
+    details summary { padding: 0.6rem 0.9rem; background: #fafafa; cursor: pointer; font-size: 0.85rem; font-weight: 500; user-select: none; list-style: none; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    details summary::-webkit-details-marker { display: none; }
+    details summary:hover { background: #f4f4f5; }
+    details.prompt-error summary { background: #fff5f5; border-left: 3px solid #ef4444; }
+    .detail-body { padding: 0.9rem 1rem; font-size: 0.84rem; border-top: 1px solid #e4e4e7; }
+    .detail-row { margin-bottom: 0.4rem; color: #52525b; }
+    .detail-row strong { color: #18181b; }
+    .raw-response { white-space: pre-wrap; background: #fafafa; padding: 0.75rem; border-radius: 5px; border-left: 3px solid #d4d4d8; color: #3f3f46; line-height: 1.65; margin-top: 0.5rem; font-size: 0.82rem; }
+    .err-box { background: #fee2e2; border-radius: 5px; padding: 0.45rem 0.7rem; color: #991b1b; font-size: 0.82rem; margin-top: 0.4rem; }
+
+    .tag-pos { color: #16a34a; font-weight: 600; }
+    .tag-neu { color: #6b7280; }
+    .tag-neg { color: #dc2626; font-weight: 600; }
+    .mention-yes { color: #16a34a; font-weight: 600; }
+    .mention-no  { color: #a1a1aa; }
+
+    /* ── Disclaimer ── */
+    .disclaimer { background: #fafafa; border: 1px solid #e4e4e7; border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.82rem; color: #71717a; line-height: 1.6; }
+    .disclaimer strong { color: #52525b; }
+
+    .empty { color: #a1a1aa; font-style: italic; text-align: center; padding: 2rem; }
+    .footer { text-align: center; font-size: 0.75rem; color: #a1a1aa; margin-top: 1.5rem; }
+
+    .chevron { font-style: normal; margin-right: 0.25rem; font-size: 0.7rem; color: #a1a1aa; }
+
+    /* ── Notion export button ── */
+    .notion-bar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; }
+    .btn-notion { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.95rem; border: 1px solid #d4d4d8; border-radius: 7px; background: #fff; font-size: 0.84rem; font-weight: 600; color: #18181b; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+    .btn-notion:hover:not(:disabled) { background: #f4f4f5; border-color: #a1a1aa; }
+    .btn-notion:disabled { opacity: 0.55; cursor: default; }
+    .notion-status { font-size: 0.82rem; color: #71717a; }
+    details[open] .chevron::before { content: "▼"; }
+    .chevron::before { content: "▶"; }
+
+    /* ── ARRS Risk Card ── */
+    .arrs-risk-card { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+    .arrs-score-block { text-align: center; min-width: 80px; }
+    .arrs-score-number { font-size: 3.2rem; font-weight: 800; line-height: 1; }
+    .arrs-score-label  { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #a1a1aa; margin-top: 0.2rem; }
+    .badge-risk-low    { background: #dcfce7; color: #166534; font-size: 0.82rem; padding: 0.3rem 0.8rem; }
+    .badge-risk-med    { background: #fef9c3; color: #854d0e; font-size: 0.82rem; padding: 0.3rem 0.8rem; }
+    .badge-risk-high   { background: #fee2e2; color: #991b1b; font-size: 0.82rem; padding: 0.3rem 0.8rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <h1>AI Recommendation Monitor</h1>
+  <p class="subtitle">Brand visibility report for <strong>{{ run.brand_name }}</strong> · {{ run.category }} · {{ run.region }}</p>
+
+  <div class="notion-bar">
+    <button class="btn-notion" id="notion-btn" onclick="exportToNotion('{{ run.id }}')">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;"><rect width="14" height="14" rx="2" fill="#18181b"/><path d="M3 3.5h5.5L11 6v5H3V3.5z" fill="#fff" opacity=".15"/><path d="M3 3.5h5.5m0 0V6H11m-2.5-2.5L11 6" stroke="#fff" stroke-width="1"/></svg>
+      Export to Notion
+    </button>
+    <span class="notion-status" id="notion-status"></span>
+  </div>
+
+  <!-- ── Run Details ── -->
+  <div class="card">
+    <h2>Run Details</h2>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <label>Brand</label>
+        <span>{{ run.brand_name }}</span>
+      </div>
+      <div class="meta-item">
+        <label>Category</label>
+        <span>{{ run.category }}</span>
+      </div>
+      <div class="meta-item">
+        <label>Region</label>
+        <span>{{ run.region }}</span>
+      </div>
+      {% if run.price_band %}
+      <div class="meta-item">
+        <label>Price Band</label>
+        <span>{{ run.price_band }}</span>
+      </div>
+      {% endif %}
+      <div class="meta-item">
+        <label>Status</label>
+        <span class="badge badge-{{ run.status.value }}">{{ run.status.value }}</span>
+      </div>
+      <div class="meta-item">
+        <label>Rank Method</label>
+        {% if dominant_method == "list-order" %}
+          <span class="badge badge-list">list-order</span>
+        {% elif dominant_method == "first-mention" %}
+          <span class="badge badge-first">first-mention</span>
+        {% else %}
+          <span class="badge badge-mixed">mixed</span>
+        {% endif %}
+      </div>
+      <div class="meta-item">
+        <label>Confidence</label>
+        {% if dominant_confidence == "high" %}
+          <span class="badge badge-high">high</span>
+        {% elif dominant_confidence == "low" %}
+          <span class="badge badge-low">low</span>
+        {% else %}
+          <span class="badge badge-mixed">mixed</span>
+        {% endif %}
+        <span style="font-size:0.72rem; color:#a1a1aa; margin-left:0.3rem;">{{ list_pct }}% list responses</span>
+      </div>
+      <div class="meta-item">
+        <label>Started</label>
+        <span>{{ run.started_at.strftime('%Y-%m-%d %H:%M UTC') if run.started_at else '—' }}</span>
+      </div>
+      <div class="meta-item">
+        <label>Finished</label>
+        <span>{{ run.finished_at.strftime('%Y-%m-%d %H:%M UTC') if run.finished_at else '—' }}</span>
+      </div>
+      <div class="meta-item">
+        <label>Providers</label>
+        <span style="display:flex; gap:0.3rem; flex-wrap:wrap;">
+          {% for p in (run.providers or ['openai']) %}
+            <span class="badge badge-{{ p }}">{{ p }}</span>
+          {% endfor %}
+        </span>
+      </div>
+      {% if run.competitor_names %}
+      <div class="meta-item">
+        <label>Competitors</label>
+        <span>{{ run.competitor_names | join(', ') }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Progress -->
+    {% set pct = ((run.progress_done / run.progress_total * 100) | round(1)) if run.progress_total > 0 else 0 %}
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>{{ run.progress_done }} / {{ run.progress_total }} prompts</span>
+        <span>{{ pct }}%{% if failed_count > 0 %} &nbsp;·&nbsp; <span class="warn-text">{{ failed_count }} errored</span>{% endif %}</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill {{ run.status.value }}" style="width: {{ pct }}%"></div>
+      </div>
+    </div>
+    {% if run.error_message %}
+    <div class="error-banner">⚠ {{ run.error_message }}</div>
+    {% endif %}
+  </div>
+
+  <!-- ── ARRS Risk Card ── -->
+  <div class="card">
+    <h2>AI Replacement Risk Score <span style="font-weight:400; color:#71717a;">— {{ run.brand_name }} vs competitors</span></h2>
+    <div class="arrs-risk-card">
+      <div class="arrs-score-block">
+        <div class="arrs-score-number" style="color:{% if arrs >= 60 %}#dc2626{% elif arrs >= 30 %}#d97706{% else %}#16a34a{% endif %};">{{ arrs }}</div>
+        <div class="arrs-score-label">/ 100</div>
+      </div>
+      <div>
+        {% if arrs_band == "high" %}
+          <span class="badge badge-risk-high">HIGH RISK</span>
+        {% elif arrs_band == "med" %}
+          <span class="badge badge-risk-med">MEDIUM RISK</span>
+        {% else %}
+          <span class="badge badge-risk-low">LOW RISK</span>
+        {% endif %}
+        <p data-field="arrs_explain" style="margin-top:0.6rem; font-size:0.88rem; color:#374151; max-width:520px;">{{ arrs_explain or "No competitor gap detected." }}</p>
+        <p style="margin-top:0.4rem; font-size:0.74rem; color:#a1a1aa;">Gap-based: how far competitors lead {{ run.brand_name }} per intent type, weighted by buying signal strength.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Brand Performance (with Weighted SOV + ARRS) ── -->
+  {% if brand_table %}
+  <div class="card">
+    <h2>Brand Performance
+      {% if providers_used | length > 1 %}
+      <span style="font-weight:400; color:#71717a;">— combined across all providers</span>
+      {% endif %}
+    </h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>Mention Rate</th>
+          <th>Overall SOV</th>
+          <th>Weighted SOV</th>
+          <th>ARRS</th>
+          <th>Avg Position</th>
+          <th>Sentiment</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in brand_table %}
+        <tr{% if b.is_primary %} class="primary-row"{% endif %}>
+          <td>{{ b.name }}{% if b.is_primary %} <span style="color:#6366f1">★</span>{% endif %}</td>
+          <td>{{ b.mention_rate }}%
+            <span style="font-size:0.72rem; color:#a1a1aa;">({{ b.mention_count }}/{{ total }})</span>
+          </td>
+          <td>
+            <div class="sov-bar-wrap">
+              <div class="sov-bar-track">
+                <div class="sov-bar-fill" style="width: {{ b.sov }}%"></div>
+              </div>
+              <span style="font-size:0.82rem; white-space:nowrap;">{{ b.sov }}%</span>
+            </div>
+          </td>
+          <td>
+            <div class="sov-bar-wrap">
+              <div class="sov-bar-track">
+                <div class="sov-bar-fill" style="width: {{ b.weighted_sov if b.weighted_sov is defined else b.sov }}%; background:#f59e0b;"></div>
+              </div>
+              <span style="font-size:0.82rem; white-space:nowrap;">{{ b.weighted_sov if b.weighted_sov is defined else '—' }}%</span>
+            </div>
+          </td>
+          <td style="font-weight:700; color:{% if b.arrs is defined and b.arrs >= 60 %}#16a34a{% elif b.arrs is defined and b.arrs >= 30 %}#d97706{% else %}#6b7280{% endif %};">
+            {{ b.arrs if b.arrs is defined else '—' }}
+          </td>
+          <td>{{ b.avg_position if b.avg_position is not none else '—' }}</td>
+          <td>
+            {% set s = b.sentiment %}
+            {% set s_total = s.positive + s.neutral + s.negative %}
+            {% if s_total > 0 %}
+            <div class="sent-chips">
+              {% if s.positive > 0 %}<span class="chip chip-pos">+{{ s.positive }}</span>{% endif %}
+              {% if s.neutral  > 0 %}<span class="chip chip-neu">~{{ s.neutral }}</span>{% endif %}
+              {% if s.negative > 0 %}<span class="chip chip-neg">−{{ s.negative }}</span>{% endif %}
+            </div>
+            {% else %}
+            <span class="chip chip-na">no mentions</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p style="font-size:0.74rem; color:#a1a1aa; margin-top:0.75rem;">
+      <strong>SOV</strong> = Share of Voice (brand mentions / all tracked-brand mentions).
+      <strong>Weighted SOV</strong> = intent-weighted: (hi×1.5 + cmp×1.2 + info×1.0) / 3.7.
+      <strong>ARRS</strong> = AI Replacement Risk Score (0–100): weighted SOV + positive-sentiment bonus (max +15).
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- ── ARRS Leaderboard ── -->
+  {% if arrs_leaderboard %}
+  <div class="card">
+    <h2>ARRS Leaderboard <span style="font-weight:400; color:#71717a;">— top 5 brands by AI Replacement Risk Score</span></h2>
+    {% for b in arrs_leaderboard %}
+    <div class="arrs-row">
+      <span class="arrs-rank">#{{ loop.index }}</span>
+      <span class="arrs-label {% if b.is_primary %}arrs-primary{% endif %}">{{ b.name }}</span>
+      <div class="arrs-track">
+        <div class="arrs-fill {% if b.is_primary %}arrs-fill-primary{% endif %}" style="width: {{ b.arrs if b.arrs is defined else 0 }}%"></div>
+      </div>
+      <span class="arrs-value">{{ b.arrs if b.arrs is defined else 0 }}</span>
+    </div>
+    {% endfor %}
+    {% if arrs_explain %}
+    <p data-field="arrs_explain" style="font-size:0.82rem; color:#374151; margin-top:0.85rem; font-weight:500;">
+      Risk signal: {{ arrs_explain }}
+    </p>
+    {% endif %}
+    <p style="font-size:0.74rem; color:#a1a1aa; margin-top:0.4rem;">
+      A higher ARRS indicates a stronger AI recommendation footprint. Scores above 60 suggest this brand is consistently surfaced in buying-intent queries.
+      <span style="color:#2563eb;">Blue bars</span> = your brand.
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- ── Intent SOV Breakdown ── -->
+  {% if intent_sections %}
+  <div class="card">
+    <h2>Intent SOV Breakdown</h2>
+
+    <!-- Per-intent SOV table using brand_table's sov_high / sov_comp / sov_info -->
+    {% if brand_table %}
+    <table style="margin-bottom:1rem;">
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>
+            <span class="badge badge-intent-high">High Intent</span>
+            <span style="font-size:0.65rem; color:#a1a1aa;">×1.5</span>
+          </th>
+          <th>
+            <span class="badge badge-intent-comp">Comparison</span>
+            <span style="font-size:0.65rem; color:#a1a1aa;">×1.2</span>
+          </th>
+          <th>
+            <span class="badge badge-intent-info">Informational</span>
+            <span style="font-size:0.65rem; color:#a1a1aa;">×1.0</span>
+          </th>
+          <th>Weighted SOV</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in brand_table %}
+        <tr{% if b.is_primary %} class="primary-row"{% endif %}>
+          <td>{{ b.name }}{% if b.is_primary %} <span style="color:#6366f1">★</span>{% endif %}</td>
+          <td>{{ b.sov_high if b.sov_high is defined else '—' }}%</td>
+          <td>{{ b.sov_comp if b.sov_comp is defined else '—' }}%</td>
+          <td>{{ b.sov_info if b.sov_info is defined else '—' }}%</td>
+          <td style="font-weight:600;">{{ b.weighted_sov if b.weighted_sov is defined else '—' }}%</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <!-- Per-intent collapsible brand tables -->
+    {% for is in intent_sections %}
+    <details class="intent-section">
+      <summary>
+        <i class="chevron"></i>
+        {% if is.intent_type == "high" %}
+          <span class="badge badge-intent-high">High Intent</span>
+        {% elif is.intent_type == "comparison" %}
+          <span class="badge badge-intent-comp">Comparison</span>
+        {% else %}
+          <span class="badge badge-intent-info">Informational</span>
+        {% endif %}
+        <span style="color:#71717a; font-size:0.85rem;">{{ is.count }} prompts · weight {{ is.weight }}</span>
+      </summary>
+      <div class="intent-section-body">
+        {% if is.brand_table %}
+        <table>
+          <thead>
+            <tr>
+              <th>Brand</th>
+              <th>Mention Rate</th>
+              <th>SOV</th>
+              <th>Avg Position</th>
+              <th>Sentiment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in is.brand_table %}
+            <tr{% if b.is_primary %} class="primary-row"{% endif %}>
+              <td>{{ b.name }}{% if b.is_primary %} <span style="color:#6366f1">★</span>{% endif %}</td>
+              <td>{{ b.mention_rate }}%
+                <span style="font-size:0.72rem; color:#a1a1aa;">({{ b.mention_count }}/{{ is.count }})</span>
+              </td>
+              <td>
+                <div class="sov-bar-wrap">
+                  <div class="sov-bar-track">
+                    <div class="sov-bar-fill" style="width: {{ b.sov }}%"></div>
+                  </div>
+                  <span style="font-size:0.82rem; white-space:nowrap;">{{ b.sov }}%</span>
+                </div>
+              </td>
+              <td>{{ b.avg_position if b.avg_position is not none else '—' }}</td>
+              <td>
+                {% set s = b.sentiment %}
+                {% set s_total = s.positive + s.neutral + s.negative %}
+                {% if s_total > 0 %}
+                <div class="sent-chips">
+                  {% if s.positive > 0 %}<span class="chip chip-pos">+{{ s.positive }}</span>{% endif %}
+                  {% if s.neutral  > 0 %}<span class="chip chip-neu">~{{ s.neutral }}</span>{% endif %}
+                  {% if s.negative > 0 %}<span class="chip chip-neg">−{{ s.negative }}</span>{% endif %}
+                </div>
+                {% else %}
+                <span class="chip chip-na">no mentions</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="empty">No results for this intent type.</p>
+        {% endif %}
+      </div>
+    </details>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ── Per-provider breakdown ── -->
+  {% if provider_sections | length > 1 %}
+  <div class="card">
+    <h2>Per-provider Breakdown</h2>
+    {% for ps in provider_sections %}
+    <details class="provider-section">
+      <summary>
+        <i class="chevron"></i>
+        <span class="badge badge-{{ ps.provider }}">{{ ps.provider }}</span>
+        <span>{{ ps.total }} results</span>
+        &nbsp;·&nbsp;
+        <span style="color:#71717a; font-size:0.82rem;">
+          method: {{ ps.dominant_method }} &nbsp;·&nbsp; confidence: {{ ps.dominant_confidence }}
+          {% if ps.failed_count > 0 %}&nbsp;·&nbsp;<span class="warn-text">{{ ps.failed_count }} errors</span>{% endif %}
+        </span>
+      </summary>
+      <div class="provider-section-body">
+        {% if ps.brand_table %}
+        <table>
+          <thead>
+            <tr>
+              <th>Brand</th>
+              <th>Mention Rate</th>
+              <th>SOV</th>
+              <th>Avg Position</th>
+              <th>Sentiment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in ps.brand_table %}
+            <tr{% if b.is_primary %} class="primary-row"{% endif %}>
+              <td>{{ b.name }}{% if b.is_primary %} <span style="color:#6366f1">★</span>{% endif %}</td>
+              <td>{{ b.mention_rate }}%
+                <span style="font-size:0.72rem; color:#a1a1aa;">({{ b.mention_count }}/{{ ps.total }})</span>
+              </td>
+              <td>
+                <div class="sov-bar-wrap">
+                  <div class="sov-bar-track">
+                    <div class="sov-bar-fill" style="width: {{ b.sov }}%"></div>
+                  </div>
+                  <span style="font-size:0.82rem; white-space:nowrap;">{{ b.sov }}%</span>
+                </div>
+              </td>
+              <td>{{ b.avg_position if b.avg_position is not none else '—' }}</td>
+              <td>
+                {% set s = b.sentiment %}
+                {% set s_total = s.positive + s.neutral + s.negative %}
+                {% if s_total > 0 %}
+                <div class="sent-chips">
+                  {% if s.positive > 0 %}<span class="chip chip-pos">+{{ s.positive }}</span>{% endif %}
+                  {% if s.neutral  > 0 %}<span class="chip chip-neu">~{{ s.neutral }}</span>{% endif %}
+                  {% if s.negative > 0 %}<span class="chip chip-neg">−{{ s.negative }}</span>{% endif %}
+                </div>
+                {% else %}
+                <span class="chip chip-na">no mentions</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="empty">No results for this provider.</p>
+        {% endif %}
+      </div>
+    </details>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ── Per-prompt Results ── -->
+  <div class="card">
+    <h2>Prompt-by-Prompt Results
+      <span style="font-weight:400; color:#71717a;">({{ results | length }} processed{% if failed_count > 0 %}, <span class="warn-text">{{ failed_count }} errored</span>{% endif %})</span>
+    </h2>
+    {% if results %}
+    {% for r in results %}
+    {% set meta = result_meta[loop.index0] %}
+    {% set it = r.intent_type or "high" %}
+    <details{% if r.error %} class="prompt-error"{% endif %}>
+      <summary>
+        <i class="chevron"></i>
+        <span style="color:#a1a1aa; font-size:0.78rem; min-width:2rem;">#{{ loop.index }}</span>
+        <span class="badge badge-{{ r.provider }}">{{ r.provider }}</span>
+        {% if it == "high" %}
+          <span class="badge badge-intent-high">HIGH</span>
+        {% elif it == "comparison" %}
+          <span class="badge badge-intent-comp">COMPARE</span>
+        {% else %}
+          <span class="badge badge-intent-info">INFO</span>
+        {% endif %}
+        {% if r.error %}
+          <span class="badge badge-failed">error</span>
+        {% elif r.brand_mentioned %}
+          <span class="mention-yes">✓ {{ run.brand_name }}</span>
+          <span class="badge {% if meta.confidence == 'high' %}badge-list{% else %}badge-first{% endif %}" title="Rank method">{{ meta.rank_method }}</span>
+          <span class="badge {% if meta.confidence == 'high' %}badge-high{% else %}badge-low{% endif %}">{{ meta.confidence }}</span>
+        {% else %}
+          <span class="mention-no">✗ not mentioned</span>
+          {% if meta.list_detected %}<span class="badge badge-list">list</span>{% endif %}
+        {% endif %}
+        <span style="color:#71717a; font-size:0.82rem; margin-left:0.25rem;">{{ r.prompt_text[:90] }}{% if r.prompt_text | length > 90 %}…{% endif %}</span>
+      </summary>
+
+      <div class="detail-body">
+        <div class="detail-row">
+          <strong>Prompt:</strong> {{ r.prompt_text }}
+          &nbsp; <span class="badge badge-{{ r.provider }}">{{ r.provider }}</span>
+          {% if it == "high" %}
+            <span class="badge badge-intent-high">High Intent</span>
+          {% elif it == "comparison" %}
+            <span class="badge badge-intent-comp">Comparison</span>
+          {% else %}
+            <span class="badge badge-intent-info">Informational</span>
+          {% endif %}
+        </div>
+
+        {% if r.error %}
+        <div class="err-box"><strong>Error:</strong> {{ r.error }}</div>
+        {% else %}
+
+        <div class="detail-row" style="display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:0.3rem;">
+          <span>
+            <strong>{{ run.brand_name }}:</strong>
+            {% if r.brand_mentioned %}
+              <span class="tag-pos">mentioned</span>
+              · pos {{ r.brand_mention_position }}
+              · <span class="tag-{{ r.brand_sentiment.value[:3] }}">{{ r.brand_sentiment.value }}</span>
+            {% else %}
+              <span class="mention-no">not mentioned</span>
+            {% endif %}
+          </span>
+          <span>
+            <strong>Rank method:</strong> {{ meta.rank_method }}
+            &nbsp;·&nbsp;
+            <strong>Confidence:</strong> {{ meta.confidence }}
+          </span>
+        </div>
+
+        {% if r.competitors_data %}
+        <div class="detail-row" style="margin-top:0.3rem;">
+          <strong>Competitors:</strong>
+          {% for comp, cd in r.competitors_data.items() %}
+            <span style="margin-right:0.75rem;">
+              {{ comp }}:
+              {% if cd.mentioned %}
+                <span class="tag-pos">✓</span> pos&nbsp;{{ cd.position }}
+              {% else %}
+                <span class="mention-no">✗</span>
+              {% endif %}
+            </span>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="raw-response">{{ r.raw_response }}</div>
+        {% endif %}
+      </div>
+    </details>
+    {% endfor %}
+    {% else %}
+    <p class="empty">No results yet — check back once the run completes.</p>
+    {% endif %}
+  </div>
+
+  <!-- ── Methodology note ── -->
+  <div class="disclaimer">
+    <strong>About these results.</strong>
+    Generative language models are non-deterministic: the same prompt can produce different responses across runs.
+    Rankings are derived from sampled prompts only and should be treated as directional signals, not exact measurements.
+    "List-order" rank method (high confidence) is used when the model's response contains a numbered or bulleted list;
+    otherwise position is inferred from the first textual mention (low confidence).
+    Prompts are split across three intent types: <em>high intent</em> (buyer ready to purchase, weight 1.5×),
+    <em>comparison</em> (evaluating options, weight 1.2×), and <em>informational</em> (researching category, weight 1.0×).
+    ARRS (AI Replacement Risk Score) combines intent-weighted SOV with a positive-sentiment bonus — higher scores indicate
+    the brand is more likely to be recommended in purchase-driven queries.
+    Re-run with more prompts or at different times to increase statistical confidence.
+  </div>
+
+  <p class="footer">AI Recommendation Monitor &nbsp;·&nbsp; Run ID: {{ run.id }}</p>
+</div>
+
+<script>
+async function exportToNotion(runId) {
+  const btn = document.getElementById('notion-btn');
+  const status = document.getElementById('notion-status');
+  btn.disabled = true;
+  btn.innerHTML = btn.innerHTML.replace('Export to Notion', 'Exporting…');
+  status.textContent = '';
+  try {
+    const resp = await fetch(`/runs/${runId}/export/notion`, { method: 'POST' });
+    const data = await resp.json();
+    if (resp.ok) {
+      btn.innerHTML = btn.innerHTML.replace('Exporting…', '✓ Exported');
+      status.innerHTML = `<a href="${data.page_url}" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600;">View in Notion →</a>`;
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = btn.innerHTML.replace('Exporting…', 'Export to Notion');
+      status.textContent = data.detail || 'Export failed';
+    }
+  } catch (e) {
+    btn.disabled = false;
+    btn.innerHTML = btn.innerHTML.replace('Exporting…', 'Export to Notion');
+    status.textContent = 'Network error';
+  }
+}
+</script>
+</body>
+</html>

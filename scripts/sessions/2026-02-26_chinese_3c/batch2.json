@@ -1,0 +1,144 @@
+{
+  "chinese_3c_b2": [
+    {
+      "brand_name": "Haylou",
+      "competitor_names": [
+        "Tozo",
+        "QCY"
+      ],
+      "category": "true wireless earbuds and smartwatches",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $50",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Govee",
+      "competitor_names": [
+        "Philips Hue",
+        "Nanoleaf"
+      ],
+      "category": "smart ambient lighting and LED strips",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $80",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Meross",
+      "competitor_names": [
+        "Kasa",
+        "Wemo"
+      ],
+      "category": "smart home plugs and switches",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $40",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "SONOFF",
+      "competitor_names": [
+        "Kasa",
+        "Shelly"
+      ],
+      "category": "smart home automation devices",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $30",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Reolink",
+      "competitor_names": [
+        "Wyze",
+        "Eufy"
+      ],
+      "category": "home security cameras",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "$50-$200",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Amazfit",
+      "competitor_names": [
+        "Fitbit",
+        "Garmin"
+      ],
+      "category": "smartwatches and fitness trackers",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $150",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Insta360",
+      "competitor_names": [
+        "GoPro",
+        "DJI"
+      ],
+      "category": "action cameras and 360 cameras",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "$200-$500",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Dreame",
+      "competitor_names": [
+        "iRobot Roomba",
+        "Roborock"
+      ],
+      "category": "robot vacuums and cordless vacuums",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "$200-$600",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "OMOTON",
+      "competitor_names": [
+        "Lamicall",
+        "ESR"
+      ],
+      "category": "tablet and phone stands and mounts",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $30",
+      "providers": [
+        "openai"
+      ]
+    },
+    {
+      "brand_name": "Lamicall",
+      "competitor_names": [
+        "OMOTON",
+        "Nulaxy"
+      ],
+      "category": "phone and tablet holders and mounts",
+      "region": "US",
+      "num_prompts": 60,
+      "price_band": "under $30",
+      "providers": [
+        "openai"
+      ]
+    }
+  ]
+}
