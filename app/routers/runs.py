@@ -105,8 +105,16 @@ async def list_runs(
     brand: str | None = Query(default=None),
     limit: int = Query(default=50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
 ):
-    stmt = select(Run).order_by(Run.created_at.desc()).limit(limit)
+    if not user:
+        return []
+    stmt = (
+        select(Run)
+        .where(Run.user_id == user.id)
+        .order_by(Run.created_at.desc())
+        .limit(limit)
+    )
     if brand:
         stmt = stmt.where(Run.brand_name == brand)
     result = await db.execute(stmt)

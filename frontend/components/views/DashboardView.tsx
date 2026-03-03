@@ -1,10 +1,12 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Run } from "@/lib/api";
+import { Run, api } from "@/lib/api";
+import { getToken } from "@/lib/auth";
 import { Lang, tx } from "@/lib/i18n";
 
 interface Props {
-  runs: Run[];
-  error: string;
   lang: Lang;
 }
 
@@ -41,10 +43,10 @@ function ProgressBar({ done, total }: { done: number; total: number }) {
   );
 }
 
-function BrandPill({ brand }: { brand: string }) {
+function BrandPill({ brand, lang }: { brand: string; lang: Lang }) {
   return (
     <Link
-      href={`/brands/${encodeURIComponent(brand)}`}
+      href={`${lang === "zh" ? "/zh" : ""}/brands/${encodeURIComponent(brand)}`}
       className="text-xs rounded-full px-3 py-1 shrink-0 transition-colors hover:text-white"
       style={{ background: "#0f0f17", border: "1px solid #25253f", color: "#7070a0" }}
     >
@@ -53,9 +55,34 @@ function BrandPill({ brand }: { brand: string }) {
   );
 }
 
-export default function DashboardView({ runs, error, lang }: Props) {
-  const brands = Array.from(new Set(runs.map((r) => r.brand_name))).sort();
+export default function DashboardView({ lang }: Props) {
+  const [runs, setRuns] = useState<Run[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const newRunPath = lang === "zh" ? "/zh/runs/new" : "/runs/new";
+
+  useEffect(() => {
+    if (!getToken()) {
+      setLoading(false);
+      return;
+    }
+    api.listRuns()
+      .then(setRuns)
+      .catch((e) => setError(String(e)))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const brands = Array.from(new Set(runs.map((r) => r.brand_name))).sort();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <div className="text-sm animate-pulse" style={{ color: "#7070a0" }}>
+          {lang === "zh" ? "加载中…" : "Loading…"}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -78,13 +105,13 @@ export default function DashboardView({ runs, error, lang }: Props) {
         brands.length > 5 ? (
           <div className="marquee-container">
             <div className="marquee-track">
-              {brands.map((b) => <BrandPill key={b} brand={b} />)}
-              {brands.map((b) => <BrandPill key={`dup-${b}`} brand={b} />)}
+              {brands.map((b) => <BrandPill key={b} brand={b} lang={lang} />)}
+              {brands.map((b) => <BrandPill key={`dup-${b}`} brand={b} lang={lang} />)}
             </div>
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {brands.map((b) => <BrandPill key={b} brand={b} />)}
+            {brands.map((b) => <BrandPill key={b} brand={b} lang={lang} />)}
           </div>
         )
       )}
@@ -95,7 +122,22 @@ export default function DashboardView({ runs, error, lang }: Props) {
         </div>
       )}
 
-      {runs.length === 0 && !error && (
+      {!getToken() && !error && (
+        <div className="rounded-xl p-12 text-center" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <p className="text-sm mb-4" style={{ color: "#7070a0" }}>
+            {lang === "zh" ? "请登录以查看你的分析记录" : "Sign in to view your runs"}
+          </p>
+          <Link
+            href={lang === "zh" ? "/zh/login" : "/login"}
+            className="text-sm font-medium px-4 py-2 rounded-lg"
+            style={{ background: "#ff6b35", color: "#fff" }}
+          >
+            {lang === "zh" ? "立即登录" : "Sign in"}
+          </Link>
+        </div>
+      )}
+
+      {getToken() && runs.length === 0 && !error && (
         <div className="rounded-xl p-12 text-center" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
           <p className="text-sm mb-4" style={{ color: "#7070a0" }}>{tx("dashboard", "noRuns", lang)}</p>
           <Link href={newRunPath} className="text-sm underline" style={{ color: "#ff6b35" }}>
@@ -123,7 +165,7 @@ export default function DashboardView({ runs, error, lang }: Props) {
                 <tr key={run.id} className="transition-colors" style={{ borderTop: "1px solid #25253f" }}>
                   <td className="px-4 py-3 font-medium">
                     <Link
-                      href={`/brands/${encodeURIComponent(run.brand_name)}`}
+                      href={`${lang === "zh" ? "/zh" : ""}/brands/${encodeURIComponent(run.brand_name)}`}
                       className="hover:underline"
                       style={{ color: "#ff6b35" }}
                     >

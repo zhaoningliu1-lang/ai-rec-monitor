@@ -8,11 +8,14 @@ export function getToken(): string | null {
 
 export function setToken(token: string): void {
   localStorage.setItem(TOKEN_KEY, token);
+  // Notify NavBar in the same tab (storage event only fires cross-tab by default)
+  window.dispatchEvent(new StorageEvent("storage", { key: TOKEN_KEY, newValue: token }));
 }
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(TIER_KEY);
+  window.dispatchEvent(new StorageEvent("storage", { key: TOKEN_KEY, newValue: null }));
 }
 
 export function isLoggedIn(): boolean {
