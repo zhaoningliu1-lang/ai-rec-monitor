@@ -198,6 +198,12 @@ export default function PromptsClient({ lang = "en" }: Props) {
       <div className="flex gap-1 p-1 rounded-xl" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
         {(["all", "active", "suggested", "inactive"] as TabFilter[]).map((t) => {
           const count = t === "all" ? prompts.length : prompts.filter((p) => p.status === t).length;
+          const tabLabelMap: Record<TabFilter, string> = {
+            all:       tx("prompts", "tabAll", lang),
+            active:    tx("prompts", "tabActive", lang),
+            suggested: tx("prompts", "tabSuggested", lang),
+            inactive:  tx("prompts", "tabInactive", lang),
+          };
           return (
             <button
               key={t}
@@ -209,7 +215,7 @@ export default function PromptsClient({ lang = "en" }: Props) {
                   : { color: "#7070a0" }
               }
             >
-              {tx("prompts", `tab${t.charAt(0).toUpperCase() + t.slice(1)}` as Parameters<typeof tx>[1], lang)}{" "}
+              {tabLabelMap[t]}{" "}
               <span className="ml-1 opacity-60">{count}</span>
             </button>
           );

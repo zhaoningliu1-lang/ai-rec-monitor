@@ -421,7 +421,7 @@ export const t = {
     save:          { en: "Save Prompt",        zh: "保存提示词" },
     generating:    { en: "Generating…",        zh: "生成中…" },
     generate:      { en: "Generate Prompts →", zh: "生成提示词 →" },
-    suggestHint:   { en: "AI will generate prompts saved as Suggested — review and activate the ones you like.", zh: "AI 生成的提示词状态为"待确认"——审查后选择启用。" },
+    suggestHint:   { en: "AI will generate prompts saved as Suggested — review and activate the ones you like.", zh: "AI 生成的提示词状态为【待确认】——审查后选择启用。" },
     loginRequired: { en: "Sign in to manage your prompt library.", zh: "请登录以管理你的提示词库。" },
   },
 } as const;
