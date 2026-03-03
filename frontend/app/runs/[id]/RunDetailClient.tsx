@@ -9,7 +9,7 @@ import {
 } from "recharts";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
-const CALENDLY = "https://calendly.com/qw2379/geo-chat";
+const CALENDLY = "https://calendly.com/brivesubscription/30min";
 
 interface BrandRow {
   name: string;

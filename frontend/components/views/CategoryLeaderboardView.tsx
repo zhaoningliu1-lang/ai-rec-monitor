@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LeaderboardEntry } from "@/lib/api";
 import { Lang, tx } from "@/lib/i18n";
 
-const CALENDLY = "https://calendly.com/qw2379/geo-chat";
+const CALENDLY = "https://calendly.com/brivesubscription/30min";
 
 interface Props {
   categoryName: string;
