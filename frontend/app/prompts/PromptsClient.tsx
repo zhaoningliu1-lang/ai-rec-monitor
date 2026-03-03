@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Lang, tx } from "@/lib/i18n";
+import { getToken } from "@/lib/auth";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
 
@@ -54,13 +55,18 @@ export default function PromptsClient({ lang = "en" }: Props) {
   });
   const [suggesting, setSuggesting] = useState(false);
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const [token, setToken_] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!token) { setLoading(false); return; }
+    const t = getToken();
+    setToken_(t);
+    if (!t) { setLoading(false); return; }
     setIsLoggedIn(true);
-    fetchPrompts();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (token) fetchPrompts();
+  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function fetchPrompts() {
     setLoading(true);
