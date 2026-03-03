@@ -179,6 +179,37 @@ class Recommendation(Base):
     run: Mapped["Run"] = relationship("Run", back_populates="recommendation")
 
 
+# ── Prompt library ────────────────────────────────────────────────────────────
+
+class PromptStatus(str, enum.Enum):
+    active = "active"
+    inactive = "inactive"
+    suggested = "suggested"
+
+
+class PromptLibrary(Base):
+    __tablename__ = "prompt_library"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True
+    )
+    category: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    region: Mapped[str] = mapped_column(String(10), nullable=False)
+    prompt_text: Mapped[str] = mapped_column(Text, nullable=False)
+    intent_type: Mapped[str] = mapped_column(String(50), nullable=False, default="high")
+    status: Mapped[PromptStatus] = mapped_column(
+        Enum(PromptStatus), nullable=False, default=PromptStatus.active
+    )
+    source: Mapped[str] = mapped_column(String(20), nullable=False, default="user")
+    usage_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
 # ── User accounts & subscriptions ─────────────────────────────────────────────
 
 class SubscriptionTier(str, enum.Enum):

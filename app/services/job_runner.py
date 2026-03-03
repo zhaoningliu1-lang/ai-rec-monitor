@@ -131,6 +131,41 @@ async def run_job(run_id: uuid.UUID, session_factory: async_sessionmaker[AsyncSe
 
     try:
         prompt_dicts = generate_prompts(category, region, num_prompts, price_band)
+
+        # ── Merge active library prompts from the run's owner ────────────────
+        run_user_id = existing_aliases.get("_user_id")  # fallback; we'll fetch properly
+        try:
+            from sqlalchemy import select as _sel
+            from app.models import PromptLibrary, PromptStatus as _PS
+            async with session_factory() as _db:
+                _run_obj = await _db.get(__import__("app.models", fromlist=["Run"]).Run, run_id)
+                _uid = _run_obj.user_id if _run_obj else None
+            if _uid:
+                async with session_factory() as _db:
+                    _lib_rows = await _db.execute(
+                        _sel(PromptLibrary).where(
+                            PromptLibrary.user_id == _uid,
+                            PromptLibrary.status == _PS.active,
+                            PromptLibrary.category == category,
+                            PromptLibrary.region == region,
+                        )
+                    )
+                    lib_prompts = _lib_rows.scalars().all()
+                _weight_map = {"high": 1.5, "comparison": 1.2, "info": 1.0}
+                for lp in lib_prompts:
+                    prompt_dicts.append({
+                        "prompt": lp.prompt_text,
+                        "intent_type": lp.intent_type,
+                        "weight": _weight_map.get(lp.intent_type, 1.0),
+                    })
+                if lib_prompts:
+                    logger.info(
+                        "Merged %d library prompts for run %s (user %s)",
+                        len(lib_prompts), run_id, _uid,
+                    )
+        except Exception as _exc:
+            logger.warning("Library prompt merge failed for run %s: %s", run_id, _exc)
+
         # Each prompt runs through every provider → total tasks = prompts × providers
         total = len(prompt_dicts) * len(providers)
         logger.info(

@@ -13,6 +13,7 @@ from app.models import Run, RunStatus, ScheduledRun
 from app.routers import reports, runs, schedules
 from app.routers import auth as auth_router
 from app.routers import billing as billing_router
+from app.routers import prompts as prompts_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -125,6 +126,27 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "CREATE INDEX IF NOT EXISTS ix_runs_user_id ON runs (user_id)"
         ))
+        # Prompt library table
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS prompt_library (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+                category VARCHAR(255) NOT NULL,
+                region VARCHAR(10) NOT NULL,
+                prompt_text TEXT NOT NULL,
+                intent_type VARCHAR(50) NOT NULL DEFAULT 'high',
+                status VARCHAR(20) NOT NULL DEFAULT 'active',
+                source VARCHAR(20) NOT NULL DEFAULT 'user',
+                usage_count INTEGER NOT NULL DEFAULT 0,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        """))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_prompt_library_user_id ON prompt_library (user_id)"
+        ))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_prompt_library_category ON prompt_library (category)"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 
@@ -169,6 +191,7 @@ app.include_router(reports.router)
 app.include_router(schedules.router)
 app.include_router(auth_router.router)
 app.include_router(billing_router.router)
+app.include_router(prompts_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s

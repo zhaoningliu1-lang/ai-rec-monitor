@@ -53,10 +53,12 @@ export default function NavBar() {
     ? [
         { href: "/zh/history",   label: "历史报告" },
         { href: "/zh/schedules", label: "自动监控" },
+        { href: "/zh/prompts",   label: "提示词库" },
       ]
     : [
         { href: "/history",   label: "History" },
         { href: "/schedules", label: "Auto Monitor" },
+        { href: "/prompts",   label: "Prompts" },
       ];
 
   return (

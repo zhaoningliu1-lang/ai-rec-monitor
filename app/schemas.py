@@ -124,6 +124,43 @@ class RunSnapshotResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+# ── Prompt Library ────────────────────────────────────────────────────────────
+
+class PromptLibraryResponse(BaseModel):
+    id: uuid.UUID
+    user_id: uuid.UUID | None
+    category: str
+    region: str
+    prompt_text: str
+    intent_type: str
+    status: str
+    source: str
+    usage_count: int
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class PromptCreateIn(BaseModel):
+    category: str = Field(..., min_length=1, max_length=255)
+    region: Literal["US", "UK", "DE"]
+    prompt_text: str = Field(..., min_length=10, max_length=2000)
+    intent_type: Literal["high", "comparison", "info"] = "high"
+
+
+class PromptUpdateIn(BaseModel):
+    status: Literal["active", "inactive", "suggested"] | None = None
+    intent_type: Literal["high", "comparison", "info"] | None = None
+    prompt_text: str | None = Field(default=None, min_length=10, max_length=2000)
+
+
+class PromptSuggestIn(BaseModel):
+    category: str = Field(..., min_length=1, max_length=255)
+    region: Literal["US", "UK", "DE"]
+    brand_name: str = Field(..., min_length=1, max_length=255)
+    count: int = Field(default=8, ge=1, le=20)
+
+
 # ── Recommendations ───────────────────────────────────────────────────────────
 
 class RecommendationItem(BaseModel):
