@@ -4,6 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import ResponseExplorer from "./ResponseExplorer";
 import { Lang, tx } from "@/lib/i18n";
+import {
+  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
+} from "recharts";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
 const CALENDLY = "https://calendly.com/qw2379/geo-chat";
@@ -83,6 +86,34 @@ interface RecommendationItem {
   title: string;
   description: string;
   priority: "high" | "medium" | "low";
+}
+
+interface TrendPoint {
+  snapshot_at: string;
+  arrs: number;
+  weighted_sov: number;
+}
+
+interface WhyAnalysis {
+  top_reasons: string[];
+  competitor_advantages: { competitor: string; edge: string }[];
+  brand_gaps: string[];
+  quick_wins: string[];
+  sample_size: number;
+  total_losses: number;
+  error?: string;
+  message?: string;
+}
+
+interface ContentBrief {
+  domain: string;
+  content_type: string;
+  headline: string;
+  draft_intro: string;
+  key_points: string[];
+  effort: string;
+  impact: string;
+  rationale: string;
 }
 
 interface Recommendation {
@@ -212,6 +243,12 @@ export default function RunDetailClient({
   // User tier for SaaS gating
   const [userTier, setUserTier] = useState<string>("guest");
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  // Phase 4 — Actionable Intelligence
+  const [trendData, setTrendData] = useState<TrendPoint[] | null>(null);
+  const [whyAnalysis, setWhyAnalysis] = useState<WhyAnalysis | null>(null);
+  const [contentBriefs, setContentBriefs] = useState<ContentBrief[] | null>(null);
+  const [whyLoading, setWhyLoading] = useState(false);
+  const [briefsLoading, setBriefsLoading] = useState(false);
 
   const fetchAndUpdate = useCallback(async () => {
     try {
@@ -226,7 +263,15 @@ export default function RunDetailClient({
           fetch(`${BASE}/runs/${id}/recommendations`, { cache: "no-store" }),
           fetch(`${BASE}/runs/${id}/sources`, { cache: "no-store" }),
         ]);
-        if (mRes.status === "fulfilled" && mRes.value.ok) setMetrics(await mRes.value.json());
+        if (mRes.status === "fulfilled" && mRes.value.ok) {
+          const m = await mRes.value.json();
+          setMetrics(m);
+          // Fetch trend data once we know the brand name
+          fetch(`${BASE}/brands/${encodeURIComponent(updated.brand_name)}/trends?days=180`, { cache: "no-store" })
+            .then((r) => r.ok ? r.json() : null)
+            .then((data) => { if (data?.length > 1) setTrendData(data); })
+            .catch(() => null);
+        }
         if (rRes.status === "fulfilled" && rRes.value.ok) setRecommendations(await rRes.value.json());
         if (sRes.status === "fulfilled" && sRes.value.ok) setSources(await sRes.value.json());
       }
@@ -240,6 +285,16 @@ export default function RunDetailClient({
     const interval = setInterval(fetchAndUpdate, 3000);
     return () => clearInterval(interval);
   }, [run.status, fetchAndUpdate]);
+
+  // Fetch trend data on initial load if run is already done
+  useEffect(() => {
+    if (initialMetrics && initialRun.status === "done") {
+      fetch(`${BASE}/brands/${encodeURIComponent(initialRun.brand_name)}/trends?days=180`, { cache: "no-store" })
+        .then((r) => r.ok ? r.json() : null)
+        .then((data) => { if (data?.length > 1) setTrendData(data); })
+        .catch(() => null);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch user tier for SaaS gating
   useEffect(() => {
@@ -460,6 +515,64 @@ export default function RunDetailClient({
             <div className="rounded-xl p-4 text-sm" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
               <span className="font-semibold" style={{ color: "#f5a623" }}>{tx("runs", "insight", lang)} </span>
               <span style={{ color: "#7070a0" }}>{metrics.arrs_explain}</span>
+            </div>
+          )}
+
+          {/* ── Visibility Trend Chart ─────────────────────────────── */}
+          {trendData && trendData.length > 1 && (
+            <div className="rounded-xl p-5" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold">
+                  {lang === "zh" ? "可见度趋势" : "Visibility Trend"}
+                </h2>
+                <span className="text-xs" style={{ color: "#7070a0" }}>
+                  {lang === "zh" ? "近 180 天" : "Last 180 days"}
+                </span>
+              </div>
+              <ResponsiveContainer width="100%" height={160}>
+                <LineChart data={trendData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#25253f" />
+                  <XAxis
+                    dataKey="snapshot_at"
+                    tickFormatter={(v) => new Date(v).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                    tick={{ fontSize: 10, fill: "#7070a0" }}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis tick={{ fontSize: 10, fill: "#7070a0" }} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    contentStyle={{ background: "#161625", border: "1px solid #25253f", borderRadius: 8, fontSize: 12 }}
+                    labelFormatter={(v) => new Date(v).toLocaleDateString()}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="arrs"
+                    stroke="#f5a623"
+                    strokeWidth={2}
+                    dot={false}
+                    name="ARRS"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="weighted_sov"
+                    stroke="#ff6b35"
+                    strokeWidth={2}
+                    dot={false}
+                    name="Weighted SOV"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+              <div className="flex gap-4 mt-2">
+                {[
+                  { color: "#f5a623", label: "ARRS" },
+                  { color: "#ff6b35", label: "Weighted SOV" },
+                ].map((l) => (
+                  <div key={l.label} className="flex items-center gap-1.5">
+                    <div className="w-3 h-0.5 rounded-full" style={{ background: l.color }} />
+                    <span className="text-xs" style={{ color: "#7070a0" }}>{l.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </>
@@ -781,6 +894,234 @@ export default function RunDetailClient({
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {/* ── Why You're Losing Analysis ─────────────────────────── */}
+      {metrics && run.competitor_names.length > 0 && (
+        <div className="no-print rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+          <div
+            className="px-4 py-3 flex items-center justify-between"
+            style={{ background: "#161625", borderBottom: whyAnalysis ? "1px solid #25253f" : undefined }}
+          >
+            <div>
+              <h2 className="text-sm font-semibold">
+                {lang === "zh" ? "为什么被 AI 忽略？" : "Why is AI skipping you?"}
+              </h2>
+              <p className="text-xs mt-0.5" style={{ color: "#7070a0" }}>
+                {lang === "zh"
+                  ? "分析 AI 优先推荐竞品而非你品牌的根本原因"
+                  : "Root-cause analysis of why AI recommends competitors over you"}
+              </p>
+            </div>
+            {!whyAnalysis && (
+              <button
+                onClick={async () => {
+                  setWhyLoading(true);
+                  try {
+                    const r = await fetch(`${BASE}/runs/${id}/why-analysis`, { cache: "no-store" });
+                    if (r.ok) setWhyAnalysis(await r.json());
+                  } catch { /* ignore */ }
+                  setWhyLoading(false);
+                }}
+                disabled={whyLoading}
+                className="text-xs px-4 py-2 rounded-lg font-medium transition-opacity hover:opacity-80 disabled:opacity-50 shrink-0"
+                style={{ background: "rgba(245,166,35,0.15)", color: "#f5a623", border: "1px solid rgba(245,166,35,0.3)" }}
+              >
+                {whyLoading
+                  ? (lang === "zh" ? "分析中…" : "Analyzing…")
+                  : (lang === "zh" ? "✦ 生成分析" : "✦ Analyze")}
+              </button>
+            )}
+          </div>
+
+          {whyAnalysis && !whyAnalysis.error && (
+            <div className="p-5 space-y-5" style={{ background: "#0f0f17" }}>
+              <p className="text-xs" style={{ color: "#7070a0" }}>
+                {lang === "zh"
+                  ? `基于 ${whyAnalysis.sample_size} 个竞品被提及而你未被提及的样本分析`
+                  : `Based on ${whyAnalysis.sample_size} examples where competitors were mentioned but you weren't`}
+              </p>
+
+              {/* Top reasons */}
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#ff4d6d" }}>
+                  {lang === "zh" ? "被跳过的主要原因" : "Why you're being skipped"}
+                </h3>
+                <ul className="space-y-2">
+                  {(whyAnalysis.top_reasons ?? []).map((r, i) => (
+                    <li key={i} className="flex gap-2.5 text-sm">
+                      <span className="shrink-0 mt-0.5" style={{ color: "#ff4d6d" }}>✗</span>
+                      <span style={{ color: "#c0c0d8" }}>{r}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Competitor edges */}
+              {(whyAnalysis.competitor_advantages ?? []).length > 0 && (
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#f5a623" }}>
+                    {lang === "zh" ? "竞品被选中的原因" : "Why competitors get chosen"}
+                  </h3>
+                  <div className="space-y-1.5">
+                    {whyAnalysis.competitor_advantages.map((ca, i) => (
+                      <div key={i} className="flex gap-2 text-xs">
+                        <span className="font-medium shrink-0" style={{ color: "#f5a623" }}>{ca.competitor}:</span>
+                        <span style={{ color: "#7070a0" }}>{ca.edge}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Quick wins */}
+              <div className="rounded-xl p-4" style={{ background: "#161625", border: "1px solid #22c55e33" }}>
+                <h3 className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#22c55e" }}>
+                  {lang === "zh" ? "立即可做的 3 件事" : "3 quick wins to start"}
+                </h3>
+                <ul className="space-y-2">
+                  {(whyAnalysis.quick_wins ?? []).map((w, i) => (
+                    <li key={i} className="flex gap-2.5 text-sm">
+                      <span className="shrink-0 font-bold" style={{ color: "#22c55e" }}>{i + 1}.</span>
+                      <span style={{ color: "#c0c0d8" }}>{w}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Brand gaps */}
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#7070a0" }}>
+                  {lang === "zh" ? "需要填补的内容缺口" : "Content gaps to close"}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {(whyAnalysis.brand_gaps ?? []).map((g, i) => (
+                    <span key={i} className="text-xs px-2.5 py-1 rounded-full" style={{ background: "#161625", border: "1px solid #25253f", color: "#7070a0" }}>
+                      {g}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {whyAnalysis?.error && (
+            <div className="p-5 text-sm text-center" style={{ color: "#7070a0", background: "#0f0f17" }}>
+              {whyAnalysis.message ?? (lang === "zh" ? "暂无足够数据进行分析" : "Not enough data for analysis")}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Content Brief Generator ───────────────────────────────── */}
+      {sources && sources.gap_count > 0 && (
+        <div className="no-print rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+          <div
+            className="px-4 py-3 flex items-center justify-between"
+            style={{ background: "#161625", borderBottom: contentBriefs ? "1px solid #25253f" : undefined }}
+          >
+            <div>
+              <h2 className="text-sm font-semibold">
+                {lang === "zh" ? "内容执行简报" : "Content Execution Briefs"}
+              </h2>
+              <p className="text-xs mt-0.5" style={{ color: "#7070a0" }}>
+                {lang === "zh"
+                  ? "针对每个高优先级来源缺口，AI 生成可直接执行的内容方案"
+                  : "For each high-priority gap, get a specific, publishable content plan"}
+              </p>
+            </div>
+            {!contentBriefs && (
+              <button
+                onClick={async () => {
+                  setBriefsLoading(true);
+                  try {
+                    const r = await fetch(`${BASE}/runs/${id}/content-briefs`, { cache: "no-store" });
+                    if (r.ok) setContentBriefs(await r.json());
+                  } catch { /* ignore */ }
+                  setBriefsLoading(false);
+                }}
+                disabled={briefsLoading}
+                className="text-xs px-4 py-2 rounded-lg font-medium transition-opacity hover:opacity-80 disabled:opacity-50 shrink-0"
+                style={{ background: "rgba(255,107,53,0.15)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.3)" }}
+              >
+                {briefsLoading
+                  ? (lang === "zh" ? "生成中…" : "Generating…")
+                  : (lang === "zh" ? "✦ 生成内容简报" : "✦ Generate Briefs")}
+              </button>
+            )}
+          </div>
+
+          {contentBriefs && contentBriefs.length === 0 && (
+            <div className="p-6 text-sm text-center" style={{ color: "#7070a0", background: "#0f0f17" }}>
+              {lang === "zh" ? "没有找到高优先级的来源机会" : "No high-priority gap opportunities found"}
+            </div>
+          )}
+
+          {contentBriefs && contentBriefs.length > 0 && (
+            <div className="space-y-0" style={{ background: "#0f0f17" }}>
+              {contentBriefs.map((brief, i) => {
+                const effortColor = brief.effort === "low" ? "#22c55e" : brief.effort === "medium" ? "#f5a623" : "#ff4d6d";
+                const impactColor = brief.impact === "high" ? "#ff6b35" : brief.impact === "medium" ? "#f5a623" : "#7070a0";
+                return (
+                  <div
+                    key={i}
+                    className="p-5"
+                    style={{ borderBottom: i < contentBriefs.length - 1 ? "1px solid #1a1a2e" : undefined }}
+                  >
+                    {/* Header */}
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className="text-xs font-mono px-2 py-0.5 rounded" style={{ background: "#161625", color: "#7070a0" }}>
+                            {brief.domain}
+                          </span>
+                          <span className="text-xs px-2 py-0.5 rounded font-medium" style={{ background: "rgba(255,107,53,0.1)", color: "#ff6b35" }}>
+                            {brief.content_type}
+                          </span>
+                        </div>
+                        <div className="font-semibold text-sm">{brief.headline}</div>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <span className="text-xs px-2 py-0.5 rounded" style={{ background: "rgba(0,0,0,0.3)", color: effortColor, border: `1px solid ${effortColor}44` }}>
+                          {lang === "zh" ? "工作量" : "effort"}: {brief.effort}
+                        </span>
+                        <span className="text-xs px-2 py-0.5 rounded" style={{ background: "rgba(0,0,0,0.3)", color: impactColor, border: `1px solid ${impactColor}44` }}>
+                          {lang === "zh" ? "影响力" : "impact"}: {brief.impact}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Draft intro */}
+                    <div
+                      className="rounded-lg p-3 text-xs leading-relaxed mb-3 italic"
+                      style={{ background: "#161625", color: "#c0c0d8", borderLeft: "3px solid #ff6b35" }}
+                    >
+                      &ldquo;{brief.draft_intro}&rdquo;
+                    </div>
+
+                    {/* Key points */}
+                    <ul className="space-y-1 mb-3">
+                      {brief.key_points.map((pt, j) => (
+                        <li key={j} className="flex gap-2 text-xs">
+                          <span style={{ color: "#ff6b35" }}>→</span>
+                          <span style={{ color: "#7070a0" }}>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Rationale */}
+                    <p className="text-xs" style={{ color: "#4a4a6a" }}>
+                      <span className="font-medium" style={{ color: "#555580" }}>
+                        {lang === "zh" ? "AI 引用逻辑：" : "Why AI will cite you: "}
+                      </span>
+                      {brief.rationale}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

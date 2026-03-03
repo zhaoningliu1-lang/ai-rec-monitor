@@ -660,6 +660,219 @@ async def get_run_sources(
     }
 
 
+# ── Content Brief Generator ───────────────────────────────────────────────────
+
+@router.get("/runs/{run_id}/content-briefs")
+async def get_content_briefs(
+    run_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    For each HIGH-priority source gap, use Claude Haiku to generate a specific,
+    publishable content brief: headline, draft intro, key talking points.
+    """
+    import json
+    from urllib.parse import urlparse
+
+    run = await db.get(Run, run_id)
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    competitor_names: list[str] = run.competitor_names or []
+
+    stmt = select(PromptResult).where(PromptResult.run_id == run_id)
+    rows = await db.execute(stmt)
+    results = rows.scalars().all()
+
+    # Rebuild domain_stats inline
+    domain_stats: dict[str, dict] = {}
+    for r in results:
+        domains_seen: set[str] = set()
+        for url in (r.cited_urls or []):
+            try:
+                domain = urlparse(url).netloc.lower().lstrip("www.")
+            except Exception:
+                continue
+            if not domain or domain in domains_seen:
+                continue
+            domains_seen.add(domain)
+            if domain not in domain_stats:
+                domain_stats[domain] = {
+                    "domain": domain,
+                    "citation_count": 0,
+                    "brand_mentioned": 0,
+                    "competitors_mentioned": {c: 0 for c in competitor_names},
+                }
+            s = domain_stats[domain]
+            s["citation_count"] += 1
+            if r.brand_mentioned:
+                s["brand_mentioned"] += 1
+            for comp in competitor_names:
+                if (r.competitors_data or {}).get(comp, {}).get("mentioned"):
+                    s["competitors_mentioned"][comp] += 1
+
+    # Pick top HIGH-priority opportunities
+    top_opps = []
+    for d in domain_stats.values():
+        comp_total = sum(d["competitors_mentioned"].values())
+        if comp_total > d["brand_mentioned"]:
+            score = round((comp_total * d["citation_count"]) / max(d["brand_mentioned"] + 0.5, 1), 1)
+            if _opportunity_priority(score) == "high":
+                top_opps.append({
+                    "domain": d["domain"],
+                    "domain_type": _classify_domain(d["domain"]),
+                    "citation_count": d["citation_count"],
+                    "brand_mentioned": d["brand_mentioned"],
+                    "competitor_total": comp_total,
+                    "score": score,
+                })
+    top_opps.sort(key=lambda x: x["score"], reverse=True)
+    top_opps = top_opps[:5]
+
+    if not top_opps:
+        return []
+
+    try:
+        import anthropic
+        client = anthropic.AsyncAnthropic()
+
+        opp_summary = "\n".join(
+            f"- {o['domain']} ({o['domain_type']}): cited {o['citation_count']}x, "
+            f"competitor mentions={o['competitor_total']}, brand mentions={o['brand_mentioned']}"
+            for o in top_opps
+        )
+
+        prompt = (
+            f"You are a GEO (Generative Engine Optimization) strategist.\n"
+            f"Brand: {run.brand_name}\n"
+            f"Category: {run.category} | Region: {run.region}\n"
+            f"Competitors: {', '.join(competitor_names) or 'none specified'}\n\n"
+            f"These platforms cite competitors more than {run.brand_name} in AI responses. "
+            f"Generate one specific content brief per platform.\n\n"
+            f"Platforms:\n{opp_summary}\n\n"
+            f"Return a JSON array. Each item must have:\n"
+            f'- "domain": the platform domain\n'
+            f'- "content_type": e.g. "Product Review Pitch", "Comparison Article", "Reddit Thread", "YouTube Script"\n'
+            f'- "headline": specific working title that would get {run.brand_name} cited by AI\n'
+            f'- "draft_intro": 2-3 sentence opening that naturally positions {run.brand_name} vs competitors\n'
+            f'- "key_points": array of 3 specific talking points to include\n'
+            f'- "effort": "low"|"medium"|"high"\n'
+            f'- "impact": "low"|"medium"|"high"\n'
+            f'- "rationale": 1 sentence — why AI models would start citing {run.brand_name} after this content\n\n'
+            f"Return ONLY valid JSON array, no markdown."
+        )
+
+        message = await client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=2500,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        text = message.content[0].text.strip()
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        briefs = json.loads(text.strip())
+        return briefs
+
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Content brief generation failed: {exc}")
+
+
+# ── Why-Losing Analysis ────────────────────────────────────────────────────────
+
+@router.get("/runs/{run_id}/why-analysis")
+async def get_why_analysis(
+    run_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Sample prompts where brand was skipped but competitors were mentioned.
+    Claude Sonnet analyzes the patterns and returns root-cause insights.
+    """
+    import json
+    import random
+
+    run = await db.get(Run, run_id)
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    competitor_names: list[str] = run.competitor_names or []
+    if not competitor_names:
+        raise HTTPException(status_code=400, detail="No competitors to compare against")
+
+    # Prompts where brand was NOT mentioned but a competitor was
+    stmt = select(PromptResult).where(
+        PromptResult.run_id == run_id,
+        PromptResult.brand_mentioned == False,  # noqa: E712
+    )
+    rows = await db.execute(stmt)
+    lost = rows.scalars().all()
+
+    competitive_losses = [
+        r for r in lost
+        if any((r.competitors_data or {}).get(c, {}).get("mentioned") for c in competitor_names)
+    ]
+    if not competitive_losses:
+        return {
+            "error": "no_data",
+            "message": "No prompts found where competitors were mentioned without the brand.",
+            "sample_size": 0,
+            "total_losses": 0,
+        }
+
+    sample = random.sample(competitive_losses, min(15, len(competitive_losses)))
+
+    samples_text = ""
+    for i, r in enumerate(sample):
+        mentioned = [c for c in competitor_names if (r.competitors_data or {}).get(c, {}).get("mentioned")]
+        samples_text += (
+            f"\n--- Example {i + 1} ---\n"
+            f"Query: {r.prompt_text[:200]}\n"
+            f"AI mentioned: {', '.join(mentioned)}\n"
+            f"Excerpt: {r.raw_response[:350]}\n"
+        )
+
+    try:
+        import anthropic
+        client = anthropic.AsyncAnthropic()
+
+        prompt = (
+            f'You are analyzing why "{run.brand_name}" is NOT being recommended by AI models '
+            f"when competitors are.\n"
+            f"Brand: {run.brand_name} | Category: {run.category} | Region: {run.region}\n"
+            f"Competitors: {', '.join(competitor_names)}\n\n"
+            f"Here are {len(sample)} real examples where AI skipped {run.brand_name}:\n"
+            f"{samples_text}\n\n"
+            f"Analyze the patterns. Return a JSON object with exactly these keys:\n"
+            f'- "top_reasons": array of 3-4 specific reasons {run.brand_name} is being skipped '
+            f"(quote evidence from the examples)\n"
+            f'- "competitor_advantages": array of objects {{"competitor": name, "edge": specific reason AI favors them}}\n'
+            f'- "brand_gaps": array of 3-5 specific content/positioning gaps to fix\n'
+            f'- "quick_wins": array of 3 concrete, immediately actionable tactics '
+            f"(e.g. exact article title to publish, exact platform to target)\n\n"
+            f"Return ONLY valid JSON, no markdown."
+        )
+
+        message = await client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=1500,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        text = message.content[0].text.strip()
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        analysis = json.loads(text.strip())
+        analysis["sample_size"] = len(sample)
+        analysis["total_losses"] = len(competitive_losses)
+        return analysis
+
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Why-analysis failed: {exc}")
+
+
 # ── Category index ─────────────────────────────────────────────────────────────
 
 @router.get("/categories")
