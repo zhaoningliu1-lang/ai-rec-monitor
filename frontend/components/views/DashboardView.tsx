@@ -55,7 +55,7 @@ function BrandPill({ brand }: { brand: string }) {
 
 export default function DashboardView({ runs, error, lang }: Props) {
   const brands = Array.from(new Set(runs.map((r) => r.brand_name))).sort();
-  const newRunPath = "/runs/new";
+  const newRunPath = lang === "zh" ? "/zh/runs/new" : "/runs/new";
 
   return (
     <div className="space-y-8">

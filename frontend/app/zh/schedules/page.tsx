@@ -8,5 +8,5 @@ export default async function ZhSchedulesPage() {
   } catch {
     // API may not be running
   }
-  return <SchedulesClient initial={schedules} />;
+  return <SchedulesClient initial={schedules} lang="zh" />;
 }
