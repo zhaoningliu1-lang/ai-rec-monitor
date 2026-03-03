@@ -86,6 +86,7 @@ interface Recommendation {
 
 interface Run {
   id: string;
+  run_code: string | null;
   brand_name: string;
   competitor_names: string[];
   category: string;
@@ -153,6 +154,9 @@ export default function RunDetailClient({
   const [metrics, setMetrics] = useState(initialMetrics);
   const [recommendations, setRecommendations] = useState(initialRecommendations);
   const [sources, setSources] = useState<Sources | null>(initialSources as Sources | null);
+  // User tier for SaaS gating
+  const [userTier, setUserTier] = useState<string>("guest");
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const fetchAndUpdate = useCallback(async () => {
     try {
@@ -181,6 +185,19 @@ export default function RunDetailClient({
     const interval = setInterval(fetchAndUpdate, 3000);
     return () => clearInterval(interval);
   }, [run.status, fetchAndUpdate]);
+
+  // Fetch user tier for SaaS gating
+  useEffect(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("avanti_token") : null;
+    if (!token) { setUserTier("guest"); return; }
+    fetch(`${BASE}/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.ok ? r.json() : null)
+      .then((u) => setUserTier(u?.subscription_tier ?? "guest"))
+      .catch(() => setUserTier("guest"));
+  }, []);
+
+  const canDownload = ["growth", "scale", "enterprise"].includes(userTier);
+  const isGuest = userTier === "guest";
 
   const primaryRow = metrics?.brand_table.find((r) => r.is_primary);
   const ss = statusStyle(run.status);
@@ -211,11 +228,13 @@ export default function RunDetailClient({
       {/* Print-only header with Avanti branding */}
       <div className="print-only print-header">
         <div>
-          <div style={{ fontSize: 20, fontWeight: 900, color: "#ff6b35", letterSpacing: "0.05em" }}>AVANTI</div>
-          <div style={{ fontSize: 11, color: "#7070a0", marginTop: 2 }}>{tx("runs", "printReportTitle", lang)}</div>
+          <div className="print-header-logo">AVANTI</div>
+          <div className="print-header-sub">AI Visibility Report</div>
         </div>
-        <div style={{ textAlign: "right", fontSize: 11, color: "#7070a0" }}>
-          <div>{run.brand_name} · {run.category} · {run.region}</div>
+        <div className="print-header-meta">
+          <div style={{ fontWeight: 600 }}>{run.brand_name}</div>
+          <div>{run.category} · {run.region}</div>
+          <div>{run.run_code ?? id.slice(0, 8)}</div>
           <div>{run.finished_at ? new Date(run.finished_at).toLocaleDateString() : new Date(run.created_at).toLocaleDateString()}</div>
         </div>
       </div>
@@ -231,18 +250,72 @@ export default function RunDetailClient({
             {run.brand_name}
           </Link>
           <span style={{ color: "#25253f" }}>/</span>
-          <span className="text-sm font-mono" style={{ color: "#7070a0" }}>{id.slice(0, 8)}…</span>
+          <span className="text-sm font-mono" style={{ color: "#7070a0" }}>
+            {run.run_code ?? id.slice(0, 8) + "…"}
+          </span>
         </div>
         {metrics && (
-          <button
-            onClick={() => window.print()}
-            className="text-xs px-3 py-1.5 rounded-lg transition-opacity hover:opacity-80"
-            style={{ background: "#161625", border: "1px solid #25253f", color: "#7070a0", cursor: "pointer" }}
-          >
-            {tx("runs", "downloadPdf", lang)}
-          </button>
+          canDownload ? (
+            <button
+              onClick={() => window.print()}
+              className="text-xs px-3 py-1.5 rounded-lg transition-opacity hover:opacity-80"
+              style={{ background: "#161625", border: "1px solid #25253f", color: "#7070a0", cursor: "pointer" }}
+            >
+              {tx("runs", "downloadPdf", lang)}
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowUpgradeModal(true)}
+              className="text-xs px-3 py-1.5 rounded-lg transition-opacity hover:opacity-80"
+              style={{ background: "#161625", border: "1px solid #25253f", color: "#7070a0", cursor: "pointer" }}
+              title={lang === "zh" ? "升级后可下载干净 PDF" : "Upgrade to download clean PDF"}
+            >
+              {tx("runs", "downloadPdf", lang)} 🔒
+            </button>
+          )
         )}
       </div>
+
+      {/* Upgrade modal */}
+      {showUpgradeModal && (
+        <div
+          className="no-print fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: "rgba(9,9,15,0.85)" }}
+          onClick={() => setShowUpgradeModal(false)}
+        >
+          <div
+            className="rounded-2xl p-8 max-w-md w-full mx-4 text-center"
+            style={{ background: "#0f0f17", border: "1px solid #ff6b35" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-2xl mb-3">⬆️</div>
+            <h2 className="text-lg font-bold mb-2">
+              {lang === "zh" ? "升级解锁干净 PDF 下载" : "Upgrade for Clean PDF Download"}
+            </h2>
+            <p className="text-sm mb-6" style={{ color: "#7070a0" }}>
+              {lang === "zh"
+                ? "Growth 及以上套餐可下载无水印专业 PDF 报告。免费用户可在浏览器中查看完整数据。"
+                : "Growth plan and above can download professional PDF reports with no watermark. Free users can view all data in browser."}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <a
+                href="/settings?tab=billing"
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold"
+                style={{ background: "#ff6b35", color: "#fff" }}
+              >
+                {lang === "zh" ? "查看套餐 →" : "View Plans →"}
+              </a>
+              <button
+                onClick={() => setShowUpgradeModal(false)}
+                className="px-5 py-2.5 rounded-xl text-sm"
+                style={{ border: "1px solid #25253f", color: "#7070a0" }}
+              >
+                {lang === "zh" ? "关闭" : "Close"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Run header */}
       <div className="rounded-xl p-6" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
@@ -341,10 +414,19 @@ export default function RunDetailClient({
       {metrics && metrics.brand_table.length > 0 && (
         <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
           <div
-            className="px-4 py-3 font-semibold text-sm"
+            className="px-4 py-3 font-semibold text-sm flex items-center justify-between"
             style={{ background: "#161625", borderBottom: "1px solid #25253f" }}
           >
-            {tx("runs", "brandComparison", lang)}
+            <span>{tx("runs", "brandComparison", lang)}</span>
+            {isGuest && (
+              <a
+                href="/login"
+                className="text-xs px-2.5 py-1 rounded-lg"
+                style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.3)" }}
+              >
+                {lang === "zh" ? "登录查看竞品数据 →" : "Sign in to see competitor data →"}
+              </a>
+            )}
           </div>
           <table className="w-full text-sm">
             <thead
@@ -360,12 +442,17 @@ export default function RunDetailClient({
               </tr>
             </thead>
             <tbody style={{ background: "#0f0f17" }}>
-              {metrics.brand_table.map((row) => (
+              {metrics.brand_table.map((row) => {
+                const blur = isGuest && !row.is_primary;
+                return (
                 <tr
                   key={row.name}
                   style={{
                     borderTop: "1px solid #25253f",
                     background: row.is_primary ? "rgba(255,107,53,0.04)" : undefined,
+                    filter: blur ? "blur(5px)" : undefined,
+                    userSelect: blur ? "none" : undefined,
+                    pointerEvents: blur ? "none" : undefined,
                   }}
                 >
                   <td className="px-4 py-3 font-medium">
@@ -394,7 +481,8 @@ export default function RunDetailClient({
                     <SovBar value={row.sov_info} isPrimary={row.is_primary} max={maxSov} />
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -159,6 +159,7 @@ export const t = {
     colProgress:  { en: "Progress",   zh: "进度" },
     colDate:      { en: "Date",       zh: "日期" },
     colView:      { en: "View",       zh: "查看" },
+    colRunId:     { en: "Run ID",     zh: "编号" },
     noRuns:       { en: "No runs yet.",            zh: "暂无分析记录。" },
     createFirst:  { en: "Create your first run →", zh: "创建首个分析 →" },
     apiError:     { en: "Could not reach API:",    zh: "无法连接到 API：" },

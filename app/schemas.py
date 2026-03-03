@@ -20,6 +20,7 @@ class CreateRunRequest(BaseModel):
 
 class RunResponse(BaseModel):
     id: uuid.UUID
+    run_code: str | None
     brand_name: str
     competitor_names: list[str]
     category: str

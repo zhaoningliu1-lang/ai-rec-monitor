@@ -35,6 +35,7 @@ export type RunStatus = "queued" | "running" | "done" | "failed";
 
 export interface Run {
   id: string;
+  run_code: string | null;
   brand_name: string;
   competitor_names: string[];
   category: string;

@@ -113,6 +113,18 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "ALTER TABLE runs ADD COLUMN IF NOT EXISTS name_aliases JSON DEFAULT '{}'"
         ))
+        await conn.execute(text(
+            "ALTER TABLE runs ADD COLUMN IF NOT EXISTS run_code VARCHAR(50)"
+        ))
+        await conn.execute(text(
+            "ALTER TABLE runs ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES users(id) ON DELETE SET NULL"
+        ))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_runs_run_code ON runs (run_code)"
+        ))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_runs_user_id ON runs (user_id)"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 

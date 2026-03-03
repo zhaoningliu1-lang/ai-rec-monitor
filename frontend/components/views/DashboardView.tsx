@@ -115,7 +115,7 @@ export default function DashboardView({ runs, error, lang }: Props) {
                 <th className="text-left px-4 py-3">{tx("dashboard", "colStatus", lang)}</th>
                 <th className="text-left px-4 py-3">{tx("dashboard", "colProgress", lang)}</th>
                 <th className="text-left px-4 py-3">{tx("dashboard", "colDate", lang)}</th>
-                <th className="px-4 py-3" />
+                <th className="text-right px-4 py-3">{tx("dashboard", "colRunId", lang)}</th>
               </tr>
             </thead>
             <tbody style={{ background: "#0f0f17" }}>
@@ -147,7 +147,7 @@ export default function DashboardView({ runs, error, lang }: Props) {
                       className="text-xs underline transition-colors hover:text-white"
                       style={{ color: "#7070a0" }}
                     >
-                      {tx("dashboard", "colView", lang)}
+                      {run.run_code ?? run.id.slice(0, 8) + "…"}
                     </Link>
                   </td>
                 </tr>

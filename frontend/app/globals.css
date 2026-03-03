@@ -67,42 +67,69 @@ body {
 
 /* ── Print / PDF styles ─────────────────────── */
 @media print {
+  /* Page setup */
+  @page {
+    margin: 1.6cm 2cm;
+    size: A4;
+  }
+
+  /* White background, dark ink */
+  html, body {
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 11pt;
+  }
+
   /* Hide interactive chrome */
-  nav,
-  .no-print { display: none !important; }
+  nav, .no-print { display: none !important; }
 
   /* Show print-only elements */
   .print-only { display: block !important; }
 
-  @page {
-    margin: 1.8cm 2.2cm;
-    size: A4;
-  }
-
-  /* Diagonal Avanti watermark */
+  /* Avanti watermark — light, diagonal, full-page */
   body::after {
     content: "AVANTI";
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(-35deg);
-    font-size: 96px;
+    transform: translate(-50%, -50%) rotate(-32deg);
+    font-size: 110pt;
     font-weight: 900;
-    letter-spacing: 0.12em;
-    color: rgba(255, 107, 53, 0.06);
+    letter-spacing: 0.15em;
+    color: rgba(255, 107, 53, 0.055);
     pointer-events: none;
     white-space: nowrap;
     z-index: 9999;
   }
 
-  /* Print header */
+  /* Print header — orange rule + branding */
   .print-header {
     display: flex !important;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ff6b35;
+    padding-bottom: 12pt;
+    margin-bottom: 20pt;
+    border-bottom: 2.5pt solid #ff6b35;
+  }
+  .print-header-logo {
+    font-size: 18pt;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    color: #ff6b35;
+    line-height: 1;
+  }
+  .print-header-sub {
+    font-size: 8pt;
+    color: #666;
+    margin-top: 3pt;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .print-header-meta {
+    text-align: right;
+    font-size: 9pt;
+    color: #444;
+    line-height: 1.6;
   }
 
   /* Print footer */
@@ -110,13 +137,53 @@ body {
     display: flex !important;
     justify-content: space-between;
     align-items: center;
-    font-size: 9px;
-    color: #7070a0;
-    border-top: 1px solid #25253f;
-    padding-top: 8px;
-    margin-top: 32px;
+    font-size: 8pt;
+    color: #999;
+    border-top: 0.75pt solid #ddd;
+    padding-top: 8pt;
+    margin-top: 32pt;
   }
 
-  /* Avoid page breaks inside cards */
-  .rounded-xl, table { break-inside: avoid; }
+  /* Card surfaces → white with light border */
+  .rounded-xl, .rounded-2xl {
+    background: #fff !important;
+    border: 0.75pt solid #e0e0e0 !important;
+    break-inside: avoid;
+  }
+
+  /* KPI numbers stay bold, muted labels go grey */
+  .text-4xl, .text-5xl { color: #111 !important; }
+  .text-2xl { color: #222 !important; }
+
+  /* Tables */
+  table {
+    break-inside: avoid;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  thead { background: #f5f5f5 !important; }
+  th, td {
+    border-bottom: 0.5pt solid #e0e0e0 !important;
+    color: #111 !important;
+  }
+
+  /* SOV bars — keep orange for primary, grey for others */
+  /* (inline styles on bar take precedence; no override needed) */
+
+  /* Dim colours become dark grey for legibility */
+  [style*="color: #7070a0"], [style*="color:#7070a0"] { color: #555 !important; }
+  [style*="color: #f0f0f8"], [style*="color:#f0f0f8"] { color: #111 !important; }
+
+  /* Surface backgrounds → white */
+  [style*="background: #0f0f17"], [style*="background:#0f0f17"],
+  [style*="background: #161625"], [style*="background:#161625"],
+  [style*="background: #09090f"], [style*="background:#09090f"] {
+    background: #fff !important;
+  }
+
+  /* Sentiment / status badges — print-friendly */
+  [style*="rgba(34,197,94"]   { background: #e6f9ef !important; color: #166534 !important; }
+  [style*="rgba(255,77,109"]  { background: #fef0f3 !important; color: #9b1c31 !important; }
+  [style*="rgba(245,166,35"]  { background: #fef9ec !important; color: #92400e !important; }
+  [style*="rgba(255,107,53"]  { background: #fff4ef !important; color: #9a3412 !important; }
 }

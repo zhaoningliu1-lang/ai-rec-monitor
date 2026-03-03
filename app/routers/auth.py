@@ -68,6 +68,23 @@ def _create_token(user_id: str) -> str:
     )
 
 
+async def get_current_user_optional(
+    creds: HTTPAuthorizationCredentials | None = Depends(_bearer),
+    db: AsyncSession = Depends(get_db),
+) -> "User | None":
+    """Like get_current_user but returns None instead of raising 401."""
+    if not creds:
+        return None
+    try:
+        payload = jwt.decode(creds.credentials, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
+        user_id: str = payload["sub"]
+        result = await db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
+        return user if user and user.is_active else None
+    except Exception:
+        return None
+
+
 async def get_current_user(
     creds: HTTPAuthorizationCredentials | None = Depends(_bearer),
     db: AsyncSession = Depends(get_db),

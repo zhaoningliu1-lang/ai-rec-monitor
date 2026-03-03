@@ -1,15 +1,45 @@
+import re
 import uuid
+from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import async_session_factory, get_db
-from app.models import Run
+from app.models import Run, User
+from app.routers.auth import get_current_user_optional
 from app.schemas import CreateRunRequest, RunResponse
+from app.services.brand_normalizer import _KNOWN_ALIASES
 from app.services.job_runner import run_job
 
 router = APIRouter()
+
+# ── Quota limits per subscription tier ────────────────────────────────────────
+_MONTHLY_QUOTA: dict[str, int] = {
+    "free":       3,
+    "growth":     20,
+    "scale":      100,
+    "enterprise": 99999,
+}
+
+
+def _brand_abbr(brand_name: str) -> str:
+    """Return 4-char uppercase code using English alias when available."""
+    english = _KNOWN_ALIASES.get(brand_name.strip(), brand_name)
+    ascii_letters = re.sub(r"[^A-Za-z]", "", english.encode("ascii", "ignore").decode())
+    return ascii_letters[:4].upper().ljust(4, "X")
+
+
+async def _generate_run_code(db: AsyncSession, brand_name: str) -> str:
+    """Generate a unique human-readable run code: YYYYMMDD-ABBR-NNNN."""
+    today = date.today().strftime("%Y%m%d")
+    abbr = _brand_abbr(brand_name)
+    prefix = f"{today}-{abbr}-"
+    count = await db.scalar(
+        select(func.count(Run.id)).where(Run.run_code.like(f"{prefix}%"))
+    ) or 0
+    return f"{prefix}{count + 1:04d}"
 
 
 @router.get("/health")
@@ -22,8 +52,33 @@ async def create_run(
     body: CreateRunRequest,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
 ):
-    # progress_total = prompts × providers; job_runner will set the exact count
+    # ── Monthly quota check for authenticated users ───────────────────────────
+    if user:
+        tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
+        quota = _MONTHLY_QUOTA.get(tier, 3)
+        now = datetime.now(timezone.utc)
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        monthly_count = await db.scalar(
+            select(func.count(Run.id))
+            .where(Run.user_id == user.id)
+            .where(Run.created_at >= month_start)
+        ) or 0
+        if monthly_count >= quota:
+            raise HTTPException(
+                status_code=429,
+                detail={
+                    "code": "quota_exceeded",
+                    "used": monthly_count,
+                    "limit": quota,
+                    "tier": tier,
+                    "message": f"{tier.capitalize()} plan: {quota} runs/month. Upgrade to continue.",
+                },
+            )
+
+    run_code = await _generate_run_code(db, body.brand_name)
+
     run = Run(
         brand_name=body.brand_name,
         competitor_names=body.competitor_names,
@@ -34,6 +89,8 @@ async def create_run(
         price_band=body.price_band,
         progress_total=body.num_prompts * len(body.providers),
         progress_done=0,
+        run_code=run_code,
+        user_id=user.id if user else None,
     )
     db.add(run)
     await db.commit()
