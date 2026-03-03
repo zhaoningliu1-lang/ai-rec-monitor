@@ -39,8 +39,8 @@ class Settings(BaseSettings):
     # Stripe
     stripe_secret_key: str | None = None
     stripe_webhook_secret: str | None = None
-    stripe_price_growth: str | None = None   # price ID for $99/mo
-    stripe_price_scale: str | None = None    # price ID for $199/mo
+    stripe_price_monitor: str | None = None   # STRIPE_PRICE_MONITOR — price ID for $99/mo
+    stripe_price_pro: str | None = None       # STRIPE_PRICE_PRO — price ID for $199/mo
 
     # Email (Resend)
     resend_api_key: str | None = None

@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/billing", tags=["billing"])
 
 _TIER_MAP = {
-    "growth": (settings.stripe_price_growth, SubscriptionTier.growth),
-    "scale": (settings.stripe_price_scale, SubscriptionTier.scale),
+    "growth": (settings.stripe_price_monitor, SubscriptionTier.growth),
+    "scale": (settings.stripe_price_pro, SubscriptionTier.scale),
 }
 
 _STATUS_MAP = {
