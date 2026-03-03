@@ -208,17 +208,40 @@ export default function RunDetailClient({
 
   return (
     <div className="space-y-8">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-3">
-        <Link href={dashHref} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
-          {tx("runs", "breadcrumbDash", lang)}
-        </Link>
-        <span style={{ color: "#25253f" }}>/</span>
-        <Link href={brandHref} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
-          {run.brand_name}
-        </Link>
-        <span style={{ color: "#25253f" }}>/</span>
-        <span className="text-sm font-mono" style={{ color: "#7070a0" }}>{id.slice(0, 8)}…</span>
+      {/* Print-only header with Avanti branding */}
+      <div className="print-only print-header">
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 900, color: "#ff6b35", letterSpacing: "0.05em" }}>AVANTI</div>
+          <div style={{ fontSize: 11, color: "#7070a0", marginTop: 2 }}>{tx("runs", "printReportTitle", lang)}</div>
+        </div>
+        <div style={{ textAlign: "right", fontSize: 11, color: "#7070a0" }}>
+          <div>{run.brand_name} · {run.category} · {run.region}</div>
+          <div>{run.finished_at ? new Date(run.finished_at).toLocaleDateString() : new Date(run.created_at).toLocaleDateString()}</div>
+        </div>
+      </div>
+
+      {/* Breadcrumb + Download button */}
+      <div className="no-print flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link href={dashHref} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
+            {tx("runs", "breadcrumbDash", lang)}
+          </Link>
+          <span style={{ color: "#25253f" }}>/</span>
+          <Link href={brandHref} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
+            {run.brand_name}
+          </Link>
+          <span style={{ color: "#25253f" }}>/</span>
+          <span className="text-sm font-mono" style={{ color: "#7070a0" }}>{id.slice(0, 8)}…</span>
+        </div>
+        {metrics && (
+          <button
+            onClick={() => window.print()}
+            className="text-xs px-3 py-1.5 rounded-lg transition-opacity hover:opacity-80"
+            style={{ background: "#161625", border: "1px solid #25253f", color: "#7070a0", cursor: "pointer" }}
+          >
+            {tx("runs", "downloadPdf", lang)}
+          </button>
+        )}
       </div>
 
       {/* Run header */}
@@ -456,13 +479,15 @@ export default function RunDetailClient({
         </div>
       )}
 
-      {/* Response Explorer */}
+      {/* Response Explorer — hidden in print (interactive only) */}
       {metrics && (
-        <ResponseExplorer
-          runId={id}
-          brandName={run.brand_name}
-          competitorNames={run.competitor_names ?? []}
-        />
+        <div className="no-print">
+          <ResponseExplorer
+            runId={id}
+            brandName={run.brand_name}
+            competitorNames={run.competitor_names ?? []}
+          />
+        </div>
       )}
 
       {/* Source / Citation Analysis */}
@@ -568,10 +593,18 @@ export default function RunDetailClient({
         </div>
       )}
 
-      {/* Book a call CTA */}
+      {/* Print footer */}
+      {metrics && (
+        <div className="print-footer">
+          <span style={{ color: "#ff6b35", fontWeight: 700 }}>AVANTI</span>
+          <span>{tx("runs", "printGeneratedBy", lang)}</span>
+        </div>
+      )}
+
+      {/* Book a call CTA — hidden in print */}
       {metrics && (
         <div
-          className="rounded-2xl p-8 text-center"
+          className="no-print rounded-2xl p-8 text-center"
           style={{
             background: "linear-gradient(135deg, #0f0f17 0%, #161625 100%)",
             border: "1px solid #ff6b35",

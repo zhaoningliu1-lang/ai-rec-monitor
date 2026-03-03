@@ -61,3 +61,62 @@ body {
 .marquee-track:hover {
   animation-play-state: paused;
 }
+
+/* ── Utility: hide/show for print ───────────── */
+.print-only { display: none; }
+
+/* ── Print / PDF styles ─────────────────────── */
+@media print {
+  /* Hide interactive chrome */
+  nav,
+  .no-print { display: none !important; }
+
+  /* Show print-only elements */
+  .print-only { display: block !important; }
+
+  @page {
+    margin: 1.8cm 2.2cm;
+    size: A4;
+  }
+
+  /* Diagonal Avanti watermark */
+  body::after {
+    content: "AVANTI";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-35deg);
+    font-size: 96px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    color: rgba(255, 107, 53, 0.06);
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 9999;
+  }
+
+  /* Print header */
+  .print-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ff6b35;
+  }
+
+  /* Print footer */
+  .print-footer {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    color: #7070a0;
+    border-top: 1px solid #25253f;
+    padding-top: 8px;
+    margin-top: 32px;
+  }
+
+  /* Avoid page breaks inside cards */
+  .rounded-xl, table { break-inside: avoid; }
+}
