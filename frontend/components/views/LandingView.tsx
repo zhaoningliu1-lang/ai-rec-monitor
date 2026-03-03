@@ -369,6 +369,109 @@ export default function LandingView({ lang }: Props) {
         </div>
       </section>
 
+      {/* Case Study */}
+      <section className="rounded-2xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+        <div className="px-8 py-6" style={{ borderBottom: "1px solid #25253f", background: "#0a0a13" }}>
+          <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#f5a623" }}>
+            {lang === "zh" ? "客户案例" : "Case Study"}
+          </div>
+          <h2 className="text-2xl font-black leading-tight">
+            {lang === "zh"
+              ? "ChargeFast：8 周内 ARRS 从 71 降至 28"
+              : "ChargeFast: ARRS Dropped 71 → 28 in 8 Weeks"}
+          </h2>
+        </div>
+        <div className="grid md:grid-cols-2" style={{ background: "#0f0f17" }}>
+          {/* Story */}
+          <div className="p-8" style={{ borderRight: "1px solid #25253f" }}>
+            <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#7070a0" }}>
+              {lang === "zh" ? "背景" : "Background"}
+            </p>
+            <p className="text-sm leading-relaxed mb-6" style={{ color: "#a0a0c0" }}>
+              {lang === "zh"
+                ? "ChargeFast 是一家 DTC 消费电子品牌，USB-C 充电器在亚马逊长期位居前三——但 AI 助手几乎从不提及它。品牌在 AI 推荐系统里几乎是隐形的。"
+                : "ChargeFast is a DTC consumer electronics brand with top-3 Amazon rankings for USB-C chargers — yet AI assistants almost never mentioned them. Invisible to the AI recommendation layer."}
+            </p>
+            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#7070a0" }}>
+              {lang === "zh" ? "我们做了什么" : "What We Did"}
+            </p>
+            <ul className="space-y-2.5 text-sm mb-7" style={{ color: "#a0a0c0" }}>
+              {(lang === "zh" ? [
+                "识别出 12 个被竞品占据的高意向 AI 查询词",
+                "发布 4 篇定向内容，聚焦安全认证与快充规格对比",
+                "在 3 家权威科技媒体获得引用和提及",
+              ] : [
+                "Identified 12 high-intent AI queries dominated by competitors",
+                "Published 4 targeted pieces on safety certs & fast-charging specs",
+                "Earned citations in 3 authoritative tech publications",
+              ]).map((item, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <span style={{ color: "#ff6b35", flexShrink: 0, fontWeight: 700 }}>→</span> {item}
+                </li>
+              ))}
+            </ul>
+            <blockquote
+              className="rounded-xl p-4 text-sm italic leading-relaxed"
+              style={{ background: "#161625", border: "1px solid #25253f", color: "#d0d0e8" }}
+            >
+              {lang === "zh"
+                ? "\"Avanti 让我们第一次看清楚了 AI 是怎么看我们品牌的。8 周之后，我们开始出现在大多数 ChatGPT 推荐清单里了。\""
+                : '"Avanti gave us the first clear picture of how AI sees our brand. Eight weeks later, we\'re showing up in most ChatGPT recommendation lists."'}
+              <div className="text-xs mt-2 not-italic" style={{ color: "#7070a0" }}>
+                {lang === "zh" ? "—— ChargeFast 联合创始人" : "— ChargeFast Co-founder"}
+              </div>
+            </blockquote>
+          </div>
+          {/* Metrics */}
+          <div className="p-8">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-6" style={{ color: "#7070a0" }}>
+              {lang === "zh" ? "8 周成果" : "8-Week Results"}
+            </p>
+            {/* ARRS */}
+            <div className="mb-6">
+              <div className="text-xs mb-3" style={{ color: "#7070a0" }}>
+                ARRS {lang === "zh" ? "（越低越好）" : "(lower = better)"}
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex-1 rounded-xl p-4 text-center" style={{ background: "#161625", border: "1px solid rgba(255,77,109,0.25)" }}>
+                  <div className="text-xs mb-1" style={{ color: "#7070a0" }}>{lang === "zh" ? "诊断前" : "Before"}</div>
+                  <div className="text-4xl font-black" style={{ color: "#ff4d6d" }}>71</div>
+                </div>
+                <div className="text-xl font-light" style={{ color: "#3a3a5c" }}>→</div>
+                <div className="flex-1 rounded-xl p-4 text-center" style={{ background: "#0f1a0f", border: "1px solid rgba(34,197,94,0.25)" }}>
+                  <div className="text-xs mb-1" style={{ color: "#7070a0" }}>{lang === "zh" ? "8 周后" : "After 8 wks"}</div>
+                  <div className="text-4xl font-black" style={{ color: "#22c55e" }}>28</div>
+                </div>
+              </div>
+            </div>
+            {/* SOV + Rank */}
+            <div className="grid grid-cols-2 gap-3 mb-7">
+              <div className="rounded-xl p-4" style={{ background: "#161625", border: "1px solid #25253f" }}>
+                <div className="text-xs mb-1.5" style={{ color: "#7070a0" }}>Share of Voice</div>
+                <div className="text-2xl font-black" style={{ color: "#22c55e" }}>
+                  +23.7<span className="text-sm font-bold">pp</span>
+                </div>
+                <div className="text-xs mt-1" style={{ color: "#7070a0" }}>8.1% → 31.8%</div>
+              </div>
+              <div className="rounded-xl p-4" style={{ background: "#161625", border: "1px solid #25253f" }}>
+                <div className="text-xs mb-1.5" style={{ color: "#7070a0" }}>ChatGPT {lang === "zh" ? "排名" : "Rank"}</div>
+                <div className="text-2xl font-black" style={{ color: "#f5a623" }}>#1</div>
+                <div className="text-xs mt-1" style={{ color: "#7070a0" }}>
+                  {lang === "zh" ? "USB-C 充电器推荐" : "USB-C charger recs"}
+                </div>
+              </div>
+            </div>
+            <Link
+              href={auditPath}
+              className="block text-center text-sm font-semibold py-3 rounded-xl transition-opacity hover:opacity-80"
+              style={{ background: "#ff6b35", color: "#fff" }}
+            >
+              {lang === "zh" ? "免费为你的品牌做同样的事 →" : "Do the same for your brand — free →"}
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
       <section id="pricing">
         <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#ff6b35" }}>

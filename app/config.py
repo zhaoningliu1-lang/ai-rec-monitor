@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     stripe_price_growth: str | None = None   # price ID for $99/mo
     stripe_price_scale: str | None = None    # price ID for $199/mo
 
+    # Email (Resend)
+    resend_api_key: str | None = None
+    from_email: str = "Avanti <hello@avanti.so>"
+    site_url: str = "https://avanti.so"
+
     class Config:
         env_file = ".env"
         extra = "ignore"

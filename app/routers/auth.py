@@ -1,7 +1,7 @@
 """Authentication — register / login / me."""
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import get_db
+from app.emails import send_welcome
 from app.models import SubscriptionStatus, SubscriptionTier, User
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -101,7 +102,7 @@ def _user_out(u: User) -> UserOut:
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @router.post("/register", response_model=TokenOut, status_code=201)
-async def register(body: RegisterIn, db: AsyncSession = Depends(get_db)):
+async def register(body: RegisterIn, bg: BackgroundTasks, db: AsyncSession = Depends(get_db)):
     existing = await db.execute(select(User).where(User.email == body.email))
     if existing.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -118,6 +119,7 @@ async def register(body: RegisterIn, db: AsyncSession = Depends(get_db)):
     await db.commit()
     await db.refresh(user)
 
+    bg.add_task(send_welcome, body.email, body.full_name)
     return TokenOut(access_token=_create_token(str(user.id)))
 
 

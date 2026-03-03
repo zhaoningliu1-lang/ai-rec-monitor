@@ -1,15 +1,17 @@
 """Stripe billing — checkout / webhook / customer portal."""
+import asyncio
 import logging
 from datetime import datetime, timezone
 
 import stripe
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import get_db
+from app.emails import send_subscription_upgraded
 from app.models import SubscriptionStatus, SubscriptionTier, User
 from app.routers.auth import get_current_user
 
@@ -108,7 +110,7 @@ async def customer_portal(
 
 
 @router.post("/webhook")
-async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
+async def stripe_webhook(request: Request, bg: BackgroundTasks, db: AsyncSession = Depends(get_db)):
     """Handle Stripe webhook events — update subscription state in DB."""
     s = _stripe()
     payload = await request.body()
@@ -145,11 +147,21 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
         result = await db.execute(select(User).where(User.stripe_customer_id == customer_id))
         user = result.scalar_one_or_none()
         if user:
+            was_free = user.subscription_tier == SubscriptionTier.free
             user.stripe_subscription_id = sub["id"]
             user.subscription_status = new_status
             user.subscription_tier = tier
             user.subscription_current_period_end = period_end
             await db.commit()
             logger.info("Updated user %s subscription → tier=%s status=%s", user.id, tier, new_status)
+
+            # Send upgrade confirmation email on first activation
+            if (
+                was_free
+                and new_status == SubscriptionStatus.active
+                and tier != SubscriptionTier.free
+                and etype != "customer.subscription.deleted"
+            ):
+                bg.add_task(send_subscription_upgraded, user.email, tier_name, user.full_name)
 
     return {"received": True}
