@@ -70,26 +70,34 @@ async def create_checkout(
     if not price_id:
         raise HTTPException(status_code=503, detail=f"Price for {body.tier} not configured")
 
-    # Create or reuse Stripe customer
-    if not user.stripe_customer_id:
-        customer = s.Customer.create(email=user.email, name=user.full_name or user.email)
-        result = await db.execute(select(User).where(User.id == user.id))
-        db_user = result.scalar_one()
-        db_user.stripe_customer_id = customer.id
-        await db.commit()
-        customer_id = customer.id
-    else:
-        customer_id = user.stripe_customer_id
+    try:
+        # Create or reuse Stripe customer
+        if not user.stripe_customer_id:
+            customer = s.Customer.create(email=user.email, name=user.full_name or user.email)
+            result = await db.execute(select(User).where(User.id == user.id))
+            db_user = result.scalar_one()
+            db_user.stripe_customer_id = customer.id
+            await db.commit()
+            customer_id = customer.id
+        else:
+            customer_id = user.stripe_customer_id
 
-    session = s.checkout.Session.create(
-        customer=customer_id,
-        mode="subscription",
-        line_items=[{"price": price_id, "quantity": 1}],
-        success_url=body.success_url,
-        cancel_url=body.cancel_url,
-        allow_promotion_codes=True,
-        subscription_data={"metadata": {"user_id": str(user.id), "tier": body.tier}},
-    )
+        session = s.checkout.Session.create(
+            customer=customer_id,
+            mode="subscription",
+            line_items=[{"price": price_id, "quantity": 1}],
+            success_url=body.success_url,
+            cancel_url=body.cancel_url,
+            allow_promotion_codes=True,
+            subscription_data={"metadata": {"user_id": str(user.id), "tier": body.tier}},
+        )
+    except stripe.error.StripeError as exc:
+        logger.error("Stripe error in checkout: %s", exc)
+        raise HTTPException(status_code=400, detail=str(exc.user_message or exc))
+    except Exception as exc:
+        logger.exception("Unexpected error in checkout")
+        raise HTTPException(status_code=500, detail=str(exc))
+
     return CheckoutOut(checkout_url=session.url)
 
 
@@ -102,10 +110,18 @@ async def customer_portal(
     if not user.stripe_customer_id:
         raise HTTPException(status_code=400, detail="No Stripe customer found")
 
-    session = s.billing_portal.Session.create(
-        customer=user.stripe_customer_id,
-        return_url=return_url,
-    )
+    try:
+        session = s.billing_portal.Session.create(
+            customer=user.stripe_customer_id,
+            return_url=return_url,
+        )
+    except stripe.error.StripeError as exc:
+        logger.error("Stripe error in portal: %s", exc)
+        raise HTTPException(status_code=400, detail=str(exc.user_message or exc))
+    except Exception as exc:
+        logger.exception("Unexpected error in portal")
+        raise HTTPException(status_code=500, detail=str(exc))
+
     return PortalOut(portal_url=session.url)
 
 

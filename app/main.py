@@ -3,8 +3,9 @@ import os
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy import select, update
 
 from app.database import Base, async_session_factory, engine
@@ -148,6 +149,16 @@ app.include_router(reports.router)
 app.include_router(schedules.router)
 app.include_router(auth_router.router)
 app.include_router(billing_router.router)
+
+
+# Global exception handler — ensures CORS headers survive unhandled 500s
+@app.exception_handler(Exception)
+async def _global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    logger.exception("Unhandled exception on %s %s", request.method, request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"},
+    )
 
 
 @app.get("/health")
