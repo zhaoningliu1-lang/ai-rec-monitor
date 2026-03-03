@@ -58,15 +58,25 @@ interface SourceDomain {
 
 interface SourceOpportunity {
   domain: string;
+  domain_type: string;
   citation_count: number;
+  brand_mentioned: number;
+  competitors_data: Record<string, number>;
   top_competitor: string;
   competitor_mentions: number;
+  competitor_total: number;
+  gap: number;
+  opportunity_score: number;
+  priority: "high" | "medium" | "low";
+  is_pure_gap: boolean;
 }
 
 interface Sources {
   domains: SourceDomain[];
   opportunities: SourceOpportunity[];
   total_unique_domains: number;
+  gap_count: number;
+  pure_gap_count: number;
 }
 
 interface RecommendationItem {
@@ -107,6 +117,51 @@ const priorityStyle: Record<string, { bg: string; color: string }> = {
   medium: { bg: "rgba(245,166,35,0.12)",  color: "#f5a623" },
   low:    { bg: "rgba(34,197,94,0.12)",   color: "#22c55e" },
 };
+
+const oppPriorityConfig = {
+  high:   { border: "#ff4d6d44", badge: { bg: "rgba(255,77,109,0.15)", color: "#ff4d6d" }, label: { en: "HIGH",   zh: "高优先" } },
+  medium: { border: "#f5a62344", badge: { bg: "rgba(245,166,35,0.15)", color: "#f5a623" }, label: { en: "MEDIUM", zh: "中优先" } },
+  low:    { border: "#25253f",   badge: { bg: "rgba(112,112,160,0.15)", color: "#7070a0" }, label: { en: "LOW",    zh: "低优先" } },
+} as const;
+
+function GapBar({
+  brandName, brandCount, competitorsData, maxVal,
+}: {
+  brandName: string;
+  brandCount: number;
+  competitorsData: Record<string, number>;
+  maxVal: number;
+}) {
+  const scale = Math.max(maxVal, 1);
+  return (
+    <div className="space-y-1.5 mt-3">
+      <div className="flex items-center gap-2">
+        <span className="text-xs w-20 truncate text-right shrink-0" style={{ color: "#ff6b35" }}>{brandName}</span>
+        <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
+          <div
+            className="h-full rounded-full transition-all duration-700"
+            style={{ width: `${(brandCount / scale) * 100}%`, background: brandCount > 0 ? "#ff6b35" : "transparent" }}
+          />
+        </div>
+        <span className="text-xs w-5 text-right shrink-0" style={{ color: brandCount > 0 ? "#ff6b35" : "#3a3a5c" }}>
+          {brandCount}
+        </span>
+      </div>
+      {Object.entries(competitorsData).sort(([, a], [, b]) => b - a).map(([name, count]) => (
+        <div key={name} className="flex items-center gap-2">
+          <span className="text-xs w-20 truncate text-right shrink-0" style={{ color: "#7070a0" }}>{name}</span>
+          <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
+            <div
+              className="h-full rounded-full"
+              style={{ width: `${(count / scale) * 100}%`, background: "#7070a0" }}
+            />
+          </div>
+          <span className="text-xs w-5 text-right shrink-0" style={{ color: "#7070a0" }}>{count}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function statusStyle(s: string) {
   if (s === "done")    return { bg: "rgba(34,197,94,0.12)",  color: "#22c55e" };
@@ -567,23 +622,133 @@ export default function RunDetailClient({
         </div>
       )}
 
-      {/* Response Explorer — hidden in print (interactive only) */}
-      {metrics && (
-        <div className="no-print">
-          <ResponseExplorer
-            runId={id}
-            brandName={run.brand_name}
-            competitorNames={run.competitor_names ?? []}
-          />
-        </div>
-      )}
-
-      {/* Source / Citation Analysis */}
+      {/* ── Source Opportunity Panel (Phase 2) ─────────────────── */}
       {sources && sources.total_unique_domains > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-5">
+
+          {/* Section header + summary */}
+          <div className="flex items-end justify-between">
+            <div>
+              <h2 className="text-base font-bold">
+                {lang === "zh" ? "来源机会面板" : "Source Opportunity Panel"}
+              </h2>
+              <p className="text-xs mt-0.5" style={{ color: "#7070a0" }}>
+                {lang === "zh"
+                  ? `AI 回复引用了 ${sources.total_unique_domains} 个域名 · 发现 ${sources.pure_gap_count ?? 0} 个零曝光缺口`
+                  : `AI cited ${sources.total_unique_domains} domains · ${sources.pure_gap_count ?? 0} gap${sources.pure_gap_count !== 1 ? "s" : ""} where you're absent`}
+              </p>
+            </div>
+            {sources.gap_count > 0 && (
+              <span
+                className="text-xs px-2.5 py-1 rounded-full font-semibold"
+                style={{ background: "rgba(255,77,109,0.12)", color: "#ff4d6d", border: "1px solid rgba(255,77,109,0.25)" }}
+              >
+                {sources.gap_count} {lang === "zh" ? "个机会待抓取" : `opportunit${sources.gap_count !== 1 ? "ies" : "y"} found`}
+              </span>
+            )}
+          </div>
+
+          {/* Opportunity cards */}
+          {sources.opportunities.length > 0 && (
+            <div className="space-y-3">
+              {sources.opportunities.map((opp) => {
+                const pc = oppPriorityConfig[opp.priority];
+                const maxMentions = Math.max(opp.competitor_total, opp.brand_mentioned, 1);
+                return (
+                  <div
+                    key={opp.domain}
+                    className="rounded-xl p-5"
+                    style={{ background: "#0f0f17", border: `1px solid ${pc.border}` }}
+                  >
+                    {/* Card top row */}
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span
+                            className="text-xs px-2 py-0.5 rounded font-bold tracking-widest"
+                            style={{ background: pc.badge.bg, color: pc.badge.color }}
+                          >
+                            {pc.label[lang]}
+                          </span>
+                          <span
+                            className="text-xs px-2 py-0.5 rounded font-medium"
+                            style={{ background: "rgba(112,112,160,0.1)", color: "#7070a0" }}
+                          >
+                            {opp.domain_type}
+                          </span>
+                          {opp.is_pure_gap && (
+                            <span
+                              className="text-xs px-2 py-0.5 rounded font-medium"
+                              style={{ background: "rgba(255,77,109,0.1)", color: "#ff4d6d" }}
+                            >
+                              {lang === "zh" ? "零曝光" : "Not present"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="mt-1.5 text-sm font-bold font-mono">{opp.domain}</div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="text-xl font-black" style={{ color: pc.badge.color }}>
+                          {opp.opportunity_score}
+                        </div>
+                        <div className="text-xs" style={{ color: "#7070a0" }}>
+                          {lang === "zh" ? "机会分" : "opp. score"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Gap visualization */}
+                    <GapBar
+                      brandName={run.brand_name}
+                      brandCount={opp.brand_mentioned}
+                      competitorsData={opp.competitors_data}
+                      maxVal={maxMentions}
+                    />
+
+                    {/* Bottom row: citation count + gap summary + CTA */}
+                    <div className="mt-3 flex items-center justify-between flex-wrap gap-2">
+                      <p className="text-xs" style={{ color: "#7070a0" }}>
+                        {lang === "zh"
+                          ? `被引用 ${opp.citation_count} 次 · 竞品领先 ${opp.gap} 次提及`
+                          : `Cited in ${opp.citation_count} response${opp.citation_count !== 1 ? "s" : ""} · competitors lead by ${opp.gap} mention${opp.gap !== 1 ? "s" : ""}`}
+                      </p>
+                      <a
+                        href={`https://${opp.domain}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs px-3 py-1.5 rounded-lg transition-opacity hover:opacity-80 shrink-0"
+                        style={{ background: "#161625", border: "1px solid #25253f", color: "#7070a0" }}
+                      >
+                        {lang === "zh" ? "访问该域名 →" : "Visit domain →"}
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {sources.opportunities.length === 0 && (
+            <div
+              className="rounded-xl p-6 text-center"
+              style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)" }}
+            >
+              <div className="text-2xl mb-2">✓</div>
+              <p className="text-sm font-semibold" style={{ color: "#22c55e" }}>
+                {lang === "zh" ? "暂无内容缺口" : "No content gaps detected"}
+              </p>
+              <p className="text-xs mt-1" style={{ color: "#7070a0" }}>
+                {lang === "zh"
+                  ? "你的品牌在所有被引用域名中都有出现"
+                  : "Your brand appears across all cited domains"}
+              </p>
+            </div>
+          )}
+
+          {/* All cited domains — collapsible detail table */}
           <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
-            <div className="px-4 py-3 font-semibold text-sm flex items-center justify-between" style={{ background: "#161625", borderBottom: "1px solid #25253f" }}>
-              <span>{tx("runs", "citedSources", lang)}</span>
+            <div className="px-4 py-3 text-sm flex items-center justify-between" style={{ background: "#161625", borderBottom: "1px solid #25253f" }}>
+              <span className="font-semibold">{tx("runs", "citedSources", lang)}</span>
               <span className="text-xs font-normal" style={{ color: "#7070a0" }}>
                 {sources.total_unique_domains}{" "}
                 {tx("runs", sources.total_unique_domains !== 1 ? "uniqueDomainPlural" : "uniqueDomainSingular", lang)}
@@ -592,8 +757,8 @@ export default function RunDetailClient({
             <table className="w-full text-sm" style={{ background: "#0f0f17" }}>
               <thead className="text-xs uppercase tracking-wide" style={{ background: "#161625", color: "#7070a0" }}>
                 <tr>
-                  <th className="text-left px-4 py-2">{tx("runs", "colDomain",         lang)}</th>
-                  <th className="text-right px-4 py-2">{tx("runs", "colCitations",      lang)}</th>
+                  <th className="text-left px-4 py-2">{tx("runs", "colDomain", lang)}</th>
+                  <th className="text-right px-4 py-2">{tx("runs", "colCitations", lang)}</th>
                   <th className="text-right px-4 py-2">{tx("runs", "colBrandMentioned", lang)}</th>
                 </tr>
               </thead>
@@ -616,35 +781,17 @@ export default function RunDetailClient({
               </tbody>
             </table>
           </div>
+        </div>
+      )}
 
-          {sources.opportunities.length > 0 && (
-            <div className="rounded-xl p-5" style={{ background: "#0f0f17", border: "1px solid #f5a62333" }}>
-              <div className="flex items-center gap-2 mb-4">
-                <span style={{ color: "#f5a623" }}>⚡</span>
-                <span className="font-semibold text-sm">{tx("runs", "contentOpps", lang)}</span>
-                <span className="text-xs ml-1" style={{ color: "#7070a0" }}>
-                  — {tx("runs", "contentOppsNote", lang)}
-                </span>
-              </div>
-              <div className="space-y-2">
-                {sources.opportunities.map((opp) => (
-                  <div key={opp.domain} className="flex items-center justify-between rounded-lg px-4 py-2.5" style={{ background: "#161625" }}>
-                    <div>
-                      <span className="text-sm font-mono">{opp.domain}</span>
-                      <span className="text-xs ml-3" style={{ color: "#7070a0" }}>
-                        {lang === "zh"
-                          ? `${opp.top_competitor} 被引用 ${opp.competitor_mentions}×`
-                          : `${opp.top_competitor} cited ${opp.competitor_mentions}×`}
-                      </span>
-                    </div>
-                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(245,166,35,0.12)", color: "#f5a623" }}>
-                      {opp.citation_count} {tx("runs", opp.citation_count !== 1 ? "citationPlural" : "citationSingular", lang)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+      {/* Response Explorer — hidden in print (interactive only) */}
+      {metrics && (
+        <div className="no-print">
+          <ResponseExplorer
+            runId={id}
+            brandName={run.brand_name}
+            competitorNames={run.competitor_names ?? []}
+          />
         </div>
       )}
 

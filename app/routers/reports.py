@@ -523,6 +523,46 @@ async def get_run_results(
 
 # ── Source / citation analysis ────────────────────────────────────────────────
 
+# Domain type classification table
+_DOMAIN_TYPES: dict[str, str] = {
+    "wirecutter.com": "Review", "rtings.com": "Review", "tomsguide.com": "Review",
+    "pcmag.com": "Review", "bestreviews.com": "Review", "reviewed.com": "Review",
+    "techradar.com": "Tech Media", "theverge.com": "Tech Media", "engadget.com": "Tech Media",
+    "cnet.com": "Tech Media", "zdnet.com": "Tech Media", "gizmodo.com": "Tech Media",
+    "wired.com": "Tech Media", "arstechnica.com": "Tech Media", "tomshardware.com": "Tech Media",
+    "9to5mac.com": "Tech Media", "9to5google.com": "Tech Media", "macrumors.com": "Tech Media",
+    "amazon.com": "E-commerce", "bestbuy.com": "E-commerce", "walmart.com": "E-commerce",
+    "reddit.com": "Community", "quora.com": "Community", "stackexchange.com": "Community",
+    "youtube.com": "Video", "vimeo.com": "Video",
+    "forbes.com": "Business", "businessinsider.com": "Business", "inc.com": "Business",
+    "nytimes.com": "News", "wsj.com": "News", "bloomberg.com": "News", "reuters.com": "News",
+    "consumer.ftc.gov": "Gov", "fda.gov": "Gov",
+}
+
+
+def _classify_domain(domain: str) -> str:
+    if domain in _DOMAIN_TYPES:
+        return _DOMAIN_TYPES[domain]
+    d = domain.lower()
+    if any(k in d for k in ("review", "reviews", "rating", "ratings", "compare")):
+        return "Review"
+    if any(k in d for k in ("news", "times", "post", "daily", "herald", "journal")):
+        return "News"
+    if any(k in d for k in ("blog", "guide", "tips", "how-to")):
+        return "Blog"
+    if any(k in d for k in ("shop", "store", "buy", "price", "deal")):
+        return "E-commerce"
+    return "Media"
+
+
+def _opportunity_priority(score: float) -> str:
+    if score >= 15:
+        return "high"
+    if score >= 5:
+        return "medium"
+    return "low"
+
+
 @router.get("/runs/{run_id}/sources")
 async def get_run_sources(
     run_id: uuid.UUID,
@@ -530,7 +570,10 @@ async def get_run_sources(
 ):
     """
     Aggregate cited domains from AI responses for a run.
-    Returns top domains and opportunity list (competitor cited, you're not).
+    Returns:
+    - domains: all cited domains with citation counts and brand/competitor presence
+    - opportunities: domains where competitors outrank the brand (sorted by opportunity_score)
+    - summary stats
     """
     from urllib.parse import urlparse
 
@@ -578,24 +621,42 @@ async def get_run_sources(
 
     domains = sorted(domain_stats.values(), key=lambda x: x["citation_count"], reverse=True)
 
+    # Build opportunities: domains where competitors outrank brand
     opportunities = []
     for d in domains:
         comp_total = sum(d["competitors_mentioned"].values())
-        if comp_total > 0 and d["brand_mentioned"] == 0:
-            top_comp = max(d["competitors_mentioned"], key=lambda k: d["competitors_mentioned"][k])
+        # Include if any competitor is cited AND they have more citations than the brand
+        if comp_total > d["brand_mentioned"]:
+            comp_breakdown = {c: v for c, v in d["competitors_mentioned"].items() if v > 0}
+            top_comp = max(comp_breakdown, key=lambda k: comp_breakdown[k]) if comp_breakdown else ""
+            gap = comp_total - d["brand_mentioned"]
+            # Score = how much competitors dominate × how frequently this domain is cited
+            score = round((comp_total * d["citation_count"]) / max(d["brand_mentioned"] + 0.5, 1), 1)
             opportunities.append({
                 "domain": d["domain"],
+                "domain_type": _classify_domain(d["domain"]),
                 "citation_count": d["citation_count"],
+                "brand_mentioned": d["brand_mentioned"],
+                "competitors_data": comp_breakdown,
                 "top_competitor": top_comp,
-                "competitor_mentions": d["competitors_mentioned"][top_comp],
+                "competitor_mentions": comp_breakdown.get(top_comp, 0),
+                "competitor_total": comp_total,
+                "gap": gap,
+                "opportunity_score": score,
+                "priority": _opportunity_priority(score),
+                "is_pure_gap": d["brand_mentioned"] == 0,
             })
 
-    opportunities.sort(key=lambda x: x["citation_count"], reverse=True)
+    opportunities.sort(key=lambda x: x["opportunity_score"], reverse=True)
+
+    pure_gaps = sum(1 for o in opportunities if o["is_pure_gap"])
 
     return {
         "domains": domains[:30],
-        "opportunities": opportunities[:10],
+        "opportunities": opportunities[:15],
         "total_unique_domains": len(domain_stats),
+        "gap_count": len(opportunities),
+        "pure_gap_count": pure_gaps,
     }
 
 
