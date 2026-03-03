@@ -143,7 +143,7 @@ export default function DashboardView({ runs, error, lang }: Props) {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
-                      href={`/runs/${run.id}`}
+                      href={`${lang === "zh" ? "/zh" : ""}/runs/${run.id}`}
                       className="text-xs underline transition-colors hover:text-white"
                       style={{ color: "#7070a0" }}
                     >

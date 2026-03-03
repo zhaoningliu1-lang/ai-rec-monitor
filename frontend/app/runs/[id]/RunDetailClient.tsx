@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import ResponseExplorer from "./ResponseExplorer";
+import { Lang, tx } from "@/lib/i18n";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
 const CALENDLY = "https://calendly.com/qw2379/geo-chat";
@@ -139,12 +140,14 @@ export default function RunDetailClient({
   initialMetrics,
   initialRecommendations,
   initialSources,
+  lang = "en",
 }: {
   id: string;
   initialRun: Run;
   initialMetrics: Metrics | null;
   initialRecommendations: Recommendation | null;
   initialSources: Record<string, unknown> | null;
+  lang?: Lang;
 }) {
   const [run, setRun] = useState(initialRun);
   const [metrics, setMetrics] = useState(initialMetrics);
@@ -183,24 +186,35 @@ export default function RunDetailClient({
   const ss = statusStyle(run.status);
   const pct = run.progress_total > 0 ? Math.round((run.progress_done / run.progress_total) * 100) : 0;
 
-  // Compute max SOV across all brands for relative bar scaling
   const maxSov = metrics
     ? Math.max(...metrics.brand_table.map((r) => r.weighted_sov), 1)
     : 100;
+
+  const STATUS_LABEL: Record<string, string> = {
+    done:    tx("runs", "statusDone",    lang),
+    running: tx("runs", "statusRunning", lang),
+    queued:  tx("runs", "statusQueued",  lang),
+    failed:  tx("runs", "statusFailed",  lang),
+  };
+
+  const PRIORITY_LABEL: Record<string, string> = {
+    high:   tx("runs", "priorityHigh",   lang),
+    medium: tx("runs", "priorityMedium", lang),
+    low:    tx("runs", "priorityLow",    lang),
+  };
+
+  const dashHref = lang === "zh" ? "/zh/dashboard" : "/dashboard";
+  const brandHref = `${lang === "zh" ? "/zh" : ""}/brands/${encodeURIComponent(run.brand_name)}`;
 
   return (
     <div className="space-y-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-3">
-        <Link href="/dashboard" className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
-          ← Dashboard
+        <Link href={dashHref} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
+          {tx("runs", "breadcrumbDash", lang)}
         </Link>
         <span style={{ color: "#25253f" }}>/</span>
-        <Link
-          href={`/brands/${encodeURIComponent(run.brand_name)}`}
-          className="text-sm transition-colors hover:text-white"
-          style={{ color: "#7070a0" }}
-        >
+        <Link href={brandHref} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
           {run.brand_name}
         </Link>
         <span style={{ color: "#25253f" }}>/</span>
@@ -220,7 +234,7 @@ export default function RunDetailClient({
             className="text-xs px-2.5 py-1 rounded-full font-medium"
             style={{ background: ss.bg, color: ss.color }}
           >
-            {run.status}
+            {STATUS_LABEL[run.status] ?? run.status}
           </span>
         </div>
 
@@ -228,7 +242,9 @@ export default function RunDetailClient({
         {(run.status === "running" || run.status === "queued") && (
           <div className="mt-5 space-y-2">
             <p className="text-sm font-medium" style={{ color: "#f0f0f8" }}>
-              Asking AI models about {run.brand_name}…
+              {lang === "zh"
+                ? `正在向 AI 模型询问 ${run.brand_name}…`
+                : `Asking AI models about ${run.brand_name}…`}
             </p>
             <div className="h-2 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
               <div
@@ -237,16 +253,16 @@ export default function RunDetailClient({
               />
             </div>
             <p className="text-xs" style={{ color: "#7070a0" }}>
-              {pct}% · {run.progress_done} / {run.progress_total} queries complete
+              {pct}% · {run.progress_done} / {run.progress_total} {tx("runs", "queriesComplete", lang)}
             </p>
           </div>
         )}
 
         <div className="mt-5 grid grid-cols-3 gap-4 text-sm">
           {[
-            { label: "Prompts", value: `${run.progress_done} / ${run.progress_total}` },
-            { label: "Started", value: run.started_at ? new Date(run.started_at).toLocaleString() : "—" },
-            { label: "Finished", value: run.finished_at ? new Date(run.finished_at).toLocaleString() : "—" },
+            { label: tx("runs", "labelPrompts",  lang), value: `${run.progress_done} / ${run.progress_total}` },
+            { label: tx("runs", "labelStarted",  lang), value: run.started_at  ? new Date(run.started_at).toLocaleString()  : "—" },
+            { label: tx("runs", "labelFinished", lang), value: run.finished_at ? new Date(run.finished_at).toLocaleString() : "—" },
           ].map((item) => (
             <div key={item.label}>
               <div className="text-xs mb-0.5" style={{ color: "#7070a0" }}>{item.label}</div>
@@ -273,13 +289,13 @@ export default function RunDetailClient({
               <div className="text-4xl font-black mb-1" style={{ color: "#f5a623" }}>
                 {metrics.arrs}
               </div>
-              <div className="text-sm font-semibold mb-0.5">ARRS Score</div>
-              <div className="text-xs" style={{ color: "#7070a0" }}>AI Recommendation Risk (0–100)</div>
+              <div className="text-sm font-semibold mb-0.5">{tx("runs", "arrsScore", lang)}</div>
+              <div className="text-xs" style={{ color: "#7070a0" }}>{tx("runs", "arrsNote", lang)}</div>
             </div>
             {[
-              { label: "Weighted SOV", value: `${primaryRow.weighted_sov.toFixed(1)}%`, note: "Composite visibility score" },
-              { label: "High-Intent SOV", value: `${primaryRow.sov_high.toFixed(1)}%`, note: "Purchase-intent queries" },
-              { label: "Mention Rate", value: `${primaryRow.mention_rate.toFixed(1)}%`, note: "Overall mention frequency" },
+              { label: tx("runs", "weightedSov",   lang), value: `${primaryRow.weighted_sov.toFixed(1)}%`, note: tx("runs", "weightedSovNote",  lang) },
+              { label: tx("runs", "highIntentSov", lang), value: `${primaryRow.sov_high.toFixed(1)}%`,    note: tx("runs", "highIntentSovNote", lang) },
+              { label: tx("runs", "mentionRate",   lang), value: `${primaryRow.mention_rate.toFixed(1)}%`, note: tx("runs", "mentionRateNote",   lang) },
             ].map((kpi) => (
               <div key={kpi.label} className="rounded-xl p-5" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
                 <div className="text-2xl font-bold mb-1">{kpi.value}</div>
@@ -291,7 +307,7 @@ export default function RunDetailClient({
 
           {metrics.arrs_explain && (
             <div className="rounded-xl p-4 text-sm" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
-              <span className="font-semibold" style={{ color: "#f5a623" }}>Insight: </span>
+              <span className="font-semibold" style={{ color: "#f5a623" }}>{tx("runs", "insight", lang)} </span>
               <span style={{ color: "#7070a0" }}>{metrics.arrs_explain}</span>
             </div>
           )}
@@ -305,7 +321,7 @@ export default function RunDetailClient({
             className="px-4 py-3 font-semibold text-sm"
             style={{ background: "#161625", borderBottom: "1px solid #25253f" }}
           >
-            Brand comparison
+            {tx("runs", "brandComparison", lang)}
           </div>
           <table className="w-full text-sm">
             <thead
@@ -313,11 +329,11 @@ export default function RunDetailClient({
               style={{ background: "#161625", color: "#7070a0" }}
             >
               <tr>
-                <th className="text-left px-4 py-2">Brand</th>
-                <th className="text-left px-4 py-2">Weighted SOV</th>
-                <th className="text-left px-4 py-2">High Intent</th>
-                <th className="text-left px-4 py-2">Comparison</th>
-                <th className="text-left px-4 py-2">Informational</th>
+                <th className="text-left px-4 py-2">{tx("runs", "colBrand",         lang)}</th>
+                <th className="text-left px-4 py-2">{tx("runs", "colWeightedSov",   lang)}</th>
+                <th className="text-left px-4 py-2">{tx("runs", "colHighIntent",    lang)}</th>
+                <th className="text-left px-4 py-2">{tx("runs", "colComparison",    lang)}</th>
+                <th className="text-left px-4 py-2">{tx("runs", "colInformational", lang)}</th>
               </tr>
             </thead>
             <tbody style={{ background: "#0f0f17" }}>
@@ -338,7 +354,7 @@ export default function RunDetailClient({
                         className="text-xs ml-2 px-1.5 py-0.5 rounded font-medium"
                         style={{ background: "rgba(255,107,53,0.15)", color: "#ff6b35" }}
                       >
-                        you
+                        {tx("runs", "youBadge", lang)}
                       </span>
                     )}
                   </td>
@@ -365,9 +381,9 @@ export default function RunDetailClient({
       {metrics?.intent_sections && metrics.intent_sections.length > 0 && (
         <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
           <div className="px-4 py-3 font-semibold text-sm" style={{ background: "#161625", borderBottom: "1px solid #25253f" }}>
-            SOV by query intent
+            {tx("runs", "sovByIntent", lang)}
             <span className="text-xs ml-2 font-normal" style={{ color: "#7070a0" }}>
-              High-intent queries carry 1.5× weight
+              {tx("runs", "intentWeightNote", lang)}
             </span>
           </div>
           <div className="grid md:grid-cols-3 divide-x" style={{ background: "#0f0f17", borderColor: "#25253f" }}>
@@ -381,17 +397,17 @@ export default function RunDetailClient({
                 <div key={section.intent_type} className="p-5" style={{ borderRight: "1px solid #25253f" }}>
                   <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#7070a0" }}>
                     {section.label}
-                    <span className="ml-1.5 font-normal normal-case">({section.count} queries)</span>
+                    <span className="ml-1.5 font-normal normal-case">({section.count} {tx("runs", "queriesCount", lang)})</span>
                   </div>
                   {primary && (
                     <>
                       <div className="text-2xl font-black mb-0.5" style={{ color: "#ff6b35" }}>
                         {primary.weighted_sov.toFixed(1)}%
                       </div>
-                      <div className="text-xs mb-3" style={{ color: "#7070a0" }}>your weighted SOV</div>
+                      <div className="text-xs mb-3" style={{ color: "#7070a0" }}>{tx("runs", "yourWeightedSov", lang)}</div>
                       {topComp && (
                         <div className="text-xs">
-                          <span style={{ color: "#7070a0" }}>vs top competitor </span>
+                          <span style={{ color: "#7070a0" }}>{tx("runs", "vsTopComp", lang)} </span>
                           <span style={{ color: gap !== null && gap > 0 ? "#ff4d6d" : "#22c55e" }}>
                             {topComp.name}: {topComp.weighted_sov.toFixed(1)}%{" "}
                             {gap !== null && (gap > 0 ? `(−${gap.toFixed(1)}pp)` : `(+${Math.abs(gap).toFixed(1)}pp)`)}
@@ -411,7 +427,7 @@ export default function RunDetailClient({
       {metrics?.provider_sections && metrics.provider_sections.length > 1 && (
         <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
           <div className="px-4 py-3 font-semibold text-sm" style={{ background: "#161625", borderBottom: "1px solid #25253f" }}>
-            SOV by AI provider
+            {tx("runs", "sovByProvider", lang)}
           </div>
           <div className="grid divide-x" style={{ gridTemplateColumns: `repeat(${metrics.provider_sections.length}, 1fr)`, background: "#0f0f17" }}>
             {metrics.provider_sections.map((ps) => {
@@ -420,16 +436,16 @@ export default function RunDetailClient({
                 <div key={ps.provider} className="p-5" style={{ borderRight: "1px solid #25253f" }}>
                   <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#7070a0" }}>
                     {ps.provider}
-                    <span className="ml-1.5 font-normal normal-case">({ps.total} queries)</span>
+                    <span className="ml-1.5 font-normal normal-case">({ps.total} {tx("runs", "queriesCount", lang)})</span>
                   </div>
                   {primary && (
                     <>
                       <div className="text-2xl font-black mb-0.5" style={{ color: "#ff6b35" }}>
                         {primary.weighted_sov.toFixed(1)}%
                       </div>
-                      <div className="text-xs mb-2" style={{ color: "#7070a0" }}>weighted SOV</div>
+                      <div className="text-xs mb-2" style={{ color: "#7070a0" }}>{tx("runs", "weightedSovLabel", lang)}</div>
                       <div className="text-xs" style={{ color: ps.arrs > 50 ? "#ff4d6d" : ps.arrs > 25 ? "#f5a623" : "#22c55e" }}>
-                        ARRS: {ps.arrs}
+                        {tx("runs", "arrsLabel", lang)} {ps.arrs}
                       </div>
                     </>
                   )}
@@ -454,17 +470,18 @@ export default function RunDetailClient({
         <div className="space-y-4">
           <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
             <div className="px-4 py-3 font-semibold text-sm flex items-center justify-between" style={{ background: "#161625", borderBottom: "1px solid #25253f" }}>
-              <span>Cited sources</span>
+              <span>{tx("runs", "citedSources", lang)}</span>
               <span className="text-xs font-normal" style={{ color: "#7070a0" }}>
-                {sources.total_unique_domains} unique domain{sources.total_unique_domains !== 1 ? "s" : ""} cited by AI
+                {sources.total_unique_domains}{" "}
+                {tx("runs", sources.total_unique_domains !== 1 ? "uniqueDomainPlural" : "uniqueDomainSingular", lang)}
               </span>
             </div>
             <table className="w-full text-sm" style={{ background: "#0f0f17" }}>
               <thead className="text-xs uppercase tracking-wide" style={{ background: "#161625", color: "#7070a0" }}>
                 <tr>
-                  <th className="text-left px-4 py-2">Domain</th>
-                  <th className="text-right px-4 py-2">AI Citations</th>
-                  <th className="text-right px-4 py-2">Brand mentioned</th>
+                  <th className="text-left px-4 py-2">{tx("runs", "colDomain",         lang)}</th>
+                  <th className="text-right px-4 py-2">{tx("runs", "colCitations",      lang)}</th>
+                  <th className="text-right px-4 py-2">{tx("runs", "colBrandMentioned", lang)}</th>
                 </tr>
               </thead>
               <tbody>
@@ -491,9 +508,9 @@ export default function RunDetailClient({
             <div className="rounded-xl p-5" style={{ background: "#0f0f17", border: "1px solid #f5a62333" }}>
               <div className="flex items-center gap-2 mb-4">
                 <span style={{ color: "#f5a623" }}>⚡</span>
-                <span className="font-semibold text-sm">Content opportunities</span>
+                <span className="font-semibold text-sm">{tx("runs", "contentOpps", lang)}</span>
                 <span className="text-xs ml-1" style={{ color: "#7070a0" }}>
-                  — domains where competitors appear but you don't
+                  — {tx("runs", "contentOppsNote", lang)}
                 </span>
               </div>
               <div className="space-y-2">
@@ -502,11 +519,13 @@ export default function RunDetailClient({
                     <div>
                       <span className="text-sm font-mono">{opp.domain}</span>
                       <span className="text-xs ml-3" style={{ color: "#7070a0" }}>
-                        {opp.top_competitor} cited {opp.competitor_mentions}×
+                        {lang === "zh"
+                          ? `${opp.top_competitor} 被引用 ${opp.competitor_mentions}×`
+                          : `${opp.top_competitor} cited ${opp.competitor_mentions}×`}
                       </span>
                     </div>
                     <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(245,166,35,0.12)", color: "#f5a623" }}>
-                      {opp.citation_count} citation{opp.citation_count !== 1 ? "s" : ""}
+                      {opp.citation_count} {tx("runs", opp.citation_count !== 1 ? "citationPlural" : "citationSingular", lang)}
                     </span>
                   </div>
                 ))}
@@ -519,10 +538,11 @@ export default function RunDetailClient({
       {/* Recommendations */}
       {recommendations && recommendations.items.length > 0 && (
         <div className="rounded-xl p-6" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
-          <h2 className="font-semibold mb-1">Optimization recommendations</h2>
+          <h2 className="font-semibold mb-1">{tx("runs", "recTitle", lang)}</h2>
           <p className="text-xs mb-4" style={{ color: "#7070a0" }}>
-            Generated by {recommendations.model_used} ·{" "}
-            {new Date(recommendations.generated_at).toLocaleDateString()}
+            {lang === "zh"
+              ? `由 ${recommendations.model_used} 生成 · ${new Date(recommendations.generated_at).toLocaleDateString()}`
+              : `Generated by ${recommendations.model_used} · ${new Date(recommendations.generated_at).toLocaleDateString()}`}
           </p>
           <div className="space-y-3">
             {recommendations.items.map((item, i) => {
@@ -533,7 +553,7 @@ export default function RunDetailClient({
                     className="text-xs px-2 py-0.5 rounded-full font-medium h-fit mt-0.5 shrink-0"
                     style={{ background: ps.bg, color: ps.color }}
                   >
-                    {item.priority}
+                    {PRIORITY_LABEL[item.priority] ?? item.priority}
                   </span>
                   <div>
                     <div className="font-medium text-sm">{item.title}</div>
@@ -557,9 +577,9 @@ export default function RunDetailClient({
             border: "1px solid #ff6b35",
           }}
         >
-          <p className="font-bold text-lg mb-2">Want to move these numbers?</p>
+          <p className="font-bold text-lg mb-2">{tx("runs", "ctaTitle", lang)}</p>
           <p className="text-sm mb-6" style={{ color: "#7070a0" }}>
-            We identify exactly which content signals are holding your brand back — and build the plan to fix them.
+            {tx("runs", "ctaSub", lang)}
           </p>
           <a
             href={CALENDLY}
@@ -568,7 +588,7 @@ export default function RunDetailClient({
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-opacity hover:opacity-85"
             style={{ background: "#ff6b35", color: "#fff" }}
           >
-            Book a free strategy call →
+            {tx("runs", "bookCall", lang)}
           </a>
         </div>
       )}

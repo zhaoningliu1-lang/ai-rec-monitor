@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { api, Run, Recommendation } from "@/lib/api";
-import RunDetailClient from "./RunDetailClient";
+import RunDetailClient from "@/app/runs/[id]/RunDetailClient";
 
 interface Metrics {
   total: number;
@@ -22,7 +22,7 @@ interface Metrics {
   failed_count: number;
 }
 
-export default async function RunDetailPage({
+export default async function ZhRunDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -35,9 +35,9 @@ export default async function RunDetailPage({
   } catch {
     return (
       <div className="text-center py-24" style={{ color: "#7070a0" }}>
-        Run not found.{" "}
-        <Link href="/dashboard" className="underline" style={{ color: "#ff6b35" }}>
-          ← Back
+        未找到该分析报告。{" "}
+        <Link href="/zh/dashboard" className="underline" style={{ color: "#ff6b35" }}>
+          ← 返回看板
         </Link>
       </div>
     );
@@ -53,7 +53,7 @@ export default async function RunDetailPage({
     <RunDetailClient
       id={id}
       initialRun={run}
-      lang="en"
+      lang="zh"
       initialMetrics={
         metrics.status === "fulfilled" ? (metrics.value as unknown as Metrics) : null
       }

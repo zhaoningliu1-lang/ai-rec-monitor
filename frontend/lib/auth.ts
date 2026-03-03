@@ -70,6 +70,7 @@ export async function register(email: string, password: string, fullName?: strin
     body: JSON.stringify({ email, password, full_name: fullName, company_name: companyName }),
   });
   setToken(data.access_token);
+  await fetchMe().catch(() => null); // store tier before redirect
   return data;
 }
 
@@ -79,6 +80,7 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
   setToken(data.access_token);
+  await fetchMe().catch(() => null); // store tier before redirect
   return data;
 }
 
