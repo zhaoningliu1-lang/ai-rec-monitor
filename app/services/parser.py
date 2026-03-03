@@ -41,19 +41,26 @@ def detect_list(text: str) -> bool:
     return bool(_LIST_RE.search(text))
 
 
-def find_mention_position(text: str, brand: str) -> int | None:
+def find_mention_position(text: str, brand: str, aliases: list[str] | None = None) -> int | None:
     """
-    Return the word index of the first occurrence of `brand` in `text`,
-    or None if not found. Case-insensitive substring match on each word.
+    Return the word index of the first occurrence of `brand` (or any alias) in `text`.
+    Case-insensitive substring match. Returns the earliest position found across all names.
+
+    `aliases` should include the original brand name plus any alternate forms
+    (e.g. ["绿联", "UGREEN"]).
     """
+    all_names = aliases if aliases else [brand]
     words = text.lower().split()
-    brand_lower = brand.lower()
-    for i, word in enumerate(words):
-        # Strip punctuation for cleaner matching
-        clean_word = word.strip(".,;:!?\"'()-[]")
-        if brand_lower in clean_word or clean_word in brand_lower:
-            return i
-    return None
+    best: int | None = None
+    for name in all_names:
+        name_lower = name.lower()
+        for i, word in enumerate(words):
+            clean_word = word.strip(".,;:!?\"'()-[]")
+            if name_lower in clean_word or clean_word in name_lower:
+                if best is None or i < best:
+                    best = i
+                break  # found earliest for this name; check next name
+    return best
 
 
 def score_sentiment(text: str, brand: str) -> Sentiment:
@@ -87,9 +94,14 @@ def parse_response(
     response_text: str,
     brand_name: str,
     competitor_names: list[str],
+    name_aliases: dict[str, list[str]] | None = None,
 ) -> dict:
     """
-    Parse a single OpenAI response and return a structured result dict.
+    Parse a single AI response and return a structured result dict.
+
+    `name_aliases` maps each brand/competitor name to a list of all its known
+    forms, e.g. {"绿联": ["绿联", "UGREEN"], "安克": ["安克", "Anker"]}.
+    This ensures Chinese brand names are matched even when AI responds in English.
 
     Returns:
         {
@@ -98,16 +110,26 @@ def parse_response(
             "brand_sentiment": "positive" | "neutral" | "negative",
             "competitors_data": {
                 "<competitor>": {"mentioned": bool, "position": int | None}
-            }
+            },
+            "cited_urls": list[str],
         }
     """
-    brand_pos = find_mention_position(response_text, brand_name)
+    aliases = name_aliases or {}
+    brand_aliases = aliases.get(brand_name, [brand_name])
+
+    brand_pos = find_mention_position(response_text, brand_name, brand_aliases)
     brand_mentioned = brand_pos is not None
-    brand_sentiment = score_sentiment(response_text, brand_name) if brand_mentioned else "neutral"
+    # For sentiment, use the alias that was actually found in text
+    effective_brand = next(
+        (a for a in brand_aliases if find_mention_position(response_text, a, [a]) is not None),
+        brand_name,
+    )
+    brand_sentiment = score_sentiment(response_text, effective_brand) if brand_mentioned else "neutral"
 
     competitors_data: dict[str, dict] = {}
     for comp in competitor_names:
-        comp_pos = find_mention_position(response_text, comp)
+        comp_aliases = aliases.get(comp, [comp])
+        comp_pos = find_mention_position(response_text, comp, comp_aliases)
         competitors_data[comp] = {
             "mentioned": comp_pos is not None,
             "position": comp_pos,

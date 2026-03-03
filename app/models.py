@@ -61,6 +61,8 @@ class Run(Base):
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     providers: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
     price_band: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    # Maps each brand/competitor name to its list of aliases (e.g. {"绿联": ["绿联", "UGREEN"]})
+    name_aliases: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
 
     results: Mapped[list["PromptResult"]] = relationship(
         "PromptResult", back_populates="run", cascade="all, delete-orphan"

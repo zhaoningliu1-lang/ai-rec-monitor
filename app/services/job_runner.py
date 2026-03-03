@@ -25,6 +25,7 @@ async def _process_single_prompt(
     intent_type: str,
     provider: BaseProvider,
     session_factory: async_sessionmaker[AsyncSession],
+    name_aliases: dict[str, list[str]] | None = None,
 ) -> bool:
     """
     Query one provider for one prompt, parse, persist, increment progress_done.
@@ -43,7 +44,7 @@ async def _process_single_prompt(
 
     try:
         raw_response = await provider.ask(prompt_text)
-        parsed = parse_response(raw_response, brand_name, competitor_names)
+        parsed = parse_response(raw_response, brand_name, competitor_names, name_aliases)
     except Exception as exc:
         error_msg = str(exc)
         logger.warning("Prompt failed [%s] for run %s: %s", provider.name, run_id, exc)
@@ -94,6 +95,7 @@ async def run_job(run_id: uuid.UUID, session_factory: async_sessionmaker[AsyncSe
         num_prompts = run.num_prompts
         price_band = run.price_band
         provider_names: list[str] = run.providers or ["openai"]
+        existing_aliases: dict = run.name_aliases or {}
 
     # Instantiate providers up-front so misconfiguration fails before work starts
     try:
@@ -108,6 +110,24 @@ async def run_job(run_id: uuid.UUID, session_factory: async_sessionmaker[AsyncSe
                 run.finished_at = datetime.now(timezone.utc)
                 await db.commit()
         return
+
+    # ── Resolve brand name aliases (CJK → English) ──────────────────────────
+    try:
+        from app.services.brand_normalizer import build_name_aliases
+        name_aliases = await build_name_aliases(brand_name, competitor_names)
+        # Persist resolved aliases so they survive re-runs and can be inspected
+        async with session_factory() as db:
+            await db.execute(
+                update(Run).where(Run.id == run_id).values(name_aliases=name_aliases)
+            )
+            await db.commit()
+        logger.info("Name aliases for run %s: %s", run_id, name_aliases)
+    except Exception as exc:
+        logger.warning("Alias resolution failed for run %s: %s — using original names", run_id, exc)
+        name_aliases = existing_aliases or {
+            brand_name: [brand_name],
+            **{c: [c] for c in competitor_names},
+        }
 
     try:
         prompt_dicts = generate_prompts(category, region, num_prompts, price_band)
@@ -128,7 +148,8 @@ async def run_job(run_id: uuid.UUID, session_factory: async_sessionmaker[AsyncSe
             *[
                 _process_single_prompt(
                     run_id, brand_name, competitor_names,
-                    p["prompt"], p["intent_type"], provider, session_factory
+                    p["prompt"], p["intent_type"], provider, session_factory,
+                    name_aliases=name_aliases,
                 )
                 for p in prompt_dicts
                 for provider in providers

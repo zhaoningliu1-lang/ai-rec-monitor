@@ -110,6 +110,9 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "ALTER TABLE prompt_results ADD COLUMN IF NOT EXISTS cited_urls JSON DEFAULT '[]'"
         ))
+        await conn.execute(text(
+            "ALTER TABLE runs ADD COLUMN IF NOT EXISTS name_aliases JSON DEFAULT '{}'"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 
