@@ -159,6 +159,9 @@ export const api = {
   // Recommendations
   getRecommendations: (runId: string) => get<Recommendation>(`/runs/${runId}/recommendations`),
 
+  // Sources / citation analysis
+  getRunSources: (runId: string) => get<Record<string, unknown>>(`/runs/${runId}/sources`),
+
   // Category index
   listCategories: () => get<CategoryEntry[]>("/categories"),
   getCategoryLeaderboard: (category: string) =>

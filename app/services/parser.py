@@ -5,6 +5,9 @@ from typing import Literal
 # Matches numbered lists (1. / 1) or bullet lists (- / * / •)
 _LIST_RE = re.compile(r"^\s*(\d+[\.\)]\s+|[-*•]\s+)", re.MULTILINE)
 
+# Matches http/https URLs (including markdown link syntax)
+_URL_RE = re.compile(r'https?://[^\s\)\]\>"\'<]+')
+
 
 POSITIVE_WORDS = {
     "recommend", "love", "great", "best", "top", "excellent",
@@ -18,6 +21,19 @@ NEGATIVE_WORDS = {
 }
 
 Sentiment = Literal["positive", "neutral", "negative"]
+
+
+def extract_cited_urls(text: str) -> list[str]:
+    """Extract unique URLs from an AI response, cleaning trailing punctuation."""
+    raw = _URL_RE.findall(text)
+    cleaned = [u.rstrip(".,;:!?)]}") for u in raw]
+    seen: set[str] = set()
+    result: list[str] = []
+    for u in cleaned:
+        if u not in seen:
+            seen.add(u)
+            result.append(u)
+    return result
 
 
 def detect_list(text: str) -> bool:
@@ -102,4 +118,5 @@ def parse_response(
         "brand_mention_position": brand_pos,
         "brand_sentiment": brand_sentiment,
         "competitors_data": competitors_data,
+        "cited_urls": extract_cited_urls(response_text),
     }

@@ -105,6 +105,11 @@ async def lifespan(app: FastAPI):
     logger.info("Creating database tables if not exists…")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Idempotent column migrations for new fields
+        from sqlalchemy import text
+        await conn.execute(text(
+            "ALTER TABLE prompt_results ADD COLUMN IF NOT EXISTS cited_urls JSON DEFAULT '[]'"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 

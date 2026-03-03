@@ -90,6 +90,7 @@ class PromptResult(Base):
     brand_sentiment: Mapped[Sentiment] = mapped_column(
         Enum(Sentiment), nullable=False, default=Sentiment.neutral
     )
+    cited_urls: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
     provider: Mapped[str] = mapped_column(String(50), nullable=False, default="openai")
     intent_type: Mapped[str] = mapped_column(String(50), nullable=False, default="high_intent")
     error: Mapped[str | None] = mapped_column(Text, nullable=True)

@@ -48,6 +48,26 @@ interface Metrics {
   provider_sections?: ProviderSection[];
 }
 
+interface SourceDomain {
+  domain: string;
+  citation_count: number;
+  brand_mentioned: number;
+  competitors_mentioned: Record<string, number>;
+}
+
+interface SourceOpportunity {
+  domain: string;
+  citation_count: number;
+  top_competitor: string;
+  competitor_mentions: number;
+}
+
+interface Sources {
+  domains: SourceDomain[];
+  opportunities: SourceOpportunity[];
+  total_unique_domains: number;
+}
+
 interface RecommendationItem {
   title: string;
   description: string;
@@ -118,15 +138,18 @@ export default function RunDetailClient({
   initialRun,
   initialMetrics,
   initialRecommendations,
+  initialSources,
 }: {
   id: string;
   initialRun: Run;
   initialMetrics: Metrics | null;
   initialRecommendations: Recommendation | null;
+  initialSources: Record<string, unknown> | null;
 }) {
   const [run, setRun] = useState(initialRun);
   const [metrics, setMetrics] = useState(initialMetrics);
   const [recommendations, setRecommendations] = useState(initialRecommendations);
+  const [sources, setSources] = useState<Sources | null>(initialSources as Sources | null);
 
   const fetchAndUpdate = useCallback(async () => {
     try {
@@ -136,12 +159,14 @@ export default function RunDetailClient({
       setRun(updated);
 
       if (updated.status === "done" && !metrics) {
-        const [mRes, rRes] = await Promise.allSettled([
+        const [mRes, rRes, sRes] = await Promise.allSettled([
           fetch(`${BASE}/runs/${id}/metrics`, { cache: "no-store" }),
           fetch(`${BASE}/runs/${id}/recommendations`, { cache: "no-store" }),
+          fetch(`${BASE}/runs/${id}/sources`, { cache: "no-store" }),
         ]);
         if (mRes.status === "fulfilled" && mRes.value.ok) setMetrics(await mRes.value.json());
         if (rRes.status === "fulfilled" && rRes.value.ok) setRecommendations(await rRes.value.json());
+        if (sRes.status === "fulfilled" && sRes.value.ok) setSources(await sRes.value.json());
       }
     } catch {
       // ignore network errors during polling
@@ -422,6 +447,73 @@ export default function RunDetailClient({
           brandName={run.brand_name}
           competitorNames={run.competitor_names ?? []}
         />
+      )}
+
+      {/* Source / Citation Analysis */}
+      {sources && sources.total_unique_domains > 0 && (
+        <div className="space-y-4">
+          <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+            <div className="px-4 py-3 font-semibold text-sm flex items-center justify-between" style={{ background: "#161625", borderBottom: "1px solid #25253f" }}>
+              <span>Cited sources</span>
+              <span className="text-xs font-normal" style={{ color: "#7070a0" }}>
+                {sources.total_unique_domains} unique domain{sources.total_unique_domains !== 1 ? "s" : ""} cited by AI
+              </span>
+            </div>
+            <table className="w-full text-sm" style={{ background: "#0f0f17" }}>
+              <thead className="text-xs uppercase tracking-wide" style={{ background: "#161625", color: "#7070a0" }}>
+                <tr>
+                  <th className="text-left px-4 py-2">Domain</th>
+                  <th className="text-right px-4 py-2">AI Citations</th>
+                  <th className="text-right px-4 py-2">Brand mentioned</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sources.domains.slice(0, 10).map((d) => (
+                  <tr key={d.domain} style={{ borderTop: "1px solid #25253f" }}>
+                    <td className="px-4 py-2.5 font-mono text-xs">{d.domain}</td>
+                    <td className="px-4 py-2.5 text-right text-xs" style={{ color: "#7070a0" }}>{d.citation_count}</td>
+                    <td className="px-4 py-2.5 text-right">
+                      {d.brand_mentioned > 0 ? (
+                        <span className="text-xs px-1.5 py-0.5 rounded" style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e" }}>
+                          ✓ {d.brand_mentioned}×
+                        </span>
+                      ) : (
+                        <span className="text-xs" style={{ color: "#3a3a5c" }}>—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {sources.opportunities.length > 0 && (
+            <div className="rounded-xl p-5" style={{ background: "#0f0f17", border: "1px solid #f5a62333" }}>
+              <div className="flex items-center gap-2 mb-4">
+                <span style={{ color: "#f5a623" }}>⚡</span>
+                <span className="font-semibold text-sm">Content opportunities</span>
+                <span className="text-xs ml-1" style={{ color: "#7070a0" }}>
+                  — domains where competitors appear but you don't
+                </span>
+              </div>
+              <div className="space-y-2">
+                {sources.opportunities.map((opp) => (
+                  <div key={opp.domain} className="flex items-center justify-between rounded-lg px-4 py-2.5" style={{ background: "#161625" }}>
+                    <div>
+                      <span className="text-sm font-mono">{opp.domain}</span>
+                      <span className="text-xs ml-3" style={{ color: "#7070a0" }}>
+                        {opp.top_competitor} cited {opp.competitor_mentions}×
+                      </span>
+                    </div>
+                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(245,166,35,0.12)", color: "#f5a623" }}>
+                      {opp.citation_count} citation{opp.citation_count !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
       {/* Recommendations */}

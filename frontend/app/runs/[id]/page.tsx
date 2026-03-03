@@ -43,9 +43,10 @@ export default async function RunDetailPage({
     );
   }
 
-  const [metrics, recommendations] = await Promise.allSettled([
+  const [metrics, recommendations, sources] = await Promise.allSettled([
     run.status === "done" ? api.getMetrics(id) : Promise.reject(),
     run.status === "done" ? api.getRecommendations(id) : Promise.reject(),
+    run.status === "done" ? api.getRunSources(id) : Promise.reject(),
   ]);
 
   return (
@@ -59,6 +60,9 @@ export default async function RunDetailPage({
         recommendations.status === "fulfilled"
           ? (recommendations.value as Recommendation)
           : null
+      }
+      initialSources={
+        sources.status === "fulfilled" ? (sources.value as Record<string, unknown>) : null
       }
     />
   );

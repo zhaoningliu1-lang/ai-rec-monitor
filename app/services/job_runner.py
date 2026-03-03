@@ -38,6 +38,7 @@ async def _process_single_prompt(
         "brand_mention_position": None,
         "brand_sentiment": "neutral",
         "competitors_data": {},
+        "cited_urls": [],
     }
 
     try:
@@ -55,6 +56,7 @@ async def _process_single_prompt(
         brand_mention_position=parsed["brand_mention_position"],
         competitors_data=parsed["competitors_data"],
         brand_sentiment=Sentiment(parsed["brand_sentiment"]),
+        cited_urls=parsed["cited_urls"],
         provider=provider.name,
         intent_type=intent_type,
         error=error_msg,

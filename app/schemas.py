@@ -56,6 +56,7 @@ class PromptResultDetailResponse(PromptResultResponse):
     """Extended response that includes provider and intent classification."""
     provider: str | None = None
     intent_type: str | None = None
+    cited_urls: list[str] = []
 
 
 class CategoryLeaderboardEntry(BaseModel):

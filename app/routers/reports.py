@@ -521,6 +521,84 @@ async def get_run_results(
     return rows.scalars().all()
 
 
+# ── Source / citation analysis ────────────────────────────────────────────────
+
+@router.get("/runs/{run_id}/sources")
+async def get_run_sources(
+    run_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Aggregate cited domains from AI responses for a run.
+    Returns top domains and opportunity list (competitor cited, you're not).
+    """
+    from urllib.parse import urlparse
+
+    run = await db.get(Run, run_id)
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    stmt = select(PromptResult).where(PromptResult.run_id == run_id)
+    rows = await db.execute(stmt)
+    results = rows.scalars().all()
+
+    competitor_names: list[str] = run.competitor_names or []
+    domain_stats: dict[str, dict] = {}
+
+    for r in results:
+        urls: list[str] = r.cited_urls or []
+        if not urls:
+            continue
+
+        domains_seen: set[str] = set()
+        for url in urls:
+            try:
+                netloc = urlparse(url).netloc.lower()
+                domain = netloc.lstrip("www.")
+            except Exception:
+                continue
+            if not domain or domain in domains_seen:
+                continue
+            domains_seen.add(domain)
+
+            if domain not in domain_stats:
+                domain_stats[domain] = {
+                    "domain": domain,
+                    "citation_count": 0,
+                    "brand_mentioned": 0,
+                    "competitors_mentioned": {c: 0 for c in competitor_names},
+                }
+            s = domain_stats[domain]
+            s["citation_count"] += 1
+            if r.brand_mentioned:
+                s["brand_mentioned"] += 1
+            for comp in competitor_names:
+                if (r.competitors_data or {}).get(comp, {}).get("mentioned"):
+                    s["competitors_mentioned"][comp] += 1
+
+    domains = sorted(domain_stats.values(), key=lambda x: x["citation_count"], reverse=True)
+
+    opportunities = []
+    for d in domains:
+        comp_total = sum(d["competitors_mentioned"].values())
+        if comp_total > 0 and d["brand_mentioned"] == 0:
+            top_comp = max(d["competitors_mentioned"], key=lambda k: d["competitors_mentioned"][k])
+            opportunities.append({
+                "domain": d["domain"],
+                "citation_count": d["citation_count"],
+                "top_competitor": top_comp,
+                "competitor_mentions": d["competitors_mentioned"][top_comp],
+            })
+
+    opportunities.sort(key=lambda x: x["citation_count"], reverse=True)
+
+    return {
+        "domains": domains[:30],
+        "opportunities": opportunities[:10],
+        "total_unique_domains": len(domain_stats),
+    }
+
+
 # ── Category index ─────────────────────────────────────────────────────────────
 
 @router.get("/categories")
