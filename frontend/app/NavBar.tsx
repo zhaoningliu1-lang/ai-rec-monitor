@@ -35,12 +35,14 @@ export default function NavBar() {
   // Always visible
   const publicLinks = isZh
     ? [
-        { href: "/zh/audit",      label: "免费诊断" },
+        { href: "/zh/audit",      label: "产品" },
         { href: "/zh/categories", label: "行业指数" },
+        { href: "/blog",          label: "研究报告" },
       ]
     : [
-        { href: "/audit",      label: "Free Audit" },
+        { href: "/audit",      label: "Product" },
         { href: "/categories", label: "Index" },
+        { href: "/blog",       label: "Research" },
       ];
 
   // Logged-in (any tier)

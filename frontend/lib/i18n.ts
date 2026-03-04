@@ -3,7 +3,7 @@ export type Lang = "en" | "zh";
 export const t = {
   nav: {
     dashboard:  { en: "Dashboard",  zh: "数据看板" },
-    audit:      { en: "Free Audit", zh: "免费诊断" },
+    audit:      { en: "Product", zh: "产品" },
     index:      { en: "Index",      zh: "行业指数" },
     history:    { en: "History",    zh: "历史报告" },
     schedules:  { en: "Schedules",  zh: "定时任务" },
