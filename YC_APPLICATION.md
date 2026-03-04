@@ -37,7 +37,28 @@ We solve two problems simultaneously:
 
 **Problem 2 — Product selection:** Cross-border sellers on Amazon FBA, TikTok Shop, and Shopee need to decide what to source 6–8 weeks before demand peaks. We aggregate what AI models are currently recommending to real buyers — by category, brand, and SKU — so sellers can see emerging demand signals before they show up in sales rank data.
 
-Together, these are two sides of the same insight: AI is replacing Google as the product discovery engine, and no existing tool is built for the sellers who need this most — the 10 million Chinese cross-border sellers shipping globally.
+Together, these are two sides of the same flywheel — not just two separate features.
+
+**The growth flywheel:**
+
+```
+① Selection Intelligence
+   AI is recommending X category → seller sources X product (6–8 weeks lead time)
+        ↓
+② Seller lists the product on Amazon / TikTok Shop / Shopee
+        ↓
+③ GEO Monitor
+   Is AI recommending MY brand for X? What's my SOV vs competitors?
+        ↓
+④ GEO Optimization
+   Seller publishes content, gets reviews, builds authority → AI cites their brand more
+        ↓
+⑤ Higher AI SOV → more buyer discovery → more sales → validated signal feeds back to ①
+```
+
+Every seller who uses Selection Intelligence to pick a winning product becomes a GEO Monitor customer to protect that position. Every GEO customer who improves their AI ranking validates which categories are hot — strengthening our Selection Intelligence data for all sellers.
+
+This is not a feature bundle. It's a compound intelligence loop where each product makes the other more valuable.
 
 ---
 

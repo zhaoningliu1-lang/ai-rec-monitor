@@ -32,16 +32,23 @@ export default function NavBar() {
   const demoHref = isZh ? "/zh/company/techvision-pro" : "/company/techvision-pro";
   const homeHref = isZh ? "/zh" : "/";
 
+  const isActive = (href: string) =>
+    pathname === href || (href.length > 3 && pathname.startsWith(href));
+
   // Always visible
   const publicLinks = isZh
     ? [
         { href: "/zh/product",    label: "产品" },
+        { href: "/zh/selection",  label: "选品情报" },
+        { href: "/zh/optimizer",  label: "成本优化" },
         { href: "/zh/pricing",    label: "定价" },
         { href: "/zh/categories", label: "行业指数" },
         { href: "/zh/blog",       label: "研究报告" },
       ]
     : [
         { href: "/product",    label: "Product" },
+        { href: "/selection",  label: "Selection" },
+        { href: "/optimizer",  label: "Optimizer" },
         { href: "/pricing",    label: "Pricing" },
         { href: "/categories", label: "Index" },
         { href: "/blog",       label: "Research" },
@@ -75,25 +82,54 @@ export default function NavBar() {
       </Link>
 
       {/* Public links — always visible */}
-      {publicLinks.map((l) => (
-        <Link key={l.href} href={l.href} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
-          {l.label}
-        </Link>
-      ))}
+      {publicLinks.map((l) => {
+        const active = isActive(l.href);
+        return (
+          <Link
+            key={l.href} href={l.href}
+            className="text-sm transition-colors hover:text-white relative pb-0.5"
+            style={{
+              color: active ? "#f0f0f8" : "#7070a0",
+              fontWeight: active ? 500 : 400,
+              borderBottom: active ? "2px solid #ff6b35" : "2px solid transparent",
+            }}
+          >
+            {l.label}
+          </Link>
+        );
+      })}
 
       {/* Logged-in links */}
-      {loggedIn && userLinks.map((l) => (
-        <Link key={l.href} href={l.href} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
-          {l.label}
-        </Link>
-      ))}
+      {loggedIn && userLinks.map((l) => {
+        const active = isActive(l.href);
+        return (
+          <Link key={l.href} href={l.href}
+            className="text-sm transition-colors hover:text-white pb-0.5"
+            style={{
+              color: active ? "#f0f0f8" : "#7070a0",
+              fontWeight: active ? 500 : 400,
+              borderBottom: active ? "2px solid #ff6b35" : "2px solid transparent",
+            }}>
+            {l.label}
+          </Link>
+        );
+      })}
 
       {/* Paid-only links */}
-      {paid && paidLinks.map((l) => (
-        <Link key={l.href} href={l.href} className="text-sm transition-colors hover:text-white" style={{ color: "#7070a0" }}>
-          {l.label}
-        </Link>
-      ))}
+      {paid && paidLinks.map((l) => {
+        const active = isActive(l.href);
+        return (
+          <Link key={l.href} href={l.href}
+            className="text-sm transition-colors hover:text-white pb-0.5"
+            style={{
+              color: active ? "#f0f0f8" : "#7070a0",
+              fontWeight: active ? 500 : 400,
+              borderBottom: active ? "2px solid #ff6b35" : "2px solid transparent",
+            }}>
+            {l.label}
+          </Link>
+        );
+      })}
 
       {/* Book Demo — always visible, highlighted */}
       <Link
