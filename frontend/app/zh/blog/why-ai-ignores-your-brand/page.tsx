@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "为什么 AI 不提你的品牌：跨境卖家 GEO 入门指南 | Avanti",
+  title: "为什么 AI 不提你的品牌：跨境卖家 GEO 入门指南 | 阿凡提",
   description:
     "ChatGPT 正在把买家引导给你的竞争对手。以下是 AI 忽视你品牌的 5 个原因——以及你现在可以做什么。",
 };

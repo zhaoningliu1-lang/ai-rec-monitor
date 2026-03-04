@@ -1,7 +1,7 @@
 import AuditView from "@/components/views/AuditView";
 
 export const metadata = {
-  title: "AI 可见度诊断 — Avanti",
+  title: "AI 可见度诊断 — 阿凡提",
   description: "查看 AI 助手推荐你品牌的频率。完全免费，无需注册。",
 };
 

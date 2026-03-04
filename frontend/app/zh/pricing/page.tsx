@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "定价 — Avanti GEO 平台",
+  title: "定价 — 阿凡提 GEO 平台",
   description:
     "AI 可见度监控、选品情报与 GEO 优化的透明定价。专为亚马逊卖家、TikTok Shop 品牌、DTC 独立站、跨境代理机构及 Shopee/Lazada 卖家打造。",
 };
@@ -343,8 +343,8 @@ export default function ZhPricingPage() {
             a: "可以。没有长期合同，在账户设置中取消，当前计费周期结束后生效。",
           },
           {
-            q: "Avanti 和 Helium 10 有什么区别？",
-            a: "Helium 10 追踪亚马逊平台上的历史销售数据、BSR 和关键词。Avanti 追踪 AI 模型现在正在把未来买家引向哪里——是关于需求去向的前瞻信号，不是已发生的历史。",
+            q: "阿凡提 和 Helium 10 有什么区别？",
+            a: "Helium 10 追踪亚马逊平台上的历史销售数据、BSR 和关键词。阿凡提 追踪 AI 模型现在正在把未来买家引向哪里——是关于需求去向的前瞻信号，不是已发生的历史。",
           },
         ].map(({ q, a }) => (
           <div key={q} className="space-y-2">

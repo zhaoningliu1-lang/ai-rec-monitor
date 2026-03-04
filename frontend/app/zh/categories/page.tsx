@@ -2,7 +2,7 @@ import { api, CategoryEntry } from "@/lib/api";
 import CategoriesView from "@/components/views/CategoriesView";
 
 export const metadata = {
-  title: "品类排行榜 — Avanti",
+  title: "品类排行榜 — 阿凡提",
   description: "各品类品牌在 AI 助手中的推荐可见度排名。",
 };
 

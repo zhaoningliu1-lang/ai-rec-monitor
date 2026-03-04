@@ -34,7 +34,7 @@ function ZhLoginForm() {
       <div style={{ background: "#12121e", border: "1px solid #25253f", borderRadius: 16 }} className="w-full max-w-md p-8">
         <div className="mb-8 text-center">
           <h1 style={{ fontSize: 26, fontWeight: 800, color: "#f0f0f8" }}>欢迎回来</h1>
-          <p style={{ color: "#7070a0", fontSize: 14, marginTop: 8 }}>登录你的 Avanti 账户</p>
+          <p style={{ color: "#7070a0", fontSize: 14, marginTop: 8 }}>登录你的 阿凡提 账户</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

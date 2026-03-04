@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Insta360 vs DJI：AI 可见度完整分析（2026）— Avanti",
+  title: "Insta360 vs DJI：AI 可见度完整分析（2026）— 阿凡提",
   description:
     "当消费者向 AI 询问相机推荐时，谁赢了？我们在 ChatGPT、Claude、Gemini、Perplexity 上运行了 47 个查询，找到了答案。",
 };
@@ -39,7 +39,7 @@ export default function ZhInsta360VsDjiPage() {
         </p>
 
         <div className="flex items-center gap-6 text-xs pt-2" style={{ color: "#7070a0" }}>
-          <span>Avanti 研究团队</span>
+          <span>阿凡提 研究团队</span>
           <span>·</span>
           <span>2026年3月</span>
           <span>·</span>
@@ -316,7 +316,7 @@ export default function ZhInsta360VsDjiPage() {
             </div>
           ))}
           <p className="text-xs" style={{ color: "#7070a0" }}>
-            基于 Avanti GEO 改善模型：在60天内完成 P1+P2 行动，通常可在一个季度内带来 +8–14pts SOV 提升。
+            基于 阿凡提 GEO 改善模型：在60天内完成 P1+P2 行动，通常可在一个季度内带来 +8–14pts SOV 提升。
           </p>
         </div>
       </section>

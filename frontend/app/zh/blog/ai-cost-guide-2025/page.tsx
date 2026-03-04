@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "2025 跨境卖家省钱指南：AI 能替代哪些岗位 | Avanti",
+  title: "2025 跨境卖家省钱指南：AI 能替代哪些岗位 | 阿凡提",
   description:
     "大多数跨境品牌每月花 800–2000 美元雇人做 AI 几秒钟就能搞定的事情。以下是哪里可以省钱——以及如何把这笔钱投入 GEO 形成复利。",
 };
@@ -86,10 +86,10 @@ export default function ZhAICostGuide2025Page() {
             op: "选品研究与采购——60% 可被 AI 替代",
             hours: "典型：15小时/月",
             saving: "$135/月（$15/小时）",
-            tools: "Avanti 选品情报、Perplexity、带网页浏览的 Claude",
+            tools: "阿凡提 选品情报、Perplexity、带网页浏览的 Claude",
             what: "AI 处理：品类趋势分析、竞品研究、阿里巴巴/1688 供应商发现、规格对比表、MOQ 调研。",
             whatHuman: "人工仍需处理：供应商关系建立、工厂审核、样品评估。",
-            tip: "用 Avanti 选品情报，在备货前就知道 AI 正在推哪些品类。这是你选品决策的免费信号。",
+            tip: "用 阿凡提 选品情报，在备货前就知道 AI 正在推哪些品类。这是你选品决策的免费信号。",
           },
           {
             num: "03",
@@ -116,7 +116,7 @@ export default function ZhAICostGuide2025Page() {
             op: "GEO 内容创作——新机会",
             hours: "因情况而异",
             saving: "替代每月 500–2000 美元的代理费",
-            tools: "Claude、Avanti GEO 推荐",
+            tools: "Claude、阿凡提 GEO 推荐",
             what: "AI 处理：针对自然语言购买查询的引用优化博客文章、比较文章、FAQ 页面、产品规格指南、Reddit 风格问答内容。",
             whatHuman: "人工仍需处理：内容策略、专家事实核查、主动联系权威媒体。",
             tip: "为回答 AI 查询而创作的内容同样是 SEO 内容。你不是在 SEO 和 GEO 之间二选一——一篇写得好的比较文章两者都能服务。",
@@ -159,7 +159,7 @@ export default function ZhAICostGuide2025Page() {
           <div className="flex flex-col gap-2 text-sm">
             {[
               { label: "AI 每月帮你省下 $910 运营成本", color: "#22c55e" },
-              { label: "你投入 $199/月 到 Avanti GEO 监控", color: "#ff6b35" },
+              { label: "你投入 $199/月 到 阿凡提 GEO 监控", color: "#ff6b35" },
               { label: "AI 开始更频繁地推荐你的品牌", color: "#f5a623" },
               { label: "AI 驱动的自然需求增加", color: "#22c55e" },
               { label: "客户获取成本下降", color: "#f5a623" },

@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "研究报告与卖家指南 — Avanti",
-  description: "Avanti 发布的 AI 可见度审计报告、选品情报分析与跨境卖家策略指南，每月更新。",
+  title: "研究报告与卖家指南 — 阿凡提",
+  description: "阿凡提 发布的 AI 可见度审计报告、选品情报分析与跨境卖家策略指南，每月更新。",
 };
 
 const POSTS = [
@@ -36,9 +36,9 @@ const POSTS = [
   {
     slug: "helium10-vs-avanti",
     tag: "工具对比",
-    title: "Helium 10 vs Avanti：传统选品工具 vs AI 可见度监控",
+    title: "Helium 10 vs 阿凡提：传统选品工具 vs AI 可见度监控",
     excerpt:
-      "Helium 10 告诉你上个月卖了什么。Avanti 告诉你 AI 今天正在推荐什么。诚实的对比——以及每种工具适合什么场景。",
+      "Helium 10 告诉你上个月卖了什么。阿凡提 告诉你 AI 今天正在推荐什么。诚实的对比——以及每种工具适合什么场景。",
     date: "2026年3月",
     readTime: "5 分钟",
   },
@@ -69,7 +69,7 @@ export default function ZhBlogIndexPage() {
           className="inline-block text-xs px-3 py-1 rounded-full font-medium"
           style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35" }}
         >
-          Avanti 研究
+          阿凡提 研究
         </div>
         <h1 className="text-3xl font-bold mt-3">GEO 报告与卖家策略指南</h1>
         <p className="text-sm" style={{ color: "#7070a0" }}>

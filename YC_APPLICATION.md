@@ -1,4 +1,4 @@
-# Avanti — YC Application Draft (2026 Batch)
+# 阿凡提 (Avanti) — YC Application Draft (2026 Batch)
 
 > Internal working document. Answers drafted for Y Combinator application.
 > Fill in all `[PLACEHOLDER]` values before submitting.
@@ -7,11 +7,13 @@
 
 ## 1. Company Name and URL
 
-**Company name:** Avanti
+**Company name:** Avanti（阿凡提）
+
+**Chinese brand name:** 阿凡提 — 民间故事里永远比市场早一步的聪明商人
 
 **URL:** [PLACEHOLDER — e.g., avanti.so or getavanti.com]
 
-**Tagline:** 阿凡提 (Avantī) — the clever merchant who always knows where the market is going before anyone else.
+**Tagline:** Know what AI recommends before your competitors stock it.
 
 ---
 
@@ -27,7 +29,7 @@ AI product intelligence for cross-border sellers
 
 ## 3. What Does Your Company Do?
 
-Avanti is an AI-native product intelligence platform built for cross-border e-commerce sellers.
+阿凡提 (Avanti) is an AI-native product intelligence platform built for cross-border e-commerce sellers.
 
 We solve two problems simultaneously:
 

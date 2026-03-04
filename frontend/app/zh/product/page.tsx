@@ -51,7 +51,7 @@ export default function ZhProductPage() {
       <div className="text-center space-y-3 max-w-2xl mx-auto">
         <div className="inline-block text-xs px-3 py-1 rounded-full font-medium"
           style={{ background:"rgba(255,107,53,.12)", color:"#ff6b35" }}>
-          Avanti 产品
+          阿凡提 产品
         </div>
         <h1 className="text-3xl font-bold">三个工具，一个不对称优势。</h1>
         <p className="text-sm leading-relaxed" style={{ color:"#7070a0" }}>
@@ -82,7 +82,7 @@ export default function ZhProductPage() {
                 <span style={{ color:"#ff6b35" }}>你的品牌出现在答案里了吗？</span>
               </h2>
               <p className="text-sm leading-relaxed" style={{ color:"#7070a0" }}>
-                Avanti 在 ChatGPT、Claude、Gemini 和 Perplexity 上运行 20+ 个查询，给出你的 ARRS 评分、与每个竞品的声量对比，以及差距成因的精准分析。
+                阿凡提 在 ChatGPT、Claude、Gemini 和 Perplexity 上运行 20+ 个查询，给出你的 ARRS 评分、与每个竞品的声量对比，以及差距成因的精准分析。
               </p>
               <ul className="space-y-2 text-sm" style={{ color:"#7070a0" }}>
                 {["AI 推荐排名评分（ARRS）", "与所有竞品的声量份额（SOV）对比", "按查询意图拆解的详细分析", "引用来源溯源分析", "缩小差距的 3 步行动计划"].map(f => (
@@ -311,7 +311,7 @@ export default function ZhProductPage() {
                     <div className="text-xs font-semibold" style={{ color:"#ff6b35" }}>这笔钱能做什么</div>
                     <p className="text-sm" style={{ color:"#f0f0f8" }}>
                       {geoMos > 0
-                        ? <><strong>{geoMos} 个月</strong>的 Avanti GEO 监控，每月自动运行。</>
+                        ? <><strong>{geoMos} 个月</strong>的 阿凡提 GEO 监控，每月自动运行。</>
                         : "拖动滑块增加工时，查看可支持的 GEO 月数。"}
                     </p>
                   </div>

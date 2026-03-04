@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "ChatGPT 正在推荐这些便携储能品牌——2025 卖家选品报告 | Avanti",
+  title: "ChatGPT 正在推荐这些便携储能品牌——2025 卖家选品报告 | 阿凡提",
   description:
     "我们对 ChatGPT、Claude、Gemini、Perplexity 运行了 200+ 次查询。EcoFlow 拿下 34% SOV。每一位进入这个品类的亚马逊卖家都需要看这份报告。",
 };

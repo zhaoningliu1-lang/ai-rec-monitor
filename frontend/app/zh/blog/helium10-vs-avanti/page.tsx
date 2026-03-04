@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Helium 10 vs Avanti：传统选品工具 vs AI 可见度监控 | Avanti",
+  title: "Helium 10 vs 阿凡提：传统选品工具 vs AI 可见度监控 | 阿凡提",
   description:
-    "Helium 10 告诉你上个月卖了什么。Avanti 告诉你 AI 今天正在推荐什么。以下是每种工具的适用场景——以及为什么认真做跨境的卖家两个都需要。",
+    "Helium 10 告诉你上个月卖了什么。阿凡提 告诉你 AI 今天正在推荐什么。以下是每种工具的适用场景——以及为什么认真做跨境的卖家两个都需要。",
 };
 
 export default function ZhHelium10VsAvantiPage() {
@@ -20,10 +20,10 @@ export default function ZhHelium10VsAvantiPage() {
           <span className="text-xs" style={{ color: "#7070a0" }}>2026年3月 · 5分钟阅读</span>
         </div>
         <h1 className="text-3xl font-bold leading-tight">
-          Helium 10 vs Avanti：传统选品工具 vs AI 可见度监控
+          Helium 10 vs 阿凡提：传统选品工具 vs AI 可见度监控
         </h1>
         <p className="text-base leading-relaxed" style={{ color: "#7070a0" }}>
-          Helium 10 是为亚马逊算法打造的。Avanti 是为 AI 推荐层打造的。
+          Helium 10 是为亚马逊算法打造的。阿凡提 是为 AI 推荐层打造的。
           它们回答的是不同的问题。以下是每种工具的适用场景，以及为什么最聪明的卖家两个都在用。
         </p>
       </div>
@@ -130,7 +130,7 @@ export default function ZhHelium10VsAvantiPage() {
             因为 Sony 和 Jabra 的搜索量确实很高，但那些搜索都去了你的竞争对手。
           </p>
           <p className="text-sm font-semibold" style={{ color: "#f0f0f8" }}>
-            Avanti 展示的是 AI 层——买家搜索亚马逊之前，考虑范围在哪里形成的。
+            阿凡提 展示的是 AI 层——买家搜索亚马逊之前，考虑范围在哪里形成的。
           </p>
         </div>
       </div>
@@ -145,11 +145,11 @@ export default function ZhHelium10VsAvantiPage() {
               <span>→ 亚马逊运营、关键词研究、BSR 追踪</span>
             </div>
             <div className="flex items-start gap-2">
-              <span style={{ color: "#ff6b35" }}>Avanti</span>
+              <span style={{ color: "#ff6b35" }}>阿凡提</span>
               <span>→ AI 可见度、品牌对标、选品情报、GEO 战略</span>
             </div>
             <div className="flex items-start gap-2">
-              <span style={{ color: "#7070a0" }}>Avanti 成本优化器</span>
+              <span style={{ color: "#7070a0" }}>阿凡提 成本优化器</span>
               <span>→ 免费。帮你算清楚 AI 节省下来的运营成本足够支付两个工具的订阅。</span>
             </div>
           </div>

@@ -129,12 +129,12 @@ export default function ZhOptimizerPage() {
                 <div className="text-xs font-semibold" style={{ color: "#ff6b35" }}>这笔省下来的钱能做什么</div>
                 <p className="text-sm" style={{ color: "#f0f0f8" }}>
                   {geoMonths > 0 ? (
-                    <>你节省的费用足以支付 <strong>{geoMonths} 个月</strong>的 Avanti GEO 监控计划。</>
+                    <>你节省的费用足以支付 <strong>{geoMonths} 个月</strong>的 阿凡提 GEO 监控计划。</>
                   ) : "拖动滑块增加工时，查看可支持的 GEO 月数。"}
                 </p>
                 {geoMonths >= 1 && (
                   <div className="text-xs" style={{ color: "#7070a0" }}>
-                    Avanti Scale 计划 = ${GEO_PLAN_COST}/月
+                    阿凡提 Scale 计划 = ${GEO_PLAN_COST}/月
                   </div>
                 )}
               </div>
