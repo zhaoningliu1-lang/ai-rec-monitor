@@ -28,7 +28,6 @@ function GeoScoreRing({ score }: { score: number }) {
 
 export default function LandingView({ lang }: Props) {
   const auditPath = lang === "zh" ? "/zh/audit" : "/audit";
-  const dashboardPath = lang === "zh" ? "/zh/dashboard" : "/dashboard";
 
   const stats = [
     { val: tx("landing", "stat1Val", lang), label: tx("landing", "stat1Label", lang) },
@@ -114,19 +113,21 @@ export default function LandingView({ lang }: Props) {
           {tx("landing", "subheadline", lang)}
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
+          <a
+            href={CALENDLY}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-85"
+            style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
+          >
+            {lang === "zh" ? "预约免费策略通话 →" : "Book a Free Strategy Call →"}
+          </a>
           <Link
             href={auditPath}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-opacity hover:opacity-85"
-            style={{ background: "#ff6b35", color: "#fff" }}
-          >
-            {tx("landing", "ctaPrimary", lang)}
-          </Link>
-          <Link
-            href={dashboardPath}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-colors hover:text-white"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium transition-colors hover:text-white"
             style={{ border: "1px solid #25253f", color: "#7070a0" }}
           >
-            {tx("landing", "ctaSecondary", lang)}
+            {lang === "zh" ? "先免费自助诊断" : "Start Free Audit"}
           </Link>
         </div>
       </section>
@@ -586,17 +587,28 @@ export default function LandingView({ lang }: Props) {
       {/* CTA banner */}
       <section
         className="rounded-2xl p-10 text-center"
-        style={{ background: "linear-gradient(135deg, #0f0f17 0%, #161625 100%)", border: "1px solid #25253f" }}
+        style={{ background: "linear-gradient(135deg, #0f0f17 0%, #161625 100%)", border: "1px solid rgba(255,107,53,0.25)" }}
       >
         <h2 className="text-2xl font-black mb-2">{tx("landing", "ctaBannerH2", lang)}</h2>
         <p className="text-sm mb-8" style={{ color: "#7070a0" }}>{tx("landing", "ctaBannerSub", lang)}</p>
-        <Link
-          href={auditPath}
-          className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-semibold transition-opacity hover:opacity-85"
-          style={{ background: "#ff6b35", color: "#fff" }}
-        >
-          {tx("landing", "ctaBannerBtn", lang)}
-        </Link>
+        <div className="flex items-center justify-center gap-4 flex-wrap">
+          <a
+            href={CALENDLY}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-85"
+            style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
+          >
+            {lang === "zh" ? "预约免费策略通话 →" : "Book a Free Strategy Call →"}
+          </a>
+          <Link
+            href={auditPath}
+            className="text-sm font-medium transition-colors hover:text-white"
+            style={{ color: "#7070a0" }}
+          >
+            {lang === "zh" ? "或先免费自助诊断 →" : "or start free audit →"}
+          </Link>
+        </div>
       </section>
     </div>
   );
