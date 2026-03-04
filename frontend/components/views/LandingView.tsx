@@ -255,6 +255,162 @@ export default function LandingView({ lang }: Props) {
         </div>
       </section>
 
+      {/* Three Pillars */}
+      <section className="space-y-6">
+        <div className="text-center">
+          <h2 className="text-2xl font-black">
+            {lang === "zh" ? "一个平台，三项竞争优势。" : "One platform. Three competitive edges."}
+          </h2>
+          <p className="text-sm mt-2" style={{ color: "#7070a0" }}>
+            {lang === "zh"
+              ? "无论你是想提升品牌 AI 曝光，还是想先人一步知道该卖什么——Avanti 都有答案。"
+              : "Whether you're a brand growing in AI or a seller deciding what to stock — Avanti gives you the edge."}
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            {
+              icon: "◎",
+              color: "#ff6b35",
+              title:    lang === "zh" ? "GEO 可见度监控" : "GEO Monitoring",
+              desc:     lang === "zh"
+                ? "追踪你的品牌在 ChatGPT、Claude、Gemini、Perplexity 中的 AI 推荐排名。知道你排第几，以及为什么。"
+                : "Track your brand's AI recommendation ranking across ChatGPT, Claude, Gemini, and Perplexity. Know where you stand — and why.",
+              cta:      lang === "zh" ? "免费诊断 →" : "Run Free Audit →",
+              href:     lang === "zh" ? "/zh/audit" : "/audit",
+            },
+            {
+              icon: "◈",
+              color: "#f5a623",
+              title:    lang === "zh" ? "AI 选品情报" : "Selection Intelligence",
+              desc:     lang === "zh"
+                ? "知道 AI 正在推荐哪些品类和品牌——比竞争对手先一步备货。数据每月更新。"
+                : "Know what AI is recommending — before your competitors stock it. See which categories and brands buyers are being sent to.",
+              cta:      lang === "zh" ? "查看选品情报 →" : "View Selection Intel →",
+              href:     lang === "zh" ? "/zh/selection" : "/selection",
+            },
+            {
+              icon: "◑",
+              color: "#22c55e",
+              title:    lang === "zh" ? "成本优化计算器" : "Cost Optimizer",
+              desc:     lang === "zh"
+                ? "计算你的运营成本中哪些可以用 AI 替代，省下来的钱直接投入 GEO 监控。"
+                : "Find which ops costs AI can replace. Calculate your monthly savings — then reinvest them into GEO visibility.",
+              cta:      lang === "zh" ? "计算节省额 →" : "Calculate Savings →",
+              href:     lang === "zh" ? "/zh/optimizer" : "/optimizer",
+            },
+          ].map((p) => (
+            <div
+              key={p.title}
+              className="rounded-2xl p-6 flex flex-col gap-4"
+              style={{ background: "#0f0f17", border: `1px solid ${p.color}30` }}
+            >
+              <div className="text-2xl" style={{ color: p.color }}>{p.icon}</div>
+              <div>
+                <div className="font-bold text-base mb-2">{p.title}</div>
+                <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>{p.desc}</p>
+              </div>
+              <a
+                href={p.href}
+                className="text-sm font-medium mt-auto transition-colors hover:opacity-80"
+                style={{ color: p.color }}
+              >
+                {p.cta}
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Selection Intel Preview */}
+      <section className="space-y-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "#f5a623" }}>
+              {lang === "zh" ? "AI 选品情报" : "AI Selection Intelligence"}
+            </div>
+            <h2 className="text-xl font-bold">
+              {lang === "zh" ? "AI 本月正在推荐什么" : "What AI Is Recommending Right Now"}
+            </h2>
+          </div>
+          <a
+            href={lang === "zh" ? "/zh/selection" : "/selection"}
+            className="text-sm font-medium shrink-0 transition-colors hover:text-white"
+            style={{ color: "#f5a623" }}
+          >
+            {lang === "zh" ? "查看全部品类 →" : "See all categories →"}
+          </a>
+        </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            { cat: lang === "zh" ? "便携储能" : "Portable Power Stations", signal: lang === "zh" ? "强烈推荐入场" : "STRONG BUY", signalColor: "#22c55e", signalBg: "rgba(34,197,94,0.1)", trend: "↑ +4.2pts", brands: ["EcoFlow 34.2%", "Jackery 28.7%", "Bluetti 19.4%"] },
+            { cat: lang === "zh" ? "真无线耳机" : "Wireless Earbuds",       signal: lang === "zh" ? "强烈推荐入场" : "STRONG BUY", signalColor: "#22c55e", signalBg: "rgba(34,197,94,0.1)", trend: "↑ +2.8pts", brands: ["Soundcore 29.1%", "QCY 16.4%", "Mpow 11.2%"] },
+            { cat: lang === "zh" ? "美容仪器" : "Skincare Devices",          signal: lang === "zh" ? "强烈推荐入场" : "STRONG BUY", signalColor: "#22c55e", signalBg: "rgba(34,197,94,0.1)", trend: "↑ +6.3pts", brands: ["NuFace 28.4%", "Foreo 24.1%", "CurrentBody 17.8%"] },
+          ].map((item) => (
+            <div key={item.cat} className="rounded-xl p-4 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+              <div className="flex items-center justify-between">
+                <div className="font-semibold text-sm">{item.cat}</div>
+                <div className="text-xs font-bold" style={{ color: "#22c55e" }}>{item.trend}</div>
+              </div>
+              <div className="text-xs font-bold px-2.5 py-1 rounded-full self-start inline-block"
+                style={{ background: item.signalBg, color: item.signalColor }}>{item.signal}</div>
+              <div className="space-y-1">
+                {item.brands.map((b) => (
+                  <div key={b} className="text-xs" style={{ color: "#7070a0" }}>· {b} SOV</div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Cost Optimizer Preview */}
+      <section>
+        <div
+          className="rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8"
+          style={{ background: "linear-gradient(135deg, #0f0f17 0%, #0a0a12 100%)", border: "1px solid rgba(34,197,94,0.2)" }}
+        >
+          <div className="flex-1 space-y-3">
+            <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#22c55e" }}>
+              {lang === "zh" ? "成本优化" : "Cost Optimizer"}
+            </div>
+            <h2 className="text-xl font-bold">
+              {lang === "zh" ? "省下运营成本，投入 GEO" : "Cut ops costs. Fund your GEO."}
+            </h2>
+            <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
+              {lang === "zh"
+                ? "客服、选品调研、翻译、数据录入——这些工作 AI 已经可以完成 60–80%。省下来的钱可以直接覆盖你的 GEO 监控成本。"
+                : "Customer service, product research, translation, data entry — AI handles 60–80% of this. The savings fund your GEO monitoring."}
+            </p>
+            <a
+              href={lang === "zh" ? "/zh/optimizer" : "/optimizer"}
+              className="inline-block text-sm font-medium px-5 py-2 rounded-lg mt-2 transition-opacity hover:opacity-80"
+              style={{ background: "#22c55e", color: "#0f0f17" }}
+            >
+              {lang === "zh" ? "计算我能省多少 →" : "Calculate my savings →"}
+            </a>
+          </div>
+          <div className="shrink-0 rounded-xl p-5 space-y-2 min-w-48"
+            style={{ background: "#161625", border: "1px solid #25253f" }}>
+            <div className="text-xs" style={{ color: "#7070a0" }}>
+              {lang === "zh" ? "示例：20人客服团队" : "Example: 20-hr/wk CS team"}
+            </div>
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between"><span style={{ color: "#7070a0" }}>{lang === "zh" ? "当前" : "Current"}</span><span>$1,300<span style={{ color: "#7070a0" }}>/mo</span></span></div>
+              <div className="flex justify-between"><span style={{ color: "#7070a0" }}>{lang === "zh" ? "AI 后" : "After AI"}</span><span>$390<span style={{ color: "#7070a0" }}>/mo</span></span></div>
+              <div className="h-px my-1" style={{ background: "#25253f" }} />
+              <div className="flex justify-between font-bold">
+                <span style={{ color: "#22c55e" }}>{lang === "zh" ? "节省" : "Saved"}</span>
+                <span style={{ color: "#22c55e" }}>$910/mo</span>
+              </div>
+            </div>
+            <div className="text-xs mt-2 pt-2" style={{ color: "#7070a0", borderTop: "1px solid #25253f" }}>
+              = {lang === "zh" ? "4个月 Avanti GEO 监控" : "4 months Avanti GEO monitoring"}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features — 2+3 asymmetric */}
       <section>
         <h2 className="text-xs font-semibold uppercase tracking-widest mb-8" style={{ color: "#7070a0" }}>
