@@ -37,7 +37,7 @@ export default function NavBar() {
     ? [
         { href: "/zh/audit",      label: "产品" },
         { href: "/zh/categories", label: "行业指数" },
-        { href: "/blog",          label: "研究报告" },
+        { href: "/zh/blog",       label: "研究报告" },
       ]
     : [
         { href: "/audit",      label: "Product" },
