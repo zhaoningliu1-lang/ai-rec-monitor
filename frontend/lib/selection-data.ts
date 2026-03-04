@@ -53,6 +53,37 @@ export const PRODUCT_DATA: Record<string, ProductMention[]> = {
     { name: "MSR Hubba Hubba NX2", brand: "MSR", asin: "B007X4GRSE", aiMentions: 41, arrs: 27, priceRange: "$449–$599", aiContext: "\"Best ultralight backpacking tent\" — premium segment with strong authority signals.", aiContextZh: "「最佳超轻背包帐篷」——高端细分具有强权威信号。" },
     { name: "BioLite FirePit+", brand: "BioLite", asin: "B086C7VQPL", aiMentions: 28, arrs: 39, priceRange: "$149–$199", aiContext: "\"Best smokeless fire pit\" — unique positioning keeps it cited despite smaller brand.", aiContextZh: "「最佳无烟篝火炉」——独特定位使其尽管品牌较小仍被引用。" },
   ],
+  "dash-cameras": [
+    { name: "Vantrue N4 Pro 3-Channel", brand: "Vantrue", asin: "B0BSVTPFZJ", aiMentions: 67, arrs: 19, priceRange: "$179–$229", aiContext: "\"Best 3-channel dash cam for complete coverage\" — recommended in 67% of multi-camera queries.", aiContextZh: "「三通道全覆盖最佳行车记录仪」——在 67% 的多摄像头查询中被推荐。" },
+    { name: "Thinkware U1000", brand: "Thinkware", asin: "B09FCKNG8C", aiMentions: 52, arrs: 24, priceRange: "$249–$329", aiContext: "\"Best 4K front dash cam with cloud connectivity\" — cited for premium fleet and professional use.", aiContextZh: "「最佳 4K 前置云端行车记录仪」——在高端车队和专业场景中被引用。" },
+    { name: "Garmin Dash Cam 67W", brand: "Garmin", asin: "B09G6FHK1G", aiMentions: 44, arrs: 29, priceRange: "$179–$219", aiContext: "\"Best wide-angle single dash cam\" — strong brand trust, cited in safety-focused queries.", aiContextZh: "「最佳宽角单镜头行车记录仪」——品牌信任度高，在安全类查询中被引用。" },
+    { name: "Nextbase 622GW", brand: "Nextbase", asin: "B08KWFLTQS", aiMentions: 38, arrs: 33, priceRange: "$199–$269", aiContext: "\"Best for emergency SOS and connected safety\" — Alexa integration drives AI visibility.", aiContextZh: "「紧急 SOS 和互联安全最佳选择」——Alexa 集成提升 AI 可见度。" },
+    { name: "Rexing V1-4K", brand: "Rexing", asin: "B07YDMC8JG", aiMentions: 21, arrs: 48, priceRange: "$69–$99", aiContext: "\"Budget 4K option\" — cited only in price-sensitive queries, limited brand authority.", aiContextZh: "「预算级 4K 选择」——仅在价格敏感查询中被引用，品牌权威有限。" },
+  ],
+  "car-phone-mounts": [
+    { name: "Spigen OneTap Pro 3 MagSafe", brand: "Spigen", asin: "B0BVMNR33G", aiMentions: 61, arrs: 22, priceRange: "$34–$49", aiContext: "\"Best MagSafe car mount for iPhone\" — recommended in majority of iPhone car setup queries.", aiContextZh: "「iPhone 最佳 MagSafe 车载支架」——在大多数 iPhone 车载设置查询中被推荐。" },
+    { name: "ESR HaloLock 2-in-1", brand: "ESR", asin: "B0BVZW34DC", aiMentions: 48, arrs: 27, priceRange: "$29–$44", aiContext: "\"Best budget MagSafe mount with wireless charging\" — ESR's value positioning winning AI mentions.", aiContextZh: "「最佳带无线充电的预算 MagSafe 支架」——ESR 的性价比定位赢得 AI 提及。" },
+    { name: "iOttie Easy One Touch 5", brand: "iOttie", asin: "B07GRSGR86", aiMentions: 39, arrs: 31, priceRange: "$24–$34", aiContext: "\"Classic universal car mount — best for non-iPhone users\".", aiContextZh: "「经典通用车载支架——非 iPhone 用户最佳选择」。" },
+    { name: "Lamicall Magnetic Air Vent", brand: "Lamicall", asin: "B071NZWN2D", aiMentions: 28, arrs: 39, priceRange: "$14–$22", aiContext: "\"Ultra-budget magnetic mount\" — mentioned for budget queries, strong Amazon reviews.", aiContextZh: "「超低价磁吸支架」——在预算查询中被提及，亚马逊评价强劲。" },
+  ],
+  "car-jump-starters": [
+    { name: "NOCO Boost Plus GB40", brand: "NOCO", asin: "B015TKUPIC", aiMentions: 74, arrs: 16, priceRange: "$99–$129", aiContext: "\"The gold standard jump starter\" — cited in 74% of all car jump starter queries by any AI.", aiContextZh: "「启动电源黄金标准」——在 74% 的启动电源查询中被任何 AI 引用。" },
+    { name: "NOCO Boost HD GB70", brand: "NOCO", asin: "B07237VJ4L", aiMentions: 59, arrs: 21, priceRange: "$179–$219", aiContext: "\"Best for trucks and diesel engines\" — recommended for large vehicles and commercial use.", aiContextZh: "「卡车和柴油发动机最佳选择」——推荐给大型车辆和商业用途。" },
+    { name: "Gooloo GP4000", brand: "Gooloo", asin: "B0BXLHQ8KM", aiMentions: 38, arrs: 34, priceRange: "$59–$79", aiContext: "\"Best value jump starter with safety protection\" — Chinese brand gaining ground with safety features.", aiContextZh: "「带安全保护的最佳性价比启动电源」——中国品牌凭借安全功能快速追赶。" },
+    { name: "HULKMAN Alpha85S", brand: "HULKMAN", asin: "B09TFQZ4RN", aiMentions: 29, arrs: 41, priceRange: "$89–$119", aiContext: "\"Smart jump starter with OLED display\" — cited for tech-savvy buyers, ARRS improving.", aiContextZh: "「带 OLED 显示的智能启动电源」——被科技达人引用，ARRS 持续改善。" },
+  ],
+  "womens-dresses": [
+    { name: "CUPSHE Women's Floral Wrap Dress", brand: "CUPSHE", asin: "B09NV3TBBS", aiMentions: 52, arrs: 29, priceRange: "$28–$48", aiContext: "\"Best affordable summer dress for beach and vacation\" — CUPSHE consistently cited for resort wear.", aiContextZh: "「沙滩和度假最佳平价夏裙」——CUPSHE 在度假服装中持续被引用。" },
+    { name: "Floerns Floral Midi Dress", brand: "Floerns", asin: "B09DN9XFZ9", aiMentions: 41, arrs: 37, priceRange: "$22–$38", aiContext: "\"Budget-friendly boho dress\" — mentioned for style-conscious budget shoppers.", aiContextZh: "「预算友好的波西米亚风裙」——为注重风格的预算购物者推荐。" },
+    { name: "Amazon Essentials Smock Dress", brand: "Amazon Essentials", asin: "B09V5H5RYN", aiMentions: 34, arrs: 43, priceRange: "$18–$28", aiContext: "\"Best casual everyday dress\" — Amazon's own brand benefits from platform AI lift.", aiContextZh: "「最佳日常休闲裙」——亚马逊自有品牌受益于平台 AI 提升。" },
+    { name: "Verdusa Bodycon Mini Dress", brand: "Verdusa", asin: "B09XDRRKBM", aiMentions: 27, arrs: 48, priceRange: "$19–$34", aiContext: "\"TikTok-trending party dress\" — mention spikes after viral TikTok content, inconsistent AI citation.", aiContextZh: "「TikTok 爆款派对裙」——TikTok 爆红后提及激增，AI 引用尚不稳定。" },
+  ],
+  "athleisure": [
+    { name: "Halara Cloudful Wide Leg Set", brand: "Halara", asin: "B0CF2YRDKJ", aiMentions: 64, arrs: 26, priceRange: "$48–$68", aiContext: "\"Best TikTok-viral athleisure set\" — Halara's content flywheel driving AI citations rapidly.", aiContextZh: "「最爆款 TikTok 运动休闲套装」——Halara 的内容飞轮快速驱动 AI 引用。" },
+    { name: "CRZ Yoga Naked Feeling Leggings", brand: "CRZ Yoga", asin: "B07D28W4Q2", aiMentions: 58, arrs: 22, priceRange: "$34–$48", aiContext: "\"Best Lululemon dupe leggings\" — cited in nearly every budget activewear comparison.", aiContextZh: "「最佳 Lululemon 平替打底裤」——几乎在每次预算运动服比较中被引用。" },
+    { name: "Colorfulkoala High Waist Biker Shorts", brand: "Colorfulkoala", asin: "B07B67JH8L", aiMentions: 47, arrs: 28, priceRange: "$22–$34", aiContext: "\"Best budget biker shorts\" — strong Amazon reviews + TikTok content building AI authority.", aiContextZh: "「最佳预算骑行短裤」——亚马逊强评价 + TikTok 内容构建 AI 权威。" },
+    { name: "ODODOS High Waist Yoga Pants", brand: "ODODOS", asin: "B07CVKL56B", aiMentions: 39, arrs: 33, priceRange: "$28–$42", aiContext: "\"Budget yoga pants with pockets\" — consistently recommended for value-focused buyers.", aiContextZh: "「带口袋的预算瑜伽裤」——为注重性价比的买家持续推荐。" },
+  ],
 };
 
 
@@ -66,7 +97,7 @@ export interface CategoryData {
   id: string;
   category: string;
   categoryZh: string;
-  parentSection: "Consumer Electronics" | "Outdoor & Sports" | "Home & Kitchen" | "Beauty & Care" | "TikTok Trending" | "Family & Kids";
+  parentSection: "Consumer Electronics" | "Outdoor & Sports" | "Home & Kitchen" | "Beauty & Care" | "TikTok Trending" | "Family & Kids" | "Automotive" | "Apparel & Fashion";
   parentSectionZh: string;
   trend: "up" | "stable" | "down";
   trendPts: string;
@@ -447,6 +478,168 @@ export const SELECTION_DATA: CategoryData[] = [
     platformNote: "TikTok pet content virality is the strongest AI citation predictor in this category.",
     platformNoteZh: "TikTok 宠物内容爆红是该品类最强的 AI 引用预测指标。",
   },
+
+  // ── Automotive ─────────────────────────────────────────────────────────────
+  {
+    id: "dash-cameras",
+    category: "Dash Cameras",
+    categoryZh: "行车记录仪",
+    parentSection: "Automotive",
+    parentSectionZh: "汽车配件",
+    trend: "up",
+    trendPts: "+6.1",
+    topBrands: [
+      { name: "Vantrue",    sov: 27.4, arrs: 21 },
+      { name: "Thinkware",  sov: 19.8, arrs: 26 },
+      { name: "Garmin",     sov: 18.3, arrs: 28 },
+    ],
+    sellerSignal: "strong_buy",
+    sellerNote: "Insurance companies now recommend dash cams in AI safety queries — driving 6.1pts surge. Chinese brands like Vantrue own the AI narrative.",
+    sellerNoteZh: "保险公司现在在 AI 安全查询中推荐行车记录仪——带动 6.1pts 增长。Vantrue 等中国品牌主导 AI 叙事。",
+    platforms: ["Amazon"],
+    platformNote: "Amazon is the dominant channel — 80%+ of AI queries link to Amazon listings. DTC conversion is rare in this category.",
+    platformNoteZh: "亚马逊是主导渠道——超过 80% 的 AI 查询链接到亚马逊商品。该品类 DTC 转化率低。",
+  },
+  {
+    id: "car-phone-mounts",
+    category: "Car Phone Mounts",
+    categoryZh: "手机车载支架",
+    parentSection: "Automotive",
+    parentSectionZh: "汽车配件",
+    trend: "up",
+    trendPts: "+3.9",
+    topBrands: [
+      { name: "Spigen",    sov: 31.2, arrs: 21 },
+      { name: "ESR",       sov: 22.7, arrs: 27 },
+      { name: "iOttie",   sov: 16.4, arrs: 32 },
+    ],
+    sellerSignal: "strong_buy",
+    sellerNote: "MagSafe queries surging with iPhone adoption — Spigen leads but ESR (Chinese brand) rapidly closing gap. Clear window for new Chinese brands.",
+    sellerNoteZh: "MagSafe 查询随 iPhone 普及激增——Spigen 领先但 ESR（中国品牌）快速追赶。中国新品牌机会窗口明确。",
+    platforms: ["Amazon", "Shopee"],
+    platformNote: "Shopee SEA shows strong demand spike — mobile-first markets drive car mount adoption faster.",
+    platformNoteZh: "Shopee 东南亚需求激增——移动优先市场推动车载支架更快普及。",
+  },
+  {
+    id: "car-jump-starters",
+    category: "Car Jump Starters",
+    categoryZh: "汽车启动电源",
+    parentSection: "Automotive",
+    parentSectionZh: "汽车配件",
+    trend: "up",
+    trendPts: "+4.7",
+    topBrands: [
+      { name: "NOCO",     sov: 44.8, arrs: 17 },
+      { name: "Gooloo",   sov: 16.3, arrs: 36 },
+      { name: "HULKMAN",  sov: 11.9, arrs: 42 },
+    ],
+    sellerSignal: "strong_buy",
+    sellerNote: "NOCO is a category monopolist (44.8% SOV). Gooloo and HULKMAN are Chinese brands gaining quickly — ARRS drop of 8pts in 4 months signals AI traction.",
+    sellerNoteZh: "NOCO 是品类垄断者（44.8% SOV）。Gooloo 和 HULKMAN 是快速追赶的中国品牌——4 个月内 ARRS 下降 8pts，表明 AI 牵引力增强。",
+    platforms: ["Amazon"],
+    platformNote: "Safety-critical product — AI queries are high-intent. Being cited here = high conversion rate for sellers.",
+    platformNoteZh: "安全关键产品——AI 查询高意向。在此被引用 = 卖家高转化率。",
+  },
+  {
+    id: "car-accessories-interior",
+    category: "Car Interior Accessories",
+    categoryZh: "汽车内饰配件",
+    parentSection: "Automotive",
+    parentSectionZh: "汽车配件",
+    trend: "stable",
+    trendPts: "+1.2",
+    topBrands: [
+      { name: "WeatherTech", sov: 26.4, arrs: 24 },
+      { name: "BDK",         sov: 14.8, arrs: 43 },
+      { name: "Lusso Gear",  sov: 11.3, arrs: 48 },
+    ],
+    sellerSignal: "watch",
+    sellerNote: "WeatherTech owns AI mindshare for floor mats and seat covers. AI rarely cites generic brands — quality content and safety certifications are required.",
+    sellerNoteZh: "WeatherTech 主导脚垫和座椅套的 AI 认知。AI 很少引用通用品牌——需要优质内容和安全认证。",
+    platforms: ["Amazon"],
+  },
+
+  // ── Apparel & Fashion ──────────────────────────────────────────────────────
+  {
+    id: "womens-dresses",
+    category: "Women's Casual Dresses",
+    categoryZh: "女装休闲连衣裙",
+    parentSection: "Apparel & Fashion",
+    parentSectionZh: "服装时尚",
+    trend: "up",
+    trendPts: "+5.3",
+    topBrands: [
+      { name: "CUPSHE",    sov: 22.4, arrs: 31 },
+      { name: "Floerns",   sov: 16.8, arrs: 44 },
+      { name: "Verdusa",   sov: 12.1, arrs: 49 },
+    ],
+    sellerSignal: "strong_buy",
+    sellerNote: "Summer and vacation dress queries surging. CUPSHE is a Chinese brand dominating AI citations — proof that apparel brands can win AI recommendations at scale.",
+    sellerNoteZh: "夏季和度假连衣裙查询激增。CUPSHE 是主导 AI 引用的中国品牌——证明服装品牌可以规模化赢得 AI 推荐。",
+    platforms: ["Amazon", "TikTok", "Shopee"],
+    platformNote: "TikTok outfit videos drive 45% of dress discovery. Shopee fashion GMV growing 38% YoY in SEA.",
+    platformNoteZh: "TikTok 穿搭视频驱动 45% 的连衣裙发现。Shopee 东南亚时尚 GMV 同比增长 38%。",
+  },
+  {
+    id: "athleisure",
+    category: "Athleisure & Loungewear",
+    categoryZh: "运动休闲 & 居家服",
+    parentSection: "Apparel & Fashion",
+    parentSectionZh: "服装时尚",
+    trend: "up",
+    trendPts: "+7.1",
+    topBrands: [
+      { name: "CRZ Yoga",       sov: 24.8, arrs: 23 },
+      { name: "Halara",         sov: 21.3, arrs: 27 },
+      { name: "Colorfulkoala",  sov: 17.6, arrs: 29 },
+    ],
+    sellerSignal: "strong_buy",
+    sellerNote: "Three Chinese brands hold top 3 spots — strongest category proof that Chinese apparel brands can dominate AI recommendations. Budget-Lululemon queries are exploding.",
+    sellerNoteZh: "前三名均为中国品牌——最强品类证明中国服装品牌可以主导 AI 推荐。预算版 Lululemon 查询爆炸式增长。",
+    platforms: ["TikTok", "Amazon", "DTC"],
+    platformNote: "TikTok is the primary discovery channel. AI mirrors TikTok popularity with 3–6 week lag.",
+    platformNoteZh: "TikTok 是主要发现渠道。AI 以 3–6 周的滞后反映 TikTok 热度。",
+  },
+  {
+    id: "mens-basics",
+    category: "Men's Everyday Basics",
+    categoryZh: "男装基础款",
+    parentSection: "Apparel & Fashion",
+    parentSectionZh: "服装时尚",
+    trend: "stable",
+    trendPts: "+1.8",
+    topBrands: [
+      { name: "Quince",       sov: 19.4, arrs: 34 },
+      { name: "Mack Weldon",  sov: 14.8, arrs: 39 },
+      { name: "Buck Mason",   sov: 11.3, arrs: 44 },
+    ],
+    sellerSignal: "watch",
+    sellerNote: "DTC premium basics (Quince, Mack Weldon) dominate AI. Cross-border opportunity: luxury-quality basics at mid-range pricing. Requires strong brand story.",
+    sellerNoteZh: "DTC 高端基础款（Quince、Mack Weldon）主导 AI。跨境机会：中等价位的奢侈品质基础款。需要强品牌故事。",
+    platforms: ["DTC", "Amazon"],
+    platformNote: "AI favors brands with clear quality narrative — materials storytelling (Merino, Pima cotton) drives citation.",
+    platformNoteZh: "AI 偏爱有清晰品质叙事的品牌——材质故事（美利奴羊毛、皮马棉）驱动引用。",
+  },
+  {
+    id: "sustainable-fashion",
+    category: "Sustainable & Eco Fashion",
+    categoryZh: "可持续环保服装",
+    parentSection: "Apparel & Fashion",
+    parentSectionZh: "服装时尚",
+    trend: "up",
+    trendPts: "+4.2",
+    topBrands: [
+      { name: "Patagonia",  sov: 34.7, arrs: 18 },
+      { name: "Everlane",   sov: 21.3, arrs: 27 },
+      { name: "Allbirds",   sov: 16.8, arrs: 31 },
+    ],
+    sellerSignal: "watch",
+    sellerNote: "Patagonia's AI dominance is near-impossible to displace. Opportunity: sustainable basics with transparent supply chain claims — AI rewards certification language.",
+    sellerNoteZh: "Patagonia 的 AI 主导地位几乎无法撼动。机会：具有透明供应链声明的可持续基础款——AI 奖励认证语言。",
+    platforms: ["DTC", "Amazon"],
+    platformNote: "DTC is essential — sustainability stories need owned channels to build AI citation credibility.",
+    platformNoteZh: "DTC 至关重要——可持续故事需要自有渠道来建立 AI 引用可信度。",
+  },
 ];
 
 export const SECTIONS = [
@@ -457,4 +650,6 @@ export const SECTIONS = [
   { id: "Beauty & Care",        label: "Beauty",            labelZh: "美妆个护" },
   { id: "TikTok Trending",      label: "TikTok Trending",   labelZh: "TikTok 热卖" },
   { id: "Family & Kids",        label: "Family",            labelZh: "母婴亲子" },
+  { id: "Automotive",           label: "Automotive",        labelZh: "汽车配件" },
+  { id: "Apparel & Fashion",    label: "Apparel",           labelZh: "服装时尚" },
 ] as const;
