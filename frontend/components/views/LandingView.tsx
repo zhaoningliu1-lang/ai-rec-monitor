@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Lang, tx } from "@/lib/i18n";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 
 const CALENDLY = "https://calendly.com/brivesubscription/30min";
 
@@ -93,48 +94,60 @@ export default function LandingView({ lang }: Props) {
 
   return (
     <div className="space-y-24 pb-24">
+      <ScrollReveal />
 
       {/* Hero */}
-      <section className="pt-16 pb-8 text-center max-w-3xl mx-auto">
+      <section className="pt-16 pb-8 text-center relative overflow-hidden">
+        {/* Background orbs */}
         <div
-          className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-6"
-          style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.25)" }}
-        >
-          {tx("landing", "pill", lang)}
-        </div>
-        <h1 className="text-6xl font-black tracking-tight leading-none mb-4" style={{ color: "#f0f0f8" }}>
-          {tx("landing", "heroLine1", lang)}<br />
-          <span style={{ color: "#ff6b35" }}>{tx("landing", "heroAccent", lang)}</span>
-        </h1>
-        <p className="text-base mb-3 max-w-xl mx-auto font-semibold tracking-wide" style={{ color: "#7070a0" }}>
-          {lang === "zh" ? "被引用。被信任。成为答案。" : "Be Cited. Be Trusted. Be the Answer."}
-        </p>
-        <p className="text-lg mb-10 max-w-xl mx-auto" style={{ color: "#7070a0" }}>
-          {tx("landing", "subheadline", lang)}
-        </p>
-        <div className="flex items-center justify-center gap-4 flex-wrap">
-          <a
-            href={CALENDLY}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-85"
-            style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] pointer-events-none animate-orb"
+          style={{ background: "radial-gradient(ellipse at center, rgba(255,107,53,0.18) 0%, transparent 70%)", filter: "blur(60px)" }}
+        />
+        <div
+          className="absolute top-16 left-1/4 w-72 h-72 pointer-events-none animate-orb delay-400"
+          style={{ background: "radial-gradient(circle at center, rgba(245,166,35,0.12) 0%, transparent 70%)", filter: "blur(50px)" }}
+        />
+        <div className="max-w-3xl mx-auto relative z-10">
+          <div
+            className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-6 animate-fade-up"
+            style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.25)" }}
           >
-            {lang === "zh" ? "预约免费策略通话 →" : "Book a Free Strategy Call →"}
-          </a>
-          <Link
-            href={auditPath}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium transition-colors hover:text-white"
-            style={{ border: "1px solid #25253f", color: "#7070a0" }}
-          >
-            {lang === "zh" ? "先免费自助诊断" : "Start Free Audit"}
-          </Link>
+            {tx("landing", "pill", lang)}
+          </div>
+          <h1 className="text-6xl font-black tracking-tight leading-none mb-4 animate-fade-up delay-200" style={{ color: "#f0f0f8" }}>
+            {tx("landing", "heroLine1", lang)}<br />
+            <span className="shimmer-text">{tx("landing", "heroAccent", lang)}</span>
+          </h1>
+          <p className="text-base mb-3 max-w-xl mx-auto font-semibold tracking-wide animate-fade-up delay-300" style={{ color: "#7070a0" }}>
+            {lang === "zh" ? "被引用。被信任。成为答案。" : "Be Cited. Be Trusted. Be the Answer."}
+          </p>
+          <p className="text-lg mb-10 max-w-xl mx-auto animate-fade-up delay-400" style={{ color: "#7070a0" }}>
+            {tx("landing", "subheadline", lang)}
+          </p>
+          <div className="flex items-center justify-center gap-4 flex-wrap animate-fade-up delay-500">
+            <a
+              href={CALENDLY}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-85"
+              style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
+            >
+              {lang === "zh" ? "预约免费策略通话 →" : "Book a Free Strategy Call →"}
+            </a>
+            <Link
+              href={auditPath}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium transition-colors hover:text-white"
+              style={{ border: "1px solid #25253f", color: "#7070a0" }}
+            >
+              {lang === "zh" ? "先免费自助诊断" : "Start Free Audit"}
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Stats bar */}
       <section
-        className="rounded-2xl px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center"
+        className="reveal rounded-2xl px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center"
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}
       >
         {stats.map((s) => (
@@ -147,7 +160,7 @@ export default function LandingView({ lang }: Props) {
 
       {/* AI Shift urgency banner */}
       <section
-        className="rounded-2xl p-8"
+        className="reveal rounded-2xl p-8"
         style={{ background: "linear-gradient(135deg, #100a06 0%, #0f0f17 100%)", border: "1px solid rgba(245,166,35,0.25)" }}
       >
         <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#f5a623" }}>
@@ -184,7 +197,7 @@ export default function LandingView({ lang }: Props) {
         <div className="grid md:grid-cols-2 gap-4">
           {/* SEO column */}
           <div
-            className="rounded-2xl p-6"
+            className="reveal-left rounded-2xl p-6"
             style={{ background: "#0f0f17", border: "1px solid #25253f", opacity: 0.7 }}
           >
             <div
@@ -204,7 +217,7 @@ export default function LandingView({ lang }: Props) {
           </div>
           {/* GEO column */}
           <div
-            className="rounded-2xl p-6"
+            className="reveal-right rounded-2xl p-6"
             style={{ background: "linear-gradient(135deg, #0f1a0f 0%, #0f0f17 100%)", border: "1px solid rgba(34,197,94,0.3)" }}
           >
             <div
@@ -237,10 +250,10 @@ export default function LandingView({ lang }: Props) {
             { num: "01", titleKey: "how1Title" as const, descKey: "how1Desc" as const, color: "#ff6b35" },
             { num: "02", titleKey: "how2Title" as const, descKey: "how2Desc" as const, color: "#f5a623" },
             { num: "03", titleKey: "how3Title" as const, descKey: "how3Desc" as const, color: "#22c55e" },
-          ].map((p) => (
+          ].map((p, i) => (
             <div
               key={p.num}
-              className="rounded-2xl p-7 flex flex-col"
+              className={`reveal card-hover rounded-2xl p-7 flex flex-col delay-${i * 200}`}
               style={{ background: "#0f0f17", border: "1px solid #25253f" }}
             >
               <div className="text-4xl font-black mb-5 opacity-20" style={{ color: p.color }}>{p.num}</div>
@@ -299,10 +312,10 @@ export default function LandingView({ lang }: Props) {
               cta:      lang === "zh" ? "计算节省额 →" : "Calculate Savings →",
               href:     lang === "zh" ? "/zh/optimizer" : "/optimizer",
             },
-          ].map((p) => (
+          ].map((p, i) => (
             <div
               key={p.title}
-              className="rounded-2xl p-6 flex flex-col gap-4"
+              className={`reveal-scale card-hover rounded-2xl p-6 flex flex-col gap-4 delay-${i * 200}`}
               style={{ background: "#0f0f17", border: `1px solid ${p.color}30` }}
             >
               <div className="text-2xl" style={{ color: p.color }}>{p.icon}</div>
