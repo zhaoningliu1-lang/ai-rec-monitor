@@ -2,7 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { SELECTION_DATA, SECTIONS, type SellerSignal } from "@/lib/selection-data";
+import { SELECTION_DATA, SECTIONS, type SellerSignal, type Platform } from "@/lib/selection-data";
+
+const PLATFORM_LABEL: Record<Platform, string> = {
+  Amazon: "Amazon", TikTok: "TikTok", Shopee: "Shopee", DTC: "独立站", All: "全平台",
+};
+const PLATFORM_STYLE: Record<Platform, { color: string; bg: string }> = {
+  Amazon: { color: "#f5a623", bg: "rgba(245,166,35,0.12)" },
+  TikTok: { color: "#f0f0f8", bg: "rgba(240,240,248,0.08)" },
+  Shopee: { color: "#ff6b35", bg: "rgba(255,107,53,0.10)" },
+  DTC:    { color: "#60a5fa", bg: "rgba(96,165,250,0.10)" },
+  All:    { color: "#22c55e", bg: "rgba(34,197,94,0.10)" },
+};
 
 const ARRS_COLOR = (arrs: number) =>
   arrs < 30 ? "#22c55e" : arrs < 50 ? "#f5a623" : "#ff4d6d";
@@ -108,9 +119,27 @@ export default function ZhSelectionPage() {
                 ))}
               </div>
 
+              {cat.platforms && cat.platforms.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {cat.platforms.map((p) => {
+                    const ps = PLATFORM_STYLE[p];
+                    return (
+                      <span key={p} className="text-xs px-2 py-0.5 rounded-full font-medium"
+                        style={{ background: ps.bg, color: ps.color }}>
+                        {PLATFORM_LABEL[p]}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
               <p className="text-xs leading-relaxed mt-auto" style={{ color: "#7070a0" }}>
                 {cat.sellerNoteZh}
               </p>
+              {cat.platformNoteZh && (
+                <p className="text-xs leading-relaxed" style={{ color: "#555580", fontStyle: "italic" }}>
+                  ↳ {cat.platformNoteZh}
+                </p>
+              )}
             </div>
           );
         })}

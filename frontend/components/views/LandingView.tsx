@@ -299,8 +299,8 @@ export default function LandingView({ lang }: Props) {
               desc:     lang === "zh"
                 ? "知道 AI 正在推荐哪些品类和品牌——比竞争对手先一步备货。数据每月更新。"
                 : "Know what AI is recommending — before your competitors stock it. See which categories and brands buyers are being sent to.",
-              cta:      lang === "zh" ? "查看选品情报 →" : "View Selection Intel →",
-              href:     lang === "zh" ? "/zh/selection" : "/selection",
+              cta:      lang === "zh" ? "查看你的选品机会 →" : "See your brand's opportunity →",
+              href:     lang === "zh" ? "/zh/signup" : "/signup",
             },
             {
               icon: "◑",
@@ -356,17 +356,21 @@ export default function LandingView({ lang }: Props) {
         </div>
         <div className="grid md:grid-cols-3 gap-4">
           {[
-            { cat: lang === "zh" ? "便携储能" : "Portable Power Stations", signal: lang === "zh" ? "强烈推荐入场" : "STRONG BUY", signalColor: "#22c55e", signalBg: "rgba(34,197,94,0.1)", trend: "↑ +4.2pts", brands: ["EcoFlow 34.2%", "Jackery 28.7%", "Bluetti 19.4%"] },
-            { cat: lang === "zh" ? "真无线耳机" : "Wireless Earbuds",       signal: lang === "zh" ? "强烈推荐入场" : "STRONG BUY", signalColor: "#22c55e", signalBg: "rgba(34,197,94,0.1)", trend: "↑ +2.8pts", brands: ["Soundcore 29.1%", "QCY 16.4%", "Mpow 11.2%"] },
-            { cat: lang === "zh" ? "美容仪器" : "Skincare Devices",          signal: lang === "zh" ? "强烈推荐入场" : "STRONG BUY", signalColor: "#22c55e", signalBg: "rgba(34,197,94,0.1)", trend: "↑ +6.3pts", brands: ["NuFace 28.4%", "Foreo 24.1%", "CurrentBody 17.8%"] },
+            { cat: lang === "zh" ? "便携储能" : "Portable Power Stations", signal: lang === "zh" ? "强烈推荐入场" : "STRONG BUY", signalColor: "#22c55e", signalBg: "rgba(34,197,94,0.1)", trend: "↑ +4.2pts", brands: ["EcoFlow 34.2%", "Jackery 28.7%", "Bluetti 19.4%"], tag: lang === "zh" ? "Amazon" : "Amazon" },
+            { cat: lang === "zh" ? "TikTok 爆款美妆" : "Viral Skincare & Beauty", signal: lang === "zh" ? "强烈推荐入场" : "STRONG BUY", signalColor: "#22c55e", signalBg: "rgba(34,197,94,0.1)", trend: "↑ +8.4pts", brands: ["CeraVe 31.2%", "The Ordinary 22.7%", "Laneige 14.8%"], tag: "TikTok" },
+            { cat: lang === "zh" ? "美容仪器" : "Skincare Devices", signal: lang === "zh" ? "强烈推荐入场" : "STRONG BUY", signalColor: "#22c55e", signalBg: "rgba(34,197,94,0.1)", trend: "↑ +6.3pts", brands: ["NuFace 28.4%", "Foreo 24.1%", "CurrentBody 17.8%"], tag: "DTC" },
           ].map((item) => (
             <div key={item.cat} className="rounded-xl p-4 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
               <div className="flex items-center justify-between">
                 <div className="font-semibold text-sm">{item.cat}</div>
                 <div className="text-xs font-bold" style={{ color: "#22c55e" }}>{item.trend}</div>
               </div>
-              <div className="text-xs font-bold px-2.5 py-1 rounded-full self-start inline-block"
-                style={{ background: item.signalBg, color: item.signalColor }}>{item.signal}</div>
+              <div className="flex items-center gap-2">
+                <div className="text-xs font-bold px-2.5 py-1 rounded-full inline-block"
+                  style={{ background: item.signalBg, color: item.signalColor }}>{item.signal}</div>
+                <div className="text-xs px-2 py-0.5 rounded-full"
+                  style={{ background: "rgba(255,107,53,0.08)", color: "#ff6b35" }}>{item.tag}</div>
+              </div>
               <div className="space-y-1">
                 {item.brands.map((b) => (
                   <div key={b} className="text-xs" style={{ color: "#7070a0" }}>· {b} SOV</div>
