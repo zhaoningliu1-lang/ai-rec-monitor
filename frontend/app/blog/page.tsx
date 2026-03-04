@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Research & GEO Case Studies — Avanti",
+  title: "Research & GEO Reports — Avanti",
   description:
-    "AI visibility audits, GEO case studies, and brand benchmarking reports from Avanti.",
+    "AI visibility audits, GEO case studies, brand benchmarking, and cross-border seller guides from Avanti.",
 };
 
 const POSTS = [
@@ -16,7 +16,51 @@ const POSTS = [
     date: "March 2026",
     readTime: "8 min read",
   },
+  {
+    slug: "portable-power-ai-ranking",
+    tag: "AI Selection Report",
+    title: "ChatGPT Is Recommending These Portable Power Brands — 2025 Seller Report",
+    excerpt:
+      "200+ queries across 4 AI engines. EcoFlow dominates at 34% SOV, Jackery holds 28.7%. Here's the full ranking — and where the opportunity gaps are.",
+    date: "March 2026",
+    readTime: "7 min read",
+  },
+  {
+    slug: "why-ai-ignores-your-brand",
+    tag: "GEO Guide",
+    title: "Why AI Doesn't Mention Your Brand: A Guide for Cross-Border Sellers",
+    excerpt:
+      "Your brand has 4.4 stars and 2,000 reviews on Amazon. ChatGPT still recommends your competitor. Here are the 5 reasons why — and exactly what to do about it.",
+    date: "March 2026",
+    readTime: "6 min read",
+  },
+  {
+    slug: "helium10-vs-avanti",
+    tag: "Tool Comparison",
+    title: "Helium 10 vs Avanti: Traditional Product Research vs AI Visibility Monitoring",
+    excerpt:
+      "Helium 10 tells you what sold last month. Avanti tells you what AI is recommending today. An honest comparison — and when you need each.",
+    date: "March 2026",
+    readTime: "5 min read",
+  },
+  {
+    slug: "ai-cost-guide-2025",
+    tag: "Operations Guide",
+    title: "2025 Cross-Border Seller Cost Savings Guide: 5 Operations AI Can Handle Right Now",
+    excerpt:
+      "Most brands are paying humans $800–$2,000/mo to do what AI handles in seconds. Here's exactly where to cut — and how to reinvest in GEO.",
+    date: "March 2026",
+    readTime: "6 min read",
+  },
 ];
+
+const TAG_COLORS: Record<string, { bg: string; color: string }> = {
+  "GEO Case Study":     { bg: "rgba(255,107,53,0.12)", color: "#ff6b35" },
+  "AI Selection Report":{ bg: "rgba(34,197,94,0.10)",  color: "#22c55e" },
+  "GEO Guide":          { bg: "rgba(245,166,35,0.10)", color: "#f5a623" },
+  "Tool Comparison":    { bg: "rgba(112,112,160,0.12)", color: "#9090c0" },
+  "Operations Guide":   { bg: "rgba(96,165,250,0.10)", color: "#60a5fa" },
+};
 
 export default function BlogIndexPage() {
   return (
@@ -28,54 +72,57 @@ export default function BlogIndexPage() {
         >
           Avanti Research
         </div>
-        <h1 className="text-3xl font-bold mt-3">GEO Reports & Case Studies</h1>
+        <h1 className="text-3xl font-bold mt-3">GEO Reports & Seller Guides</h1>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          Real AI visibility audits for real brands — showing exactly where they
-          stand, why, and what to do about it.
+          Real AI visibility audits, selection intelligence reports, and cross-border
+          strategy guides — updated monthly.
         </p>
       </div>
 
       <div className="space-y-4">
-        {POSTS.map((post) => (
-          <Link
-            key={post.slug}
-            href={`/blog/${post.slug}`}
-            className="block rounded-xl p-6 transition-colors group"
-            style={{ background: "#0f0f17", border: "1px solid #25253f" }}
-          >
-            <div className="space-y-3">
-              <div
-                className="inline-block text-xs px-2.5 py-0.5 rounded-full font-medium"
-                style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35" }}
-              >
-                {post.tag}
-              </div>
-              <h2
-                className="text-lg font-semibold leading-snug group-hover:text-white transition-colors"
-                style={{ color: "#f0f0f8" }}
-              >
-                {post.title}
-              </h2>
-              <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
-                {post.excerpt}
-              </p>
-              <div
-                className="flex items-center gap-4 text-xs pt-1"
-                style={{ color: "#7070a0" }}
-              >
-                <span>{post.date}</span>
-                <span>·</span>
-                <span>{post.readTime}</span>
-                <span
-                  className="ml-auto font-medium group-hover:text-white transition-colors"
-                  style={{ color: "#ff6b35" }}
+        {POSTS.map((post) => {
+          const tagStyle = TAG_COLORS[post.tag] ?? { bg: "rgba(255,107,53,0.12)", color: "#ff6b35" };
+          return (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className="block rounded-xl p-6 transition-colors group"
+              style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+            >
+              <div className="space-y-3">
+                <div
+                  className="inline-block text-xs px-2.5 py-0.5 rounded-full font-medium"
+                  style={{ background: tagStyle.bg, color: tagStyle.color }}
                 >
-                  Read report →
-                </span>
+                  {post.tag}
+                </div>
+                <h2
+                  className="text-lg font-semibold leading-snug group-hover:text-white transition-colors"
+                  style={{ color: "#f0f0f8" }}
+                >
+                  {post.title}
+                </h2>
+                <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
+                  {post.excerpt}
+                </p>
+                <div
+                  className="flex items-center gap-4 text-xs pt-1"
+                  style={{ color: "#7070a0" }}
+                >
+                  <span>{post.date}</span>
+                  <span>·</span>
+                  <span>{post.readTime}</span>
+                  <span
+                    className="ml-auto font-medium group-hover:text-white transition-colors"
+                    style={{ color: "#ff6b35" }}
+                  >
+                    Read report →
+                  </span>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
 
       <div
@@ -84,10 +131,10 @@ export default function BlogIndexPage() {
       >
         <p className="text-sm font-medium">Want us to run a report for your brand?</p>
         <p className="text-xs" style={{ color: "#7070a0" }}>
-          Free, no signup required. Takes under 2 minutes.
+          Free ARRS audit. See your AI visibility score vs every competitor in your category.
         </p>
         <Link
-          href="/audit"
+          href="/signup"
           className="inline-block text-sm font-medium px-5 py-2 rounded-lg transition-opacity hover:opacity-80"
           style={{ background: "#ff6b35", color: "#fff" }}
         >

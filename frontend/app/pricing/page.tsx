@@ -1,0 +1,331 @@
+import Link from "next/link";
+
+export const metadata = {
+  title: "Pricing — Avanti GEO Platform",
+  description:
+    "Transparent pricing for AI visibility monitoring, selection intelligence, and GEO optimization. Built for cross-border ecommerce brands.",
+};
+
+const TIERS = [
+  {
+    name: "Starter",
+    price: 99,
+    annual: 79,
+    description: "For solo sellers and small brands testing their AI presence.",
+    cta: "Start free →",
+    href: "/signup",
+    highlight: false,
+    features: [
+      "1 brand tracked",
+      "Monthly GEO report",
+      "4 AI engines (ChatGPT, Claude, Gemini, Perplexity)",
+      "ARRS score + SOV breakdown",
+      "Selection intelligence: top 3 categories (read-only)",
+      "Email delivery",
+    ],
+    notIncluded: [
+      "Full selection intelligence",
+      "PDF export",
+      "API access",
+    ],
+  },
+  {
+    name: "Growth",
+    price: 249,
+    annual: 199,
+    description: "For scaling brands that compete on AI visibility — our most popular plan.",
+    cta: "Start free →",
+    href: "/signup",
+    highlight: true,
+    badge: "Most Popular",
+    features: [
+      "3 brands tracked",
+      "Bi-weekly GEO reports",
+      "4 AI engines",
+      "ARRS + SOV + competitor benchmarking",
+      "Full selection intelligence (all categories + filter)",
+      "Cost optimizer",
+      "PDF export",
+      "Priority email support",
+    ],
+    notIncluded: [
+      "API access",
+      "Custom category tracking",
+    ],
+  },
+  {
+    name: "Scale",
+    price: 499,
+    annual: 499,
+    description: "For agencies and serious cross-border operators managing multiple brands.",
+    cta: "Contact us →",
+    href: "https://calendly.com/brivesubscription/30min",
+    highlight: false,
+    features: [
+      "10 brands tracked",
+      "Weekly GEO reports",
+      "4 AI engines + custom query sets",
+      "Full selection intelligence",
+      "Custom category & keyword tracking",
+      "API access",
+      "PDF + CSV export",
+      "Quarterly 1-on-1 strategy calls",
+      "Slack integration",
+      "Dedicated onboarding",
+    ],
+    notIncluded: [],
+  },
+];
+
+const COMPARISON = [
+  { feature: "Brands tracked",       starter: "1",     growth: "3",     scale: "10" },
+  { feature: "Report frequency",     starter: "Monthly", growth: "Bi-weekly", scale: "Weekly" },
+  { feature: "AI engines covered",   starter: "4",     growth: "4",     scale: "4 + custom" },
+  { feature: "ARRS score",           starter: true,    growth: true,    scale: true },
+  { feature: "SOV breakdown",        starter: true,    growth: true,    scale: true },
+  { feature: "Competitor benchmarking", starter: false, growth: true,  scale: true },
+  { feature: "Selection intelligence (full)", starter: false, growth: true, scale: true },
+  { feature: "Cost optimizer",       starter: false,   growth: true,    scale: true },
+  { feature: "PDF export",           starter: false,   growth: true,    scale: true },
+  { feature: "API access",           starter: false,   growth: false,   scale: true },
+  { feature: "Custom category tracking", starter: false, growth: false, scale: true },
+  { feature: "Strategy calls",       starter: false,   growth: false,   scale: "Quarterly" },
+];
+
+function Check() {
+  return <span style={{ color: "#22c55e" }}>✓</span>;
+}
+function Cross() {
+  return <span style={{ color: "#3a3a5c" }}>—</span>;
+}
+
+export default function PricingPage() {
+  return (
+    <div className="py-16 space-y-20 max-w-6xl mx-auto px-4">
+      {/* Header */}
+      <div className="text-center space-y-4 max-w-2xl mx-auto">
+        <div
+          className="inline-block text-xs px-3 py-1 rounded-full font-medium"
+          style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35" }}
+        >
+          Pricing
+        </div>
+        <h1 className="text-4xl font-bold">Simple, transparent pricing</h1>
+        <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
+          Built for cross-border brands serious about AI visibility.
+          All plans include a 14-day free trial. No credit card required.
+        </p>
+      </div>
+
+      {/* Tier cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+        {TIERS.map((tier) => (
+          <div
+            key={tier.name}
+            className="rounded-2xl p-6 space-y-6 flex flex-col"
+            style={{
+              background: tier.highlight ? "rgba(255,107,53,0.06)" : "#0f0f17",
+              border: tier.highlight ? "2px solid #ff6b35" : "1px solid #25253f",
+              position: "relative",
+            }}
+          >
+            {tier.badge && (
+              <div
+                className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-3 py-1 rounded-full"
+                style={{ background: "#ff6b35", color: "#fff" }}
+              >
+                {tier.badge}
+              </div>
+            )}
+
+            <div className="space-y-1">
+              <div className="font-bold text-lg">{tier.name}</div>
+              <p className="text-xs leading-relaxed" style={{ color: "#7070a0" }}>
+                {tier.description}
+              </p>
+            </div>
+
+            <div>
+              <div className="flex items-end gap-1">
+                <span className="text-4xl font-black">${tier.annual}</span>
+                <span className="text-sm pb-1" style={{ color: "#7070a0" }}>/mo</span>
+              </div>
+              {tier.annual !== tier.price && (
+                <div className="text-xs mt-1" style={{ color: "#7070a0" }}>
+                  ${tier.price}/mo billed monthly · save ${(tier.price - tier.annual) * 12}/yr
+                </div>
+              )}
+              {tier.annual === tier.price && tier.name !== "Scale" && (
+                <div className="text-xs mt-1" style={{ color: "#7070a0" }}>billed monthly</div>
+              )}
+              {tier.name === "Scale" && (
+                <div className="text-xs mt-1" style={{ color: "#7070a0" }}>contact us for volume pricing</div>
+              )}
+            </div>
+
+            <Link
+              href={tier.href}
+              target={tier.href.startsWith("http") ? "_blank" : undefined}
+              rel={tier.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="block text-center text-sm font-semibold px-4 py-2.5 rounded-lg transition-opacity hover:opacity-80"
+              style={
+                tier.highlight
+                  ? { background: "#ff6b35", color: "#fff" }
+                  : { border: "1px solid #25253f", color: "#f0f0f8" }
+              }
+            >
+              {tier.cta}
+            </Link>
+
+            <div className="space-y-2 flex-1">
+              <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7070a0" }}>
+                Includes
+              </div>
+              <ul className="space-y-2">
+                {tier.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-xs" style={{ color: "#f0f0f8" }}>
+                    <span style={{ color: "#22c55e", flexShrink: 0 }}>✓</span>
+                    {f}
+                  </li>
+                ))}
+                {tier.notIncluded.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-xs" style={{ color: "#3a3a5c" }}>
+                    <span style={{ flexShrink: 0 }}>—</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Free tool callout */}
+      <div
+        className="rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4"
+        style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+      >
+        <div>
+          <div className="font-semibold text-sm">Cost Optimizer — Always Free</div>
+          <p className="text-xs mt-1" style={{ color: "#7070a0" }}>
+            Calculate exactly how much AI can save your ops — and how many months of GEO that funds.
+            No login, no credit card.
+          </p>
+        </div>
+        <Link
+          href="/optimizer"
+          className="shrink-0 text-sm font-medium px-5 py-2 rounded-lg transition-colors hover:text-white"
+          style={{ border: "1px solid #25253f", color: "#7070a0" }}
+        >
+          Calculate savings →
+        </Link>
+      </div>
+
+      {/* Comparison table */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold text-center">Full comparison</h2>
+        <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ background: "#0f0f17", borderBottom: "1px solid #25253f" }}>
+                <th className="text-left p-4 font-medium" style={{ color: "#7070a0" }}>Feature</th>
+                <th className="text-center p-4 font-medium">Starter</th>
+                <th className="text-center p-4 font-bold" style={{ color: "#ff6b35" }}>Growth</th>
+                <th className="text-center p-4 font-medium">Scale</th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON.map((row, i) => (
+                <tr
+                  key={row.feature}
+                  style={{
+                    background: i % 2 === 0 ? "#0a0a10" : "#0f0f17",
+                    borderBottom: "1px solid #25253f",
+                  }}
+                >
+                  <td className="p-4 text-xs" style={{ color: "#f0f0f8" }}>{row.feature}</td>
+                  <td className="p-4 text-center text-xs">
+                    {typeof row.starter === "boolean"
+                      ? row.starter ? <Check /> : <Cross />
+                      : <span style={{ color: "#f0f0f8" }}>{row.starter}</span>}
+                  </td>
+                  <td className="p-4 text-center text-xs">
+                    {typeof row.growth === "boolean"
+                      ? row.growth ? <Check /> : <Cross />
+                      : <span style={{ color: "#f0f0f8" }}>{row.growth}</span>}
+                  </td>
+                  <td className="p-4 text-center text-xs">
+                    {typeof row.scale === "boolean"
+                      ? row.scale ? <Check /> : <Cross />
+                      : <span style={{ color: "#f0f0f8" }}>{row.scale}</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div className="max-w-2xl mx-auto space-y-6">
+        <h2 className="text-xl font-bold text-center">FAQ</h2>
+        {[
+          {
+            q: "What counts as a \"brand\"?",
+            a: "One brand = one entity we track across AI engines. If you sell under multiple brand names (e.g., your main brand + a sub-brand), each counts separately.",
+          },
+          {
+            q: "What are the 4 AI engines you track?",
+            a: "ChatGPT (GPT-4o), Claude, Gemini, and Perplexity — the four engines that are actively directing buyer decisions. We run queries in both English and Chinese for cross-border brands.",
+          },
+          {
+            q: "Can I cancel anytime?",
+            a: "Yes. No long-term contracts. Cancel from your account settings, effective at end of billing cycle.",
+          },
+          {
+            q: "I'm an agency managing 20+ brands. Do you have custom plans?",
+            a: "Yes. Contact us via the Scale plan or book a strategy call — we build custom volume pricing for agencies.",
+          },
+          {
+            q: "How is Avanti different from Helium 10 or Jungle Scout?",
+            a: "Helium 10 and Jungle Scout track historical sales data, BSR, and keywords on Amazon's own platform. Avanti tracks where AI models are actively sending future buyers — a fundamentally different signal about where demand is going, not where it has been.",
+          },
+        ].map(({ q, a }) => (
+          <div key={q} className="space-y-2">
+            <div className="font-semibold text-sm">{q}</div>
+            <p className="text-xs leading-relaxed" style={{ color: "#7070a0" }}>{a}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom CTA */}
+      <div
+        className="rounded-2xl p-10 text-center space-y-4"
+        style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+      >
+        <p className="text-2xl font-bold">Start with a free audit</p>
+        <p className="text-sm" style={{ color: "#7070a0" }}>
+          See your brand&apos;s ARRS score and SOV against every competitor — before committing to a plan.
+        </p>
+        <div className="flex justify-center gap-3 pt-2">
+          <Link
+            href="/signup"
+            className="text-sm font-semibold px-6 py-3 rounded-lg transition-opacity hover:opacity-80"
+            style={{ background: "#ff6b35", color: "#fff" }}
+          >
+            Start free →
+          </Link>
+          <a
+            href="https://calendly.com/brivesubscription/30min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium px-6 py-3 rounded-lg transition-colors hover:text-white"
+            style={{ border: "1px solid #25253f", color: "#7070a0" }}
+          >
+            Book a demo
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}

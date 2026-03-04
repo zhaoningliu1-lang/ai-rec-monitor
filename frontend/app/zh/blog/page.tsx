@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "研究报告与案例分析 — Avanti",
-  description: "Avanti 发布的 AI 可见度审计报告、GEO 案例分析与品牌基准研究。",
+  title: "研究报告与卖家指南 — Avanti",
+  description: "Avanti 发布的 AI 可见度审计报告、选品情报分析与跨境卖家策略指南，每月更新。",
 };
 
 const POSTS = [
@@ -15,7 +15,51 @@ const POSTS = [
     date: "2026年3月",
     readTime: "8 分钟",
   },
+  {
+    slug: "portable-power-ai-ranking",
+    tag: "AI 选品报告",
+    title: "ChatGPT 正在推荐这些便携储能品牌——2025 卖家选品报告",
+    excerpt:
+      "200+ 次查询覆盖 4 个 AI 引擎。EcoFlow 以 34% SOV 主导，Jackery 保持 28.7%。完整排名及机会空白在哪里。",
+    date: "2026年3月",
+    readTime: "7 分钟",
+  },
+  {
+    slug: "why-ai-ignores-your-brand",
+    tag: "GEO 入门指南",
+    title: "为什么 AI 不提你的品牌：跨境卖家 GEO 入门指南",
+    excerpt:
+      "你的品牌在亚马逊有 4.4 分和 2000 条评论。ChatGPT 还是推荐了你的竞争对手。5 个原因，以及你现在能做什么。",
+    date: "2026年3月",
+    readTime: "6 分钟",
+  },
+  {
+    slug: "helium10-vs-avanti",
+    tag: "工具对比",
+    title: "Helium 10 vs Avanti：传统选品工具 vs AI 可见度监控",
+    excerpt:
+      "Helium 10 告诉你上个月卖了什么。Avanti 告诉你 AI 今天正在推荐什么。诚实的对比——以及每种工具适合什么场景。",
+    date: "2026年3月",
+    readTime: "5 分钟",
+  },
+  {
+    slug: "ai-cost-guide-2025",
+    tag: "运营指南",
+    title: "2025 跨境卖家省钱指南：5 个 AI 现在就能替代的运营环节",
+    excerpt:
+      "大多数品牌每月花 800–2000 美元雇人做 AI 几秒钟搞定的事。以下是具体怎么省——以及如何把节省的钱投入 GEO。",
+    date: "2026年3月",
+    readTime: "6 分钟",
+  },
 ];
+
+const TAG_COLORS: Record<string, { bg: string; color: string }> = {
+  "GEO 案例分析":  { bg: "rgba(255,107,53,0.12)", color: "#ff6b35" },
+  "AI 选品报告":   { bg: "rgba(34,197,94,0.10)",  color: "#22c55e" },
+  "GEO 入门指南":  { bg: "rgba(245,166,35,0.10)", color: "#f5a623" },
+  "工具对比":      { bg: "rgba(112,112,160,0.12)", color: "#9090c0" },
+  "运营指南":      { bg: "rgba(96,165,250,0.10)",  color: "#60a5fa" },
+};
 
 export default function ZhBlogIndexPage() {
   return (
@@ -27,53 +71,56 @@ export default function ZhBlogIndexPage() {
         >
           Avanti 研究
         </div>
-        <h1 className="text-3xl font-bold mt-3">GEO 研究报告与案例分析</h1>
+        <h1 className="text-3xl font-bold mt-3">GEO 报告与卖家策略指南</h1>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          真实品牌的 AI 可见度审计——精确呈现现状、原因，以及如何改变。
+          真实的 AI 可见度审计、选品情报分析与跨境运营策略指南——每月更新。
         </p>
       </div>
 
       <div className="space-y-4">
-        {POSTS.map((post) => (
-          <Link
-            key={post.slug}
-            href={`/zh/blog/${post.slug}`}
-            className="block rounded-xl p-6 transition-colors group"
-            style={{ background: "#0f0f17", border: "1px solid #25253f" }}
-          >
-            <div className="space-y-3">
-              <div
-                className="inline-block text-xs px-2.5 py-0.5 rounded-full font-medium"
-                style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35" }}
-              >
-                {post.tag}
-              </div>
-              <h2
-                className="text-lg font-semibold leading-snug group-hover:text-white transition-colors"
-                style={{ color: "#f0f0f8" }}
-              >
-                {post.title}
-              </h2>
-              <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
-                {post.excerpt}
-              </p>
-              <div
-                className="flex items-center gap-4 text-xs pt-1"
-                style={{ color: "#7070a0" }}
-              >
-                <span>{post.date}</span>
-                <span>·</span>
-                <span>阅读时长 {post.readTime}</span>
-                <span
-                  className="ml-auto font-medium group-hover:text-white transition-colors"
-                  style={{ color: "#ff6b35" }}
+        {POSTS.map((post) => {
+          const tagStyle = TAG_COLORS[post.tag] ?? { bg: "rgba(255,107,53,0.12)", color: "#ff6b35" };
+          return (
+            <Link
+              key={post.slug}
+              href={`/zh/blog/${post.slug}`}
+              className="block rounded-xl p-6 transition-colors group"
+              style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+            >
+              <div className="space-y-3">
+                <div
+                  className="inline-block text-xs px-2.5 py-0.5 rounded-full font-medium"
+                  style={{ background: tagStyle.bg, color: tagStyle.color }}
                 >
-                  阅读报告 →
-                </span>
+                  {post.tag}
+                </div>
+                <h2
+                  className="text-lg font-semibold leading-snug group-hover:text-white transition-colors"
+                  style={{ color: "#f0f0f8" }}
+                >
+                  {post.title}
+                </h2>
+                <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
+                  {post.excerpt}
+                </p>
+                <div
+                  className="flex items-center gap-4 text-xs pt-1"
+                  style={{ color: "#7070a0" }}
+                >
+                  <span>{post.date}</span>
+                  <span>·</span>
+                  <span>阅读时长 {post.readTime}</span>
+                  <span
+                    className="ml-auto font-medium group-hover:text-white transition-colors"
+                    style={{ color: "#ff6b35" }}
+                  >
+                    阅读报告 →
+                  </span>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
 
       <div
@@ -82,10 +129,10 @@ export default function ZhBlogIndexPage() {
       >
         <p className="text-sm font-medium">想让我们为你的品牌出一份报告？</p>
         <p className="text-xs" style={{ color: "#7070a0" }}>
-          完全免费，无需注册，2 分钟内完成。
+          免费 ARRS 诊断，查看你在品类内的 AI 可见度 vs 所有竞品。
         </p>
         <Link
-          href="/zh/audit"
+          href="/zh/signup"
           className="inline-block text-sm font-medium px-5 py-2 rounded-lg transition-opacity hover:opacity-80"
           style={{ background: "#ff6b35", color: "#fff" }}
         >

@@ -36,11 +36,13 @@ export default function NavBar() {
   const publicLinks = isZh
     ? [
         { href: "/zh/product",    label: "产品" },
+        { href: "/zh/pricing",    label: "定价" },
         { href: "/zh/categories", label: "行业指数" },
         { href: "/zh/blog",       label: "研究报告" },
       ]
     : [
         { href: "/product",    label: "Product" },
+        { href: "/pricing",    label: "Pricing" },
         { href: "/categories", label: "Index" },
         { href: "/blog",       label: "Research" },
       ];
