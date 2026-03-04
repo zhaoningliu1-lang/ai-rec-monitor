@@ -1,6 +1,61 @@
 export type SellerSignal = "strong_buy" | "watch" | "avoid";
 export type Platform = "Amazon" | "TikTok" | "Shopee" | "DTC" | "All";
 
+// ── Phase 3: Product-level AI mention data ────────────────────────────────
+export interface ProductMention {
+  name: string;          // Exact product name as mentioned by AI
+  brand: string;
+  asin?: string;         // Amazon ASIN if applicable
+  aiMentions: number;    // Out of 100 queries in this category
+  arrs: number;          // AI Recommendation Rank Score (lower = better)
+  priceRange: string;    // e.g. "$149–$199"
+  aiContext: string;     // Typical context AI uses when mentioning this product
+  aiContextZh: string;
+}
+
+export const PRODUCT_DATA: Record<string, ProductMention[]> = {
+  "portable-power": [
+    { name: "EcoFlow Delta Pro Ultra", brand: "EcoFlow", asin: "B0CHX5ZB1M", aiMentions: 71, arrs: 14, priceRange: "$3,299–$4,499", aiContext: "\"Best for whole-home backup and off-grid living\" — cited in 71% of high-capacity power queries.", aiContextZh: "「全屋备用和离网生活首选」——在 71% 的大容量电源查询中被引用。" },
+    { name: "EcoFlow River 2 Pro", brand: "EcoFlow", asin: "B0BVRX4JLQ", aiMentions: 58, arrs: 19, priceRange: "$399–$549", aiContext: "\"Best mid-range portable power for camping trips\" — dominant in $300–$600 queries.", aiContextZh: "「露营中端便携电源首选」——在 $300–$600 查询中占主导。" },
+    { name: "Jackery Explorer 1000 Pro", brand: "Jackery", asin: "B09GH3K7KS", aiMentions: 52, arrs: 22, priceRange: "$799–$999", aiContext: "\"Reliable, beginner-friendly power station\" — recommended alongside solar panels.", aiContextZh: "「可靠、新手友好的电源站」——与太阳能板组合推荐。" },
+    { name: "Jackery Explorer 300 Plus", brand: "Jackery", asin: "B0C4P2SQFQ", aiMentions: 34, arrs: 31, priceRange: "$249–$299", aiContext: "\"Best budget option for day hikes\" — mentioned in entry-level queries.", aiContextZh: "「日间徒步最佳预算选择」——在入门级查询中提及。" },
+    { name: "Bluetti AC200MAX", brand: "Bluetti", asin: "B09CXYQC41", aiMentions: 29, arrs: 34, priceRange: "$1,199–$1,499", aiContext: "\"Expandable capacity for serious overlanders\" — niche but growing.", aiContextZh: "「严肃越野爱好者的可扩展容量」——细分但增长中。" },
+    { name: "Goal Zero Yeti 500X", brand: "Goal Zero", asin: "B07Y5JMBRP", aiMentions: 14, arrs: 51, priceRange: "$499–$649", aiContext: "\"Premium lifestyle brand\" — cited by style-focused AI queries but losing ground.", aiContextZh: "「高端生活方式品牌」——被注重风格的 AI 查询引用，但正在失去份额。" },
+  ],
+  "wireless-earbuds": [
+    { name: "Soundcore Liberty 4 NC", brand: "Soundcore", asin: "B0BX49PRPZ", aiMentions: 64, arrs: 18, priceRange: "$79–$99", aiContext: "\"Best budget ANC earbuds\" — mentioned in 64% of under-$100 noise-cancelling queries.", aiContextZh: "「最佳预算降噪耳机」——在 64% 的百元以下降噪查询中被提及。" },
+    { name: "Soundcore Q45", brand: "Soundcore", asin: "B09GHHKCDR", aiMentions: 41, arrs: 24, priceRange: "$59–$79", aiContext: "\"Best over-ear for budget travelers\" — frequently bundled with Soundcore earbuds.", aiContextZh: "「旅行者最佳头戴式预算耳机」——常与 Soundcore 耳机打包推荐。" },
+    { name: "QCY T13 ANC", brand: "QCY", asin: "B0BKWTPXCD", aiMentions: 28, arrs: 38, priceRange: "$29–$49", aiContext: "\"Ultra-budget with ANC\" — mentioned when users ask for cheapest noise-cancelling.", aiContextZh: "「超低价降噪」——当用户询问最便宜的降噪选项时被提及。" },
+    { name: "QCY MelobudsANC", brand: "QCY", asin: "B0CDRPCL8N", aiMentions: 19, arrs: 47, priceRange: "$39–$59", aiContext: "\"Rising challenger in value earbuds\" — newer model gaining AI mentions.", aiContextZh: "「高性价比耳机新兴挑战者」——新型号正在获得更多 AI 提及。" },
+    { name: "Mpow M30 Plus", brand: "Mpow", asin: "B09CF27JNK", aiMentions: 12, arrs: 54, priceRange: "$19–$35", aiContext: "\"Only mentioned for extreme budget queries\" — declining visibility.", aiContextZh: "「仅在极限预算查询中被提及」——可见度下降中。" },
+  ],
+  "skincare": [
+    { name: "NuFace Trinity Pro", brand: "NuFace", asin: "B08CZMJGR4", aiMentions: 68, arrs: 19, priceRange: "$299–$399", aiContext: "\"Clinical-grade microcurrent at home\" — cited as the gold standard in 68% of facial toning queries.", aiContextZh: "「家用临床级微电流」——在 68% 的面部塑形查询中被引为黄金标准。" },
+    { name: "Foreo Luna 4 Plus", brand: "Foreo", asin: "B0BRVTDQ2H", aiMentions: 51, arrs: 24, priceRange: "$249–$329", aiContext: "\"Best dual-action cleansing and firming device\" — frequently recommended for skincare beginners.", aiContextZh: "「最佳双效清洁紧致仪」——常推荐给护肤初学者。" },
+    { name: "CurrentBody LED Face Mask", brand: "CurrentBody", asin: "B08BFDSLVX", aiMentions: 38, arrs: 29, priceRange: "$380–$499", aiContext: "\"Only FDA-cleared at-home LED mask\" — certification language drives AI citation.", aiContextZh: "「唯一经 FDA 认证的家用 LED 面罩」——认证用语驱动 AI 引用。" },
+    { name: "Theraface Pro", brand: "Therabody", asin: "B0B7RQXG2Z", aiMentions: 22, arrs: 41, priceRange: "$399–$499", aiContext: "\"Best for jaw tension + facial massage\" — specific use-case niche.", aiContextZh: "「改善下颌紧张和面部按摩最佳选择」——特定用途细分。" },
+  ],
+  "kitchen-appliances": [
+    { name: "Cosori TurboBlaze Air Fryer 6Qt", brand: "Cosori", asin: "B0CH4PFSZQ", aiMentions: 61, arrs: 18, priceRange: "$119–$159", aiContext: "\"Best mid-size air fryer for families\" — mentioned in 61% of air fryer queries.", aiContextZh: "「最佳家庭中号空气炸锅」——在 61% 的空气炸锅查询中被提及。" },
+    { name: "Ninja Foodi DZ401 2-Basket", brand: "Ninja", asin: "B0BVJVX9MP", aiMentions: 54, arrs: 21, priceRange: "$169–$229", aiContext: "\"Best dual-basket air fryer\" — dominates 2-basket category with strong review volume.", aiContextZh: "「最佳双抽屉空气炸锅」——凭借强大的评论量主导双抽屉品类。" },
+    { name: "Instant Pot Duo 7-in-1 (8qt)", brand: "Instant Pot", asin: "B00FLYWNYQ", aiMentions: 47, arrs: 24, priceRange: "$89–$129", aiContext: "\"The classic for meal-prepping families\" — legacy brand with high AI visibility.", aiContextZh: "「备餐家庭的经典选择」——历史品牌具有高 AI 可见度。" },
+    { name: "Cosori Smart WiFi Air Fryer 5.8Qt", brand: "Cosori", asin: "B07GJBBGHG", aiMentions: 33, arrs: 29, priceRange: "$89–$119", aiContext: "\"Best value smart air fryer\" — WiFi connectivity sets it apart in tech-focused queries.", aiContextZh: "「最佳性价比智能空气炸锅」——WiFi 连接功能在科技类查询中脱颖而出。" },
+    { name: "Breville BOV900BSS Oven", brand: "Breville", asin: "B074Z77WNS", aiMentions: 26, arrs: 36, priceRange: "$349–$499", aiContext: "\"Best countertop oven for serious home cooks\" — premium segment with loyal audience.", aiContextZh: "「认真居家厨师最佳台面烤箱」——高端细分具有忠实受众。" },
+  ],
+  "tiktok-viral-beauty": [
+    { name: "CeraVe Moisturizing Cream", brand: "CeraVe", asin: "B01MSSDEPK", aiMentions: 74, arrs: 14, priceRange: "$14–$22", aiContext: "\"Dermatologist-recommended daily moisturizer\" — CeraVe's TikTok virality permanently elevated its AI ranking.", aiContextZh: "「皮肤科医生推荐的日常保湿霜」——CeraVe 的 TikTok 爆红永久提升了其 AI 排名。" },
+    { name: "The Ordinary Niacinamide 10%", brand: "The Ordinary", asin: "B07XGGFBYH", aiMentions: 58, arrs: 19, priceRange: "$8–$12", aiContext: "\"Best budget serum for pores and blemishes\" — #skincare TikTok content drove AI citation.", aiContextZh: "「最佳平价毛孔和瑕疵精华」——#skincare TikTok 内容驱动 AI 引用。" },
+    { name: "Laneige Lip Sleeping Mask", brand: "Laneige", asin: "B009MXVMME", aiMentions: 41, arrs: 28, priceRange: "$24–$32", aiContext: "\"Best overnight lip treatment\" — TikTok beauty routines made this a household name.", aiContextZh: "「最佳夜间唇部护理」——TikTok 美妆攻略让这款产品家喻户晓。" },
+    { name: "e.l.f. Halo Glow Liquid Filter", brand: "e.l.f.", asin: "B0BJM5GFYR", aiMentions: 34, arrs: 33, priceRange: "$14–$18", aiContext: "\"Viral dupe for Charlotte Tilbury\" — TikTok makeup trends driving AI recommendation rapidly.", aiContextZh: "「Charlotte Tilbury 的爆红平替」——TikTok 妆容趋势快速推动 AI 推荐。" },
+  ],
+  "camping-gear": [
+    { name: "Coleman Skydome Camping Tent", brand: "Coleman", asin: "B09XWGW1PC", aiMentions: 58, arrs: 21, priceRange: "$89–$149", aiContext: "\"Best beginner tent for families\" — mentioned in majority of camping setup queries.", aiContextZh: "「家庭初学者最佳帐篷」——在大多数营地装备查询中被提及。" },
+    { name: "MSR Hubba Hubba NX2", brand: "MSR", asin: "B007X4GRSE", aiMentions: 41, arrs: 27, priceRange: "$449–$599", aiContext: "\"Best ultralight backpacking tent\" — premium segment with strong authority signals.", aiContextZh: "「最佳超轻背包帐篷」——高端细分具有强权威信号。" },
+    { name: "BioLite FirePit+", brand: "BioLite", asin: "B086C7VQPL", aiMentions: 28, arrs: 39, priceRange: "$149–$199", aiContext: "\"Best smokeless fire pit\" — unique positioning keeps it cited despite smaller brand.", aiContextZh: "「最佳无烟篝火炉」——独特定位使其尽管品牌较小仍被引用。" },
+  ],
+};
+
+
 export interface BrandSov {
   name: string;
   sov: number;  // percentage 0-100
