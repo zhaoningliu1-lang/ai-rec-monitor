@@ -221,6 +221,7 @@ export default function CompanyDashboardView({
                 {[
                   { label: "ChatGPT",    val: brand.by_model.chatgpt },
                   { label: "Claude",     val: brand.by_model.claude },
+                  { label: "Gemini",     val: brand.by_model.gemini },
                   { label: "Perplexity", val: brand.by_model.perplexity },
                 ].map((m) => (
                   <div key={m.label} className="flex items-center gap-2 mb-1">
@@ -232,6 +233,41 @@ export default function CompanyDashboardView({
                   </div>
                 ))}
               </div>
+
+              {/* Sample AI Queries */}
+              {brand.sampleQueries && brand.sampleQueries.length > 0 && (
+                <div>
+                  <div className="text-xs mb-2 font-semibold uppercase tracking-widest" style={{ color: "#7070a0" }}>
+                    {lang === "zh" ? "AI 实际回答示例" : "What AI Actually Said"}
+                  </div>
+                  <div className="space-y-2">
+                    {brand.sampleQueries.map((q, i) => (
+                      <div key={i} className="rounded-lg p-3 space-y-1.5" style={{ background: "#0a0a14", border: "1px solid #1e1e30" }}>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="text-xs italic" style={{ color: "#a0a0c8" }}>"{q.query}"</div>
+                          {q.brandPosition !== null ? (
+                            <div className="shrink-0 text-xs font-bold px-1.5 py-0.5 rounded"
+                              style={{
+                                background: q.brandPosition === 1 ? "rgba(34,197,94,0.15)" : "rgba(245,166,35,0.12)",
+                                color: q.brandPosition === 1 ? "#22c55e" : "#f5a623",
+                              }}>
+                              #{q.brandPosition}
+                            </div>
+                          ) : (
+                            <div className="shrink-0 text-xs font-bold px-1.5 py-0.5 rounded"
+                              style={{ background: "rgba(255,77,109,0.12)", color: "#ff4d6d" }}>
+                              {lang === "zh" ? "未提及" : "Not cited"}
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs leading-relaxed" style={{ color: "#555580", fontStyle: "italic" }}>
+                          {q.snippet}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Competitors */}
               <div>

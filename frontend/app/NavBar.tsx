@@ -149,9 +149,13 @@ export default function NavBar() {
         {isZh ? "EN" : "中文"}
       </Link>
 
-      {/* Demo portal — subtle */}
-      <Link href={demoHref} className="text-xs transition-colors hover:text-white" style={{ color: "#25253f" }}>
-        {isZh ? "演示门户" : "Demo Portal"}
+      {/* Demo portal — visible amber pill */}
+      <Link
+        href={demoHref}
+        className="text-xs font-medium px-3 py-1 rounded-lg transition-opacity hover:opacity-80"
+        style={{ background: "rgba(245,166,35,0.12)", color: "#f5a623", border: "1px solid rgba(245,166,35,0.25)" }}
+      >
+        {isZh ? "演示 Demo" : "Live Demo"}
       </Link>
 
       {/* Auth + New Run */}
