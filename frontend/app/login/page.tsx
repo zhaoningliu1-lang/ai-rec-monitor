@@ -83,7 +83,10 @@ function LoginForm() {
           </button>
         </form>
 
-        <p style={{ color: "#7070a0", fontSize: 12, textAlign: "center", marginTop: 20 }}>
+        <p style={{ color: "#7070a0", fontSize: 12, textAlign: "center", marginTop: 16 }}>
+          <Link href="/forgot-password" style={{ color: "#7070a0" }}>Forgot password?</Link>
+        </p>
+        <p style={{ color: "#7070a0", fontSize: 12, textAlign: "center", marginTop: 8 }}>
           Don&apos;t have an account?{" "}
           <Link href="/signup" style={{ color: "#ff6b35" }}>Create one free</Link>
         </p>

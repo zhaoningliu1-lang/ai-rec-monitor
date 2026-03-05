@@ -1,4 +1,5 @@
-"""Authentication — register / login / me."""
+"""Authentication — register / login / me / password reset."""
+import secrets
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
@@ -11,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import get_db
-from app.emails import send_welcome
+from app.emails import send_password_reset, send_welcome
 from app.models import SubscriptionStatus, SubscriptionTier, User
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -152,3 +153,50 @@ async def login(body: LoginIn, db: AsyncSession = Depends(get_db)):
 @router.get("/me", response_model=UserOut)
 async def me(user: User = Depends(get_current_user)):
     return _user_out(user)
+
+
+# ── Password reset ─────────────────────────────────────────────────────────────
+
+class ForgotPasswordIn(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordIn(BaseModel):
+    token: str
+    new_password: str
+
+
+_RESET_TOKEN_EXPIRE_HOURS = 1
+
+
+@router.post("/forgot-password", status_code=200)
+async def forgot_password(body: ForgotPasswordIn, bg: BackgroundTasks, db: AsyncSession = Depends(get_db)):
+    """Generate a one-time reset token and email it. Always returns 200 to avoid email enumeration."""
+    result = await db.execute(select(User).where(User.email == body.email))
+    user = result.scalar_one_or_none()
+    if user and user.is_active:
+        token = secrets.token_urlsafe(32)
+        user.password_reset_token = token
+        user.password_reset_expires = datetime.now(timezone.utc) + timedelta(hours=_RESET_TOKEN_EXPIRE_HOURS)
+        await db.commit()
+        reset_url = f"{settings.site_url}/reset-password?token={token}"
+        bg.add_task(send_password_reset, user.email, reset_url, user.full_name)
+    return {"detail": "If that email is registered, a reset link has been sent."}
+
+
+@router.post("/reset-password", status_code=200)
+async def reset_password(body: ResetPasswordIn, db: AsyncSession = Depends(get_db)):
+    """Validate token and set a new password."""
+    if len(body.new_password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+    result = await db.execute(select(User).where(User.password_reset_token == body.token))
+    user = result.scalar_one_or_none()
+    if not user or not user.password_reset_expires:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+    if user.password_reset_expires < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Reset token has expired")
+    user.hashed_password = _hash(body.new_password)
+    user.password_reset_token = None
+    user.password_reset_expires = None
+    await db.commit()
+    return {"detail": "Password updated. You can now sign in."}

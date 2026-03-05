@@ -85,3 +85,27 @@ async def send_subscription_upgraded(to_email: str, tier: str, name: str | None 
         "subject": f"Avanti {tier_label} — subscription confirmed",
         "html": html,
     })
+
+
+async def send_password_reset(to_email: str, reset_url: str, name: str | None = None) -> None:
+    """Password reset email with a one-hour expiry link."""
+    display = name or to_email.split("@")[0]
+    html = f"""
+<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#f0f0f8;background:#09090f;padding:32px 24px;border-radius:12px">
+  <div style="font-size:22px;font-weight:900;color:#ff6b35;margin-bottom:8px">AVANTI</div>
+  <h1 style="font-size:24px;font-weight:800;margin:0 0 12px">Reset your password</h1>
+  <p style="color:#a0a0c0;font-size:15px;line-height:1.6;margin:0 0 24px">
+    Hi {display}, click the button below to set a new password. This link expires in 1 hour.
+  </p>
+  <a href="{reset_url}" style="display:inline-block;background:#ff6b35;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px">
+    Reset password →
+  </a>
+  <p style="color:#7070a0;font-size:12px;margin-top:24px">If you didn't request this, you can safely ignore this email.</p>
+</div>
+"""
+    await asyncio.to_thread(_send, {
+        "from": settings.from_email,
+        "to": [to_email],
+        "subject": "Reset your Avanti password",
+        "html": html,
+    })

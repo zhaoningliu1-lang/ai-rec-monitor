@@ -62,7 +62,10 @@ function ZhLoginForm() {
           </button>
         </form>
 
-        <p style={{ color: "#7070a0", fontSize: 12, textAlign: "center", marginTop: 20 }}>
+        <p style={{ color: "#7070a0", fontSize: 12, textAlign: "center", marginTop: 16 }}>
+          <Link href="/zh/forgot-password" style={{ color: "#7070a0" }}>忘记密码？</Link>
+        </p>
+        <p style={{ color: "#7070a0", fontSize: 12, textAlign: "center", marginTop: 8 }}>
           还没有账户？{" "}
           <Link href="/zh/signup" style={{ color: "#ff6b35" }}>免费注册</Link>
         </p>

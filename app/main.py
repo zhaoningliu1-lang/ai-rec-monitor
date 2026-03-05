@@ -147,6 +147,13 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "CREATE INDEX IF NOT EXISTS ix_prompt_library_category ON prompt_library (category)"
         ))
+        # Password reset columns
+        await conn.execute(text(
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_reset_token VARCHAR(64) UNIQUE"
+        ))
+        await conn.execute(text(
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_reset_expires TIMESTAMPTZ"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 
