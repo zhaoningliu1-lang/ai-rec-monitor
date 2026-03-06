@@ -352,8 +352,10 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "cb-1",
         title: "VoltEdge vs Jackery 1000: Which Portable Power Station Wins in 2026?",
+        titleZh: "VoltEdge vs Jackery 1000：2026年谁才是最强便携储能站？",
         targetKeyword: "best portable power station comparison",
         aiFormat: "Comparison listicle with spec table",
+        aiFormatZh: "参数对比测评 + 规格数据表",
         status: "published",
         brand: "VoltEdge",
         dueDate: "2026-02-10",
@@ -361,8 +363,10 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "cb-2",
         title: "How to Choose a Portable Power Station for Camping (2026 Buyer's Guide)",
+        titleZh: "露营储能站怎么选？2026年完整购买指南",
         targetKeyword: "portable power station camping guide",
         aiFormat: "Long-form buyer's guide with FAQ",
+        aiFormatZh: "长文购买指南 + 常见问题解答",
         status: "measuring",
         brand: "VoltEdge",
         dueDate: "2026-02-17",
@@ -370,8 +374,10 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "cb-3",
         title: "VoltEdge 500: Best-in-Class for Weekend Overlanders",
+        titleZh: "VoltEdge 500：越野露营首选储能站",
         targetKeyword: "best power station for overlanding",
         aiFormat: "Use-case narrative + specs",
+        aiFormatZh: "使用场景叙述 + 规格参数",
         status: "draft",
         brand: "VoltEdge",
         dueDate: "2026-03-05",
@@ -379,8 +385,10 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "cb-4",
         title: "Smart Lights That Actually Work: LumaPulse Honest Review",
+        titleZh: "真正好用的智能灯：LumaPulse 真实使用评测",
         targetKeyword: "best smart home lights review",
         aiFormat: "Review article + setup tutorial",
+        aiFormatZh: "使用评测 + 设置教程",
         status: "draft",
         brand: "LumaPulse",
         dueDate: "2026-03-08",
@@ -388,8 +396,10 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "cb-5",
         title: "ChargeFast 140W GaN Charger: Why It's the Top Pick for MacBook Users",
+        titleZh: "ChargeFast 140W GaN 充电器：MacBook 用户的最佳选择",
         targetKeyword: "best USB-C charger for MacBook",
         aiFormat: "Product spotlight + benchmark data",
+        aiFormatZh: "产品深度评测 + 充电速度基准测试",
         status: "published",
         brand: "ChargeFast",
         dueDate: "2026-01-28",
@@ -397,8 +407,10 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "cb-6",
         title: "GaN vs Silicon: Which USB-C Charger Technology Should You Buy?",
+        titleZh: "GaN vs 硅基：USB-C 充电器哪种技术更值得买？",
         targetKeyword: "GaN charger vs silicon charger explained",
         aiFormat: "Educational explainer + recommendation",
+        aiFormatZh: "技术科普 + 选购建议",
         status: "measuring",
         brand: "ChargeFast",
         dueDate: "2026-02-14",
@@ -414,6 +426,7 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
         status: "outreach sent",
         targetBrands: ["VoltEdge", "ChargeFast"],
         notes: "Editor covers power & charging. Sent press kit 2026-02-20.",
+        notesZh: "负责电源与充电品类的编辑，已于 2026-02-20 发送产品资料包。",
       },
       {
         id: "ct-2",
@@ -423,6 +436,7 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
         status: "in negotiation",
         targetBrands: ["VoltEdge"],
         notes: "Review unit shipped. Follow up due 2026-03-01.",
+        notesZh: "评测样品已寄出，计划于 2026-03-01 跟进。",
       },
       {
         id: "ct-3",
@@ -432,6 +446,7 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
         status: "published",
         targetBrands: ["ChargeFast"],
         notes: "ChargeFast 140W named 'Editor's Choice' Feb 2026.",
+        notesZh: "ChargeFast 140W 荣获 PCMag 2026年2月「编辑推荐」。",
       },
       {
         id: "ct-4",
@@ -441,6 +456,7 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
         status: "not started",
         targetBrands: ["LumaPulse"],
         notes: "Smart home roundup published quarterly. Next one in April.",
+        notesZh: "智能家居季度横评，下一期在4月，现在布局正当时。",
       },
       {
         id: "ct-5",
@@ -450,6 +466,7 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
         status: "outreach sent",
         targetBrands: ["VoltEdge", "LumaPulse"],
         notes: "Reached out to two editors. No response yet.",
+        notesZh: "已联系两位编辑，暂无回复，本周再次跟进。",
       },
       {
         id: "ct-6",
@@ -459,6 +476,7 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
         status: "in negotiation",
         targetBrands: ["VoltEdge"],
         notes: "Perfect audience for camping/overlanding use case.",
+        notesZh: "受众与露营/越野场景完美匹配，洽谈中。",
       },
       {
         id: "ct-7",
@@ -468,6 +486,7 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
         status: "not started",
         targetBrands: ["LumaPulse"],
         notes: "Adding smart lights category in Q2 2026.",
+        notesZh: "计划于 2026 年 Q2 开设智能灯品类，提前接触。",
       },
       {
         id: "ct-8",
@@ -477,6 +496,7 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
         status: "published",
         targetBrands: ["ChargeFast"],
         notes: "Featured in 'Best USB-C Chargers' roundup Jan 2026.",
+        notesZh: "2026年1月入选「最佳 USB-C 充电器」年度横评。",
       },
     ],
 
@@ -484,7 +504,9 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "okr-1",
         objective: "Dominate USB-C Charger category in AI recommendations",
+        objectiveZh: "主导 USB-C 充电器品类的 AI 推荐排名",
         keyResult: "ChargeFast reaches 45% weighted SOV in USB-C Chargers",
+        keyResultZh: "ChargeFast 加权 SOV 达到 45%（当前 31.8%）",
         current: 31.8,
         target: 45,
         startVal: 23.9,
@@ -496,7 +518,9 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "okr-2",
         objective: "Rescue LumaPulse AI visibility",
+        objectiveZh: "拯救 LumaPulse 的 AI 可见度",
         keyResult: "LumaPulse ARRS score drops below 40 (from 61)",
+        keyResultZh: "LumaPulse ARRS 分数从 61 降至 40 以下",
         current: 61,
         target: 40,
         startVal: 61,
@@ -508,7 +532,9 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "okr-3",
         objective: "Establish VoltEdge as the go-to camping power brand",
+        objectiveZh: "确立 VoltEdge 露营储能首选品牌地位",
         keyResult: "3 top-10 DA publications cite VoltEdge in camping/overlanding content",
+        keyResultZh: "3 家 DA 前十媒体在露营/越野内容中引用 VoltEdge",
         current: 1,
         target: 3,
         startVal: 0,
@@ -523,7 +549,9 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "na-1",
         title: "Ship LumaPulse review unit to TechRadar",
+        titleZh: "向 TechRadar 寄送 LumaPulse 评测样品",
         description: "TechRadar's smart home roundup is in April — get on their radar now.",
+        descriptionZh: "TechRadar 智能家居横评在4月发布，现在寄样品刚好赶上编辑审阅周期。",
         priority: "urgent",
         assignee: "Marketing",
         dueDate: "2026-03-01",
@@ -533,7 +561,9 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "na-2",
         title: "Publish VoltEdge overlanding content brief (cb-3)",
+        titleZh: "发布 VoltEdge 越野场景内容文章（cb-3）",
         description: "Brief is drafted — needs final review and publish to official blog.",
+        descriptionZh: "文章已起草完毕，完成最终审核后发布到官方博客。",
         priority: "high",
         assignee: "Content",
         dueDate: "2026-03-05",
@@ -543,7 +573,9 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "na-3",
         title: "Follow up with Tom's Guide on VoltEdge review unit",
+        titleZh: "跟进 Tom's Guide 的 VoltEdge 评测进展",
         description: "Unit shipped 2 weeks ago. Send a polite follow-up with updated spec sheet.",
+        descriptionZh: "样品已寄出两周，发送一封礼貌的跟进邮件并附上最新规格说明书。",
         priority: "high",
         assignee: "PR",
         dueDate: "2026-03-01",
@@ -553,7 +585,9 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "na-4",
         title: "Add product FAQ schema to ChargeFast product pages",
+        titleZh: "为 ChargeFast 产品页面添加 FAQ 结构化数据",
         description: "AI models frequently cite FAQ-structured pages. 5 key questions identified.",
+        descriptionZh: "AI 模型优先引用 FAQ 结构化页面，已整理 5 个核心问题，完成上线。",
         priority: "high",
         assignee: "Engineering",
         dueDate: "2026-03-03",
@@ -563,7 +597,9 @@ export const DEMO_PLAYBOOKS: Record<string, ExecutionPlaybook> = {
       {
         id: "na-5",
         title: "Reach out to CNET smart home editor (LumaPulse)",
+        titleZh: "联系 CNET 智能家居编辑（LumaPulse）",
         description: "Follow up on the initial outreach. Offer a 30-min product demo call.",
+        descriptionZh: "跟进初次联系，邀请对方参加 30 分钟产品体验通话。",
         priority: "medium",
         assignee: "PR",
         dueDate: "2026-03-07",
