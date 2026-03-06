@@ -428,6 +428,116 @@ export default function LandingView({ lang }: Props) {
         </div>
       </section>
 
+      {/* AI Quality Cleanup Warning — learned from GEO articles */}
+      <section className="space-y-6">
+        {/* Warning banner */}
+        <div
+          className="rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center gap-5"
+          style={{ background: "rgba(255,77,109,0.06)", border: "1px solid rgba(255,77,109,0.25)" }}
+        >
+          <div className="text-3xl shrink-0">⚠</div>
+          <div className="flex-1">
+            <div className="font-bold text-base mb-1" style={{ color: "#ff4d6d" }}>
+              {lang === "zh"
+                ? "AI 大清洗正在发生：30% 品牌一夜消失"
+                : "AI Quality Cleanup: 30% of brands disappeared overnight"}
+            </div>
+            <p className="text-sm leading-relaxed" style={{ color: "#9090b0" }}>
+              {lang === "zh"
+                ? "DeepSeek、ChatGPT 等主流 AI 已完成质量过滤升级——靠批量自动生成内容冲上 AI 推荐位的品牌，正在被系统性清洗。你的品牌引用来自权威评测，还是低质自动内容？"
+                : "DeepSeek and ChatGPT have upgraded their quality filters. Brands that relied on auto-generated content spam are being systematically removed. Do you know the quality of your AI citations?"}
+            </p>
+          </div>
+          <a
+            href={lang === "zh" ? "/zh/audit" : "/audit"}
+            className="shrink-0 text-sm font-semibold px-5 py-2.5 rounded-xl transition-opacity hover:opacity-85 whitespace-nowrap"
+            style={{ background: "#ff4d6d", color: "#fff" }}
+          >
+            {lang === "zh" ? "检测我的内容健康度 →" : "Check My Citation Health →"}
+          </a>
+        </div>
+
+        {/* Three pillars of healthy GEO */}
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#ff6b35" }}>
+            {lang === "zh" ? "良性 GEO 的三真标准" : "The Three Standards of Healthy GEO"}
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              {
+                icon: "①",
+                title: lang === "zh" ? "真专家" : "Real Experts",
+                desc: lang === "zh"
+                  ? "内容由领域专家署名并校验，非 AI 自动生成。AI 优先引用有专家背书的内容。"
+                  : "Content authored or verified by domain experts — not AI-generated. AI models heavily favor expert-attributed content.",
+                color: "#22c55e",
+              },
+              {
+                icon: "②",
+                title: lang === "zh" ? "真数据" : "Real Data",
+                desc: lang === "zh"
+                  ? "技术参数有可公开验证的测试来源（PDF 报告/认证）。AI 偏爱有数据支撑的事实陈述。"
+                  : "Technical specs with publicly verifiable test sources. AI strongly prefers factual claims backed by data.",
+                color: "#f5a623",
+              },
+              {
+                icon: "③",
+                title: lang === "zh" ? "真结构" : "Real Structure",
+                desc: lang === "zh"
+                  ? "内容按用户决策旅程布局（需求→对比→结论），而非关键词堆砌。AI 的 RAG 系统更容易提取完整答案。"
+                  : "Content structured around buyer decision journeys (need → compare → conclude). AI RAG systems extract this easily.",
+                color: "#3b82f6",
+              },
+            ].map((p) => (
+              <div
+                key={p.icon}
+                className="rounded-xl p-5 space-y-3"
+                style={{ background: "#0f0f17", border: `1px solid ${p.color}25` }}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-black" style={{ color: p.color }}>{p.icon}</span>
+                  <span className="font-bold text-sm">{p.title}</span>
+                </div>
+                <p className="text-xs leading-relaxed" style={{ color: "#7070a0" }}>{p.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Citation source quality breakdown explainer */}
+        <div
+          className="rounded-xl p-5"
+          style={{ background: "#0a0a14", border: "1px solid #25253f" }}
+        >
+          <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#7070a0" }}>
+            {lang === "zh" ? "Avanti 如何衡量你的引用质量" : "How Avanti Measures Your Citation Quality"}
+          </div>
+          <div className="grid md:grid-cols-4 gap-3">
+            {[
+              { label: lang === "zh" ? "专家评测" : "Expert Review", pct: "65%", color: "#22c55e", note: lang === "zh" ? "最高权重" : "Highest weight" },
+              { label: lang === "zh" ? "社区讨论" : "Community",     pct: "22%", color: "#3b82f6", note: lang === "zh" ? "中等权重" : "Medium weight" },
+              { label: lang === "zh" ? "电商页面" : "Retailer Pages", pct: "10%", color: "#f5a623", note: lang === "zh" ? "低权重"  : "Low weight" },
+              { label: lang === "zh" ? "自动生成" : "Auto-generated", pct: "3%",  color: "#ff4d6d", note: lang === "zh" ? "清洗风险" : "Cleanup risk" },
+            ].map((s) => (
+              <div key={s.label} className="space-y-1.5">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: s.color }} />
+                  <span className="text-xs font-semibold" style={{ color: s.color }}>{s.pct}</span>
+                  <span className="text-xs" style={{ color: "#7070a0" }}>{s.label}</span>
+                </div>
+                <div className="h-1.5 rounded-full" style={{ background: s.color, width: s.pct, maxWidth: "100%", opacity: 0.7 }} />
+                <div className="text-xs" style={{ color: "#555570" }}>{s.note}</div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs mt-4" style={{ color: "#555570" }}>
+            {lang === "zh"
+              ? "示例来自 ChargeFast（GEO 评分 82）。以上数据来自我们平台实时监控，不是估算。"
+              : "Example from ChargeFast (GEO Score 82). This data comes from live platform monitoring, not estimates."}
+          </p>
+        </div>
+      </section>
+
       {/* Features — 2+3 asymmetric */}
       <section>
         <h2 className="text-xs font-semibold uppercase tracking-widest mb-8" style={{ color: "#7070a0" }}>
