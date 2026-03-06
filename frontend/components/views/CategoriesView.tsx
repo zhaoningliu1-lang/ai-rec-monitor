@@ -5,6 +5,23 @@ import { groupCategoriesByParent } from "@/lib/category-hierarchy";
 
 type CategoriesKey = keyof typeof t.categories;
 
+// Static demo data shown when no real scan data exists (automotive + 3C)
+const STATIC_AUTO: CategoryEntry[] = [
+  { category: "Car Jump Starters",    brand_count: 8 },
+  { category: "Dash Cameras",         brand_count: 7 },
+  { category: "Car Phone Mounts",     brand_count: 6 },
+  { category: "Car Battery Chargers", brand_count: 5 },
+  { category: "Tire Inflators",       brand_count: 5 },
+];
+
+const STATIC_3C: CategoryEntry[] = [
+  { category: "Portable Power Stations", brand_count: 11 },
+  { category: "USB-C Chargers",          brand_count: 9 },
+  { category: "Wireless Earbuds",        brand_count: 14 },
+  { category: "Bluetooth Speakers",      brand_count: 8 },
+  { category: "Smart Home Devices",      brand_count: 7 },
+];
+
 interface Props {
   categories: CategoryEntry[];
   lang: Lang;
@@ -13,6 +30,70 @@ interface Props {
 export default function CategoriesView({ categories, lang }: Props) {
   const grouped = groupCategoriesByParent(categories);
   const indexPath = lang === "zh" ? "/zh/categories" : "/categories";
+  const isDemo = categories.length === 0;
+
+  // Static demo sections used when API returns empty
+  const demoSections = [
+    {
+      id: "automotive",
+      label: lang === "zh" ? "汽车配件" : "Automotive Accessories",
+      entries: STATIC_AUTO,
+    },
+    {
+      id: "3c",
+      label: lang === "zh" ? "消费电子 (3C)" : "Consumer Electronics (3C)",
+      entries: STATIC_3C,
+    },
+  ];
+
+  function renderCategoryGrid(entries: CategoryEntry[], sectionLabel: string, sectionKey: string) {
+    return (
+      <div key={sectionKey}>
+        <div
+          className="flex items-center gap-3 mb-4 pb-2"
+          style={{ borderBottom: "1px solid #25253f" }}
+        >
+          <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7070a0" }}>
+            {sectionLabel}
+          </h2>
+          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(255,107,53,0.08)", color: "#ff6b35" }}>
+            {entries.length}
+          </span>
+          {isDemo && (
+            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(245,166,35,0.08)", color: "#f5a623" }}>
+              {lang === "zh" ? "演示" : "Demo"}
+            </span>
+          )}
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          {entries.map((cat, i) => (
+            <Link
+              key={cat.category}
+              href={`${indexPath}/${encodeURIComponent(cat.category)}`}
+              className="rounded-xl p-5 flex items-center gap-4 group transition-colors"
+              style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+            >
+              <div
+                className="text-lg font-black w-8 text-center shrink-0"
+                style={{ color: i === 0 ? "#f5a623" : "#25253f" }}
+              >
+                #{i + 1}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold group-hover:underline mb-0.5" style={{ color: "#f0f0f8" }}>
+                  {cat.category}
+                </div>
+                <div className="text-xs" style={{ color: "#7070a0" }}>
+                  {cat.brand_count} {cat.brand_count !== 1 ? tx("categories", "brandsTracked", lang) : tx("categories", "brandSingular", lang)}
+                </div>
+              </div>
+              <div className="text-sm shrink-0" style={{ color: "#25253f" }}>→</div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -29,67 +110,33 @@ export default function CategoriesView({ categories, lang }: Props) {
         </p>
       </div>
 
-      {categories.length === 0 && (
+      {/* Demo fallback banner */}
+      {isDemo && (
         <div
-          className="rounded-xl p-12 text-center"
-          style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+          className="rounded-xl px-5 py-3 flex items-center gap-3"
+          style={{ background: "rgba(245,166,35,0.07)", border: "1px solid rgba(245,166,35,0.2)" }}
         >
-          <p className="text-sm mb-4" style={{ color: "#7070a0" }}>
-            {tx("categories", "noCategories", lang)}
+          <span className="text-base">📊</span>
+          <p className="text-sm" style={{ color: "#b0905a" }}>
+            {lang === "zh"
+              ? "以下为演示数据（汽配 + 3C）。运行首次品牌分析后将显示您的真实数据。"
+              : "Showing sample data (Automotive + 3C). Run your first brand analysis to see real data."}
+            {" "}
+            <Link href="/runs/new" className="underline font-medium" style={{ color: "#f5a623" }}>
+              {lang === "zh" ? "开始扫描 →" : "Start a scan →"}
+            </Link>
           </p>
-          <Link href="/runs/new" className="text-sm underline" style={{ color: "#ff6b35" }}>
-            {tx("categories", "startFirst", lang)}
-          </Link>
         </div>
       )}
 
-      {grouped.map(({ parent, entries }) => {
+      {/* Real data sections */}
+      {!isDemo && grouped.map(({ parent, entries }) => {
         const sectionLabel = tx("categories", parent.labelKey as CategoriesKey, lang);
-        return (
-          <div key={parent.id}>
-            {/* Section header */}
-            <div
-              className="flex items-center gap-3 mb-4 pb-2"
-              style={{ borderBottom: "1px solid #25253f" }}
-            >
-              <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7070a0" }}>
-                {sectionLabel}
-              </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(255,107,53,0.08)", color: "#ff6b35" }}>
-                {entries.length}
-              </span>
-            </div>
-
-            {/* Category cards */}
-            <div className="grid md:grid-cols-2 gap-4">
-              {entries.map((cat, i) => (
-                <Link
-                  key={cat.category}
-                  href={`${indexPath}/${encodeURIComponent(cat.category)}`}
-                  className="rounded-xl p-5 flex items-center gap-4 group transition-colors"
-                  style={{ background: "#0f0f17", border: "1px solid #25253f" }}
-                >
-                  <div
-                    className="text-lg font-black w-8 text-center shrink-0"
-                    style={{ color: i === 0 ? "#f5a623" : "#25253f" }}
-                  >
-                    #{i + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold group-hover:underline mb-0.5" style={{ color: "#f0f0f8" }}>
-                      {cat.category}
-                    </div>
-                    <div className="text-xs" style={{ color: "#7070a0" }}>
-                      {cat.brand_count} {cat.brand_count !== 1 ? tx("categories", "brandsTracked", lang) : tx("categories", "brandSingular", lang)}
-                    </div>
-                  </div>
-                  <div className="text-sm shrink-0" style={{ color: "#25253f" }}>→</div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        );
+        return renderCategoryGrid(entries, sectionLabel, parent.id);
       })}
+
+      {/* Static demo sections */}
+      {isDemo && demoSections.map((s) => renderCategoryGrid(s.entries, s.label, s.id))}
 
       {/* Explainer */}
       {categories.length > 0 && (

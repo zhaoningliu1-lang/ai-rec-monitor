@@ -281,7 +281,7 @@ export default function LandingView({ lang }: Props) {
             </p>
           </div>
           <a
-            href={lang === "zh" ? "/zh/audit" : "/audit"}
+            href={lang === "zh" ? "/zh/content-health" : "/content-health"}
             className="shrink-0 text-sm font-semibold px-5 py-2.5 rounded-xl transition-opacity hover:opacity-85 whitespace-nowrap"
             style={{ background: "#ff4d6d", color: "#fff" }}
           >

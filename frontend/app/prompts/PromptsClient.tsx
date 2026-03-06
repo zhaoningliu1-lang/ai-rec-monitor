@@ -41,6 +41,7 @@ export default function PromptsClient({ lang = "en" }: Props) {
   const [tab, setTab] = useState<TabFilter>("all");
   const [showAdd, setShowAdd] = useState(false);
   const [showSuggest, setShowSuggest] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Add form
@@ -148,6 +149,64 @@ export default function PromptsClient({ lang = "en" }: Props) {
     }
   }
 
+  // Bulk generate state
+  const [bulkProgress, setBulkProgress] = useState(0);
+  const [bulkTotal, setBulkTotal] = useState(0);
+  const [bulkRunning, setBulkRunning] = useState(false);
+
+  const BULK_BATCHES = [
+    { brand_name: "NOCO",      category: "Car Jump Starters",        region: "US", count: 10 },
+    { brand_name: "Gooloo",    category: "Car Jump Starters",        region: "US", count: 8  },
+    { brand_name: "HULKMAN",   category: "Car Jump Starters",        region: "US", count: 8  },
+    { brand_name: "Vantrue",   category: "Dash Cameras",             region: "US", count: 10 },
+    { brand_name: "Garmin",    category: "Dash Cameras",             region: "US", count: 8  },
+    { brand_name: "Thinkware", category: "Dash Cameras",             region: "US", count: 8  },
+    { brand_name: "Spigen",    category: "Car Phone Mounts",         region: "US", count: 8  },
+    { brand_name: "ESR",       category: "Car Phone Mounts",         region: "US", count: 8  },
+    { brand_name: "EcoFlow",   category: "Portable Power Stations",  region: "US", count: 10 },
+    { brand_name: "Jackery",   category: "Portable Power Stations",  region: "US", count: 10 },
+    { brand_name: "Soundcore", category: "Wireless Earbuds",         region: "US", count: 8  },
+    { brand_name: "Cosori",    category: "Kitchen Appliances",       region: "US", count: 8  },
+    { brand_name: "NuFace",    category: "Skincare",                 region: "US", count: 8  },
+    { brand_name: "CeraVe",    category: "Skincare",                 region: "US", count: 8  },
+    { brand_name: "Coleman",   category: "Camping Gear",             region: "US", count: 8  },
+    { brand_name: "NOCO",      category: "Car Jump Starters",        region: "UK", count: 8  },
+    { brand_name: "EcoFlow",   category: "Portable Power Stations",  region: "DE", count: 8  },
+    { brand_name: "Jackery",   category: "Portable Power Stations",  region: "UK", count: 8  },
+    { brand_name: "Vantrue",   category: "Dash Cameras",             region: "UK", count: 6  },
+  ];
+
+  async function handleBulkGenerate() {
+    if (!confirm(`Generate ~${BULK_BATCHES.reduce((s, b) => s + b.count, 0)} prompts across ${BULK_BATCHES.length} brand/category combinations? This may take 1–2 minutes.`)) return;
+    setBulkRunning(true);
+    setBulkProgress(0);
+    setBulkTotal(BULK_BATCHES.length);
+    const allCreated: Prompt[] = [];
+    for (let i = 0; i < BULK_BATCHES.length; i++) {
+      const batch = BULK_BATCHES[i];
+      try {
+        const res = await fetch(`${BASE}/prompts/suggest`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(batch),
+        });
+        if (res.ok) {
+          const created: Prompt[] = await res.json();
+          allCreated.push(...created);
+        }
+      } catch {
+        // skip failed batches
+      }
+      setBulkProgress(i + 1);
+    }
+    if (allCreated.length > 0) {
+      setPrompts((ps) => [...allCreated, ...ps]);
+    }
+    setBulkRunning(false);
+    setShowBulk(false);
+    alert(`Done! Generated ${allCreated.length} prompts across ${BULK_BATCHES.length} batches.`);
+  }
+
   const filtered = tab === "all" ? prompts : prompts.filter((p) => p.status === tab);
 
   const intentLabel = (t: string) =>
@@ -182,7 +241,15 @@ export default function PromptsClient({ lang = "en" }: Props) {
           <h1 className="text-3xl font-black mb-1">{tx("prompts", "title", lang)}</h1>
           <p className="text-sm" style={{ color: "#7070a0" }}>{tx("prompts", "subtitle", lang)}</p>
         </div>
-        <div className="flex gap-2 flex-shrink-0">
+        <div className="flex gap-2 flex-shrink-0 flex-wrap">
+          <button
+            onClick={() => setShowBulk(true)}
+            className="px-4 py-2 rounded-xl text-sm font-medium transition-opacity hover:opacity-80"
+            style={{ background: "rgba(112,112,160,0.12)", color: "#9090b0", border: "1px solid rgba(112,112,160,0.25)" }}
+            title="Batch-generate 150+ prompts across automotive + electronics categories"
+          >
+            Batch Generate 150+
+          </button>
           <button
             onClick={() => setShowSuggest(true)}
             className="px-4 py-2 rounded-xl text-sm font-medium transition-opacity hover:opacity-80"
@@ -412,6 +479,89 @@ export default function PromptsClient({ lang = "en" }: Props) {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* Bulk Generate Modal */}
+      {showBulk && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.7)" }}>
+          <div
+            className="w-full max-w-lg rounded-2xl p-8 space-y-5"
+            style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+          >
+            <div>
+              <h2 className="text-lg font-bold mb-1">Batch Generate 150+ Prompts</h2>
+              <p className="text-xs" style={{ color: "#7070a0" }}>
+                Calls AI suggest across {BULK_BATCHES.length} brand/category combinations — automotive accessories +
+                consumer electronics (US / UK / DE). Estimated ~{BULK_BATCHES.reduce((s, b) => s + b.count, 0)} prompts total.
+              </p>
+            </div>
+
+            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #1a1a2e" }}>
+              <div className="max-h-48 overflow-y-auto">
+                {BULK_BATCHES.map((b, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between px-4 py-2 text-xs"
+                    style={{
+                      background: i % 2 === 0 ? "#0a0a12" : "#0d0d18",
+                      borderBottom: i < BULK_BATCHES.length - 1 ? "1px solid #1a1a2e" : undefined,
+                      opacity: bulkRunning && i < bulkProgress ? 0.4 : 1,
+                    }}
+                  >
+                    <span style={{ color: "#f0f0f8" }}>{b.brand_name}</span>
+                    <span style={{ color: "#7070a0" }}>{b.category}</span>
+                    <span style={{ color: "#4a4a6a" }}>{b.region} · {b.count} prompts</span>
+                    {bulkRunning && i < bulkProgress && (
+                      <span style={{ color: "#22c55e" }}>✓</span>
+                    )}
+                    {bulkRunning && i === bulkProgress && (
+                      <span style={{ color: "#f5a623" }}>…</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {bulkRunning && (
+              <div>
+                <div className="flex justify-between text-xs mb-1" style={{ color: "#7070a0" }}>
+                  <span>Progress</span>
+                  <span>{bulkProgress} / {bulkTotal} batches</span>
+                </div>
+                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#1a1a2e" }}>
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{
+                      width: `${bulkTotal > 0 ? (bulkProgress / bulkTotal) * 100 : 0}%`,
+                      background: "#ff6b35",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowBulk(false)}
+                disabled={bulkRunning}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium disabled:opacity-40"
+                style={{ border: "1px solid #25253f", color: "#7070a0" }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleBulkGenerate}
+                disabled={bulkRunning}
+                className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-85 disabled:opacity-50"
+                style={{ background: "#ff6b35", color: "#fff" }}
+              >
+                {bulkRunning ? `Generating… (${bulkProgress}/${bulkTotal})` : "Start Batch Generation →"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
