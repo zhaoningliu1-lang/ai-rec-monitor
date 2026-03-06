@@ -12,25 +12,17 @@ const SIGNAL_CFG: Record<SellerSignal, { label: string; color: string; bg: strin
   watch:      { label: "WATCH",      color: "#f5a623", bg: "rgba(245,166,35,.10)" },
   avoid:      { label: "AVOID",      color: "#7070a0", bg: "rgba(112,112,160,.08)" },
 };
-const TREND_ICON: Record<string, string>  = { up:"↑", stable:"→", down:"↓" };
-const TREND_CLR:  Record<string, string>  = { up:"#22c55e", stable:"#7070a0", down:"#ff4d6d" };
+const TREND_ICON: Record<string, string> = { up:"↑", stable:"→", down:"↓" };
+const TREND_CLR:  Record<string, string> = { up:"#22c55e", stable:"#7070a0", down:"#ff4d6d" };
 
 /* ── cost-optimizer config ───────────────────────────── */
 const GEO_PLAN = 199;
 interface OpItem { id:string; label:string; unit:string; pct:number; def:number; max:number; weekly?:boolean }
 const OPS: OpItem[] = [
-  { id:"cs",   label:"Customer Service",           unit:"hrs/week",  pct:.70, def:20, max:80,  weekly:true },
-  { id:"res",  label:"Product Research & Sourcing",unit:"hrs/month", pct:.60, def:15, max:60 },
-  { id:"tr",   label:"Translation & Localization", unit:"hrs/month", pct:.80, def:10, max:40 },
-  { id:"data", label:"Data Entry & Reporting",     unit:"hrs/month", pct:.75, def:20, max:80 },
-];
-
-/* ── tabs ────────────────────────────────────────────── */
-type Tab = "geo" | "selection" | "optimizer";
-const TABS: { id: Tab; label: string; icon: string }[] = [
-  { id: "geo",       label: "GEO Visibility Diagnosis", icon: "◎" },
-  { id: "selection", label: "AI Selection Intelligence", icon: "◈" },
-  { id: "optimizer", label: "Cost Optimizer",            icon: "◐" },
+  { id:"cs",   label:"Customer Service",            unit:"hrs/week",  pct:.70, def:20, max:80, weekly:true },
+  { id:"res",  label:"Product Research & Sourcing", unit:"hrs/month", pct:.60, def:15, max:60 },
+  { id:"tr",   label:"Translation & Localization",  unit:"hrs/month", pct:.80, def:10, max:40 },
+  { id:"data", label:"Data Entry & Reporting",      unit:"hrs/month", pct:.75, def:20, max:80 },
 ];
 
 /* ── stats ticker ────────────────────────────────────── */
@@ -43,8 +35,22 @@ const STATS = [
   { label: "avg ARRS gap closed",  value: "18 pts" },
 ];
 
+/* ── step divider ────────────────────────────────────── */
+function StepHeader({ n, label, sub, color = "#ff6b35" }: { n: string; label: string; sub: string; color?: string }) {
+  return (
+    <div className="max-w-3xl mx-auto text-center space-y-3 pt-16 pb-2">
+      <div className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-wider"
+        style={{ background: `${color}14`, color, border: `1px solid ${color}30` }}>
+        <span style={{ opacity: 0.6 }}>Step {n}</span>
+        <span>·</span>
+        <span>{label}</span>
+      </div>
+      <p className="text-sm" style={{ color: "#7070a0" }}>{sub}</p>
+    </div>
+  );
+}
+
 export default function ProductPage() {
-  const [tab, setTab]       = useState<Tab>("geo");
   const [filter, setFilter] = useState("all");
   const [vals, setVals]     = useState<Record<string, number>>(
     Object.fromEntries(OPS.map(i => [i.id, i.def]))
@@ -64,7 +70,6 @@ export default function ProductPage() {
 
       {/* ── Hero ──────────────────────────────────────── */}
       <div className="relative overflow-hidden py-20 px-4">
-        {/* Background orbs */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="animate-orb absolute w-96 h-96 rounded-full opacity-20"
             style={{ background:"radial-gradient(circle, #ff6b35 0%, transparent 70%)", top:"-10%", left:"15%", filter:"blur(60px)" }} />
@@ -79,14 +84,14 @@ export default function ProductPage() {
           </div>
 
           <h1 className="animate-fade-up delay-100 text-4xl sm:text-5xl font-black leading-tight tracking-tight">
-            The AI layer your competitors<br />
-            <span className="shimmer-text">don&apos;t know exists yet.</span>
+            The complete AI playbook<br />
+            <span className="shimmer-text">for cross-border sellers.</span>
           </h1>
 
           <p className="animate-fade-up delay-200 text-base leading-relaxed max-w-2xl mx-auto" style={{ color:"#7070a0" }}>
-            ChatGPT, Claude, and Perplexity are already telling buyers what to purchase.
-            Avanti shows you exactly where your brand stands in those answers —
-            which categories AI is sending buyers to, and how to fund it all by cutting AI-replaceable ops costs.
+            ChatGPT, Claude, and Perplexity are already directing buyer decisions.
+            Avanti gives you the full loop: diagnose your AI rank, monitor weekly shifts,
+            discover what AI is pushing buyers to buy next, and fund it all by cutting AI-replaceable ops costs.
           </p>
 
           <div className="animate-fade-up delay-300 flex justify-center gap-3 flex-wrap">
@@ -95,10 +100,10 @@ export default function ProductPage() {
               style={{ background:"#ff6b35", color:"#fff" }}>
               Start free — no credit card →
             </Link>
-            <Link href="/pricing"
+            <Link href="/company/techvision-pro"
               className="text-sm font-medium px-6 py-3 rounded-lg transition-colors hover:text-white"
               style={{ border:"1px solid #25253f", color:"#7070a0" }}>
-              View pricing
+              See live demo →
             </Link>
           </div>
         </div>
@@ -116,38 +121,29 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {/* ── Tab bar ──────────────────────────────────── */}
-      <div className="pt-12 pb-4 px-4">
-        <div className="flex justify-center gap-2 flex-wrap">
-          {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              className="text-sm px-5 py-2.5 rounded-full font-medium transition-all"
-              style={tab === t.id
-                ? { background:"#ff6b35", color:"#fff", boxShadow:"0 0 20px rgba(255,107,53,.4)" }
-                : { background:"#0f0f17", border:"1px solid #25253f", color:"#7070a0" }}>
-              <span className="mr-1.5 opacity-70">{t.icon}</span>{t.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* ═══════════════ STEP 1: DIAGNOSE ═══════════════ */}
+      <div className="px-4">
+        <AnimateIn>
+          <StepHeader
+            n="1" label="Diagnose"
+            sub="Find out exactly where your brand stands in AI-generated answers — right now."
+          />
+        </AnimateIn>
 
-      {/* ═══════════════ TAB: GEO ═══════════════ */}
-      {tab === "geo" && (
-        <div className="space-y-16 px-4 pb-8">
-
+        <div className="space-y-16 pb-8 mt-8">
           {/* Problem statement */}
-          <AnimateIn className="max-w-3xl mx-auto text-center space-y-4 pt-4">
+          <AnimateIn className="max-w-3xl mx-auto text-center space-y-4">
             <div className="inline-block text-xs px-2.5 py-1 rounded-full font-medium"
               style={{ background:"rgba(255,77,109,.1)", color:"#ff4d6d", border:"1px solid rgba(255,77,109,.2)" }}>
               The problem
             </div>
             <p className="text-xl font-semibold leading-snug">
               Right now, a buyer is asking ChatGPT:{" "}
-              <span style={{ color:"#7070a0" }}>&ldquo;What&apos;s the best portable power station for camping?&rdquo;</span>
+              <span style={{ color:"#7070a0" }}>&ldquo;What&apos;s the best car jump starter for cold weather?&rdquo;</span>
             </p>
             <p className="text-sm leading-relaxed" style={{ color:"#7070a0" }}>
-              ChatGPT names EcoFlow, Jackery, and Bluetti. Your brand — which has 4.5 stars and
-              1,800 Amazon reviews — is not mentioned at all. The buyer goes to Amazon and searches
+              ChatGPT names NOCO, Tacklife, and AVAPOW. Your brand — which has 4.6 stars and
+              8,000 Amazon reviews — is not mentioned at all. The buyer goes to Amazon and searches
               for one of those three brands. You never had a chance.
             </p>
             <p className="text-sm font-medium" style={{ color:"#f0f0f8" }}>
@@ -178,9 +174,8 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Demo + features */}
+          {/* Demo card + features */}
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6 items-start">
-            {/* Left: features */}
             <AnimateIn direction="left" className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold leading-tight">
@@ -219,54 +214,52 @@ export default function ProductPage() {
                   Sign up — Run your free audit →
                 </Link>
                 <div>
-                  <Link href="/blog/insta360-vs-dji"
+                  <Link href="/company/techvision-pro"
                     className="text-xs transition-colors hover:text-white" style={{ color:"#7070a0" }}>
-                    See a real report: Insta360 vs DJI →
+                    See a real client dashboard: AutoCore Global →
                   </Link>
                 </div>
               </div>
             </AnimateIn>
 
-            {/* Right: demo card */}
+            {/* Demo card — JumpStart Pro */}
             <AnimateIn direction="right"
               className="rounded-2xl p-6 space-y-5 animate-border-glow"
               style={{ background:"#0f0f17", border:"1px solid rgba(255,107,53,.25)" }}>
               <div className="flex items-center justify-between">
                 <div className="text-xs font-semibold uppercase tracking-widest" style={{ color:"#7070a0" }}>
-                  Sample Report — ChargeFast
+                  Sample Report — JumpStart Pro
                 </div>
                 <div className="text-xs px-2 py-0.5 rounded" style={{ background:"rgba(245,166,35,.1)", color:"#f5a623" }}>
-                  USB-C Chargers
+                  Car Jump Starters
                 </div>
               </div>
 
-              {/* ARRS gauge */}
               <div className="flex items-center gap-4">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-black shrink-0 animate-pulse-ring"
-                  style={{ background:"rgba(245,166,35,.12)", border:"2px solid #f5a623", color:"#f5a623" }}>
-                  42
+                  style={{ background:"rgba(34,197,94,.12)", border:"2px solid #22c55e", color:"#22c55e" }}>
+                  68
                 </div>
                 <div>
-                  <div className="text-sm font-semibold">ARRS Score</div>
+                  <div className="text-sm font-semibold">GEO Score: 68 / 100</div>
                   <div className="text-xs mt-1" style={{ color:"#7070a0" }}>
-                    Moderate visibility — competitors are winning AI shelf space
+                    Strong visibility — #2 in AI recommendations. Playbook execution working.
                   </div>
-                  <div className="text-xs mt-2 font-medium" style={{ color:"#f5a623" }}>
-                    Target: below 30 to dominate your category
+                  <div className="text-xs mt-2 font-medium" style={{ color:"#22c55e" }}>
+                    Target: 80+ to dominate cold-weather category
                   </div>
                 </div>
               </div>
 
-              {/* SOV bars */}
               <div className="space-y-3">
                 <div className="text-xs font-semibold uppercase tracking-widest" style={{ color:"#7070a0" }}>
-                  AI Share of Voice — USB-C Chargers
+                  AI Share of Voice — Car Jump Starters
                 </div>
                 {[
-                  { name:"Anker", sov:41.2, arrs:19, isYou:false },
-                  { name:"Ugreen", sov:22.1, arrs:27, isYou:false },
-                  { name:"ChargeFast", sov:18.4, arrs:42, isYou:true },
-                  { name:"Belkin", sov:11.8, arrs:51, isYou:false },
+                  { name:"NOCO",        sov:38.4, arrs:19, isYou:false },
+                  { name:"JumpStart Pro", sov:19.3, arrs:41, isYou:true },
+                  { name:"TACKLIFE",    sov:14.7, arrs:53, isYou:false },
+                  { name:"AVAPOW",      sov:10.2, arrs:64, isYou:false },
                 ].map(b => (
                   <div key={b.name} className="space-y-1">
                     <div className="flex justify-between text-xs">
@@ -293,8 +286,8 @@ export default function ProductPage() {
                 style={{ background:"rgba(255,107,53,.06)", border:"1px solid rgba(255,107,53,.15)" }}>
                 <div className="font-semibold" style={{ color:"#ff6b35" }}>AI Insight</div>
                 <p style={{ color:"#7070a0" }}>
-                  Anker&apos;s dominance is driven by 340+ third-party editorial mentions.
-                  ChargeFast has zero Wirecutter citations — closing this gap alone could
+                  NOCO&apos;s dominance is driven by Project Farm (1.14M YouTube views) + 280+ Wirecutter-tier citations.
+                  JumpStart Pro has 1 Tom&apos;s Guide mention in negotiation — closing this gap could
                   add ~12 SOV points within 90 days.
                 </p>
               </div>
@@ -305,13 +298,13 @@ export default function ProductPage() {
             </AnimateIn>
           </div>
 
-          {/* Trust strip */}
+          {/* AI engine trust strip */}
           <AnimateIn className="max-w-3xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { label: "ChatGPT", sub: "GPT-4o" },
-                { label: "Claude",  sub: "Anthropic" },
-                { label: "Gemini",  sub: "Google" },
+                { label: "ChatGPT",    sub: "GPT-4o" },
+                { label: "Claude",     sub: "Anthropic" },
+                { label: "Gemini",     sub: "Google" },
                 { label: "Perplexity", sub: "Answer engine" },
               ].map(e => (
                 <div key={e.label} className="rounded-xl p-4 text-center card-hover"
@@ -326,31 +319,110 @@ export default function ProductPage() {
             </p>
           </AnimateIn>
         </div>
-      )}
+      </div>
 
-      {/* ═══════════════ TAB: SELECTION ═══════════════ */}
-      {tab === "selection" && (
-        <div className="space-y-12 px-4 pb-8">
+      {/* ═══════════════ STEP 2: MONITOR ═══════════════ */}
+      <div className="px-4 border-t" style={{ borderColor:"#1a1a2e" }}>
+        <AnimateIn>
+          <StepHeader
+            n="2" label="Monitor"
+            sub="Track how your AI visibility changes week over week — and see the exact impact of every content and citation move."
+            color="#f5a623"
+          />
+        </AnimateIn>
 
-          {/* Intro */}
-          <AnimateIn className="max-w-3xl mx-auto text-center space-y-4 pt-4">
-            <div className="inline-block text-xs px-2.5 py-1 rounded-full font-medium"
-              style={{ background:"rgba(34,197,94,.1)", color:"#22c55e", border:"1px solid rgba(34,197,94,.2)" }}>
-              The opportunity
+        <div className="max-w-5xl mx-auto mt-10 grid md:grid-cols-2 gap-6">
+          {/* Trend chart mock */}
+          <AnimateIn direction="left" className="rounded-2xl p-6 space-y-5"
+            style={{ background:"#0f0f17", border:"1px solid #25253f" }}>
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-semibold">GEO Score Trend — AutoCore Global</div>
+              <span className="text-xs px-2 py-0.5 rounded" style={{ background:"rgba(34,197,94,.1)", color:"#22c55e" }}>
+                Live tracking
+              </span>
             </div>
-            <h2 className="text-2xl font-bold leading-snug">
-              AI isn&apos;t neutral. It has already decided<br/>
-              <span style={{ color:"#22c55e" }}>which categories are worth recommending.</span>
-            </h2>
-            <p className="text-sm leading-relaxed" style={{ color:"#7070a0" }}>
-              AI models form strong opinions based on training data, citation patterns, and content authority.
-              Some categories are pushed relentlessly. Others are barely mentioned.
-              Our Selection Intelligence maps exactly which categories and brands are winning AI recommendations
-              right now — so you can source and position ahead of the curve.
-            </p>
+
+            {[
+              { brand:"JumpStart Pro", scores:[52,56,60,65,68], color:"#22c55e" },
+              { brand:"MagDrive Pro",  scores:[18,20,21,22,24], color:"#f5a623" },
+              { brand:"DriveSafe Pro", scores:[38,33,27,22,18], color:"#ff4d6d" },
+            ].map(({ brand, scores, color }) => {
+              const delta = scores[scores.length-1] - scores[0];
+              const W = 120, H = 32;
+              const min = Math.min(...scores) - 3;
+              const max = Math.max(...scores) + 3;
+              const range = max - min || 1;
+              const pts = scores.map((v,i) => {
+                const x = (i/(scores.length-1))*W;
+                const y = H - ((v-min)/range)*H;
+                return `${x.toFixed(1)},${y.toFixed(1)}`;
+              }).join(" ");
+              return (
+                <div key={brand} className="flex items-center gap-4">
+                  <div className="w-28 shrink-0">
+                    <div className="text-xs font-medium">{brand}</div>
+                    <div className="text-xs mt-0.5" style={{ color }}>
+                      {scores[scores.length-1]} pts {delta > 0 ? `(+${delta})` : `(${delta})`}
+                    </div>
+                  </div>
+                  <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="shrink-0">
+                    <polyline points={pts} fill="none" stroke={color}
+                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+              );
+            })}
+
+            <div className="flex gap-4 text-xs pt-2" style={{ borderTop:"1px solid #1a1a2e", color:"#7070a0" }}>
+              <span>Week 1</span>
+              <span className="ml-auto">Week 5 (now)</span>
+            </div>
           </AnimateIn>
 
-          {/* Value props horizontal */}
+          {/* What monitoring tells you */}
+          <AnimateIn direction="right" className="space-y-4">
+            <h3 className="text-xl font-bold">
+              See what moves the needle,<br/>
+              <span style={{ color:"#f5a623" }}>week by week.</span>
+            </h3>
+            <p className="text-sm leading-relaxed" style={{ color:"#7070a0" }}>
+              Publishing a new piece of content? Getting a Wirecutter citation? Avanti tracks your
+              GEO score every week so you can attribute exactly which actions drove which changes —
+              and double down on what works.
+            </p>
+            <div className="space-y-3">
+              {[
+                { event:"JumpStart Pro: Tom's Guide review unit shipped", impact:"GEO +8 pts (3 weeks later)", color:"#22c55e" },
+                { event:"DriveSafe Pro: 46% auto-generated content flagged", impact:"GEO −20 pts (AI quality filter)", color:"#ff4d6d" },
+                { event:"MagDrive Pro: FAQ schema added to product pages", impact:"GEO +4 pts (2 weeks later)", color:"#f5a623" },
+              ].map(({ event, impact, color }) => (
+                <div key={event} className="rounded-xl p-4 space-y-1"
+                  style={{ background:"#0a0a14", border:`1px solid ${color}20` }}>
+                  <div className="text-xs" style={{ color:"#a0a0c8" }}>{event}</div>
+                  <div className="text-sm font-semibold" style={{ color }}>{impact}</div>
+                </div>
+              ))}
+            </div>
+            <Link href="/company/techvision-pro"
+              className="inline-block text-sm font-medium transition-colors hover:text-white"
+              style={{ color:"#7070a0" }}>
+              See a full client dashboard with live trends →
+            </Link>
+          </AnimateIn>
+        </div>
+      </div>
+
+      {/* ═══════════════ STEP 3: DISCOVER ═══════════════ */}
+      <div className="px-4 border-t mt-16" style={{ borderColor:"#1a1a2e" }}>
+        <AnimateIn>
+          <StepHeader
+            n="3" label="Discover"
+            sub="Before you decide what to sell, find out what AI is already recommending to buyers — 6–8 weeks before it shows up as sales data."
+            color="#22c55e"
+          />
+        </AnimateIn>
+
+        <div className="space-y-10 mt-10">
           <AnimateIn className="max-w-4xl mx-auto grid md:grid-cols-3 gap-4">
             {[
               { icon:"📡", title:"Real-time AI tracking", body:"200+ queries/month across ChatGPT, Claude, Gemini, and Perplexity — continuously updated." },
@@ -428,7 +500,6 @@ export default function ProductPage() {
             })}
           </div>
 
-          {/* Explainer legend */}
           <AnimateIn className="max-w-2xl mx-auto rounded-xl p-5 space-y-3"
             style={{ background:"#0f0f17", border:"1px solid #25253f" }}>
             <div className="font-semibold text-sm">How to read this data</div>
@@ -439,46 +510,20 @@ export default function ProductPage() {
               <div className="pt-1">SOV (Share of Voice) — percentage of all AI mentions in this category captured by this brand.</div>
             </div>
           </AnimateIn>
-
-          {/* CTA */}
-          <AnimateIn className="rounded-xl p-8 text-center space-y-4 max-w-2xl mx-auto"
-            style={{ background:"#0f0f17", border:"1px solid #25253f" }}>
-            <p className="font-semibold text-lg">Is your brand on any of these lists?</p>
-            <p className="text-sm" style={{ color:"#7070a0" }}>
-              Sign up to see your brand&apos;s ARRS score, SOV breakdown, and how you compare
-              to every competitor in your category. Updated every month.
-            </p>
-            <Link href="/signup"
-              className="inline-block text-sm font-semibold px-6 py-3 rounded-lg transition-opacity hover:opacity-80"
-              style={{ background:"#ff6b35", color:"#fff" }}>
-              Sign up free — Track your brand →
-            </Link>
-          </AnimateIn>
         </div>
-      )}
+      </div>
 
-      {/* ═══════════════ TAB: OPTIMIZER ═══════════════ */}
-      {tab === "optimizer" && (
-        <div className="space-y-12 px-4 pb-8">
+      {/* ═══════════════ STEP 4: OPTIMIZE & FUND ═══════════════ */}
+      <div className="px-4 border-t mt-16" style={{ borderColor:"#1a1a2e" }}>
+        <AnimateIn>
+          <StepHeader
+            n="4" label="Optimize & Fund"
+            sub="Cut AI-replaceable ops costs first. Reinvest the savings into GEO — the flywheel that compounds."
+            color="#60a5fa"
+          />
+        </AnimateIn>
 
-          {/* Intro */}
-          <AnimateIn className="max-w-3xl mx-auto text-center space-y-4 pt-4">
-            <div className="inline-block text-xs px-2.5 py-1 rounded-full font-medium"
-              style={{ background:"rgba(96,165,250,.1)", color:"#60a5fa", border:"1px solid rgba(96,165,250,.2)" }}>
-              The flywheel
-            </div>
-            <h2 className="text-2xl font-bold leading-snug">
-              Your team is doing tasks that GPT-4o<br/>
-              <span style={{ color:"#60a5fa" }}>completes in under 8 seconds.</span>
-            </h2>
-            <p className="text-sm leading-relaxed" style={{ color:"#7070a0" }}>
-              Most cross-border brands spend $800–$2,000/month on repetitive, language-dependent operations
-              that AI now handles faster and cheaper. The brands winning in 2026 cut these costs first —
-              then reinvest the savings into GEO monitoring, which drives more AI recommendations,
-              which drives more organic demand.
-            </p>
-          </AnimateIn>
-
+        <div className="space-y-12 mt-10">
           {/* Flywheel visual */}
           <AnimateIn className="max-w-2xl mx-auto rounded-xl p-6"
             style={{ background:"#0f0f17", border:"1px solid #25253f" }}>
@@ -487,10 +532,10 @@ export default function ProductPage() {
             </div>
             <div className="flex flex-col gap-2">
               {[
-                { label:"AI saves you $800–$2,000/mo in ops", color:"#22c55e" },
+                { label:"AI saves you $800–$2,000/mo in ops costs", color:"#22c55e" },
                 { label:"Reinvest → Avanti GEO monitoring ($199/mo)", color:"#ff6b35" },
                 { label:"AI recommends your brand more frequently", color:"#f5a623" },
-                { label:"More organic AI-driven demand arrives", color:"#22c55e" },
+                { label:"More organic AI-driven buyer demand arrives", color:"#22c55e" },
                 { label:"Customer acquisition cost drops", color:"#60a5fa" },
                 { label:"More budget freed for GEO expansion", color:"#ff6b35" },
               ].map((step, i) => (
@@ -508,11 +553,9 @@ export default function ProductPage() {
 
           {/* Calculator */}
           <div className="max-w-5xl mx-auto grid lg:grid-cols-5 gap-6 items-start">
-            {/* Inputs */}
             <div className="lg:col-span-3 space-y-5">
               <div className="text-sm font-semibold" style={{ color:"#f0f0f8" }}>Enter your team&apos;s actual numbers:</div>
 
-              {/* Rate */}
               <div className="rounded-xl p-5 space-y-4 card-hover"
                 style={{ background:"#0f0f17", border:"1px solid #25253f" }}>
                 <div className="flex items-center justify-between">
@@ -618,7 +661,6 @@ export default function ProductPage() {
                 </div>
               </div>
 
-              {/* What AI replaces */}
               <div className="rounded-xl p-5 space-y-3 card-hover"
                 style={{ background:"#0f0f17", border:"1px solid #25253f" }}>
                 <div className="text-xs font-semibold uppercase tracking-widest" style={{ color:"#7070a0" }}>
@@ -638,15 +680,11 @@ export default function ProductPage() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/blog/ai-cost-guide-2025"
-                  className="text-xs transition-colors hover:text-white block pt-1" style={{ color:"#ff6b35" }}>
-                  Read the full cost savings guide →
-                </Link>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Bottom CTA strip ─────────────────────────────── */}
       <AnimateIn className="mt-16 mx-4 rounded-2xl p-10 text-center space-y-4 max-w-4xl lg:mx-auto"

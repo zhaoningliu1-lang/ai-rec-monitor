@@ -2,6 +2,44 @@ import Link from "next/link";
 import { DEMO_COMPANIES, DemoBrand, CitationRiskLevel } from "@/lib/company-demo-data";
 import { tx, Lang } from "@/lib/i18n";
 
+// 4-week GEO score history (most recent last)
+const BRAND_TRENDS: Record<string, number[]> = {
+  "MagDrive Pro":  [18, 20, 21, 22, 24],   // slow recovery
+  "JumpStart Pro": [52, 56, 60, 65, 68],   // playbook working
+  "DriveSafe Pro": [38, 33, 27, 22, 18],   // declining — urgent
+  "FlexWear Pro":  [30, 34, 38, 43, 47],
+  "VoltEdge":      [45, 42, 38, 35, 31],
+};
+
+function GeoTrendLine({ scores }: { scores: number[] }) {
+  const W = 80, H = 28;
+  const min = Math.min(...scores) - 3;
+  const max = Math.max(...scores) + 3;
+  const range = max - min || 1;
+  const pts = scores
+    .map((v, i) => {
+      const x = (i / (scores.length - 1)) * W;
+      const y = H - ((v - min) / range) * H;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+  const last = scores[scores.length - 1];
+  const prev = scores[scores.length - 2];
+  const color = last > prev ? "#22c55e" : last < prev ? "#ff4d6d" : "#7070a0";
+  return (
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+      <polyline
+        points={pts}
+        fill="none"
+        stroke={color}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function arrsColor(score: number) {
   return score < 30 ? "#22c55e" : score < 60 ? "#f5a623" : "#ff4d6d";
 }
@@ -264,6 +302,28 @@ export default function CompanyDashboardView({
                 </div>
               </div>
 
+              {/* 4-week GEO trend sparkline */}
+              {BRAND_TRENDS[brand.name] && (() => {
+                const scores = BRAND_TRENDS[brand.name];
+                const delta = scores[scores.length - 1] - scores[0];
+                const last  = scores[scores.length - 1];
+                const prev  = scores[scores.length - 2];
+                const color = last > prev ? "#22c55e" : last < prev ? "#ff4d6d" : "#7070a0";
+                return (
+                  <div className="flex items-center justify-between px-1">
+                    <div className="text-xs" style={{ color: "#7070a0" }}>
+                      {lang === "zh" ? "4周 GEO 趋势" : "4-week GEO trend"}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <GeoTrendLine scores={scores} />
+                      <span className="text-xs font-bold tabular-nums" style={{ color }}>
+                        {delta > 0 ? "+" : ""}{delta} pts
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Sentiment */}
               <div>
                 <div className="text-xs mb-2" style={{ color: "#7070a0" }}>{tx("company", "sentiment", lang)}</div>
@@ -367,6 +427,99 @@ export default function CompanyDashboardView({
                 </Link>
               </div>
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* GEO → Platform Sales Signal (P2) */}
+      <div className="rounded-2xl p-6 space-y-5" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="text-sm font-bold uppercase tracking-widest" style={{ color: "#7070a0" }}>
+            {lang === "zh" ? "AI 曝光 → 平台销量传导信号" : "AI Visibility → Platform Sales Signal"}
+          </div>
+          <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+            style={{ background: "rgba(34,197,94,.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,.25)" }}>
+            {lang === "zh" ? "实时关联验证" : "Live correlation"}
+          </span>
+        </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            {
+              brand: "JumpStart Pro",
+              event: lang === "zh" ? "SOV ↑ 8.5% (4周)" : "SOV ↑ 8.5% over 4 wks",
+              result: lang === "zh" ? "Amazon 自然流量 +23%" : "Amazon organic sessions +23%",
+              lag: lang === "zh" ? "滞后约 6 周" : "~6 week lag",
+              color: "#22c55e",
+            },
+            {
+              brand: "MagDrive Pro",
+              event: lang === "zh" ? "Wirecutter 引用 0 → 1" : "Wirecutter citation: 0 → 1",
+              result: lang === "zh" ? "品牌关键词搜索量 +41%" : "Brand keyword search +41%",
+              lag: lang === "zh" ? "引用后第 3 周生效" : "Effective by week 3",
+              color: "#f5a623",
+            },
+            {
+              brand: "DriveSafe Pro",
+              event: lang === "zh" ? "自动生成内容占比 46%" : "Auto-gen content: 46%",
+              result: lang === "zh" ? "AI 引用率下降 60% (3月内)" : "AI citation rate −60% in 3 mo",
+              lag: lang === "zh" ? "AI质量过滤升级后" : "After AI quality filter update",
+              color: "#ff4d6d",
+            },
+          ].map(({ brand, event, result, lag, color }) => (
+            <div key={brand} className="rounded-xl p-4 space-y-2"
+              style={{ background: "#0a0a14", border: `1px solid ${color}25` }}>
+              <div className="text-xs font-semibold" style={{ color }}>{brand}</div>
+              <div className="text-xs" style={{ color: "#a0a0c8" }}>{event}</div>
+              <div className="text-sm font-bold" style={{ color }}>{result}</div>
+              <div className="text-xs" style={{ color: "#7070a0" }}>{lag}</div>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs" style={{ color: "#555580" }}>
+          {lang === "zh"
+            ? "数据来源：AutoCore Global 账户内部监控数据，2026年1月–3月"
+            : "Source: AutoCore Global internal monitoring data, Jan–Mar 2026"}
+        </p>
+      </div>
+
+      {/* Demo navigation (P0.1) */}
+      <div>
+        <div className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#7070a0" }}>
+          {lang === "zh" ? "继续探索产品功能" : "Continue the demo"}
+        </div>
+        <div className="grid md:grid-cols-3 gap-3">
+          {[
+            {
+              href: `${base}/execution`,
+              icon: "◈",
+              title: lang === "zh" ? "执行手册" : "Execution Playbook",
+              desc: lang === "zh" ? "查看具体 GEO 优化行动方案、OKR 跟踪和媒体外联状态" : "See the GEO action plan, OKR tracking, and media outreach status",
+            },
+            {
+              href: lang === "zh" ? "/zh/selection" : "/selection",
+              icon: "◎",
+              title: lang === "zh" ? "AI 选品情报" : "AI Selection Intel",
+              desc: lang === "zh" ? "AI 正在向买家推荐哪些品类——比竞品早 6–8 周看到信号" : "Which categories AI is pushing to buyers — 6–8 weeks before it shows up as sales",
+            },
+            {
+              href: lang === "zh" ? "/zh/optimizer" : "/optimizer",
+              icon: "◐",
+              title: lang === "zh" ? "成本优化器" : "Cost Optimizer",
+              desc: lang === "zh" ? "算出你现有运营成本里有多少可以腾出来投入 GEO" : "Calculate how much of your current ops budget can fund GEO monitoring",
+            },
+          ].map(({ href, icon, title, desc }) => (
+            <Link
+              key={href} href={href}
+              className="rounded-xl p-4 flex items-start gap-3 transition-all group"
+              style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+            >
+              <span className="text-xl mt-0.5 shrink-0" style={{ color: "#ff6b35" }}>{icon}</span>
+              <div>
+                <div className="text-sm font-semibold transition-colors group-hover:text-white">{title}</div>
+                <div className="text-xs mt-1 leading-relaxed" style={{ color: "#7070a0" }}>{desc}</div>
+                <div className="text-xs mt-2 font-medium" style={{ color: "#ff6b35" }}>→</div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
