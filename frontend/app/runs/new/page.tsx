@@ -8,10 +8,19 @@ import { api } from "@/lib/api";
 const PROVIDER_OPTIONS = ["openai", "claude"] as const;
 const REGION_OPTIONS = ["US", "UK", "DE"] as const;
 
+type AnalysisType = "brand" | "seller" | "sku";
+
+const TYPE_CONFIG: Record<AnalysisType, { label: string; placeholder: string; hint: string }> = {
+  brand:  { label: "Brand name",            placeholder: "e.g. JumpStart Pro, Vantrue, NOCO",              hint: "Track brand-level AI visibility across all products" },
+  seller: { label: "Seller / Company name", placeholder: "e.g. NOCO Company, Vantrue Electronics",         hint: "See how this seller's product portfolio appears in AI buyer recommendations" },
+  sku:    { label: "Product / SKU name",    placeholder: "e.g. NOCO Boost Plus GB40 1000A, Vantrue N4 Pro", hint: "Track a specific product model's AI ranking vs competing SKUs" },
+};
+
 export default function NewRunPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [analysisType, setAnalysisType] = useState<AnalysisType>("brand");
 
   const [form, setForm] = useState({
     brand_name: "",
@@ -74,18 +83,43 @@ export default function NewRunPage() {
         className="rounded-2xl p-6 space-y-5"
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}
       >
+        {/* Analysis type selector */}
         <div>
-          <label className="block text-sm font-medium mb-1.5">Brand name *</label>
+          <label className="block text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#7070a0" }}>
+            Analyzing
+          </label>
+          <div className="flex gap-2 flex-wrap">
+            {(["brand", "seller", "sku"] as AnalysisType[]).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setAnalysisType(t)}
+                className="text-sm px-3 py-1.5 rounded-lg border transition-colors capitalize"
+                style={
+                  analysisType === t
+                    ? { background: "#ff6b35", color: "#fff", border: "1px solid #ff6b35" }
+                    : { background: "#161625", color: "#7070a0", border: "1px solid #25253f" }
+                }
+              >
+                {t === "sku" ? "SKU / Product" : t.charAt(0).toUpperCase() + t.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1.5">{TYPE_CONFIG[analysisType].label} *</label>
           <input
             className={inputCls}
             style={inputStyle}
             onFocus={(e) => (e.currentTarget.style.borderColor = "#ff6b35")}
             onBlur={(e) => (e.currentTarget.style.borderColor = "#25253f")}
-            placeholder="e.g. Nekteck"
+            placeholder={TYPE_CONFIG[analysisType].placeholder}
             value={form.brand_name}
             onChange={(e) => setForm((f) => ({ ...f, brand_name: e.target.value }))}
             required
           />
+          <p className="text-xs mt-1.5" style={{ color: "#555580" }}>{TYPE_CONFIG[analysisType].hint}</p>
         </div>
 
         <div>

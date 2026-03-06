@@ -22,6 +22,31 @@ const CATEGORIES = [
 ];
 
 type Phase = "idle" | "running" | "done" | "error";
+type AnalysisType = "brand" | "seller" | "sku";
+
+const TYPE_CONFIG: Record<AnalysisType, { label: Record<string, string>; placeholder: Record<string, string>; hint: Record<string, string> }> = {
+  brand: {
+    label:       { en: "Brand name", zh: "品牌名称" },
+    placeholder: { en: "e.g. JumpStart Pro, Vantrue, NOCO", zh: "例如：JumpStart Pro、Vantrue、NOCO" },
+    hint:        { en: "Track brand-level AI visibility across all products", zh: "追踪品牌整体在 AI 推荐中的曝光度" },
+  },
+  seller: {
+    label:       { en: "Seller / Company name", zh: "卖家 / 公司名称" },
+    placeholder: { en: "e.g. NOCO Company, Vantrue Electronics, Blackview", zh: "例如：NOCO Company、Vantrue Electronics" },
+    hint:        { en: "See how this seller's portfolio appears in AI buyer recommendations", zh: "查看该卖家产品线在 AI 推荐中的整体表现" },
+  },
+  sku: {
+    label:       { en: "Product / SKU name", zh: "产品 / SKU 名称" },
+    placeholder: { en: "e.g. NOCO Boost Plus GB40 1000A, Vantrue N4 Pro", zh: "例如：NOCO GB40 1000A、Vantrue N4 Pro" },
+    hint:        { en: "Track a specific product model's AI ranking vs competing SKUs", zh: "追踪具体型号在 AI 中的排名，对比竞品 SKU" },
+  },
+};
+
+const TYPE_LABELS: Record<AnalysisType, Record<string, string>> = {
+  brand:  { en: "Brand",   zh: "品牌" },
+  seller: { en: "Seller",  zh: "卖家" },
+  sku:    { en: "SKU / Product", zh: "具体产品" },
+};
 
 interface RunResult {
   arrs: number;
@@ -38,6 +63,7 @@ export default function AuditClient({ lang = "en" }: Props) {
   const [error, setError] = useState("");
   const [result, setResult] = useState<RunResult | null>(null);
   const [runId, setRunId] = useState<string | null>(null);
+  const [analysisType, setAnalysisType] = useState<AnalysisType>("brand");
 
   const [form, setForm] = useState({
     brand_name: "",
@@ -149,22 +175,46 @@ export default function AuditClient({ lang = "en" }: Props) {
           className="rounded-2xl p-8 space-y-5"
           style={{ background: "#0f0f17", border: "1px solid #25253f" }}
         >
+          {/* Analysis type selector */}
           <div>
-            <label className="block text-sm font-medium mb-1.5">{tx("audit", "labelBrand", lang)}</label>
+            <label className="block text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#7070a0" }}>
+              {lang === "zh" ? "分析类型" : "Analyzing"}
+            </label>
+            <div className="flex gap-2">
+              {(["brand", "seller", "sku"] as AnalysisType[]).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setAnalysisType(t)}
+                  className="text-sm px-3 py-1.5 rounded-lg border transition-colors"
+                  style={
+                    analysisType === t
+                      ? { background: "#ff6b35", color: "#fff", border: "1px solid #ff6b35" }
+                      : { background: "#161625", color: "#7070a0", border: "1px solid #25253f" }
+                  }
+                >
+                  {TYPE_LABELS[t][lang] ?? TYPE_LABELS[t].en}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5">
+              {TYPE_CONFIG[analysisType].label[lang] ?? TYPE_CONFIG[analysisType].label.en} *
+            </label>
             <input
               className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors"
               style={{ background: "#161625", border: "1px solid #25253f", color: "#f0f0f8" }}
               onFocus={(e) => (e.currentTarget.style.borderColor = "#ff6b35")}
               onBlur={(e) => (e.currentTarget.style.borderColor = "#25253f")}
-              placeholder={tx("audit", "phBrand", lang)}
+              placeholder={TYPE_CONFIG[analysisType].placeholder[lang] ?? TYPE_CONFIG[analysisType].placeholder.en}
               value={form.brand_name}
               onChange={(e) => setForm((f) => ({ ...f, brand_name: e.target.value }))}
               required
             />
             <p className="text-xs mt-1.5" style={{ color: "#555580" }}>
-              {lang === "zh"
-                ? "支持品牌名（如 NOCO）、具体产品名（如 NOCO GB40）或 ASIN"
-                : "Works with brand names, specific product names, or ASINs"}
+              {TYPE_CONFIG[analysisType].hint[lang] ?? TYPE_CONFIG[analysisType].hint.en}
             </p>
           </div>
 
