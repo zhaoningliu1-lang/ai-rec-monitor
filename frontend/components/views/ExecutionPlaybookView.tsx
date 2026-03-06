@@ -119,7 +119,7 @@ export default function ExecutionPlaybookView({
               border: `1px solid ${company.planColor}33`,
             }}
           >
-            {company.plan}
+            {lang === "zh" ? (company.planZh ?? company.plan) : company.plan}
           </span>
         </div>
         <p className="text-sm mt-1" style={{ color: "#7070a0" }}>
@@ -184,12 +184,12 @@ export default function ExecutionPlaybookView({
                       </span>
                     </td>
                     <td className="px-4 py-3 font-medium max-w-xs" style={{ color: "#f0f0f8" }}>
-                      <p className="truncate">{brief.title}</p>
+                      <p className="truncate">{lang === "zh" ? (brief.titleZh ?? brief.title) : brief.title}</p>
                     </td>
                     <td className="px-4 py-3 text-xs max-w-xs" style={{ color: "#7070a0" }}>
                       <p className="truncate">{brief.targetKeyword}</p>
                     </td>
-                    <td className="px-4 py-3 text-xs" style={{ color: "#7070a0" }}>{brief.aiFormat}</td>
+                    <td className="px-4 py-3 text-xs" style={{ color: "#7070a0" }}>{lang === "zh" ? (brief.aiFormatZh ?? brief.aiFormat) : brief.aiFormat}</td>
                     <td className="px-4 py-3">
                       <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={s}>
                         {localizeStatus(brief.status, lang)}
@@ -258,7 +258,7 @@ export default function ExecutionPlaybookView({
                         {localizeStatus(ct.status, lang)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs max-w-xs" style={{ color: "#7070a0" }}>{ct.notes}</td>
+                    <td className="px-4 py-3 text-xs max-w-xs" style={{ color: "#7070a0" }}>{lang === "zh" ? (ct.notesZh ?? ct.notes) : ct.notes}</td>
                   </tr>
                 );
               })}
@@ -281,8 +281,8 @@ export default function ExecutionPlaybookView({
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="font-bold mb-1">{okr.objective}</p>
-                    <p className="text-sm" style={{ color: "#7070a0" }}>{okr.keyResult}</p>
+                    <p className="font-bold mb-1">{lang === "zh" ? (okr.objectiveZh ?? okr.objective) : okr.objective}</p>
+                    <p className="text-sm" style={{ color: "#7070a0" }}>{lang === "zh" ? (okr.keyResultZh ?? okr.keyResult) : okr.keyResult}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={ss}>
@@ -346,9 +346,9 @@ export default function ExecutionPlaybookView({
                     style={{ color: "#f0f0f8", textDecoration: action.done ? "line-through" : "none" }}
                   >
                     {action.done && <span className="mr-1.5" style={{ color: "#22c55e" }}>✓</span>}
-                    {action.title}
+                    {lang === "zh" ? (action.titleZh ?? action.title) : action.title}
                   </p>
-                  <p className="text-sm" style={{ color: "#7070a0" }}>{action.description}</p>
+                  <p className="text-sm" style={{ color: "#7070a0" }}>{lang === "zh" ? (action.descriptionZh ?? action.description) : action.description}</p>
                 </div>
 
                 <div className="shrink-0 text-right space-y-1">
