@@ -347,7 +347,7 @@ export default function LandingView({ lang }: Props) {
             </h2>
           </div>
           <a
-            href={lang === "zh" ? "/zh/selection" : "/selection"}
+            href={lang === "zh" ? "/zh/signup" : "/signup"}
             className="text-sm font-medium shrink-0 transition-colors hover:text-white"
             style={{ color: "#f5a623" }}
           >
@@ -400,7 +400,7 @@ export default function LandingView({ lang }: Props) {
                 : "Customer service, product research, translation, data entry — AI handles 60–80% of this. The savings fund your GEO monitoring."}
             </p>
             <a
-              href={lang === "zh" ? "/zh/optimizer" : "/optimizer"}
+              href={lang === "zh" ? "/zh/signup" : "/signup"}
               className="inline-block text-sm font-medium px-5 py-2 rounded-lg mt-2 transition-opacity hover:opacity-80"
               style={{ background: "#22c55e", color: "#0f0f17" }}
             >
@@ -636,7 +636,7 @@ export default function LandingView({ lang }: Props) {
               </div>
             </div>
             <Link
-              href={auditPath}
+              href={lang === "zh" ? "/zh/signup" : "/signup"}
               className="block text-center text-sm font-semibold py-3 rounded-xl transition-opacity hover:opacity-80"
               style={{ background: "#ff6b35", color: "#fff" }}
             >
