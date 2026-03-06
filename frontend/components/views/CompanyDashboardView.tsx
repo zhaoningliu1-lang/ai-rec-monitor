@@ -79,7 +79,7 @@ export default function CompanyDashboardView({
                 border: `1px solid ${company.planColor}33`,
               }}
             >
-              {company.plan}
+              {lang === "zh" ? (company.planZh ?? company.plan) : company.plan}
             </span>
           </div>
           <p className="text-sm mt-1" style={{ color: "#7070a0" }}>
@@ -145,7 +145,9 @@ export default function CompanyDashboardView({
               <div className="flex items-start justify-between">
                 <div>
                   <div className="font-bold text-lg">{brand.name}</div>
-                  <div className="text-xs mt-0.5" style={{ color: "#7070a0" }}>{brand.category}</div>
+                  <div className="text-xs mt-0.5" style={{ color: "#7070a0" }}>
+                    {lang === "zh" ? (brand.categoryZh ?? brand.category) : brand.category}
+                  </div>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-black" style={{ color: arrsColor(brand.arrs) }}>
@@ -177,7 +179,7 @@ export default function CompanyDashboardView({
                     color: brand.trend === "up" ? "#22c55e" : brand.trend === "down" ? "#ff4d6d" : "#7070a0",
                   }}
                 >
-                  {brand.trendDelta}
+                  {lang === "zh" ? (brand.trendDeltaZh ?? brand.trendDelta) : brand.trendDelta}
                 </span>
               </div>
 
@@ -244,7 +246,9 @@ export default function CompanyDashboardView({
                     {brand.sampleQueries.map((q, i) => (
                       <div key={i} className="rounded-lg p-3 space-y-1.5" style={{ background: "#0a0a14", border: "1px solid #1e1e30" }}>
                         <div className="flex items-start justify-between gap-2">
-                          <div className="text-xs italic" style={{ color: "#a0a0c8" }}>"{q.query}"</div>
+                          <div className="text-xs italic" style={{ color: "#a0a0c8" }}>
+                            "{lang === "zh" ? (q.queryZh ?? q.query) : q.query}"
+                          </div>
                           {q.brandPosition !== null ? (
                             <div className="shrink-0 text-xs font-bold px-1.5 py-0.5 rounded"
                               style={{
@@ -261,7 +265,7 @@ export default function CompanyDashboardView({
                           )}
                         </div>
                         <p className="text-xs leading-relaxed" style={{ color: "#555580", fontStyle: "italic" }}>
-                          {q.snippet}
+                          {lang === "zh" ? (q.snippetZh ?? q.snippet) : q.snippet}
                         </p>
                       </div>
                     ))}
