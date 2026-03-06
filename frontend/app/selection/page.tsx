@@ -33,13 +33,36 @@ const FREE_LIMIT = 9;
 export default function SelectionPage() {
   const [filter, setFilter] = useState("all");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
-  const filtered = filter === "all"
-    ? SELECTION_DATA
-    : SELECTION_DATA.filter((c) => c.parentSection === filter);
+  const q = search.trim().toLowerCase();
 
-  const freeItems = filter === "all" ? filtered.slice(0, FREE_LIMIT) : filtered;
-  const lockedItems = filter === "all" ? filtered.slice(FREE_LIMIT) : [];
+  // SKU search: find matching products across all PRODUCT_DATA
+  const skuMatches = q.length >= 2
+    ? Object.entries(PRODUCT_DATA).flatMap(([catId, products]) => {
+        const cat = SELECTION_DATA.find(c => c.id === catId);
+        return products
+          .filter(p =>
+            p.name.toLowerCase().includes(q) ||
+            p.brand.toLowerCase().includes(q) ||
+            (p.asin ?? "").toLowerCase().includes(q)
+          )
+          .map(p => ({ ...p, catId, catName: cat?.category ?? catId }));
+      })
+    : [];
+
+  // Category search
+  const filtered = (q.length >= 2
+    ? SELECTION_DATA.filter(c =>
+        c.category.toLowerCase().includes(q) ||
+        c.categoryZh.includes(q) ||
+        c.topBrands.some(b => b.name.toLowerCase().includes(q))
+      )
+    : filter === "all" ? SELECTION_DATA : SELECTION_DATA.filter(c => c.parentSection === filter)
+  );
+
+  const freeItems = (q.length >= 2 || filter !== "all") ? filtered : filtered.slice(0, FREE_LIMIT);
+  const lockedItems = (q.length >= 2 || filter !== "all") ? [] : filtered.slice(FREE_LIMIT);
 
   return (
     <div className="space-y-10 py-12">
@@ -66,7 +89,72 @@ export default function SelectionPage() {
         </div>
       </div>
 
-      {/* Filter bar */}
+      {/* Search bar */}
+      <div className="max-w-xl mx-auto px-4">
+        <div className="relative">
+          <input
+            type="text"
+            value={search}
+            onChange={e => { setSearch(e.target.value); setFilter("all"); }}
+            placeholder="Search brand, product, or ASIN (e.g. NOCO GB40, Vantrue N4, B015TKUPIC...)"
+            className="w-full rounded-xl px-4 py-2.5 pl-9 text-sm outline-none transition-colors"
+            style={{ background: "#0f0f17", border: "1px solid #25253f", color: "#f0f0f8" }}
+            onFocus={e => (e.currentTarget.style.borderColor = "#ff6b35")}
+            onBlur={e => (e.currentTarget.style.borderColor = "#25253f")}
+          />
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: "#7070a0" }}>◎</span>
+          {search && (
+            <button onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs hover:text-white transition-colors"
+              style={{ color: "#7070a0" }}>✕</button>
+          )}
+        </div>
+        {q.length >= 2 && (
+          <p className="text-xs mt-2 text-center" style={{ color: "#555580" }}>
+            {skuMatches.length + freeItems.length} results for &ldquo;{q}&rdquo;
+            {skuMatches.length > 0 && ` · ${skuMatches.length} product-level matches`}
+          </p>
+        )}
+      </div>
+
+      {/* SKU search results */}
+      {skuMatches.length > 0 && (
+        <div className="space-y-3 max-w-4xl mx-auto px-4">
+          <div className="text-xs font-bold uppercase tracking-widest" style={{ color: "#7070a0" }}>
+            Product / SKU matches
+          </div>
+          {skuMatches.map((p, i) => (
+            <div key={i} className="rounded-xl p-4 space-y-2"
+              style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-sm font-semibold" style={{ color: "#f0f0f8" }}>{p.name}</div>
+                  <div className="text-xs mt-0.5 flex items-center gap-2" style={{ color: "#555580" }}>
+                    <span>{p.brand}</span>
+                    <span>·</span>
+                    <span>{p.priceRange}</span>
+                    <span>·</span>
+                    <span style={{ color: "#7070a0" }}>{p.catName}</span>
+                    {p.asin && <span style={{ color: "#3a3a5c" }}>ASIN: {p.asin}</span>}
+                  </div>
+                </div>
+                <div className="shrink-0 text-right">
+                  <div className="text-sm font-black" style={{ color: "#f5a623" }}>{p.aiMentions}/100</div>
+                  <div className="text-xs" style={{ color: "#7070a0" }}>AI mentions</div>
+                  <div className="text-xs px-1.5 py-0.5 rounded mt-1 font-medium"
+                    style={{ background: `${ARRS_COLOR(p.arrs)}18`, color: ARRS_COLOR(p.arrs) }}>
+                    ARRS {p.arrs}
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs leading-relaxed italic" style={{ color: "#555580" }}>{p.aiContext}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Filter bar — hidden during search */}
+      {q.length < 2 && (
       <div className="flex flex-wrap justify-center gap-2">
         {SECTIONS.map((s) => (
           <button
@@ -83,6 +171,7 @@ export default function SelectionPage() {
           </button>
         ))}
       </div>
+      )}
 
       {/* Category grid — free items */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

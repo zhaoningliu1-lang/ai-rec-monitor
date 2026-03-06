@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import AnimateIn from "@/components/ui/AnimateIn";
 import { SELECTION_DATA, SECTIONS, type SellerSignal } from "@/lib/selection-data";
+import { getToken } from "@/lib/auth";
 
 /* ── shared colours ─────────────────────────────────── */
 const ARRS_COLOR = (v: number) => v < 30 ? "#22c55e" : v < 50 ? "#f5a623" : "#ff4d6d";
@@ -56,6 +57,28 @@ export default function ProductPage() {
     Object.fromEntries(OPS.map(i => [i.id, i.def]))
   );
   const [rate, setRate] = useState(15);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(!!getToken());
+  }, []);
+
+  // Smart CTA: different text + href based on login state
+  const primaryCta = loggedIn
+    ? { href: "/runs/new",   label: "Run New Analysis →" }
+    : { href: "/signup",     label: "Start free — no credit card →" };
+  const auditCta = loggedIn
+    ? { href: "/runs/new",   label: "Run a New Analysis →" }
+    : { href: "/signup",     label: "Sign up — Run your free audit →" };
+  const selectionCta = loggedIn
+    ? { href: "/dashboard",  label: "Go to Dashboard →" }
+    : { href: "/signup",     label: "Sign up free — Track your brand →" };
+  const optimizerCta = loggedIn
+    ? { href: "/runs/new",   label: "Start GEO Monitoring →" }
+    : { href: "/signup",     label: "Sign up — Start Saving + GEO →" };
+  const bottomCta = loggedIn
+    ? { href: "/dashboard",  label: "Go to Dashboard →" }
+    : { href: "/signup",     label: "Start free →" };
 
   const moHrs  = (item: OpItem) => item.weekly ? vals[item.id]*4.33 : vals[item.id];
   const total  = OPS.reduce((s,i) => s + moHrs(i)*rate, 0);
@@ -95,10 +118,10 @@ export default function ProductPage() {
           </p>
 
           <div className="animate-fade-up delay-300 flex justify-center gap-3 flex-wrap">
-            <Link href="/signup"
+            <Link href={primaryCta.href}
               className="text-sm font-semibold px-6 py-3 rounded-lg transition-opacity hover:opacity-80 animate-pulse-ring"
               style={{ background:"#ff6b35", color:"#fff" }}>
-              Start free — no credit card →
+              {primaryCta.label}
             </Link>
             <Link href="/company/techvision-pro"
               className="text-sm font-medium px-6 py-3 rounded-lg transition-colors hover:text-white"
@@ -208,10 +231,10 @@ export default function ProductPage() {
               </div>
 
               <div className="space-y-2">
-                <Link href="/signup"
+                <Link href={auditCta.href}
                   className="inline-block text-sm font-semibold px-6 py-3 rounded-lg transition-opacity hover:opacity-80"
                   style={{ background:"#ff6b35", color:"#fff", boxShadow:"0 0 24px rgba(255,107,53,.3)" }}>
-                  Sign up — Run your free audit →
+                  {auditCta.label}
                 </Link>
                 <div>
                   <Link href="/company/techvision-pro"
@@ -647,10 +670,10 @@ export default function ProductPage() {
                 )}
 
                 <div className="space-y-2">
-                  <Link href="/signup"
+                  <Link href={optimizerCta.href}
                     className="block text-center text-sm font-semibold px-4 py-2.5 rounded-lg transition-opacity hover:opacity-80"
                     style={{ background:"#ff6b35", color:"#fff" }}>
-                    Sign up — Start Saving + GEO →
+                    {optimizerCta.label}
                   </Link>
                   <a href="https://calendly.com/brivesubscription/30min"
                     target="_blank" rel="noopener noreferrer"
@@ -695,10 +718,10 @@ export default function ProductPage() {
           and the exact actions that move your rank — before committing to a paid plan.
         </p>
         <div className="flex justify-center gap-3 pt-2 flex-wrap">
-          <Link href="/signup"
+          <Link href={bottomCta.href}
             className="text-sm font-semibold px-8 py-3 rounded-lg transition-opacity hover:opacity-80"
             style={{ background:"#ff6b35", color:"#fff", boxShadow:"0 0 32px rgba(255,107,53,.4)" }}>
-            Start free →
+            {bottomCta.label}
           </Link>
           <Link href="/pricing"
             className="text-sm font-medium px-8 py-3 rounded-lg transition-colors hover:text-white"

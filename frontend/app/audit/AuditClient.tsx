@@ -7,6 +7,7 @@ const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
 const CALENDLY = "https://calendly.com/brivesubscription/30min";
 
 const CATEGORIES = [
+  "Automotive accessories",
   "Consumer electronics",
   "Beauty & skincare",
   "Sports & outdoor",
@@ -160,6 +161,11 @@ export default function AuditClient({ lang = "en" }: Props) {
               onChange={(e) => setForm((f) => ({ ...f, brand_name: e.target.value }))}
               required
             />
+            <p className="text-xs mt-1.5" style={{ color: "#555580" }}>
+              {lang === "zh"
+                ? "支持品牌名（如 NOCO）、具体产品名（如 NOCO GB40）或 ASIN"
+                : "Works with brand names, specific product names, or ASINs"}
+            </p>
           </div>
 
           <div>
