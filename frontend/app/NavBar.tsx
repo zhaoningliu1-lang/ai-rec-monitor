@@ -38,20 +38,22 @@ export default function NavBar() {
   // Always visible
   const publicLinks = isZh
     ? [
-        { href: "/zh/product",    label: "产品" },
-        { href: "/zh/selection",  label: "选品情报" },
-        { href: "/zh/trends",     label: "行业趋势" },
-        { href: "/zh/optimizer",  label: "成本优化" },
-        { href: "/zh/categories", label: "行业指数" },
-        { href: "/zh/blog",       label: "研究报告" },
+        { href: "/zh/product",       label: "产品" },
+        { href: "/zh/selection",     label: "选品情报" },
+        { href: "/zh/trends",        label: "行业趋势" },
+        { href: "/zh/optimizer",     label: "成本优化" },
+        { href: "/zh/hallucination", label: "幻觉检测" },
+        { href: "/zh/categories",    label: "行业指数" },
+        { href: "/zh/blog",          label: "研究报告" },
       ]
     : [
-        { href: "/product",    label: "Product" },
-        { href: "/selection",  label: "Selection" },
-        { href: "/trends",     label: "Trends" },
-        { href: "/optimizer",  label: "Optimizer" },
-        { href: "/categories", label: "Index" },
-        { href: "/blog",       label: "Research" },
+        { href: "/product",       label: "Product" },
+        { href: "/selection",     label: "Selection" },
+        { href: "/trends",        label: "Trends" },
+        { href: "/optimizer",     label: "Optimizer" },
+        { href: "/hallucination", label: "Accuracy" },
+        { href: "/categories",    label: "Index" },
+        { href: "/blog",          label: "Research" },
       ];
 
   // Logged-in (any tier)
