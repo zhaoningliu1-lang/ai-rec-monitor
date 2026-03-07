@@ -44,6 +44,7 @@ export default function NavBar() {
         { href: "/zh/optimizer",     label: "成本优化" },
         { href: "/zh/hallucination", label: "幻觉检测" },
         { href: "/zh/reddit",        label: "Reddit 引用" },
+        { href: "/zh/geo-action",    label: "GEO 行动" },
         { href: "/zh/categories",    label: "行业指数" },
         { href: "/zh/blog",          label: "研究报告" },
       ]
@@ -54,6 +55,7 @@ export default function NavBar() {
         { href: "/optimizer",     label: "Optimizer" },
         { href: "/hallucination", label: "Accuracy" },
         { href: "/reddit",        label: "Reddit" },
+        { href: "/geo-action",    label: "GEO Plan" },
         { href: "/categories",    label: "Index" },
         { href: "/blog",          label: "Research" },
       ];
