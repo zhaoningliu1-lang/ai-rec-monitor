@@ -16,6 +16,9 @@ anthropic>=0.28.0
 httpx==0.27.2
 google-generativeai==0.7.2   # only needed when using the gemini provider
 
+# agent orchestration
+langgraph>=0.2.0
+
 # retry
 tenacity==8.5.0
 

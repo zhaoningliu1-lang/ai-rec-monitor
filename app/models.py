@@ -212,6 +212,46 @@ class PromptLibrary(Base):
 
 # ── User accounts & subscriptions ─────────────────────────────────────────────
 
+# ── Agent growth cycles ───────────────────────────────────────────────────────
+
+class CycleStatus(str, enum.Enum):
+    pending = "pending"
+    monitoring = "monitoring"
+    analyzing = "analyzing"
+    strategizing = "strategizing"
+    experimenting = "experimenting"
+    completed = "completed"
+    failed = "failed"
+
+
+class AgentCycle(Base):
+    __tablename__ = "agent_cycles"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    brand_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    category: Mapped[str] = mapped_column(String(255), nullable=False)
+    region: Mapped[str] = mapped_column(String(10), nullable=False, default="us")
+    competitor_names: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    providers: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    status: Mapped[CycleStatus] = mapped_column(
+        Enum(CycleStatus), nullable=False, default=CycleStatus.pending
+    )
+    monitor_output: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    analyst_output: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    strategist_output: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    experiment_output: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+
+# ── User accounts & subscriptions ─────────────────────────────────────────────
+
 class SubscriptionTier(str, enum.Enum):
     free = "free"
     growth = "growth"

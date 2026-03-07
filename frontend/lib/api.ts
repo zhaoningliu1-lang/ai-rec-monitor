@@ -125,6 +125,25 @@ async function del(path: string): Promise<void> {
   if (!res.ok && res.status !== 204) throw new Error(`${res.status}: ${path}`);
 }
 
+// Agent Growth Cycles
+export type CycleStatus = "pending" | "monitoring" | "analyzing" | "strategizing" | "experimenting" | "completed" | "failed";
+
+export interface AgentCycle {
+  id: string;
+  brand_name: string;
+  category: string;
+  region: string;
+  competitor_names: string[];
+  providers: string[];
+  status: CycleStatus;
+  monitor_output: Record<string, unknown> | null;
+  analyst_output: Record<string, unknown> | null;
+  strategist_output: Record<string, unknown> | null;
+  experiment_output: Record<string, unknown> | null;
+  created_at: string;
+  completed_at: string | null;
+}
+
 export const api = {
   // Runs
   listRuns: (brand?: string) =>
@@ -183,4 +202,16 @@ export const api = {
   enableSchedule: (id: string) => patch<Schedule>(`/schedules/${id}/enable`),
   disableSchedule: (id: string) => patch<Schedule>(`/schedules/${id}/disable`),
   deleteSchedule: (id: string) => del(`/schedules/${id}`),
+
+  // Agent Growth Cycles
+  createCycle: (body: {
+    brand_name: string;
+    category: string;
+    region?: string;
+    competitor_names?: string[];
+    providers?: string[];
+  }) => post<AgentCycle>("/agents/cycles", body),
+  listCycles: (limit?: number) =>
+    get<AgentCycle[]>(`/agents/cycles${limit ? `?limit=${limit}` : ""}`),
+  getCycle: (id: string) => get<AgentCycle>(`/agents/cycles/${id}`),
 };

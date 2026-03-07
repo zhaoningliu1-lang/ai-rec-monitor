@@ -47,6 +47,7 @@ export default function NavBar() {
         { href: "/zh/geo-action",    label: "GEO 行动" },
         { href: "/zh/kol",           label: "KOL 追踪" },
         { href: "/zh/categories",    label: "行业指数" },
+        { href: "/zh/agents",       label: "增长引擎" },
         { href: "/zh/blog",          label: "研究报告" },
       ]
     : [
@@ -59,6 +60,7 @@ export default function NavBar() {
         { href: "/geo-action",    label: "GEO Plan" },
         { href: "/kol",           label: "KOL" },
         { href: "/categories",    label: "Index" },
+        { href: "/agents",        label: "Growth Agent" },
         { href: "/blog",          label: "Research" },
       ];
 

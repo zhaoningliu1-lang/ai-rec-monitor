@@ -11,6 +11,7 @@ from sqlalchemy import select, update
 from app.database import Base, async_session_factory, engine
 from app.models import Run, RunStatus, ScheduledRun
 from app.routers import reports, runs, schedules
+from app.routers import agents as agents_router
 from app.routers import auth as auth_router
 from app.routers import billing as billing_router
 from app.routers import prompts as prompts_router
@@ -196,6 +197,7 @@ app.add_middleware(
 app.include_router(runs.router)
 app.include_router(reports.router)
 app.include_router(schedules.router)
+app.include_router(agents_router.router)
 app.include_router(auth_router.router)
 app.include_router(billing_router.router)
 app.include_router(prompts_router.router)
