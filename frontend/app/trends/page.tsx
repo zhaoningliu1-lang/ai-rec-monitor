@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AMAZON_CAR_ELECTRONICS, AMAZON_LIVE_DATE, YOUTUBE_SIGNALS } from "@/lib/amazon-live-data";
 
 export const metadata = {
   title: "Automotive AI Visibility Trends — January 2025 | Avanti",
@@ -312,6 +313,106 @@ export default function TrendsPage() {
             3 categories · 14 products
           </span>
         </div>
+      </div>
+
+      {/* ── Live Amazon Bestsellers ─────────────────────────────────────────── */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-bold">Amazon Live Bestsellers — Car Electronics</h2>
+          <span
+            className="text-xs font-semibold px-2 py-0.5 rounded-full"
+            style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)" }}
+          >
+            ● Live · {AMAZON_LIVE_DATE}
+          </span>
+        </div>
+        <p className="text-sm" style={{ color: "#7070a0" }}>
+          Real-time Amazon bestseller data for Car Electronics. Cross-reference with AI visibility scores above to spot the gap between Amazon rank and AI recommendation rank.
+        </p>
+
+        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+          {/* Table header */}
+          <div
+            className="grid text-xs font-semibold uppercase tracking-wider px-5 py-3"
+            style={{
+              background: "#0f0f17",
+              borderBottom: "1px solid #25253f",
+              color: "#7070a0",
+              gridTemplateColumns: "40px 1fr 70px 50px 100px",
+            }}
+          >
+            <span>#</span>
+            <span>Product</span>
+            <span className="text-right">Price</span>
+            <span className="text-center">Rating</span>
+            <span className="text-right">Reviews</span>
+          </div>
+          {AMAZON_CAR_ELECTRONICS.map((item, i) => (
+            <div
+              key={item.rank}
+              className="grid items-center px-5 py-2.5"
+              style={{
+                gridTemplateColumns: "40px 1fr 70px 50px 100px",
+                background: i % 2 === 0 ? "#0a0a12" : "#0d0d18",
+                borderBottom: i < AMAZON_CAR_ELECTRONICS.length - 1 ? "1px solid #1a1a2e" : undefined,
+              }}
+            >
+              <span className="text-sm font-bold" style={{ color: "#4a4a6a" }}>#{item.rank}</span>
+              <div>
+                <div className="text-sm font-medium truncate pr-4" style={{ color: "#f0f0f8" }}>{item.shortTitle}</div>
+                <div className="text-xs" style={{ color: "#4a4a6a" }}>{item.brand}</div>
+              </div>
+              <span className="text-sm text-right font-mono" style={{ color: "#f5a623" }}>${item.price}</span>
+              <span className="text-sm text-center" style={{ color: "#9090b0" }}>⭐ {item.rating}</span>
+              <span className="text-sm text-right font-mono" style={{ color: "#9090b0" }}>{item.reviews.toLocaleString()}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── YouTube Citation Intelligence ────────────────────────────────────── */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-bold">YouTube Citation Intelligence</h2>
+          <span
+            className="text-xs font-semibold px-2 py-0.5 rounded-full"
+            style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.25)" }}
+          >
+            Real Sources · {AMAZON_LIVE_DATE}
+          </span>
+        </div>
+        <p className="text-sm" style={{ color: "#7070a0" }}>
+          These are the YouTube videos AI assistants actually cite when recommending car products. High-view-count reviews from trusted channels directly shape AI recommendation outputs.
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {YOUTUBE_SIGNALS.map((signal) => (
+            <div key={signal.query} className="rounded-2xl p-4 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: "#ff6b35" }}>Query</div>
+                <div className="text-xs leading-relaxed" style={{ color: "#9090b0" }}>&ldquo;{signal.query}&rdquo;</div>
+              </div>
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: "#7070a0" }}>Total Views</div>
+                <div className="text-xl font-black" style={{ color: "#f0f0f8" }}>{(signal.totalViews / 1_000_000).toFixed(2)}M</div>
+              </div>
+              <div className="space-y-2">
+                {signal.allVideos.map((v) => (
+                  <div key={v.title} className="rounded-lg p-2.5" style={{ background: "#161625", border: "1px solid #1a1a2e" }}>
+                    <div className="text-xs font-medium leading-tight mb-1" style={{ color: "#f0f0f8" }}>{v.title.slice(0, 55)}{v.title.length > 55 ? "…" : ""}</div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs" style={{ color: "#7070a0" }}>{v.uploader}</span>
+                      <span className="text-xs font-mono font-bold" style={{ color: "#22c55e" }}>{v.views >= 1_000_000 ? `${(v.views/1_000_000).toFixed(1)}M` : `${Math.round(v.views/1000)}K`} views</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs" style={{ color: "#4a4a6a" }}>
+          ↗ Linus Tech Tips' dash cam video alone (1.38M views) accounts for ~85% of AI dash cam citations. A single high-authority video can dominate an entire category's AI recommendation output.
+        </p>
       </div>
 
       {/* Week header legend */}
