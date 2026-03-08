@@ -151,6 +151,7 @@ export default function AgentDashboardView({ lang = "en" }: { lang?: Lang }) {
         region,
         competitor_names: competitors.split(",").map((s) => s.trim()).filter(Boolean),
         providers,
+        language: lang,
       });
       setActive(cycle);
       startPolling(cycle.id);

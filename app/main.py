@@ -155,6 +155,10 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_reset_expires TIMESTAMPTZ"
         ))
+        # Agent cycle language column
+        await conn.execute(text(
+            "ALTER TABLE agent_cycles ADD COLUMN IF NOT EXISTS language VARCHAR(10) NOT NULL DEFAULT 'en'"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 

@@ -210,6 +210,7 @@ export const api = {
     region?: string;
     competitor_names?: string[];
     providers?: string[];
+    language?: string;
   }) => post<AgentCycle>("/agents/cycles", body),
   listCycles: (limit?: number) =>
     get<AgentCycle[]>(`/agents/cycles${limit ? `?limit=${limit}` : ""}`),

@@ -235,6 +235,7 @@ class AgentCycle(Base):
     region: Mapped[str] = mapped_column(String(10), nullable=False, default="us")
     competitor_names: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
     providers: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    language: Mapped[str] = mapped_column(String(10), nullable=False, default="en")
     status: Mapped[CycleStatus] = mapped_column(
         Enum(CycleStatus), nullable=False, default=CycleStatus.pending
     )

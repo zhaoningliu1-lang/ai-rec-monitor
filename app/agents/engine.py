@@ -38,10 +38,17 @@ class GrowthState(TypedDict):
     region: str
     competitors: list[str]
     providers: list[str]
+    language: str
     monitor_output: dict
     analyst_output: dict
     strategist_output: dict
     experiment_output: dict
+
+
+LANG_INSTRUCTION = {
+    "zh": "\n\n重要：请完全使用中文回复。所有分析、建议和结论都必须用中文撰写。",
+    "en": "",
+}
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
@@ -69,6 +76,7 @@ async def monitor_node(state: GrowthState) -> dict:
     """Analyze recent monitoring data and detect signals."""
     cycle_id = state["cycle_id"]
     brand = state["brand_name"]
+    lang = state.get("language", "en")
 
     await _update_cycle(cycle_id, status=CycleStatus.monitoring)
 
@@ -85,11 +93,47 @@ async def monitor_node(state: GrowthState) -> dict:
     baseline = {}
     trend = []
 
+    # Language-aware signal messages
+    _msg = {
+        "no_data": {
+            "en": f"No historical data for {brand}. Running initial assessment.",
+            "zh": f"暂无 {brand} 的历史数据，正在进行初始评估。",
+        },
+        "low_sov": lambda v: {
+            "en": f"Weighted SOV critically low at {v:.1f}%",
+            "zh": f"加权 SOV 处于极低水平：{v:.1f}%",
+        },
+        "high_risk": lambda v: {
+            "en": f"ARRS {v:.0f}/100 — high competitive displacement risk",
+            "zh": f"ARRS {v:.0f}/100 — 竞争替代风险高",
+        },
+        "moderate_risk": lambda v: {
+            "en": f"ARRS {v:.0f}/100 — moderate competitive pressure",
+            "zh": f"ARRS {v:.0f}/100 — 竞争压力中等",
+        },
+        "intent_gap": lambda h, i: {
+            "en": f"High-intent SOV ({h:.1f}%) < informational ({i:.1f}%) — losing at purchase moment",
+            "zh": f"高意图 SOV（{h:.1f}%）低于信息类（{i:.1f}%）— 在购买决策时刻失去可见度",
+        },
+        "sov_decline": lambda d: {
+            "en": f"SOV dropped {abs(d):.1f}pp since last check",
+            "zh": f"SOV 较上次下降了 {abs(d):.1f}pp",
+        },
+        "sov_growth": lambda d: {
+            "en": f"SOV improved +{d:.1f}pp — positive momentum",
+            "zh": f"SOV 提升了 +{d:.1f}pp — 积极增长势头",
+        },
+        "stable": lambda v: {
+            "en": f"Performance stable. SOV: {v:.1f}%",
+            "zh": f"表现稳定。SOV: {v:.1f}%",
+        },
+    }
+
     if not snapshots:
         signals.append({
             "type": "no_data",
             "severity": "info",
-            "message": f"No historical data for {brand}. Running initial assessment.",
+            "message": _msg["no_data"][lang],
         })
     else:
         latest = snapshots[0]
@@ -118,30 +162,27 @@ async def monitor_node(state: GrowthState) -> dict:
             signals.append({
                 "type": "low_sov",
                 "severity": "high",
-                "message": f"Weighted SOV critically low at {latest.weighted_sov:.1f}%",
+                "message": _msg["low_sov"](latest.weighted_sov)[lang],
             })
 
         if latest.arrs >= 60:
             signals.append({
                 "type": "high_risk",
                 "severity": "high",
-                "message": f"ARRS {latest.arrs:.0f}/100 — high competitive displacement risk",
+                "message": _msg["high_risk"](latest.arrs)[lang],
             })
         elif latest.arrs >= 30:
             signals.append({
                 "type": "moderate_risk",
                 "severity": "medium",
-                "message": f"ARRS {latest.arrs:.0f}/100 — moderate competitive pressure",
+                "message": _msg["moderate_risk"](latest.arrs)[lang],
             })
 
         if latest.sov_high < latest.sov_info:
             signals.append({
                 "type": "intent_gap",
                 "severity": "medium",
-                "message": (
-                    f"High-intent SOV ({latest.sov_high:.1f}%) < informational "
-                    f"({latest.sov_info:.1f}%) — losing at purchase moment"
-                ),
+                "message": _msg["intent_gap"](latest.sov_high, latest.sov_info)[lang],
             })
 
         if len(snapshots) >= 2:
@@ -151,20 +192,20 @@ async def monitor_node(state: GrowthState) -> dict:
                 signals.append({
                     "type": "sov_decline",
                     "severity": "high",
-                    "message": f"SOV dropped {abs(delta):.1f}pp since last check",
+                    "message": _msg["sov_decline"](delta)[lang],
                 })
             elif delta > 5:
                 signals.append({
                     "type": "sov_growth",
                     "severity": "info",
-                    "message": f"SOV improved +{delta:.1f}pp — positive momentum",
+                    "message": _msg["sov_growth"](delta)[lang],
                 })
 
     if not signals:
         signals.append({
             "type": "stable",
             "severity": "info",
-            "message": f"Performance stable. SOV: {baseline.get('weighted_sov', 0):.1f}%",
+            "message": _msg["stable"](baseline.get('weighted_sov', 0))[lang],
         })
 
     output = {
@@ -183,6 +224,8 @@ async def analyst_node(state: GrowthState) -> dict:
     """Analyze root causes using AI reasoning."""
     cycle_id = state["cycle_id"]
     monitor = state["monitor_output"]
+    lang = state.get("language", "en")
+    lang_inst = LANG_INSTRUCTION.get(lang, "")
 
     await _update_cycle(cycle_id, status=CycleStatus.analyzing)
 
@@ -194,7 +237,7 @@ Region: {state["region"]}
 Competitors: {", ".join(state["competitors"])}
 
 Monitoring Signals:
-{json.dumps(monitor["signals"], indent=2)}
+{json.dumps(monitor["signals"], indent=2, ensure_ascii=False)}
 
 Baseline Metrics:
 {json.dumps(monitor.get("baseline_metrics", {}), indent=2)}
@@ -203,7 +246,7 @@ Trend (newest first):
 {json.dumps(monitor.get("trend", [])[:5], indent=2)}
 
 Analyze the brand's AI visibility. Return ONLY valid JSON:
-{{"root_causes": ["cause1", "cause2"], "threats": ["threat1"], "opportunities": ["opp1", "opp2"], "executive_summary": "2-3 sentence summary"}}"""
+{{"root_causes": ["cause1", "cause2"], "threats": ["threat1"], "opportunities": ["opp1", "opp2"], "executive_summary": "2-3 sentence summary"}}{lang_inst}"""
 
     try:
         response = await _ask_claude(prompt)
@@ -233,6 +276,8 @@ async def strategist_node(state: GrowthState) -> dict:
     cycle_id = state["cycle_id"]
     analyst = state["analyst_output"]
     monitor = state["monitor_output"]
+    lang = state.get("language", "en")
+    lang_inst = LANG_INSTRUCTION.get(lang, "")
 
     await _update_cycle(cycle_id, status=CycleStatus.strategizing)
 
@@ -244,9 +289,9 @@ Competitors: {", ".join(state["competitors"])}
 Metrics: {json.dumps(monitor.get("baseline_metrics", {}), indent=2)}
 
 Analysis:
-- Root Causes: {json.dumps(analyst.get("root_causes", []))}
-- Threats: {json.dumps(analyst.get("threats", []))}
-- Opportunities: {json.dumps(analyst.get("opportunities", []))}
+- Root Causes: {json.dumps(analyst.get("root_causes", []), ensure_ascii=False)}
+- Threats: {json.dumps(analyst.get("threats", []), ensure_ascii=False)}
+- Opportunities: {json.dumps(analyst.get("opportunities", []), ensure_ascii=False)}
 - Summary: {analyst.get("executive_summary", "")}
 
 Design 3 GEO optimization experiments. Return ONLY a valid JSON array:
@@ -260,7 +305,7 @@ Design 3 GEO optimization experiments. Return ONLY a valid JSON array:
     "timeframe": "X days",
     "metrics_to_track": ["metric1", "metric2"]
   }}
-]"""
+]{lang_inst}"""
 
     try:
         response = await _ask_claude(prompt)
@@ -299,16 +344,28 @@ async def experiment_node(state: GrowthState) -> dict:
     competitors = state["competitors"]
     monitor = state["monitor_output"]
     strategist = state["strategist_output"]
+    lang = state.get("language", "en")
+    lang_inst = LANG_INSTRUCTION.get(lang, "")
 
     await _update_cycle(cycle_id, status=CycleStatus.experimenting)
 
-    test_prompts = [
-        f"What is the best {category} brand to buy?",
-        f"Compare {brand} vs {competitors[0] if competitors else 'others'} for {category}",
-        f"I want to buy a {category}, which brand do you recommend?",
-        f"What are the top {category} brands in 2026?",
-        f"Should I buy {brand} {category} or are there better options?",
-    ]
+    if lang == "zh":
+        comp0 = competitors[0] if competitors else "其他品牌"
+        test_prompts = [
+            f"买{category}哪个品牌最好？",
+            f"对比{brand}和{comp0}的{category}，哪个更值得买？",
+            f"我想买{category}，推荐哪个品牌？",
+            f"2026年最好的{category}品牌有哪些？",
+            f"应该买{brand}的{category}还是有更好的选择？",
+        ]
+    else:
+        test_prompts = [
+            f"What is the best {category} brand to buy?",
+            f"Compare {brand} vs {competitors[0] if competitors else 'others'} for {category}",
+            f"I want to buy a {category}, which brand do you recommend?",
+            f"What are the top {category} brands in 2026?",
+            f"Should I buy {brand} {category} or are there better options?",
+        ]
 
     provider_name = state["providers"][0] if state["providers"] else "openai"
     results = []
@@ -358,13 +415,13 @@ Fresh Experiment SOV: {fresh_sov:.1f}% ({mentioned}/{total} mentions)
 Delta: {sov_delta:+.1f}pp
 
 Test Results:
-{json.dumps(results, indent=2)}
+{json.dumps(results, indent=2, ensure_ascii=False)}
 
 Top Strategy:
-{json.dumps(experiment_plan, indent=2)}
+{json.dumps(experiment_plan, indent=2, ensure_ascii=False)}
 
 Return ONLY valid JSON:
-{{"conclusion": "2-3 sentences", "hypothesis_validated": true, "confidence": "high|medium|low", "next_actions": ["action1", "action2", "action3"], "key_insight": "one sentence"}}"""
+{{"conclusion": "2-3 sentences", "hypothesis_validated": true, "confidence": "high|medium|low", "next_actions": ["action1", "action2", "action3"], "key_insight": "one sentence"}}{lang_inst}"""
 
         response = await _ask_claude(conclusion_prompt)
         text = response.strip()
@@ -438,6 +495,7 @@ async def run_growth_cycle(
     region: str,
     competitors: list[str],
     providers: list[str],
+    language: str = "en",
 ) -> None:
     """Execute a complete growth agent cycle."""
     initial_state: GrowthState = {
@@ -447,6 +505,7 @@ async def run_growth_cycle(
         "region": region,
         "competitors": competitors,
         "providers": providers,
+        "language": language,
         "monitor_output": {},
         "analyst_output": {},
         "strategist_output": {},

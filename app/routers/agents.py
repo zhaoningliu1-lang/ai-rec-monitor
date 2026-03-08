@@ -19,6 +19,7 @@ class CycleCreate(BaseModel):
     region: str = "us"
     competitor_names: list[str] = []
     providers: list[str] = ["openai"]
+    language: str = "en"
 
 
 class CycleOut(BaseModel):
@@ -64,6 +65,7 @@ async def create_cycle(body: CycleCreate):
         region=body.region,
         competitor_names=body.competitor_names,
         providers=body.providers,
+        language=body.language,
     )
 
     async with async_session_factory() as db:
@@ -82,6 +84,7 @@ async def create_cycle(body: CycleCreate):
             region=body.region,
             competitors=body.competitor_names,
             providers=body.providers,
+            language=body.language,
         )
     )
 
