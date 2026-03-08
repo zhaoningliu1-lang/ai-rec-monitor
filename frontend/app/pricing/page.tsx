@@ -1,12 +1,17 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = {
-  title: "Pricing — Avanti GEO Platform",
-  description:
-    "Transparent pricing for AI visibility monitoring, selection intelligence, and GEO optimization. Built for Amazon sellers, TikTok Shop brands, DTC brands, agencies, and Shopee/Lazada cross-border sellers.",
-};
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ShoppingCart, Music, Globe, Store, Check } from "lucide-react";
 
 const CALENDLY = "https://calendly.com/brivesubscription/30min";
+
+const reveal = {
+  initial: { opacity: 0, y: 30 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.5 },
+};
 
 const TIERS = [
   {
@@ -14,7 +19,7 @@ const TIERS = [
     price: 99,
     annual: 79,
     description: "For solo sellers testing their AI presence. Amazon FBA, TikTok Shop, or DTC brands.",
-    cta: "Start free →",
+    cta: "Start free",
     href: "/signup",
     highlight: false,
     badge: null as string | null,
@@ -37,7 +42,7 @@ const TIERS = [
     price: 249,
     annual: 199,
     description: "For scaling brands that compete on AI visibility. Our most popular plan.",
-    cta: "Start free →",
+    cta: "Start free",
     href: "/signup",
     highlight: true,
     badge: "Most Popular",
@@ -61,7 +66,7 @@ const TIERS = [
     price: 999,
     annual: 799,
     description: "For agencies and service providers managing multiple client brands with white-label reporting.",
-    cta: "Start free →",
+    cta: "Start free",
     href: "/signup",
     highlight: false,
     badge: null as string | null,
@@ -84,7 +89,7 @@ const TIERS = [
     price: 0,
     annual: 0,
     description: "Unlimited brands. Custom AI engine coverage. Dedicated strategist. For large operators.",
-    cta: "Book a call →",
+    cta: "Book a call",
     href: CALENDLY,
     highlight: false,
     badge: null as string | null,
@@ -117,18 +122,18 @@ const COMPARISON = [
   { feature: "Dedicated strategist",         starter: false,   growth: false,   agency: false,    enterprise: true },
 ];
 
-function Check() {
-  return <span style={{ color: "#22c55e" }}>✓</span>;
+function CheckIcon() {
+  return <Check size={14} style={{ color: "#22c55e" }} />;
 }
-function Cross() {
-  return <span style={{ color: "#3a3a5c" }}>—</span>;
+function CrossMark() {
+  return <span style={{ color: "#3a3a5c" }}>&mdash;</span>;
 }
 
 export default function PricingPage() {
   return (
     <div className="py-16 space-y-20 max-w-6xl mx-auto px-4">
-      {/* Header */}
-      <div className="text-center space-y-4 max-w-2xl mx-auto">
+      {/* Header -- left-aligned */}
+      <motion.div {...reveal} className="space-y-4 max-w-2xl">
         <div
           className="inline-block text-xs px-3 py-1 rounded-full font-medium"
           style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35" }}
@@ -141,14 +146,19 @@ export default function PricingPage() {
           cross-border agencies, and Shopee / Lazada operators serious about AI visibility.
           All plans include a 14-day free trial. No credit card required.
         </p>
-      </div>
+      </motion.div>
 
-      {/* Tier cards — 4 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-start">
+      {/* Tier cards -- 4 columns */}
+      <motion.div
+        {...reveal}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-start"
+      >
         {TIERS.map((tier) => (
           <div
             key={tier.name}
-            className="rounded-2xl p-5 space-y-5 flex flex-col relative"
+            className={`rounded-2xl p-5 space-y-5 flex flex-col relative${
+              tier.highlight ? " shimmer-card" : ""
+            }`}
             style={{
               background: tier.highlight ? "rgba(255,107,53,0.06)" : "#0f0f17",
               border: tier.highlight ? "2px solid #ff6b35" : "1px solid #25253f",
@@ -209,13 +219,13 @@ export default function PricingPage() {
               <ul className="space-y-1.5">
                 {tier.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-xs" style={{ color: "#f0f0f8" }}>
-                    <span style={{ color: "#22c55e", flexShrink: 0 }}>✓</span>
+                    <span className="shrink-0 mt-0.5"><Check size={12} style={{ color: "#22c55e" }} /></span>
                     {f}
                   </li>
                 ))}
                 {tier.notIncluded.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-xs" style={{ color: "#3a3a5c" }}>
-                    <span style={{ flexShrink: 0 }}>—</span>
+                    <span style={{ flexShrink: 0 }}>&mdash;</span>
                     {f}
                   </li>
                 ))}
@@ -223,39 +233,41 @@ export default function PricingPage() {
             </div>
           </div>
         ))}
-      </div>
+      </motion.div>
 
-      {/* Who is this for — seller type callout */}
-      <div
+      {/* Who is this for -- seller type callout */}
+      <motion.div
+        {...reveal}
         className="rounded-xl p-6 space-y-4"
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}
       >
         <div className="text-xs font-bold uppercase tracking-widest" style={{ color: "#ff6b35" }}>Who uses Avanti</div>
         <div className="grid md:grid-cols-4 gap-4 text-xs">
           {[
-            { icon: "🛒", type: "Amazon FBA Sellers", desc: "Track AI recommendations for your category before restocking. Know if AI is driving buyers to competitors." },
-            { icon: "🎵", type: "TikTok Shop Brands", desc: "Monitor which products AI engines are recommending after TikTok virality. Ride the signal before it peaks." },
-            { icon: "🌐", type: "DTC / Independent Sites", desc: "Build brand authority in AI search. Earn citations in the AI answer layer that drives top-of-funnel." },
-            { icon: "🏪", type: "Shopee / Lazada Sellers", desc: "Track AI visibility in SE Asia markets. Understand which brands AI recommends for cross-border expansion." },
+            { Icon: ShoppingCart, type: "Amazon FBA Sellers", desc: "Track AI recommendations for your category before restocking. Know if AI is driving buyers to competitors." },
+            { Icon: Music, type: "TikTok Shop Brands", desc: "Monitor which products AI engines are recommending after TikTok virality. Ride the signal before it peaks." },
+            { Icon: Globe, type: "DTC / Independent Sites", desc: "Build brand authority in AI search. Earn citations in the AI answer layer that drives top-of-funnel." },
+            { Icon: Store, type: "Shopee / Lazada Sellers", desc: "Track AI visibility in SE Asia markets. Understand which brands AI recommends for cross-border expansion." },
           ].map((item) => (
             <div key={item.type} className="space-y-1.5">
-              <div className="text-base">{item.icon}</div>
+              <item.Icon size={20} style={{ color: "#ff6b35" }} />
               <div className="font-semibold" style={{ color: "#f0f0f8" }}>{item.type}</div>
               <p style={{ color: "#7070a0" }}>{item.desc}</p>
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Free tool callout */}
-      <div
+      <motion.div
+        {...reveal}
         className="rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4"
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}
       >
         <div>
-          <div className="font-semibold text-sm">Cost Optimizer — Always Free</div>
+          <div className="font-semibold text-sm">Cost Optimizer -- Always Free</div>
           <p className="text-xs mt-1" style={{ color: "#7070a0" }}>
-            Calculate exactly how much AI can save your ops — and how many months of GEO that funds.
+            Calculate exactly how much AI can save your ops -- and how many months of GEO that funds.
             No login, no credit card.
           </p>
         </div>
@@ -264,13 +276,13 @@ export default function PricingPage() {
           className="shrink-0 text-sm font-medium px-5 py-2 rounded-lg transition-colors hover:text-white"
           style={{ border: "1px solid #25253f", color: "#7070a0" }}
         >
-          Calculate savings →
+          Calculate savings
         </Link>
-      </div>
+      </motion.div>
 
       {/* Comparison table */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold text-center">Full comparison</h2>
+      <motion.div {...reveal} className="space-y-4">
+        <h2 className="text-xl font-bold">Full comparison</h2>
         <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
           <table className="w-full text-sm">
             <thead>
@@ -294,22 +306,22 @@ export default function PricingPage() {
                   <td className="p-3 text-xs" style={{ color: "#f0f0f8" }}>{row.feature}</td>
                   <td className="p-3 text-center text-xs">
                     {typeof row.starter === "boolean"
-                      ? row.starter ? <Check /> : <Cross />
+                      ? row.starter ? <CheckIcon /> : <CrossMark />
                       : <span style={{ color: "#f0f0f8" }}>{row.starter}</span>}
                   </td>
                   <td className="p-3 text-center text-xs">
                     {typeof row.growth === "boolean"
-                      ? row.growth ? <Check /> : <Cross />
+                      ? row.growth ? <CheckIcon /> : <CrossMark />
                       : <span style={{ color: "#f0f0f8" }}>{row.growth}</span>}
                   </td>
                   <td className="p-3 text-center text-xs">
                     {typeof row.agency === "boolean"
-                      ? row.agency ? <Check /> : <Cross />
+                      ? row.agency ? <CheckIcon /> : <CrossMark />
                       : <span style={{ color: "#f0f0f8" }}>{row.agency}</span>}
                   </td>
                   <td className="p-3 text-center text-xs">
                     {typeof row.enterprise === "boolean"
-                      ? row.enterprise ? <Check /> : <Cross />
+                      ? row.enterprise ? <CheckIcon /> : <CrossMark />
                       : <span style={{ color: "#f0f0f8" }}>{row.enterprise}</span>}
                   </td>
                 </tr>
@@ -317,11 +329,11 @@ export default function PricingPage() {
             </tbody>
           </table>
         </div>
-      </div>
+      </motion.div>
 
       {/* FAQ */}
-      <div className="max-w-2xl mx-auto space-y-6">
-        <h2 className="text-xl font-bold text-center">FAQ</h2>
+      <motion.div {...reveal} className="max-w-2xl space-y-6">
+        <h2 className="text-xl font-bold">FAQ</h2>
         {[
           {
             q: "What counts as a \"brand\"?",
@@ -329,11 +341,11 @@ export default function PricingPage() {
           },
           {
             q: "What are the 4 AI engines you track?",
-            a: "ChatGPT (GPT-4o), Claude, Gemini, and Perplexity — the four engines actively directing buyer decisions. We run queries in both English and Chinese for cross-border brands. Custom language sets available on Agency and Enterprise.",
+            a: "ChatGPT (GPT-4o), Claude, Gemini, and Perplexity -- the four engines actively directing buyer decisions. We run queries in both English and Chinese for cross-border brands. Custom language sets available on Agency and Enterprise.",
           },
           {
             q: "Does this work for TikTok Shop sellers and Shopee/Lazada brands?",
-            a: "Yes. We track which brands AI engines recommend when buyers search for products in your category — regardless of which platform they ultimately buy on. TikTok viral products often see AI pickup 2–3 weeks after initial virality. Shopee/Lazada sellers benefit from English-language AI queries that influence cross-border buyers.",
+            a: "Yes. We track which brands AI engines recommend when buyers search for products in your category -- regardless of which platform they ultimately buy on. TikTok viral products often see AI pickup 2-3 weeks after initial virality. Shopee/Lazada sellers benefit from English-language AI queries that influence cross-border buyers.",
           },
           {
             q: "I'm an agency managing 20+ brands. Is Agency right for me?",
@@ -345,7 +357,7 @@ export default function PricingPage() {
           },
           {
             q: "How is Avanti different from Helium 10 or Jungle Scout?",
-            a: "Helium 10 and Jungle Scout track historical sales data, BSR, and keywords on Amazon. Avanti tracks where AI models are actively sending future buyers — a fundamentally different signal about where demand is going, not where it has been.",
+            a: "Helium 10 and Jungle Scout track historical sales data, BSR, and keywords on Amazon. Avanti tracks where AI models are actively sending future buyers -- a fundamentally different signal about where demand is going, not where it has been.",
           },
         ].map(({ q, a }) => (
           <div key={q} className="space-y-2">
@@ -353,24 +365,28 @@ export default function PricingPage() {
             <p className="text-xs leading-relaxed" style={{ color: "#7070a0" }}>{a}</p>
           </div>
         ))}
-      </div>
+      </motion.div>
 
-      {/* Bottom CTA */}
-      <div
-        className="rounded-2xl p-10 text-center space-y-4"
-        style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+      {/* Bottom CTA -- full-width gradient banner */}
+      <motion.div
+        {...reveal}
+        className="rounded-2xl p-10 text-center space-y-4 transition-all duration-500 hover:[box-shadow:0_0_40px_rgba(255,107,53,0.2)]"
+        style={{
+          background: "linear-gradient(135deg, #1a0f08 0%, #0f0f17 50%, #161625 100%)",
+          border: "1px solid rgba(255,107,53,0.3)",
+        }}
       >
         <p className="text-2xl font-bold">Start with a free audit</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          See your brand&apos;s ARRS score and SOV against every competitor — before committing to a plan.
+          See your brand&apos;s ARRS score and SOV against every competitor -- before committing to a plan.
         </p>
         <div className="flex justify-center gap-3 pt-2 flex-wrap">
           <Link
             href="/signup"
-            className="text-sm font-semibold px-6 py-3 rounded-lg transition-opacity hover:opacity-80"
+            className="text-sm font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:opacity-90 hover:[box-shadow:0_0_24px_rgba(255,107,53,0.4)]"
             style={{ background: "#ff6b35", color: "#fff" }}
           >
-            Start free →
+            Start free
           </Link>
           <a
             href={CALENDLY}
@@ -382,7 +398,7 @@ export default function PricingPage() {
             Book a demo
           </a>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

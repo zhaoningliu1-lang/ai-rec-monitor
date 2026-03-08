@@ -125,6 +125,28 @@ body {
 }
 .reveal-scale.visible { opacity: 1; transform: scale(1); }
 
+/* ── Shimmer card border (pricing Growth card) ──────── */
+@keyframes shimmer-border {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.shimmer-card {
+  position: relative;
+}
+.shimmer-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #25253f, #ff6b35, #f5a623, #ff6b35, #25253f);
+  background-size: 300% 100%;
+  animation: shimmer-border 3s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
 /* ── Card hover lift ─────────────────────────────────── */
 .card-hover {
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
