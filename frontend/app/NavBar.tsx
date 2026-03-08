@@ -35,10 +35,23 @@ export default function NavBar() {
   const isActive = (href: string) =>
     pathname === href || (href.length > 3 && pathname.startsWith(href));
 
-  // Always visible
+  // Always visible — marketing / conversion pages
   const publicLinks = isZh
     ? [
         { href: "/zh/product",       label: "产品" },
+        { href: "/zh/categories",    label: "行业指数" },
+        { href: "/zh/blog",          label: "研究报告" },
+      ]
+    : [
+        { href: "/product",       label: "Product" },
+        { href: "/categories",    label: "Index" },
+        { href: "/blog",          label: "Research" },
+      ];
+
+  // Logged-in (any tier) — core tool features
+  const userLinks = isZh
+    ? [
+        { href: "/zh/dashboard",     label: "数据看板" },
         { href: "/zh/selection",     label: "选品情报" },
         { href: "/zh/trends",        label: "行业趋势" },
         { href: "/zh/optimizer",     label: "成本优化" },
@@ -46,12 +59,10 @@ export default function NavBar() {
         { href: "/zh/reddit",        label: "Reddit 引用" },
         { href: "/zh/geo-action",    label: "GEO 行动" },
         { href: "/zh/kol",           label: "KOL 追踪" },
-        { href: "/zh/categories",    label: "行业指数" },
-        { href: "/zh/agents",       label: "增长引擎" },
-        { href: "/zh/blog",          label: "研究报告" },
+        { href: "/zh/agents",        label: "增长引擎" },
       ]
     : [
-        { href: "/product",       label: "Product" },
+        { href: "/dashboard",    label: "Dashboard" },
         { href: "/selection",     label: "Selection" },
         { href: "/trends",        label: "Trends" },
         { href: "/optimizer",     label: "Optimizer" },
@@ -59,15 +70,8 @@ export default function NavBar() {
         { href: "/reddit",        label: "Reddit" },
         { href: "/geo-action",    label: "GEO Plan" },
         { href: "/kol",           label: "KOL" },
-        { href: "/categories",    label: "Index" },
         { href: "/agents",        label: "Growth Agent" },
-        { href: "/blog",          label: "Research" },
       ];
-
-  // Logged-in (any tier)
-  const userLinks = isZh
-    ? [{ href: "/zh/dashboard", label: "数据看板" }]
-    : [{ href: "/dashboard",    label: "Dashboard" }];
 
   // Paid only
   const paidLinks = isZh
