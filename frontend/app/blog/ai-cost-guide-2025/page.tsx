@@ -230,7 +230,7 @@ export default function AICostGuide2025Page() {
       >
         <p className="font-semibold text-lg">Start your AI visibility audit today</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          Free ARRS score, SOV breakdown, and competitor comparison. See where you stand
+          Free GEO Score, SOV breakdown, and competitor comparison. See where you stand
           in the AI recommendation layer — before your competitors do.
         </p>
         <div className="flex justify-center gap-3">

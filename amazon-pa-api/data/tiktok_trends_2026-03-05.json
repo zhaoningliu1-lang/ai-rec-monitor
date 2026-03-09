@@ -1,0 +1,110 @@
+{
+  "date": "2026-03-05",
+  "geo": "US",
+  "period": "last_30_days",
+  "trending_hashtags": [
+    {
+      "keyword": "car accessories",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "dashcam",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "jump starter",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "car phone mount",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "car gadgets",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "outfit",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "women fashion",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "athleisure",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "ootd amazon",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "amazon fashion finds",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "amazon must haves",
+      "results": [],
+      "status": "http_404"
+    },
+    {
+      "keyword": "tiktok made me buy it",
+      "results": [],
+      "status": "http_404"
+    }
+  ],
+  "top_products": [],
+  "keyword_insights": [
+    {
+      "keyword": "car jump starter",
+      "data": {},
+      "status": "http_404"
+    },
+    {
+      "keyword": "dash cam",
+      "data": {},
+      "status": "http_404"
+    },
+    {
+      "keyword": "car phone holder",
+      "data": {},
+      "status": "http_404"
+    },
+    {
+      "keyword": "women's joggers",
+      "data": {},
+      "status": "http_404"
+    },
+    {
+      "keyword": "oversized hoodie",
+      "data": {},
+      "status": "http_404"
+    },
+    {
+      "keyword": "biker shorts",
+      "data": {},
+      "status": "http_404"
+    },
+    {
+      "keyword": "athletic set",
+      "data": {},
+      "status": "http_404"
+    },
+    {
+      "keyword": "men's t-shirt",
+      "data": {},
+      "status": "http_404"
+    }
+  ]
+}

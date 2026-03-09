@@ -143,7 +143,7 @@ export default function SelectionPage() {
                   <div className="text-xs" style={{ color: "#7070a0" }}>AI mentions</div>
                   <div className="text-xs px-1.5 py-0.5 rounded mt-1 font-medium"
                     style={{ background: `${ARRS_COLOR(p.arrs)}18`, color: ARRS_COLOR(p.arrs) }}>
-                    ARRS {p.arrs}
+                    GEO {p.arrs}
                   </div>
                 </div>
               </div>
@@ -275,7 +275,7 @@ export default function SelectionPage() {
                               <div className="text-xs font-bold" style={{ color: "#f5a623" }}>{p.aiMentions}/100</div>
                               <div className="text-xs px-1.5 py-0.5 rounded mt-0.5"
                                 style={{ background: `${ARRS_COLOR(p.arrs)}18`, color: ARRS_COLOR(p.arrs) }}>
-                                ARRS {p.arrs}
+                                GEO {p.arrs}
                               </div>
                             </div>
                           </div>
@@ -367,9 +367,9 @@ export default function SelectionPage() {
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
         <div className="font-semibold">How to read this</div>
         <div className="space-y-1 text-xs" style={{ color: "#7070a0" }}>
-          <div><span style={{ color: "#22c55e" }}>ARRS &lt; 30</span> = frequently recommended by AI</div>
-          <div><span style={{ color: "#f5a623" }}>ARRS 30–49</span> = moderate AI presence</div>
-          <div><span style={{ color: "#ff4d6d" }}>ARRS ≥ 50</span> = weak AI visibility — entry opportunity</div>
+          <div><span style={{ color: "#22c55e" }}>GEO Score &lt; 30</span> = frequently recommended by AI</div>
+          <div><span style={{ color: "#f5a623" }}>GEO Score 30–49</span> = moderate AI presence</div>
+          <div><span style={{ color: "#ff4d6d" }}>GEO Score ≥ 50</span> = weak AI visibility — entry opportunity</div>
           <div><span style={{ color: "#f5a623" }}>X/100</span> = product cited in X out of 100 AI queries in this category</div>
           <div className="pt-1">SOV = Share of Voice — % of AI mentions captured by brand in category</div>
         </div>
@@ -380,7 +380,7 @@ export default function SelectionPage() {
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
         <p className="font-semibold">Is your brand on any of these lists?</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          Run a free audit to see your ARRS score, SOV, and which specific AI queries mention you.
+          Run a free audit to see your GEO Score, SOV, and which specific AI queries mention you.
         </p>
         <div className="flex justify-center gap-3 flex-wrap">
           <Link href="/signup"

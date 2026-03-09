@@ -117,7 +117,7 @@ export default function Helium10VsAvantiPage() {
                 { feature: "Keyword search volume", h10: "✓", av: "—" },
                 { feature: "Review monitoring", h10: "✓", av: "—" },
                 { feature: "Listing optimization", h10: "✓", av: "—" },
-                { feature: "AI brand visibility (ARRS)", h10: "—", av: "✓" },
+                { feature: "AI brand visibility (GEO Score)", h10: "—", av: "✓" },
                 { feature: "AI Share of Voice (SOV)", h10: "—", av: "✓" },
                 { feature: "Competitor AI benchmarking", h10: "—", av: "✓" },
                 { feature: "AI selection intelligence", h10: "—", av: "✓ (which categories AI is pushing)" },
@@ -274,7 +274,7 @@ export default function Helium10VsAvantiPage() {
       >
         <p className="font-semibold text-lg">See where AI ranks your brand vs competitors</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          Free ARRS audit. No credit card. Takes 2 minutes.
+          Free GEO Score audit. No credit card. Takes 2 minutes.
           See the data Helium 10 can&apos;t show you.
         </p>
         <div className="flex justify-center gap-3">

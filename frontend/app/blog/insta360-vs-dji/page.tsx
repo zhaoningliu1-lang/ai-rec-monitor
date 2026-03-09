@@ -84,7 +84,7 @@ export default function Insta360VsDjiPage() {
               <div className="font-bold text-lg">{b.brand}</div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span style={{ color: "#7070a0" }}>ARRS Score</span>
+                  <span style={{ color: "#7070a0" }}>GEO Score</span>
                   <span
                     className="font-bold"
                     style={{ color: ARRS_COLOR(b.arrs) }}

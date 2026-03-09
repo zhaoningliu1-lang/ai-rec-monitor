@@ -36,7 +36,7 @@ const TREND_DATA: CategoryTrend[] = [
     products: [
       { name: "NOCO Boost Plus GB40", brand: "NOCO", asin: "B015TKUPIC", weeks: [68, 70, 72, 74], arrs: 16, priceRange: "$99–$129", trend: "rising", insight: "Wirecutter 和 Car and Driver 的专家引用持续积累。低温季节推动「最佳启动宝」查询量 1 月上涨 34%。" },
       { name: "NOCO Boost HD GB70",   brand: "NOCO", asin: "B07237VJ4L", weeks: [55, 57, 58, 59], arrs: 21, priceRange: "$179–$219", trend: "rising", insight: "卡车和柴油车细分市场增长。GB70 垄断商用车辆查询——竞争对手几乎忽视了这一细分。" },
-      { name: "Gooloo GP4000",        brand: "Gooloo", asin: "B0BXLHQ8KM", weeks: [32, 34, 36, 38], arrs: 34, priceRange: "$59–$79", trend: "rising", insight: "品类中增速最快的品牌。安全认证语言（「防反接保护」「防火花」）正在触发更多 AI 引用，ARRS 4 周从 41 降至 34。" },
+      { name: "Gooloo GP4000",        brand: "Gooloo", asin: "B0BXLHQ8KM", weeks: [32, 34, 36, 38], arrs: 34, priceRange: "$59–$79", trend: "rising", insight: "品类中增速最快的品牌。安全认证语言（「防反接保护」「防火花」）正在触发更多 AI 引用，GEO 评分 4 周从 41 降至 34。" },
       { name: "HULKMAN Alpha85S",     brand: "HULKMAN", asin: "B09TFQZ4RN", weeks: [25, 26, 27, 29], arrs: 41, priceRange: "$89–$119", trend: "rising", insight: "OLED 显示屏和智能诊断定位正在吸引科技型买家。仍低于 AI 推荐的关键阈值。" },
       { name: "Stanley J5C09",        brand: "Stanley", asin: "B000NHW946", weeks: [31, 29, 27, 24], arrs: 52, priceRange: "$49–$69", trend: "falling", insight: "老牌品牌正在失去份额——产品页内容自 2022 年以来未更新，AI 质量过滤器正在降低过期产品描述的权重。" },
     ],
@@ -259,7 +259,7 @@ export default function ZhTrendsPage() {
         <h3 className="font-bold text-sm uppercase tracking-widest" style={{ color: "#ff6b35" }}>2025 年 1 月 · 关键结论</h3>
         <div className="grid md:grid-cols-2 gap-4">
           {[
-            { icon: "🥇", title: "NOCO GB40 无可撼动", desc: "Wirecutter + Car and Driver 的专家引用护城河难以快速复制。74/100 AI 提及，ARRS 仅 16。" },
+            { icon: "🥇", title: "NOCO GB40 无可撼动", desc: "Wirecutter + Car and Driver 的专家引用护城河难以快速复制。74/100 AI 提及，GEO 评分仅 16。" },
             { icon: "🚀", title: "Gooloo 上涨最快（4 周 +6）", desc: "安全认证语言触发 AI 质量信号。这是一个战术 GEO 优化的典型案例。" },
             { icon: "📉", title: "Rexing 和 Stanley 正在下滑", desc: "低价定位 + 内容陈旧 + 高自动生成内容引用比例 = AI 质量过滤器惩罚，均下滑 3–6 次提及。" },
             { icon: "🔮", title: "MagSafe 正在重塑手机支架品类", desc: "MagSafe 专项查询激增 41%。无 MagSafe 内容的品牌无论整体质量如何都在失去 AI 份额。" },

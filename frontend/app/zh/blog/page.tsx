@@ -129,7 +129,7 @@ export default function ZhBlogIndexPage() {
       >
         <p className="text-sm font-medium">想让我们为你的品牌出一份报告？</p>
         <p className="text-xs" style={{ color: "#7070a0" }}>
-          免费 ARRS 诊断，查看你在品类内的 AI 可见度 vs 所有竞品。
+          免费 GEO 诊断，查看你在品类内的 AI 可见度 vs 所有竞品。
         </p>
         <Link
           href="/zh/signup"

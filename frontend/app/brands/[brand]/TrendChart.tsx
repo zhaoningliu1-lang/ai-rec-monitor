@@ -24,7 +24,7 @@ export default function TrendChart({ data }: { data: RunSnapshot[] }) {
   const chartData = data.map((s) => ({
     date: new Date(s.snapshot_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
     "Weighted SOV": parseFloat(s.weighted_sov.toFixed(1)),
-    ARRS: parseFloat(s.arrs.toFixed(1)),
+    "GEO Score": parseFloat(s.arrs.toFixed(1)),
     "SOV High-Intent": parseFloat(s.sov_high.toFixed(1)),
   }));
 
@@ -40,7 +40,7 @@ export default function TrendChart({ data }: { data: RunSnapshot[] }) {
         />
         <Legend wrapperStyle={{ color: "#7070a0", fontSize: 12 }} />
         <Line type="monotone" dataKey="Weighted SOV" stroke="#ff6b35" strokeWidth={2} dot={{ r: 3, fill: "#ff6b35" }} />
-        <Line type="monotone" dataKey="ARRS" stroke="#f5a623" strokeWidth={2} dot={{ r: 3, fill: "#f5a623" }} />
+        <Line type="monotone" dataKey="GEO Score" stroke="#f5a623" strokeWidth={2} dot={{ r: 3, fill: "#f5a623" }} />
         <Line type="monotone" dataKey="SOV High-Intent" stroke="#22c55e" strokeWidth={1.5} strokeDasharray="4 2" dot={false} />
       </LineChart>
     </ResponsiveContainer>

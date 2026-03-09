@@ -125,6 +125,29 @@ body {
 }
 .reveal-scale.visible { opacity: 1; transform: scale(1); }
 
+/* ── Fallback: ensure content appears even if IntersectionObserver never fires */
+.reveal       { animation: revealFallback      0.01s 0.8s both; }
+.reveal-left  { animation: revealLeftFallback   0.01s 0.8s both; }
+.reveal-right { animation: revealRightFallback  0.01s 0.8s both; }
+.reveal-scale { animation: revealScaleFallback  0.01s 0.8s both; }
+
+.reveal.visible, .reveal-left.visible, .reveal-right.visible, .reveal-scale.visible {
+  animation: none;
+}
+
+@keyframes revealFallback      { to { opacity: 1; transform: translateY(0); } }
+@keyframes revealLeftFallback   { to { opacity: 1; transform: translateX(0); } }
+@keyframes revealRightFallback  { to { opacity: 1; transform: translateX(0); } }
+@keyframes revealScaleFallback  { to { opacity: 1; transform: scale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-left, .reveal-right, .reveal-scale {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
 /* ── Shimmer card border (pricing Growth card) ──────── */
 @keyframes shimmer-border {
   0%   { background-position: 0% 50%; }

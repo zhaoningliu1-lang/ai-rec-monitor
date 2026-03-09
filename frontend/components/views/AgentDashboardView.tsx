@@ -40,7 +40,7 @@ const T: Record<string, Record<string, string>> = {
   snapshotsAnalyzed: { en: "{n} snapshots analyzed", zh: "已分析 {n} 个快照" },
   weightedSov:   { en: "Weighted SOV",           zh: "加权 SOV" },
   highIntentSov: { en: "High-Intent SOV",        zh: "高意图 SOV" },
-  arrsRisk:      { en: "ARRS Risk",              zh: "ARRS 风险" },
+  arrsRisk:      { en: "GEO Risk",               zh: "GEO 风险" },
 };
 
 type Lang = "en" | "zh";

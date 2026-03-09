@@ -8,9 +8,8 @@ import { Search, BarChart2, TrendingUp } from "lucide-react";
 const CALENDLY = "https://calendly.com/brivesubscription/30min";
 
 const reveal = {
-  initial: { opacity: 0, y: 30 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
   transition: { duration: 0.5 },
 };
 
@@ -179,9 +178,8 @@ export default function LandingView({ lang }: Props) {
 
           {/* Right column -- mock dashboard card */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
             className="hidden md:block"
           >
@@ -290,12 +288,11 @@ export default function LandingView({ lang }: Props) {
         <div className="grid md:grid-cols-2 gap-4">
           {/* SEO column */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 0.7, y: 0 }}
             transition={{ duration: 0.5 }}
             className="rounded-2xl p-6 transition-all duration-300 hover:scale-[1.015] hover:[box-shadow:0_4px_24px_rgba(0,0,0,0.4)]"
-            style={{ background: "#0f0f17", border: "1px solid #25253f", opacity: 0.7 }}
+            style={{ background: "#0f0f17", border: "1px solid #25253f" }}
           >
             <div
               className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-5 uppercase tracking-widest"
@@ -314,9 +311,8 @@ export default function LandingView({ lang }: Props) {
           </motion.div>
           {/* GEO column */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="rounded-2xl p-6 transition-all duration-300 hover:scale-[1.015] hover:[box-shadow:0_4px_24px_rgba(0,0,0,0.4)]"
             style={{ background: "linear-gradient(135deg, #0f1a0f 0%, #0f0f17 100%)", border: "1px solid rgba(34,197,94,0.3)" }}
@@ -375,9 +371,8 @@ export default function LandingView({ lang }: Props) {
             return (
               <motion.div
                 key={step.num}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="grid md:grid-cols-[1fr_auto] gap-8 items-center rounded-2xl p-7"
                 style={{
@@ -457,9 +452,8 @@ export default function LandingView({ lang }: Props) {
             ].map((p) => (
               <motion.div
                 key={p.num}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="rounded-xl p-5 space-y-3 transition-all duration-300 hover:scale-[1.02] hover:[box-shadow:0_4px_20px_rgba(0,0,0,0.3)]"
                 style={{ background: "#0f0f17", border: `1px solid ${p.color}25` }}

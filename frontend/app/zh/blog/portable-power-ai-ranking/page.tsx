@@ -46,7 +46,7 @@ export default function ZhPortablePowerAIRankingPage() {
           </li>
           <li className="flex items-start gap-2">
             <span style={{ color: "#ff6b35" }}>→</span>
-            Bluetti 的 SOV 为 19.4%，ARRS 为 31——挑战者有入场空间
+            Bluetti 的 SOV 为 19.4%，GEO 评分为 31——挑战者有入场空间
           </li>
           <li className="flex items-start gap-2">
             <span style={{ color: "#ff6b35" }}>→</span>
@@ -63,8 +63,8 @@ export default function ZhPortablePowerAIRankingPage() {
           谷歌购物或品牌官网搜索哪个品牌。
         </p>
         <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
-          这是一个传统 BSR 和关键词工具无法捕捉的全新需求层。ARRS 低于 30 的品牌，在几乎每一次
-          相关查询中都会被推荐；ARRS 超过 60 的品牌，无论亚马逊 listing 优化得多好，AI 都几乎
+          这是一个传统 BSR 和关键词工具无法捕捉的全新需求层。GEO 评分低于 30 的品牌，在几乎每一次
+          相关查询中都会被推荐；GEO 评分超过 60 的品牌，无论亚马逊 listing 优化得多好，AI 都几乎
           不会提及。
         </p>
       </div>
@@ -177,7 +177,7 @@ export default function ZhPortablePowerAIRankingPage() {
       >
         <p className="font-semibold text-lg">你的品牌在这份报告里吗？</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          免费 ARRS 诊断，查看你在便携储能品类中与每个竞品的 AI 可见度对比。
+          免费 GEO 诊断，查看你在便携储能品类中与每个竞品的 AI 可见度对比。
         </p>
         <div className="flex justify-center gap-3">
           <Link

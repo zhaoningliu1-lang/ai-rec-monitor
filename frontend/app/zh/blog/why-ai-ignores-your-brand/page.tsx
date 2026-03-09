@@ -85,7 +85,7 @@ export default function ZhWhyAIIgnoresYourBrandPage() {
             num: "04",
             title: "你在优化昨天的漏斗",
             body: "Helium 10 和 Jungle Scout 告诉你上个月亚马逊上有哪些关键词被搜索了。它们无法告诉你 AI 今天正在推荐什么。这是两种根本不同的信号。只优化历史搜索数据的卖家，是在为一个正在萎缩的漏斗构建。",
-            fix: "跑一次 ARRS 诊断，看看你现在在 AI 推荐中处于什么位置——而不是上个季度关键词搜索中的位置。",
+            fix: "跑一次 GEO 诊断，看看你现在在 AI 推荐中处于什么位置——而不是上个季度关键词搜索中的位置。",
           },
           {
             num: "05",
@@ -120,16 +120,16 @@ export default function ZhWhyAIIgnoresYourBrandPage() {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-bold">我们如何衡量 AI 可见度：ARRS 评分</h2>
+        <h2 className="text-xl font-bold">我们如何衡量 AI 可见度：GEO 评分</h2>
         <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
-          <strong>AI 推荐排名分（ARRS）</strong>衡量你的品牌在品类内 AI 回答中出现的频率。
+          <strong>GEO 评分</strong>衡量你的品牌在品类内 AI 回答中出现的频率。
           数据来自对 ChatGPT、Claude、Gemini 和 Perplexity 的系统性查询。
         </p>
         <div className="grid grid-cols-3 gap-3">
           {[
-            { range: "ARRS &lt; 30", label: "主导", color: "#22c55e", desc: "AI 在绝大多数查询中都会把你的品牌排在前 2–3 位。" },
-            { range: "ARRS 30–59", label: "中等", color: "#f5a623", desc: "AI 会提及你的品牌，但不是每次相关查询都会。" },
-            { range: "ARRS ≥ 60", label: "隐形", color: "#ff4d6d", desc: "AI 几乎不推荐你的品牌。需要重点投入。" },
+            { range: "GEO 评分 &lt; 30", label: "主导", color: "#22c55e", desc: "AI 在绝大多数查询中都会把你的品牌排在前 2–3 位。" },
+            { range: "GEO 评分 30–59", label: "中等", color: "#f5a623", desc: "AI 会提及你的品牌，但不是每次相关查询都会。" },
+            { range: "GEO 评分 ≥ 60", label: "隐形", color: "#ff4d6d", desc: "AI 几乎不推荐你的品牌。需要重点投入。" },
           ].map((tier) => (
             <div
               key={tier.label}
@@ -154,7 +154,7 @@ export default function ZhWhyAIIgnoresYourBrandPage() {
       >
         <p className="font-semibold text-lg">现在就看看 AI 如何排名你的品牌</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          免费诊断。查看你的 ARRS 评分，以及与品类内所有竞品的对比。不需要注册，2 分钟搞定。
+          免费诊断。查看你的 GEO 评分，以及与品类内所有竞品的对比。不需要注册，2 分钟搞定。
         </p>
         <div className="flex justify-center gap-3">
           <Link

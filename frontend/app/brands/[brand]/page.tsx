@@ -61,7 +61,7 @@ export default async function BrandPage({
             <div className="text-3xl font-black mb-1" style={{ color: "#f5a623" }}>
               {latest.arrs.toFixed(0)}
             </div>
-            <div className="text-sm font-semibold mb-0.5">ARRS Score</div>
+            <div className="text-sm font-semibold mb-0.5">GEO Score</div>
             <div className="text-xs" style={{ color: "#7070a0" }}>Risk score (0–100)</div>
           </div>
           {[
@@ -84,7 +84,7 @@ export default async function BrandPage({
 
       {/* Trend chart */}
       <div className="rounded-xl p-6" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
-        <h2 className="font-semibold mb-4">SOV &amp; ARRS over time</h2>
+        <h2 className="font-semibold mb-4">SOV &amp; GEO Score over time</h2>
         <TrendChart data={trends} />
       </div>
 

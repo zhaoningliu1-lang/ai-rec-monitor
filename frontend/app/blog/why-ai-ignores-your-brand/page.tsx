@@ -91,7 +91,7 @@ export default function WhyAIIgnoresYourBrandPage() {
             num: "04",
             title: "You're optimizing for yesterday's funnel",
             body: "Helium 10 and Jungle Scout tell you what keywords people searched on Amazon last month. They can't tell you what AI is recommending today. These are fundamentally different signals. Sellers who only optimize for historical search data are building for a funnel that's shrinking.",
-            fix: "Run an ARRS audit to see where you stand in AI recommendations right now — not where you stood in keyword search last quarter.",
+            fix: "Run a GEO Score audit to see where you stand in AI recommendations right now — not where you stood in keyword search last quarter.",
           },
           {
             num: "05",
@@ -130,17 +130,17 @@ export default function WhyAIIgnoresYourBrandPage() {
 
       {/* ARRS explanation */}
       <div className="space-y-4">
-        <h2 className="text-xl font-bold">How We Measure AI Visibility: The ARRS Score</h2>
+        <h2 className="text-xl font-bold">How We Measure AI Visibility: The GEO Score</h2>
         <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
-          The <strong>AI Recommendation Rank Score (ARRS)</strong> measures how often your brand
+          The <strong>GEO Score</strong> measures how often your brand
           appears in AI-generated responses to buyer queries in your category. It&apos;s calculated
           across ChatGPT, Claude, Gemini, and Perplexity.
         </p>
         <div className="grid grid-cols-3 gap-3">
           {[
-            { range: "ARRS < 30", label: "Dominant", color: "#22c55e", desc: "AI consistently recommends your brand in the top 2–3 positions." },
-            { range: "ARRS 30–59", label: "Moderate", color: "#f5a623", desc: "AI mentions your brand, but not in every relevant query." },
-            { range: "ARRS ≥ 60", label: "Invisible", color: "#ff4d6d", desc: "AI rarely or never recommends your brand. You have work to do." },
+            { range: "GEO Score < 30", label: "Dominant", color: "#22c55e", desc: "AI consistently recommends your brand in the top 2–3 positions." },
+            { range: "GEO Score 30–59", label: "Moderate", color: "#f5a623", desc: "AI mentions your brand, but not in every relevant query." },
+            { range: "GEO Score ≥ 60", label: "Invisible", color: "#ff4d6d", desc: "AI rarely or never recommends your brand. You have work to do." },
           ].map((tier) => (
             <div
               key={tier.range}
@@ -162,8 +162,8 @@ export default function WhyAIIgnoresYourBrandPage() {
           {[
             {
               step: "1",
-              action: "Get your ARRS baseline",
-              detail: "Run a free audit on Avanti. You'll see your current ARRS score, SOV against competitors, and which query types AI ignores you in.",
+              action: "Get your GEO Score baseline",
+              detail: "Run a free audit on Avanti. You'll see your current GEO Score, SOV against competitors, and which query types AI ignores you in.",
             },
             {
               step: "2",
@@ -203,7 +203,7 @@ export default function WhyAIIgnoresYourBrandPage() {
       >
         <p className="font-semibold text-lg">Find out where AI ranks your brand right now</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          Free audit. See your ARRS score and how you compare to every competitor in your category.
+          Free audit. See your GEO Score and how you compare to every competitor in your category.
           Takes under 2 minutes.
         </p>
         <div className="flex justify-center gap-3">

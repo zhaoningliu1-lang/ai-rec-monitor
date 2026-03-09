@@ -132,7 +132,7 @@ export default function ZhProductPage() {
           >1</div>
           <div>
             <div className="text-xs font-semibold uppercase tracking-widest mb-0.5" style={{ color: "#ff6b35" }}>诊断</div>
-            <h2 className="text-2xl font-black">AI 排名第几？ARRS 诊断你的可见度</h2>
+            <h2 className="text-2xl font-black">AI 排名第几？GEO 评分诊断你的可见度</h2>
           </div>
         </div>
 
@@ -141,11 +141,11 @@ export default function ZhProductPage() {
             <p className="text-sm leading-relaxed" style={{ color: "#9090b0" }}>
               阿凡提调用 ChatGPT、Claude、Gemini、Perplexity 四大 AI，
               针对你的品类运行 20+ 个真实买家查询——就像你的目标客户实际会问的那些问题。
-              结果给出 ARRS 评分（越低越好）和与竞品的 SOV 声量对比。
+              结果给出 GEO 评分（越低越好）和与竞品的 SOV 声量对比。
             </p>
             <ul className="space-y-2 text-sm" style={{ color: "#9090b0" }}>
               {[
-                "AI 推荐排名评分（ARRS）· 越低 = 被推荐越多",
+                "GEO 评分 · 越低 = 被推荐越多",
                 "与竞品的声量份额（SOV）对比",
                 "按查询意图（高意向 / 对比 / 资讯）分类分析",
                 "引用来源追溯（YouTube / 评测网站 / 社区）",
@@ -177,7 +177,7 @@ export default function ZhProductPage() {
                 style={{ background: "rgba(245,166,35,0.12)", border: "2px solid #f5a623", color: "#f5a623" }}
               >41</div>
               <div>
-                <div className="text-sm font-semibold">ARRS 评分</div>
+                <div className="text-sm font-semibold">GEO 评分</div>
                 <div className="text-xs mt-0.5" style={{ color: "#f5a623" }}>观望区间 — 竞品正在侵蚀你的 AI 份额</div>
                 <div className="text-xs mt-1" style={{ color: "#7070a0" }}>GEO 综合分：68/100 · 趋势 ↑</div>
               </div>
@@ -316,7 +316,7 @@ export default function ZhProductPage() {
                   <div className="text-xs" style={{ color: "#7070a0" }}>AI 提及</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-sm font-bold" style={{ color: ARRS_COLOR(p.arrs) }}>ARRS {p.arrs}</div>
+                  <div className="text-sm font-bold" style={{ color: ARRS_COLOR(p.arrs) }}>GEO {p.arrs}</div>
                   <div className="text-xs" style={{ color: "#7070a0" }}>{p.priceRange}</div>
                 </div>
               </div>

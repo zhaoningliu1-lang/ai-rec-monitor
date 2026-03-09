@@ -189,7 +189,7 @@ export default function ZhSelectionPage() {
                               <div className="text-xs font-bold" style={{ color: "#f5a623" }}>{p.aiMentions}/100</div>
                               <div className="text-xs px-1.5 py-0.5 rounded mt-0.5"
                                 style={{ background: `${ARRS_COLOR(p.arrs)}18`, color: ARRS_COLOR(p.arrs) }}>
-                                ARRS {p.arrs}
+                                GEO {p.arrs}
                               </div>
                             </div>
                           </div>
@@ -281,9 +281,9 @@ export default function ZhSelectionPage() {
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
         <div className="font-semibold">如何解读数据</div>
         <div className="space-y-1 text-xs" style={{ color: "#7070a0" }}>
-          <div><span style={{ color: "#22c55e" }}>ARRS &lt; 30</span> = 该品牌经常被 AI 推荐</div>
-          <div><span style={{ color: "#f5a623" }}>ARRS 30–49</span> = AI 存在感中等</div>
-          <div><span style={{ color: "#ff4d6d" }}>ARRS ≥ 50</span> = AI 可见度弱——有入场空间</div>
+          <div><span style={{ color: "#22c55e" }}>GEO 评分 &lt; 30</span> = 该品牌经常被 AI 推荐</div>
+          <div><span style={{ color: "#f5a623" }}>GEO 评分 30–49</span> = AI 存在感中等</div>
+          <div><span style={{ color: "#ff4d6d" }}>GEO 评分 ≥ 50</span> = AI 可见度弱——有入场空间</div>
           <div><span style={{ color: "#f5a623" }}>X/100</span> = 该产品在 100 次 AI 查询中被提及 X 次</div>
           <div className="pt-1">SOV（声量份额）= 该品牌在此品类 AI 提及中所占的百分比</div>
         </div>
@@ -294,7 +294,7 @@ export default function ZhSelectionPage() {
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
         <p className="font-semibold">你的品牌在这份榜单里吗？</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          免费诊断，查看你的 ARRS 评分、SOV 对比，以及哪些 AI 查询中提到了你。
+          免费诊断，查看你的 GEO 评分、SOV 对比，以及哪些 AI 查询中提到了你。
         </p>
         <div className="flex justify-center gap-3 flex-wrap">
           <Link href="/zh/signup"

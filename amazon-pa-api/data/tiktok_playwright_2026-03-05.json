@@ -1,0 +1,54 @@
+{
+  "date": "2026-03-05",
+  "categories": [
+    {
+      "category": "Car Accessories",
+      "hashtags": [],
+      "screenshot": "tiktok_Car_Accessories.png"
+    },
+    {
+      "category": "Women's Apparel",
+      "hashtags": [],
+      "screenshot": "tiktok_Women's_Apparel.png"
+    },
+    {
+      "category": "Sportswear",
+      "hashtags": [],
+      "screenshot": "tiktok_Sportswear.png"
+    }
+  ],
+  "hashtags": [
+    {
+      "hashtag": "caraccessories",
+      "volumes": []
+    },
+    {
+      "hashtag": "dashcam",
+      "volumes": []
+    },
+    {
+      "hashtag": "jumpstarter",
+      "volumes": []
+    },
+    {
+      "hashtag": "carphoneMount",
+      "volumes": []
+    },
+    {
+      "hashtag": "amazonfinds",
+      "volumes": []
+    },
+    {
+      "hashtag": "athleticwear",
+      "volumes": []
+    },
+    {
+      "hashtag": "gymoutfit",
+      "volumes": []
+    },
+    {
+      "hashtag": "ootd",
+      "volumes": []
+    }
+  ]
+}

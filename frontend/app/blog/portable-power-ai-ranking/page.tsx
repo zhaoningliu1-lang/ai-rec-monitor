@@ -49,7 +49,7 @@ export default function PortablePowerAIRankingPage() {
           </li>
           <li className="flex items-start gap-2">
             <span style={{ color: "#ff6b35" }}>→</span>
-            Bluetti at 19.4% SOV has low ARRS (31) — room for challengers to enter
+            Bluetti at 19.4% SOV has low GEO Score (31) — room for challengers to enter
           </li>
           <li className="flex items-start gap-2">
             <span style={{ color: "#ff6b35" }}>→</span>
@@ -69,8 +69,8 @@ export default function PortablePowerAIRankingPage() {
         </p>
         <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
           This is a new demand layer that BSR and keyword tools don&apos;t capture. A brand with
-          an ARRS score under 30 is being recommended in nearly every relevant query. A brand
-          with ARRS over 60 barely appears — regardless of how well-optimized its Amazon listing is.
+          a GEO Score under 30 is being recommended in nearly every relevant query. A brand
+          with GEO Score over 60 barely appears — regardless of how well-optimized its Amazon listing is.
         </p>
       </div>
 
@@ -123,7 +123,7 @@ export default function PortablePowerAIRankingPage() {
           </table>
         </div>
         <p className="text-xs" style={{ color: "#7070a0" }}>
-          ARRS (AI Recommendation Rank Score): lower = more frequently recommended.
+          GEO Score: lower = more frequently recommended.
           Under 30 = AI consistently mentions this brand first.
         </p>
       </div>
@@ -246,10 +246,10 @@ export default function PortablePowerAIRankingPage() {
         <h2 className="text-xl font-bold">The 90-Day GEO Playbook for Power Sellers</h2>
         <div className="space-y-3">
           {[
-            { week: "Weeks 1–2", action: "Run your brand&apos;s ARRS audit", detail: "Know your baseline SOV and which query types your brand appears in." },
+            { week: "Weeks 1–2", action: "Run your brand&apos;s GEO Score audit", detail: "Know your baseline SOV and which query types your brand appears in." },
             { week: "Weeks 3–6", action: "Create citation-optimized content", detail: "Write detailed comparison pages, spec guides, and use-case articles that answer the exact queries AI is receiving." },
-            { week: "Weeks 7–10", action: "Build your citation network", detail: "Get your brand cited by Wirecutter, OutdoorGearLab, and Reddit threads AI models pull from. These citations directly boost ARRS." },
-            { week: "Weeks 11–12", action: "Re-run your ARRS scan", detail: "Measure the delta. Target: 10+ point ARRS improvement = measurable increase in AI-driven traffic." },
+            { week: "Weeks 7–10", action: "Build your citation network", detail: "Get your brand cited by Wirecutter, OutdoorGearLab, and Reddit threads AI models pull from. These citations directly boost your GEO Score." },
+            { week: "Weeks 11–12", action: "Re-run your GEO Score scan", detail: "Measure the delta. Target: 10+ point GEO Score improvement = measurable increase in AI-driven traffic." },
           ].map((step, i) => (
             <div
               key={step.week}
@@ -283,7 +283,7 @@ export default function PortablePowerAIRankingPage() {
       >
         <p className="font-semibold text-lg">Is your brand in this report?</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          Run a free ARRS audit to see your brand&apos;s AI mention rate and SOV
+          Run a free GEO Score audit to see your brand&apos;s AI mention rate and SOV
           against every competitor in the portable power category.
         </p>
         <div className="flex justify-center gap-3">

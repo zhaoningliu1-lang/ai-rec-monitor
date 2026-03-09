@@ -33,7 +33,7 @@ const STATS = [
   { label: "categories covered",   value: "12" },
   { label: "data freshness",       value: "Monthly" },
   { label: "cross-border markets", value: "14" },
-  { label: "avg ARRS gap closed",  value: "18 pts" },
+  { label: "avg GEO Score gap closed",  value: "18 pts" },
 ];
 
 /* ── step divider ────────────────────────────────────── */
@@ -183,7 +183,7 @@ export default function ProductPage() {
             <div className="grid md:grid-cols-3 gap-4">
               {[
                 { n:"01", title:"We simulate buyer queries", body:"We run 200+ natural-language queries across ChatGPT, Claude, Gemini, and Perplexity — the same questions real buyers are asking right now." },
-                { n:"02", title:"We score every mention", body:"Every brand mention is logged, weighted by query intent and AI engine authority, and combined into your ARRS score and SOV ranking." },
+                { n:"02", title:"We score every mention", body:"Every brand mention is logged, weighted by query intent and AI engine authority, and combined into your GEO Score and SOV ranking." },
                 { n:"03", title:"You get an action plan", body:"Not just a score — a prioritized list of why competitors rank above you and exactly what content and citation moves will close the gap." },
               ].map((step, i) => (
                 <AnimateIn key={step.n} delay={i * 120} direction="scale"
@@ -214,11 +214,11 @@ export default function ProductPage() {
 
               <div className="space-y-2">
                 {[
-                  ["AI Recommendation Rank Score (ARRS)", "Your proprietary visibility score across 4 engines"],
+                  ["GEO Score", "Your proprietary visibility score across 4 engines"],
                   ["Share of Voice vs every competitor", "See exactly how much AI attention your brand captures"],
                   ["Query-level breakdown by buyer intent", "Know which query types you win and which you lose"],
                   ["Citation source analysis", "Understand which third-party sources are driving competitor rankings"],
-                  ["90-day GEO action plan", "Prioritized steps to improve your ARRS — not vague advice"],
+                  ["90-day GEO action plan", "Prioritized steps to improve your GEO Score — not vague advice"],
                 ].map(([title, desc]) => (
                   <div key={title} className="flex items-start gap-3 text-sm">
                     <span className="mt-0.5 shrink-0" style={{ color:"#ff6b35" }}>✓</span>
@@ -527,9 +527,9 @@ export default function ProductPage() {
             style={{ background:"#0f0f17", border:"1px solid #25253f" }}>
             <div className="font-semibold text-sm">How to read this data</div>
             <div className="space-y-1.5 text-xs" style={{ color:"#7070a0" }}>
-              <div><span style={{ color:"#22c55e" }}>ARRS &lt; 30</span> — AI consistently recommends this brand. Very hard to displace.</div>
-              <div><span style={{ color:"#f5a623" }}>ARRS 30–49</span> — Moderate AI presence. Room for a focused challenger to gain share.</div>
-              <div><span style={{ color:"#ff4d6d" }}>ARRS ≥ 50</span> — Weak AI visibility. New entrants can establish dominance quickly.</div>
+              <div><span style={{ color:"#22c55e" }}>GEO Score &lt; 30</span> — AI consistently recommends this brand. Very hard to displace.</div>
+              <div><span style={{ color:"#f5a623" }}>GEO Score 30–49</span> — Moderate AI presence. Room for a focused challenger to gain share.</div>
+              <div><span style={{ color:"#ff4d6d" }}>GEO Score ≥ 50</span> — Weak AI visibility. New entrants can establish dominance quickly.</div>
               <div className="pt-1">SOV (Share of Voice) — percentage of all AI mentions in this category captured by this brand.</div>
             </div>
           </AnimateIn>
@@ -714,7 +714,7 @@ export default function ProductPage() {
         style={{ background:"linear-gradient(135deg, #0f0f17 0%, #1a1020 100%)", border:"1px solid #25253f" }}>
         <p className="text-2xl font-bold">The AI race is already happening.<br/>Start with a free audit.</p>
         <p className="text-sm leading-relaxed max-w-xl mx-auto" style={{ color:"#7070a0" }}>
-          See your ARRS score, how you compare to every competitor in your category,
+          See your GEO Score, how you compare to every competitor in your category,
           and the exact actions that move your rank — before committing to a paid plan.
         </p>
         <div className="flex justify-center gap-3 pt-2 flex-wrap">

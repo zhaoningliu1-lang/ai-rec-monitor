@@ -550,7 +550,7 @@ export default function RunDetailClient({
                     stroke="#f5a623"
                     strokeWidth={2}
                     dot={false}
-                    name="ARRS"
+                    name="GEO Score"
                   />
                   <Line
                     type="monotone"
@@ -564,7 +564,7 @@ export default function RunDetailClient({
               </ResponsiveContainer>
               <div className="flex gap-4 mt-2">
                 {[
-                  { color: "#f5a623", label: "ARRS" },
+                  { color: "#f5a623", label: "GEO Score" },
                   { color: "#ff6b35", label: "Weighted SOV" },
                 ].map((l) => (
                   <div key={l.label} className="flex items-center gap-1.5">

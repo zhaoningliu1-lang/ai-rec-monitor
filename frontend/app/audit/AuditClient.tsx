@@ -220,13 +220,13 @@ export default function AuditClient({ lang = "en" }: Props) {
 
   const whatYouGet = lang === "zh"
     ? [
-        "ARRS 可见性分数 + AI 引擎排名",
+        "GEO 可见性分数 + AI 引擎排名",
         "SOV 份额与竞品对比分析",
         "AI 引用来源质量评估",
         "改善建议和行动方案",
       ]
     : [
-        "ARRS visibility score + AI engine rankings",
+        "GEO visibility score + AI engine rankings",
         "SOV share vs competitor benchmarking",
         "AI citation source quality assessment",
         "Improvement recommendations and action plan",

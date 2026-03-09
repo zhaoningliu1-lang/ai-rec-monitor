@@ -23,7 +23,7 @@ const TIERS = [
       "追踪 1 个品牌",
       "月度 GEO 报告",
       "4 大 AI 引擎（ChatGPT、Claude、Gemini、Perplexity）",
-      "ARRS 评分 + SOV 拆解",
+      "GEO 评分 + SOV 拆解",
       "选品情报：仅限 Top 3 品类（只读）",
       "邮件推送",
     ],
@@ -43,7 +43,7 @@ const TIERS = [
       "追踪 3 个品牌",
       "双周 GEO 报告",
       "4 大 AI 引擎",
-      "ARRS + SOV + 竞品对标",
+      "GEO 评分 + SOV + 竞品对标",
       "完整选品情报（全品类 + 筛选器）",
       "成本优化计算器",
       "PDF 导出",
@@ -101,7 +101,7 @@ const COMPARISON = [
   { feature: "追踪品牌数量",       starter: "1",     growth: "3",     agency: "20",         enterprise: "不限" },
   { feature: "报告频率",            starter: "月度",  growth: "双周",  agency: "每周",        enterprise: "自定义" },
   { feature: "AI 引擎覆盖",        starter: "4",     growth: "4",     agency: "4 + 定制",    enterprise: "自定义" },
-  { feature: "ARRS 评分",          starter: true,    growth: true,    agency: true,          enterprise: true },
+  { feature: "GEO 评分",           starter: true,    growth: true,    agency: true,          enterprise: true },
   { feature: "SOV 拆解",           starter: true,    growth: true,    agency: true,          enterprise: true },
   { feature: "竞品对标",           starter: false,   growth: true,    agency: true,          enterprise: true },
   { feature: "完整选品情报",       starter: false,   growth: true,    agency: true,          enterprise: true },
@@ -361,7 +361,7 @@ export default function ZhPricingPage() {
       >
         <p className="text-2xl font-bold">先做免费诊断</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          看到你的品牌 ARRS 评分和每个竞品的 SOV 对比——在选择方案之前。
+          看到你的品牌 GEO 评分和每个竞品的 SOV 对比——在选择方案之前。
         </p>
         <div className="flex justify-center gap-3 pt-2 flex-wrap">
           <Link

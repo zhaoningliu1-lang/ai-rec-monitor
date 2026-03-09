@@ -206,7 +206,7 @@ export default function ZhAICostGuide2025Page() {
       >
         <p className="font-semibold text-lg">立即开始你的 AI 可见度诊断</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          免费 ARRS 评分、SOV 拆解和竞品对比。在你的竞争对手看到数据之前，先看到。
+          免费 GEO 评分、SOV 拆解和竞品对比。在你的竞争对手看到数据之前，先看到。
         </p>
         <div className="flex justify-center gap-3">
           <Link

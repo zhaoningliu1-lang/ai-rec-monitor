@@ -162,7 +162,7 @@ export default function ZhHelium10VsAvantiPage() {
       >
         <p className="font-semibold text-lg">看看 AI 如何排名你的品牌 vs 竞争对手</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          免费 ARRS 诊断。无需信用卡。2 分钟。看到 Helium 10 无法给你的数据。
+          免费 GEO 诊断。无需信用卡。2 分钟。看到 Helium 10 无法给你的数据。
         </p>
         <div className="flex justify-center gap-3">
           <Link

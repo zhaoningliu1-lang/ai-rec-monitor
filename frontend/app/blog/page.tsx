@@ -131,7 +131,7 @@ export default function BlogIndexPage() {
       >
         <p className="text-sm font-medium">Want us to run a report for your brand?</p>
         <p className="text-xs" style={{ color: "#7070a0" }}>
-          Free ARRS audit. See your AI visibility score vs every competitor in your category.
+          Free GEO Score audit. See your AI visibility score vs every competitor in your category.
         </p>
         <Link
           href="/signup"

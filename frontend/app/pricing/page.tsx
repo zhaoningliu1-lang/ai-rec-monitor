@@ -27,7 +27,7 @@ const TIERS = [
       "1 brand tracked",
       "Monthly GEO report",
       "4 AI engines (ChatGPT, Claude, Gemini, Perplexity)",
-      "ARRS score + SOV breakdown",
+      "GEO Score + SOV breakdown",
       "Selection intelligence: top 3 categories (read-only)",
       "Email delivery",
     ],
@@ -50,7 +50,7 @@ const TIERS = [
       "3 brands tracked",
       "Bi-weekly GEO reports",
       "4 AI engines",
-      "ARRS + SOV + competitor benchmarking",
+      "GEO Score + SOV + competitor benchmarking",
       "Full selection intelligence (all categories + filter)",
       "Cost optimizer",
       "PDF export",
@@ -109,7 +109,7 @@ const COMPARISON = [
   { feature: "Brands tracked",               starter: "1",     growth: "3",     agency: "20",     enterprise: "Unlimited" },
   { feature: "Report frequency",             starter: "Monthly", growth: "Bi-weekly", agency: "Weekly", enterprise: "Custom" },
   { feature: "AI engines covered",           starter: "4",     growth: "4",     agency: "4 + custom", enterprise: "Custom" },
-  { feature: "ARRS score",                   starter: true,    growth: true,    agency: true,     enterprise: true },
+  { feature: "GEO Score",                    starter: true,    growth: true,    agency: true,     enterprise: true },
   { feature: "SOV breakdown",                starter: true,    growth: true,    agency: true,     enterprise: true },
   { feature: "Competitor benchmarking",      starter: false,   growth: true,    agency: true,     enterprise: true },
   { feature: "Selection intelligence (full)",starter: false,   growth: true,    agency: true,     enterprise: true },
@@ -378,7 +378,7 @@ export default function PricingPage() {
       >
         <p className="text-2xl font-bold">Start with a free audit</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          See your brand&apos;s ARRS score and SOV against every competitor -- before committing to a plan.
+          See your brand&apos;s GEO Score and SOV against every competitor -- before committing to a plan.
         </p>
         <div className="flex justify-center gap-3 pt-2 flex-wrap">
           <Link

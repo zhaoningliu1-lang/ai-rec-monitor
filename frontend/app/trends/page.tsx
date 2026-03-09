@@ -67,7 +67,7 @@ const TREND_DATA: CategoryTrend[] = [
         priceRange: "$59–$79",
         trend: "rising",
         insight:
-          "Fastest rising brand in category. Safety certification language (\"reverse polarity protection\", \"spark-proof\") is triggering more AI citations. ARRS dropped from 41 → 34 in 4 weeks.",
+          "Fastest rising brand in category. Safety certification language (\"reverse polarity protection\", \"spark-proof\") is triggering more AI citations. GEO Score dropped from 41 → 34 in 4 weeks.",
       },
       {
         name: "HULKMAN Alpha85S",
@@ -439,7 +439,7 @@ export default function TrendsPage() {
           <span className="text-xs" style={{ color: "#9090b0" }}>Falling</span>
         </div>
         <span className="text-xs" style={{ color: "#9090b0" }}>
-          ARRS: lower = AI recommends more consistently
+          GEO Score: lower = AI recommends more consistently
         </span>
       </div>
 
@@ -476,7 +476,7 @@ export default function TrendsPage() {
                 <span key={w} className="text-center">{w}</span>
               ))}
               <span className="text-center">4-wk trend</span>
-              <span className="text-center">ARRS</span>
+              <span className="text-center">GEO Score</span>
             </div>
 
             {/* Product rows */}
@@ -578,7 +578,7 @@ export default function TrendsPage() {
             {
               icon: "🥇",
               title: "NOCO GB40 remains untouchable",
-              desc: "Expert citation moat from Wirecutter + Car and Driver is impossible to replicate quickly. 74/100 AI mentions at ARRS 16.",
+              desc: "Expert citation moat from Wirecutter + Car and Driver is impossible to replicate quickly. 74/100 AI mentions at GEO Score 16.",
             },
             {
               icon: "🚀",

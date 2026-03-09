@@ -53,7 +53,7 @@ export default function BookDemoPage() {
         <div style={{ fontSize: 32 }}>💬</div>
         <div>
           <p style={{ fontSize: 14, color: "#d0d0e8", lineHeight: 1.6, fontStyle: "italic" }}>
-            &ldquo;After the strategy call we knew exactly which AI queries to target. Our ARRS dropped from 58 to 31 in 6 weeks.&rdquo;
+            &ldquo;After the strategy call we knew exactly which AI queries to target. Our GEO Score dropped from 58 to 31 in 6 weeks.&rdquo;
           </p>
           <p style={{ fontSize: 12, color: "#7070a0", marginTop: 8 }}>— DTC Brand Founder, Consumer Electronics</p>
         </div>
