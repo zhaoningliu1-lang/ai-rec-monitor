@@ -198,6 +198,73 @@ export default function DashboardView({ lang }: Props) {
           </table>
         </div>
       )}
+
+      {/* B2A Analytics — Coming Soon Teaser */}
+      <div
+        className="rounded-2xl p-6 relative overflow-hidden"
+        style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <h3 className="text-base font-bold" style={{ color: "#f0f0f8" }}>
+            {lang === "zh"
+              ? "B2A Analytics — AI 流量智能（即将推出）"
+              : "B2A Analytics — AI Traffic Intelligence (Coming Soon)"}
+          </h3>
+          <span
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}
+          >
+            Beta
+          </span>
+        </div>
+
+        {/* Blurred mock bar chart */}
+        <div className="relative mb-5">
+          <div style={{ filter: "blur(4px)" }} className="pointer-events-none select-none">
+            <div className="flex items-end gap-3 h-32 px-4">
+              {[
+                { label: "ChatGPT", h: "80%", color: "#22c55e" },
+                { label: "Perplexity", h: "45%", color: "#3b82f6" },
+                { label: "Gemini", h: "30%", color: "#f5a623" },
+                { label: "Claude", h: "15%", color: "#a78bfa" },
+              ].map((bar) => (
+                <div key={bar.label} className="flex-1 flex flex-col items-center gap-1">
+                  <div
+                    className="w-full rounded-t-lg"
+                    style={{ height: bar.h, background: bar.color, minHeight: 8 }}
+                  />
+                  <span className="text-[10px]" style={{ color: "#555580" }}>
+                    {bar.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div
+              className="text-xs font-semibold px-4 py-2 rounded-full"
+              style={{ background: "rgba(15,15,23,0.9)", border: "1px solid #25253f", color: "#7070a0" }}
+            >
+              {lang === "zh" ? "🔒 解锁后可查看完整数据" : "🔒 Unlock to view full data"}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <a
+            href="https://calendly.com/brivesubscription/30min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-semibold px-5 py-2.5 rounded-xl transition-opacity hover:opacity-85"
+            style={{ background: "#ff6b35", color: "#fff" }}
+          >
+            {lang === "zh" ? "加入 Beta 等待名单 →" : "Join Beta Waitlist →"}
+          </a>
+          <span className="text-xs" style={{ color: "#555580" }}>
+            {lang === "zh" ? "抢先体验 AI 流量归因" : "Early access to AI traffic attribution"}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

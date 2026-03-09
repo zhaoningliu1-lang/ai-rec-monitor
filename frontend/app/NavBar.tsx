@@ -50,11 +50,13 @@ export default function NavBar() {
         { href: "/zh/product",       label: "产品" },
         { href: "/zh/categories",    label: "行业指数" },
         { href: "/zh/blog",          label: "研究报告" },
+        { href: "/zh/b2a-analytics", label: "B2A Analytics" },
       ]
     : [
         { href: "/product",       label: "Product" },
         { href: "/categories",    label: "Index" },
         { href: "/blog",          label: "Research" },
+        { href: "/b2a-analytics", label: "B2A Analytics" },
       ];
 
   // Logged-in (any tier) -- core tool features
@@ -169,9 +171,12 @@ export default function NavBar() {
           </div>
           {publicLinks.filter(l => l.href !== (isZh ? "/zh/product" : "/product")).map((l) => (
             <Link key={l.href} href={l.href}
-              className="text-sm px-3 py-1.5 rounded-full transition-colors hover:text-white"
+              className="text-sm px-3 py-1.5 rounded-full transition-colors hover:text-white flex items-center gap-1"
               style={isActive(l.href) ? { color: "#f0f0f8", background: "rgba(255,107,53,0.12)" } : { color: "#7070a0" }}>
               {l.label}
+              {l.href.includes("b2a-analytics") && (
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}>Beta</span>
+              )}
             </Link>
           ))}
         </div>

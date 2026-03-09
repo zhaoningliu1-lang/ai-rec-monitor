@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { Lang, tx } from "@/lib/i18n";
 import { motion } from "framer-motion";
-import { Search, BarChart2, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { Search, BarChart2, TrendingUp, Globe, Package } from "lucide-react";
 
 const CALENDLY = "https://calendly.com/brivesubscription/30min";
 
@@ -37,6 +38,7 @@ function GeoScoreRing({ score }: { score: number }) {
 }
 
 export default function LandingView({ lang }: Props) {
+  const [heroTab, setHeroTab] = useState<"geo" | "traffic">("geo");
   const auditPath = lang === "zh" ? "/zh/audit" : "/audit";
 
   const stats = [
@@ -202,33 +204,108 @@ export default function LandingView({ lang }: Props) {
                 </div>
               </div>
 
-              {mockBrands.map((brand) => (
-                <div
-                  key={brand.name}
-                  className="flex items-center gap-4 rounded-xl px-4 py-3"
-                  style={{ background: "#161625", border: "1px solid #25253f" }}
+              <div className="flex gap-1 rounded-lg p-0.5" style={{ background: "#161625" }}>
+                <button
+                  onClick={() => setHeroTab("geo")}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
+                  style={{
+                    background: heroTab === "geo" ? "#25253f" : "transparent",
+                    color: heroTab === "geo" ? "#f0f0f8" : "#555580",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
                 >
-                  <GeoScoreRing score={brand.score} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold mb-0.5" style={{ color: "#f0f0f8" }}>
-                      {brand.name}
-                    </div>
-                    <div className="text-xs" style={{ color: "#7070a0" }}>
-                      {lang === "zh" ? "GEO 分数" : "GEO Score"}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-black" style={{ color: brand.color }}>
-                      {brand.score}
-                    </div>
-                    <div className="text-xs" style={{ color: "#7070a0" }}>/100</div>
-                  </div>
-                </div>
-              ))}
-
-              <div className="text-xs text-center pt-1" style={{ color: "#555580" }}>
-                {lang === "zh" ? "4 AI 引擎 · 实时追踪" : "4 AI Engines · Real-time Tracking"}
+                  {lang === "zh" ? "GEO 分数" : "GEO Score"}
+                </button>
+                <button
+                  onClick={() => setHeroTab("traffic")}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5"
+                  style={{
+                    background: heroTab === "traffic" ? "#25253f" : "transparent",
+                    color: heroTab === "traffic" ? "#f0f0f8" : "#555580",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  {lang === "zh" ? "AI 流量" : "AI Traffic"}
+                  <span
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                    style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}
+                  >
+                    +693%
+                  </span>
+                </button>
               </div>
+
+              {heroTab === "traffic" ? (
+                <>
+                  {[
+                    { engine: "ChatGPT", sessions: 412, color: "#22c55e", pct: 100 },
+                    { engine: "Perplexity", sessions: 187, color: "#3b82f6", pct: 45 },
+                    { engine: "Gemini", sessions: 94, color: "#f5a623", pct: 23 },
+                    { engine: "Claude", sessions: 31, color: "#a78bfa", pct: 8 },
+                  ].map((item) => (
+                    <div
+                      key={item.engine}
+                      className="flex items-center gap-4 rounded-xl px-4 py-3"
+                      style={{ background: "#161625", border: "1px solid #25253f" }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold mb-1" style={{ color: "#f0f0f8" }}>
+                          {item.engine}
+                        </div>
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
+                          <div
+                            className="h-full rounded-full"
+                            style={{ width: `${item.pct}%`, background: item.color }}
+                          />
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-black" style={{ color: item.color }}>
+                          {item.sessions}
+                        </div>
+                        <div className="text-xs" style={{ color: "#7070a0" }}>
+                          {lang === "zh" ? "本周会话" : "sessions/wk"}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="text-xs text-center pt-1" style={{ color: "#555580" }}>
+                    {lang === "zh" ? "模拟数据 · 仅供展示" : "Simulated data · For illustration"}
+                  </div>
+                </>
+              ) : (
+                <>
+                  {mockBrands.map((brand) => (
+                    <div
+                      key={brand.name}
+                      className="flex items-center gap-4 rounded-xl px-4 py-3"
+                      style={{ background: "#161625", border: "1px solid #25253f" }}
+                    >
+                      <GeoScoreRing score={brand.score} />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold mb-0.5" style={{ color: "#f0f0f8" }}>
+                          {brand.name}
+                        </div>
+                        <div className="text-xs" style={{ color: "#7070a0" }}>
+                          {lang === "zh" ? "GEO 分数" : "GEO Score"}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-black" style={{ color: brand.color }}>
+                          {brand.score}
+                        </div>
+                        <div className="text-xs" style={{ color: "#7070a0" }}>/100</div>
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="text-xs text-center pt-1" style={{ color: "#555580" }}>
+                    {lang === "zh" ? "4 AI 引擎 · 实时追踪" : "4 AI Engines · Real-time Tracking"}
+                  </div>
+                </>
+              )}
             </div>
           </motion.div>
         </div>
@@ -247,6 +324,12 @@ export default function LandingView({ lang }: Props) {
           </div>
         ))}
       </motion.section>
+
+      <div className="text-xs mt-3 text-center" style={{ color: "#555580" }}>
+        {lang === "zh"
+          ? "* Adobe Analytics：AI 驱动零售流量 2025 年假日季同比增长 +693%"
+          : "* Adobe Analytics: AI-driven retail traffic grew +693% YoY in 2025 holiday season"}
+      </div>
 
       {/* AI Shift urgency banner */}
       <motion.section
@@ -386,6 +469,71 @@ export default function LandingView({ lang }: Props) {
               </motion.div>
             );
           })}
+        </div>
+      </motion.section>
+
+      {/* Built for Cross-border Brands */}
+      <motion.section {...reveal}>
+        <div
+          className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4"
+          style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.25)" }}
+        >
+          {lang === "zh" ? "跨境卖家专区" : "CROSS-BORDER SELLERS"}
+        </div>
+        <h2 className="text-3xl font-black mb-3 leading-tight">
+          {lang === "zh"
+            ? "美国 60% 的电商产品来自亚洲。AI 能找到你吗？"
+            : "60% of US e-commerce products come from Asia. Is yours visible to AI?"}
+        </h2>
+        <p className="text-sm mb-10 max-w-2xl" style={{ color: "#7070a0" }}>
+          {lang === "zh"
+            ? "你的竞争对手已经在 AI 里消失了。Avanti 帮你抢回曝光。"
+            : "Your competitors are already invisible to ChatGPT. Avanti bridges the gap."}
+        </p>
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            {
+              Icon: Globe,
+              title: lang === "zh" ? "AI 不识别蹩脚英语" : "AI doesn\u2019t speak broken English",
+              desc: lang === "zh"
+                ? "我们优化你在 AI 引擎面前的内容权威性"
+                : "We optimize your AI-facing content for fluency and authority",
+              color: "#ff6b35",
+            },
+            {
+              Icon: Package,
+              title: lang === "zh" ? "产品目录需要机器可读" : "Your catalog needs to be machine-readable",
+              desc: lang === "zh"
+                ? "ACP Feed 生成器让 AI Agent 发现并购买你的产品"
+                : "ACP Feed Generator helps AI agents discover and buy your products",
+              color: "#f5a623",
+            },
+            {
+              Icon: BarChart2,
+              title: lang === "zh" ? "Agent 流量对 GA 不可见" : "Agent traffic is invisible to GA",
+              desc: lang === "zh"
+                ? "B2A Analytics 揭示 GA 看不到的 AI 来源流量"
+                : "B2A Analytics shows you what Google Analytics misses",
+              color: "#22c55e",
+            },
+          ].map((card) => (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="rounded-2xl p-6 space-y-3 transition-all duration-300 hover:scale-[1.02] hover:[box-shadow:0_4px_20px_rgba(0,0,0,0.3)]"
+              style={{ background: "#0f0f17", border: `1px solid ${card.color}25` }}
+            >
+              <card.Icon size={28} style={{ color: card.color }} strokeWidth={1.5} />
+              <h3 className="text-sm font-bold" style={{ color: "#f0f0f8" }}>
+                {card.title}
+              </h3>
+              <p className="text-xs leading-relaxed" style={{ color: "#7070a0" }}>
+                {card.desc}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </motion.section>
 
