@@ -1,10 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { AMAZON_CAR_ELECTRONICS, AMAZON_LIVE_DATE, YOUTUBE_SIGNALS } from "@/lib/amazon-live-data";
 
-export const metadata = {
-  title: "Automotive AI Visibility Trends — January 2025 | Avanti",
+export const metadata: Metadata = {
+  title: "Automotive AI Visibility Trends | Avanti GEO",
   description:
-    "Which automotive brands and products are rising or falling in AI recommendations. Weekly tracking of ChatGPT, Claude, and Gemini mention frequency for car accessories.",
+    "Which automotive brands and products are rising or falling in AI recommendations. Weekly tracking across ChatGPT, Claude, and Gemini.",
 };
 
 // ── Data ────────────────────────────────────────────────────────────────────

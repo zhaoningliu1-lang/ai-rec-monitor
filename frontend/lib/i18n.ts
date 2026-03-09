@@ -229,6 +229,10 @@ export const t = {
     sectionFood:         { en: "Food & Beverage",        zh: "食品饮料" },
     sectionSoftware:     { en: "Software / SaaS",        zh: "软件/SaaS" },
     sectionGeneral:      { en: "General",                zh: "其他品类" },
+    sectionAutomotive:   { en: "Automotive Accessories", zh: "汽车配件" },
+    demoBanner:          { en: "Showing sample data. Run your first brand analysis to see real data.", zh: "以下为演示数据。运行首次品牌分析后将显示您的真实数据。" },
+    demoScanCta:         { en: "Start a scan →",        zh: "开始扫描 →" },
+    demoLabel:           { en: "Demo",                   zh: "演示" },
   },
   leaderboard: {
     back:           { en: "← Index",               zh: "← 返回指数" },

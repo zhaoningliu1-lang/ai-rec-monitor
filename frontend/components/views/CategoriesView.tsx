@@ -5,7 +5,7 @@ import { groupCategoriesByParent } from "@/lib/category-hierarchy";
 
 type CategoriesKey = keyof typeof t.categories;
 
-// Static demo data shown when no real scan data exists (automotive + 3C)
+// Static demo data shown when no real scan data exists
 const STATIC_AUTO: CategoryEntry[] = [
   { category: "Car Jump Starters",    brand_count: 8 },
   { category: "Dash Cameras",         brand_count: 7 },
@@ -22,6 +22,19 @@ const STATIC_3C: CategoryEntry[] = [
   { category: "Smart Home Devices",      brand_count: 7 },
 ];
 
+const STATIC_HOME: CategoryEntry[] = [
+  { category: "Robot Vacuums",       brand_count: 10 },
+  { category: "Air Purifiers",       brand_count: 8 },
+  { category: "Kitchen Appliances",  brand_count: 6 },
+  { category: "Home Organization",   brand_count: 5 },
+];
+
+const STATIC_BEAUTY: CategoryEntry[] = [
+  { category: "Skincare",              brand_count: 12 },
+  { category: "Hair Care",             brand_count: 9 },
+  { category: "Makeup",                brand_count: 7 },
+];
+
 interface Props {
   categories: CategoryEntry[];
   lang: Lang;
@@ -36,13 +49,23 @@ export default function CategoriesView({ categories, lang }: Props) {
   const demoSections = [
     {
       id: "automotive",
-      label: lang === "zh" ? "汽车配件" : "Automotive Accessories",
+      label: tx("categories", "sectionAutomotive" as CategoriesKey, lang),
       entries: STATIC_AUTO,
     },
     {
       id: "3c",
-      label: lang === "zh" ? "消费电子 (3C)" : "Consumer Electronics (3C)",
+      label: tx("categories", "sectionConsumerElec" as CategoriesKey, lang),
       entries: STATIC_3C,
+    },
+    {
+      id: "home-kitchen",
+      label: tx("categories", "sectionHomeKitchen" as CategoriesKey, lang),
+      entries: STATIC_HOME,
+    },
+    {
+      id: "beauty",
+      label: tx("categories", "sectionBeauty" as CategoriesKey, lang),
+      entries: STATIC_BEAUTY,
     },
   ];
 
@@ -61,7 +84,7 @@ export default function CategoriesView({ categories, lang }: Props) {
           </span>
           {isDemo && (
             <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(245,166,35,0.08)", color: "#f5a623" }}>
-              {lang === "zh" ? "演示" : "Demo"}
+              {tx("categories", "demoLabel" as CategoriesKey, lang)}
             </span>
           )}
         </div>
@@ -118,12 +141,10 @@ export default function CategoriesView({ categories, lang }: Props) {
         >
           <span className="text-base">📊</span>
           <p className="text-sm" style={{ color: "#b0905a" }}>
-            {lang === "zh"
-              ? "以下为演示数据（汽配 + 3C）。运行首次品牌分析后将显示您的真实数据。"
-              : "Showing sample data (Automotive + 3C). Run your first brand analysis to see real data."}
+            {tx("categories", "demoBanner" as CategoriesKey, lang)}
             {" "}
             <Link href="/runs/new" className="underline font-medium" style={{ color: "#f5a623" }}>
-              {lang === "zh" ? "开始扫描 →" : "Start a scan →"}
+              {tx("categories", "demoScanCta" as CategoriesKey, lang)}
             </Link>
           </p>
         </div>
