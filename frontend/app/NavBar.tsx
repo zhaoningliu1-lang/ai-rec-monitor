@@ -13,6 +13,7 @@ export default function NavBar() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [paid, setPaid] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [productOpen, setProductOpen] = useState(false);
 
   useEffect(() => {
     const refresh = () => {
@@ -94,6 +95,26 @@ export default function NavBar() {
         { href: "/prompts",   label: "Prompts" },
       ];
 
+
+  const productDropdownItems = isZh
+    ? [
+        { href: "/zh/audit",         label: "AI 品牌诊断",    desc: "查询 AI 对你品牌的真实评价" },
+        { href: "/zh/trends",        label: "行业趋势",        desc: "月度 AI 推荐热榜" },
+        { href: "/zh/hallucination", label: "幻觉检测",        desc: "AI 在哪些方面说错了" },
+        { href: "/zh/reddit",        label: "Reddit 引用",   desc: "Reddit 如何影响 AI 推荐" },
+        { href: "/zh/geo-action",    label: "GEO 行动计划",  desc: "分步提升 AI 可见度" },
+        { href: "/zh/kol",           label: "KOL 追踪",     desc: "哪些创作者在影响 AI" },
+        { href: "/zh/optimizer",     label: "成本优化器",     desc: "用省下的钱投入 GEO" },
+      ]
+    : [
+        { href: "/audit",         label: "AI Audit",             desc: "See what AI says about your brand" },
+        { href: "/trends",        label: "Trend Monitor",         desc: "Monthly AI recommendation shifts" },
+        { href: "/hallucination", label: "Hallucination Detector", desc: "Where AI is getting you wrong" },
+        { href: "/reddit",        label: "Reddit Intelligence",    desc: "How Reddit shapes AI answers" },
+        { href: "/geo-action",    label: "GEO Action Plan",        desc: "Step-by-step visibility playbook" },
+        { href: "/kol",           label: "KOL Tracker",            desc: "Which creators influence AI" },
+        { href: "/optimizer",     label: "Cost Optimizer",         desc: "Fund GEO with ops savings" },
+      ];
   const allMobileLinks = [
     ...publicLinks,
     ...(loggedIn ? userLinks : []),
@@ -125,17 +146,31 @@ export default function NavBar() {
           className="hidden md:flex items-center gap-0.5 rounded-full px-1 py-0.5"
           style={{ background: "rgba(15,15,23,0.6)", border: "1px solid #25253f" }}
         >
-          {publicLinks.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
+          <div className="relative" onMouseEnter={() => setProductOpen(true)} onMouseLeave={() => setProductOpen(false)}>
+            <Link href={isZh ? "/zh/product" : "/product"}
+              className="text-sm px-3 py-1.5 rounded-full transition-colors hover:text-white flex items-center gap-1"
+              style={isActive(isZh ? "/zh/product" : "/product") ? { color: "#f0f0f8", background: "rgba(255,107,53,0.12)" } : { color: "#7070a0" }}>
+              {isZh ? "产品" : "Product"}<span style={{ fontSize: 8, opacity: 0.5 }}>▾</span>
+            </Link>
+            <AnimatePresence>
+              {productOpen && (
+                <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }} transition={{ duration: 0.15 }} className="absolute left-0 top-full pt-2 w-60 z-50">
+                  <div className="rounded-xl p-1.5" style={{ background: "#0f0f17", border: "1px solid #25253f", boxShadow: "0 16px 48px rgba(0,0,0,0.6)" }}>
+                    {productDropdownItems.map((item) => (
+                      <Link key={item.href} href={item.href} className="block px-3 py-2 rounded-lg transition-colors hover:bg-white/5">
+                        <div className="text-xs font-semibold" style={{ color: isActive(item.href) ? "#ff6b35" : "#f0f0f8" }}>{item.label}</div>
+                        <div className="text-xs mt-0.5" style={{ color: "#555580" }}>{item.desc}</div>
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          {publicLinks.filter(l => l.href !== (isZh ? "/zh/product" : "/product")).map((l) => (
+            <Link key={l.href} href={l.href}
               className="text-sm px-3 py-1.5 rounded-full transition-colors hover:text-white"
-              style={
-                isActive(l.href)
-                  ? { color: "#f0f0f8", background: "rgba(255,107,53,0.12)" }
-                  : { color: "#7070a0" }
-              }
-            >
+              style={isActive(l.href) ? { color: "#f0f0f8", background: "rgba(255,107,53,0.12)" } : { color: "#7070a0" }}>
               {l.label}
             </Link>
           ))}
