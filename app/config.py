@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     claude_model: str = "claude-haiku-4-5-20251001"
     claude_max_concurrency: int = 5
 
+    # Perplexity (optional — required when "perplexity" is in a run's providers list)
+    perplexity_api_key: str | None = None
+    perplexity_model: str = "llama-3.1-sonar-large-128k-online"
+
     # Notion (optional — required for Notion report export)
     notion_token: str | None = None
     notion_database_id: str | None = None

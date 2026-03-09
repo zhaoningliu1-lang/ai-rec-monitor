@@ -24,4 +24,7 @@ def get_provider(name: str) -> BaseProvider:
     if name == "claude":
         from app.services.claude_client import ClaudeProvider
         return ClaudeProvider()
-    raise ValueError(f"Unknown provider {name!r}. Valid choices: openai, gemini, claude")
+    if name == "perplexity":
+        from app.services.perplexity_client import PerplexityProvider
+        return PerplexityProvider()
+    raise ValueError(f"Unknown provider {name!r}. Valid choices: openai, gemini, claude, perplexity")
