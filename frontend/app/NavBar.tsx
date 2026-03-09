@@ -89,14 +89,10 @@ export default function NavBar() {
 
   /* ── LOGGED-OUT: marketing pill links ── */
   const productDropdown: DropdownItem[] = [
-    { href: h("/audit"),         label: p("AI Audit",              "AI 品牌诊断"),    desc: p("See what AI says about your brand", "查询 AI 对你品牌的真实评价") },
-    { href: h("/trends"),        label: p("Trend Monitor",         "行业趋势"),       desc: p("Monthly AI recommendation shifts",  "月度 AI 推荐热榜") },
-    { href: h("/hallucination"), label: p("Hallucination Detector","幻觉检测"),       desc: p("Where AI is getting you wrong",     "AI 在哪些方面说错了") },
-    { href: h("/reddit"),        label: p("Reddit Intelligence",   "Reddit 引用"),    desc: p("How Reddit shapes AI answers",      "Reddit 如何影响 AI 推荐") },
-    { href: h("/geo-action"),    label: p("GEO Action Plan",       "GEO 行动计划"),   desc: p("Step-by-step visibility playbook",  "分步提升 AI 可见度") },
-    { href: h("/kol"),           label: p("KOL Tracker",           "KOL 追踪"),      desc: p("Which creators influence AI",       "哪些创作者在影响 AI") },
-    { href: h("/optimizer"),     label: p("Cost Optimizer",        "成本优化器"),     desc: p("Fund GEO with ops savings",         "用省下的钱投入 GEO") },
-    { href: h("/b2a-analytics"), label: p("B2A Analytics",         "B2A Analytics"), desc: p("Agent traffic you can't see in GA", "GA 看不到的 AI 来源流量"), badge: "Beta" },
+    { href: h("/audit"),         label: p("AI Audit",        "AI 品牌诊断"),    desc: p("See what AI says about your brand", "查询 AI 对你品牌的真实评价") },
+    { href: h("/trends"),        label: p("Trend Monitor",   "行业趋势"),       desc: p("Monthly AI recommendation shifts",  "月度 AI 推荐热榜") },
+    { href: h("/geo-action"),    label: p("GEO Action Plan", "GEO 行动计划"),   desc: p("Step-by-step visibility playbook",  "分步提升 AI 可见度") },
+    { href: h("/b2a-analytics"), label: p("B2A Analytics",   "B2A Analytics"), desc: p("Agent traffic you can't see in GA", "GA 看不到的 AI 来源流量"), badge: "Beta" },
   ];
 
   /* ── LOGGED-IN: app nav dropdowns ── */
@@ -169,7 +165,7 @@ export default function NavBar() {
               style={isActive(h("/dashboard")) ? { color: "#f0f0f8", background: "rgba(255,107,53,0.12)" } : { color: "#7070a0" }}>
               {p("Dashboard", "数据看板")}
             </Link>
-            <NavDropdown label={p("Visibility", "可见度")} items={visibilityItems} isActive={isActive} />
+            <NavDropdown label={p("Monitor", "监控")} items={visibilityItems} isActive={isActive} />
             <NavDropdown label={p("Action", "行动")}     items={actionItems}     isActive={isActive} />
             {paid && <NavDropdown label={p("Saved", "已保存")} items={savedItems} isActive={isActive} />}
           </div>
