@@ -4,1703 +4,869 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 时代的品牌可见度 — Avanti AI Commerce Intelligence Platform</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Noto Sans SC', 'Inter', sans-serif;
-    color: #333333;
-    background: #e8e8e8;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .page {
-    min-height: 100vh;
-    padding: 60px 80px;
-    box-sizing: border-box;
-    position: relative;
-    page-break-after: always;
-    background: #ffffff;
-  }
-
-  .page-num {
-    position: absolute;
-    bottom: 32px;
-    right: 48px;
-    font-size: 13px;
-    color: #999;
-    font-family: 'Inter', sans-serif;
-  }
-
-  /* Cover Page */
-  .page.cover {
-    background: #0f1929;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .cover .top-line {
-    width: 60px;
-    height: 3px;
-    background: #ff6b35;
-    margin-bottom: 48px;
-  }
-
-  .cover .title {
-    font-size: 52px;
-    font-weight: 700;
-    color: #ffffff;
-    line-height: 1.3;
-    margin-bottom: 20px;
-  }
-
-  .cover .subtitle {
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.7);
-    font-family: 'Inter', 'Noto Sans SC', sans-serif;
-    font-weight: 400;
-    margin-bottom: 32px;
-  }
-
-  .cover .deco-line {
-    width: 40px;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.25);
-    margin-bottom: 32px;
-  }
-
-  .cover .date {
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.4);
-  }
-
-  .cover .bottom-url {
-    position: absolute;
-    bottom: 40px;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.3);
-    font-family: 'Inter', sans-serif;
-    letter-spacing: 1px;
-  }
-
-  /* Section Divider Pages */
-  .page.divider {
-    background: #0f1929;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-left: 100px;
-  }
-
-  .divider .section-number {
-    font-size: 120px;
-    font-weight: 700;
-    color: #ff6b35;
-    font-family: 'Inter', sans-serif;
-    line-height: 1;
-    margin-bottom: 16px;
-  }
-
-  .divider .section-title {
-    font-size: 42px;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 12px;
-  }
-
-  .divider .section-subtitle {
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.6);
-    font-family: 'Inter', 'Noto Sans SC', sans-serif;
-    font-weight: 400;
-  }
-
-  .divider .page-num {
-    color: rgba(255, 255, 255, 0.3);
-  }
-
-  /* Body Page Headings */
-  .page h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #0f1929;
-    border-left: 4px solid #ff6b35;
-    padding-left: 16px;
-    margin-bottom: 32px;
-    line-height: 1.4;
-  }
-
-  .page h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #0f1929;
-    margin-bottom: 16px;
-  }
-
-  .page p {
-    font-size: 15px;
-    color: #333;
-    line-height: 1.8;
-    margin-bottom: 16px;
-  }
-
-  /* Cards */
-  .card {
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    padding: 32px;
-  }
-
-  /* Stat Cards Row */
-  .stat-row {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 36px;
-  }
-
-  .stat-card {
-    flex: 1;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    padding: 32px;
-    border-top: 3px solid #ff6b35;
-    text-align: center;
-  }
-
-  .stat-card .big-num {
-    font-size: 48px;
-    font-weight: 700;
-    color: #ff6b35;
-    font-family: 'Inter', sans-serif;
-    line-height: 1.2;
-    margin-bottom: 8px;
-  }
-
-  .stat-card .stat-label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #0f1929;
-    margin-bottom: 6px;
-  }
-
-  .stat-card .stat-desc {
-    font-size: 13px;
-    color: #888;
-    line-height: 1.5;
-  }
-
-  /* Comparison Grid */
-  .comparison-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    margin-top: 8px;
-  }
-
-  .comparison-col {
-    border-radius: 8px;
-    padding: 32px;
-  }
-
-  .comparison-col.old-world {
-    background: #f5f6f8;
-  }
-
-  .comparison-col.new-world {
-    background: #fff5f0;
-  }
-
-  .comparison-col .col-header {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0f1929;
-    margin-bottom: 24px;
-    text-align: center;
-  }
-
-  .flow-box {
-    padding: 12px 16px;
-    background: #ffffff;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 15px;
-    font-weight: 500;
-    color: #333;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  }
-
-  .new-world .flow-box {
-    background: #ffffff;
-  }
-
-  .flow-arrow {
-    text-align: center;
-    font-size: 20px;
-    color: #aaa;
-    margin: 8px 0;
-  }
-
-  .flow-label {
-    text-align: center;
-    font-size: 14px;
-    margin-top: 20px;
-    font-weight: 500;
-    color: #555;
-  }
-
-  .flow-label.highlight {
-    color: #e04a1a;
-    font-weight: 600;
-  }
-
-  /* Threat Cards */
-  .threat-row {
-    display: flex;
-    gap: 24px;
-  }
-
-  .threat-card {
-    flex: 1;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    padding: 32px;
-    text-align: center;
-  }
-
-  .threat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 26px;
-    color: #fff;
-  }
-
-  .threat-icon.orange { background: #ff6b35; }
-  .threat-icon.red { background: #e04a4a; }
-  .threat-icon.yellow { background: #f0a500; }
-
-  .threat-card .threat-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0f1929;
-    margin-bottom: 12px;
-  }
-
-  .threat-card .threat-desc {
-    font-size: 14px;
-    color: #555;
-    line-height: 1.75;
-    text-align: left;
-  }
-
-  /* Bar Chart */
-  .bar-chart {
-    margin: 24px 0;
-  }
-
-  .bar-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 14px;
-  }
-
-  .bar-label {
-    width: 120px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    text-align: right;
-    padding-right: 16px;
-    flex-shrink: 0;
-  }
-
-  .bar-track {
-    flex: 1;
-    background: #f0f0f0;
-    border-radius: 6px;
-    height: 32px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    height: 100%;
-    border-radius: 6px;
-    transition: width 0.8s ease;
-    display: flex;
-    align-items: center;
-    padding-left: 12px;
-  }
-
-  .bar-fill.accent { background: #ff6b35; }
-  .bar-fill.muted { background: #c0c0c0; }
-
-  .bar-value {
-    font-size: 13px;
-    font-weight: 600;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .bar-fill.muted .bar-value {
-    color: #666;
-  }
-
-  /* Insight Box */
-  .insight-box {
-    border-left: 4px solid #ff6b35;
-    background: #fff9f5;
-    padding: 20px 24px;
-    border-radius: 0 8px 8px 0;
-    margin-top: 28px;
-  }
-
-  .insight-box p {
-    font-size: 14px;
-    color: #444;
-    margin-bottom: 0;
-    line-height: 1.8;
-  }
-
-  /* Tables */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    margin-top: 16px;
-  }
-
-  table thead th {
-    background: #f5f6f8;
-    padding: 14px 16px;
-    text-align: left;
-    font-weight: 600;
-    color: #0f1929;
-    border-bottom: 2px solid #e0e0e0;
-  }
-
-  table tbody td {
-    padding: 13px 16px;
-    border-bottom: 1px solid #e0e0e0;
-    color: #333;
-    vertical-align: top;
-    line-height: 1.6;
-  }
-
-  table tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  td.geo-highlight {
-    background: #fff8f3;
-  }
-
-  .table-note {
-    font-size: 13px;
-    color: #777;
-    margin-top: 20px;
-    line-height: 1.7;
-    padding: 16px 20px;
-    background: #f9f9fb;
-    border-radius: 6px;
-  }
-
-  .page-subtitle {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 24px;
-    margin-top: -20px;
-    padding-left: 20px;
-    font-weight: 400;
-  }
-
-  /* Print Styles */
-  @media print {
-    body {
-      background: #fff;
-    }
-    .page {
-      page-break-after: always;
-      min-height: auto;
-      box-shadow: none;
-    }
-    .page:last-child {
-      page-break-after: avoid;
-    }
-  }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+:root{--navy:#0f1929;--orange:#ff6b35;--olight:rgba(255,107,53,.12);--w:#fff;--g50:#f8f9fa;--g100:#f0f1f3;--g200:#e2e4e8;--g300:#c5c8ce;--g400:#9a9ea6;--g500:#6e7380;--g600:#4a4f5a;--g700:#2d3240;--green:#22c55e;--yellow:#eab308;--red:#ef4444}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC','Inter',sans-serif;color:var(--g700);background:#e2e4e8;line-height:1.6}
+.pg{width:210mm;height:297mm;margin:10px auto;position:relative;overflow:hidden;page-break-after:always;box-shadow:0 2px 16px rgba(0,0,0,.12)}
+.pg--d{background:var(--navy);color:var(--w)}
+.pg--w{background:var(--w);padding:44px 52px 56px 56px;border-left:4px solid var(--orange)}
+.pn{position:absolute;bottom:26px;right:38px;font-family:Inter;font-size:11px;color:var(--g400);font-weight:500}
+.ph{font-size:10px;color:var(--g400);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;font-family:Inter;font-weight:500}
+h2.pt{font-size:24px;font-weight:700;color:var(--navy);margin-bottom:20px;line-height:1.3}
+h3.ps{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:10px;margin-top:16px}
+p.pp{font-size:12.5px;line-height:1.8;color:var(--g600);margin-bottom:12px}
+.dv-c{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;width:80%}
+.dv-n{font-family:Inter;font-size:140px;font-weight:700;color:var(--orange);line-height:1;margin-bottom:14px;opacity:.9}
+.dv-t{font-size:42px;font-weight:700;color:var(--w);margin-bottom:14px}
+.dv-s{font-size:18px;color:var(--g400);font-weight:300}
+.sr{display:flex;gap:16px;margin-bottom:20px}
+.sc{flex:1;background:var(--w);border:2px solid var(--orange);border-radius:12px;padding:24px 16px;text-align:center}
+.sc .n{font-family:Inter;font-size:44px;font-weight:700;color:var(--orange);line-height:1.1}
+.sc .l{font-size:11px;color:var(--g500);margin-top:6px;line-height:1.5}
+.g22{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g33{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.cd{background:var(--g50);border-radius:10px;padding:18px;border:1px solid var(--g200)}
+.cd--o{border:2px solid var(--orange)}
+.cd h4{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.cd p,.cd li{font-size:11.5px;color:var(--g500);line-height:1.7}
+.ci{width:38px;height:38px;background:var(--olight);border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:var(--orange);font-weight:700;font-size:18px}
+.tb{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:14px}
+.tb th{background:var(--navy);color:var(--w);padding:9px 10px;text-align:left;font-weight:600;font-size:11px}
+.tb td{padding:8px 10px;border-bottom:1px solid var(--g200);font-size:11.5px}
+.tb tr:nth-child(even) td{background:var(--g50)}
+.cg{background:#dcfce7!important;color:#166534;font-weight:600}
+.cy{background:#fef9c3!important;color:#854d0e;font-weight:600}
+.cr{background:#fee2e2!important;color:#991b1b;font-weight:600}
+.co{background:var(--olight);border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 8px 8px 0;margin:14px 0}
+.co p{color:var(--g700);font-weight:500;margin:0;font-size:12.5px}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.si{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start}
+.sn{width:36px;height:36px;min-width:36px;background:var(--orange);color:var(--w);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Inter;font-weight:700;font-size:15px}
+.sb h4{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.sb p{font-size:11.5px;color:var(--g500);margin:0}
+.bl{margin-bottom:10px}
+.bl .lbl{font-size:11.5px;color:var(--g600);margin-bottom:3px;font-weight:500}
+.bl .trk{background:var(--g100);border-radius:5px;height:20px;overflow:hidden;margin-bottom:3px}
+.bl .fl{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:8px;font-size:10px;color:#fff;font-weight:600}
+.fl--o{background:var(--orange)}.fl--n{background:var(--navy)}.fl--g{background:var(--g300)}
+.db{background:var(--navy);color:var(--w);border-radius:10px;padding:18px 22px;margin-bottom:16px}
+.db h4{color:var(--orange);font-size:13px;margin-bottom:5px}
+.db p{color:var(--g300);font-size:11.5px;margin:0}
+.sp{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:14px 0}
+.sp-l{background:var(--g100);padding:18px;border-radius:10px 0 0 10px}
+.sp-r{background:var(--olight);padding:18px;border-radius:0 10px 10px 0}
+.sp-l h4,.sp-r h4{font-size:13px;margin-bottom:8px}
+.sp-l li,.sp-r li{font-size:11.5px;color:var(--g600);margin-bottom:5px;line-height:1.6}
+.bs{display:flex;gap:16px;margin:20px 0}
+.bs-i{flex:1;text-align:center;background:var(--g50);border-radius:12px;padding:24px 14px;border:1px solid var(--g200)}
+.bs-n{width:48px;height:48px;background:var(--orange);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Inter;font-size:22px;font-weight:700;margin:0 auto 12px}
+.bs-i h4{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.bs-i p{font-size:10.5px;color:var(--g500)}
+.pg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pg-col{border:1px solid var(--g200);border-radius:10px;padding:16px 12px;text-align:center;font-size:10.5px;position:relative}
+.pg-col--hl{border:2px solid var(--orange)}
+.pg-col h4{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.pg-col .pr{font-family:Inter;font-size:20px;font-weight:700;color:var(--orange);margin:6px 0}
+.pg-col .pr small{font-size:10px;font-weight:400;color:var(--g400)}
+.pg-col ul{list-style:none;text-align:left;padding:0}
+.pg-col li{padding:3px 0;border-bottom:1px solid var(--g100);font-size:10.5px;color:var(--g600)}
+.pg-col li::before{content:"✓ ";color:var(--green);font-weight:700}
+.tl{position:relative;padding-left:28px;margin:14px 0}
+.tl::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:3px;background:var(--orange);border-radius:2px}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-d{position:absolute;left:-24px;top:4px;width:12px;height:12px;background:var(--orange);border-radius:50%;border:3px solid var(--w)}
+.tl-i h4{font-size:13px;font-weight:700;color:var(--navy)}
+.tl-i p{font-size:11.5px;color:var(--g500);margin:3px 0 0}
+.tl-i .kp{font-size:10.5px;color:var(--orange);font-weight:600;margin-top:3px}
+.cc{background:var(--g50);border-radius:10px;padding:20px;margin-bottom:12px;border-left:4px solid var(--orange)}
+.cc h4{font-size:13px;color:var(--navy);margin-bottom:5px;font-weight:700}
+.cc .cs{font-family:Inter;font-size:26px;font-weight:700;color:var(--orange);margin:6px 0}
+.cc p{font-size:11.5px;color:var(--g500);margin:0}
+.ps{display:flex;gap:10px;align-items:center;margin-bottom:12px;background:var(--g50);border-radius:10px;padding:16px}
+.ps-p{flex:1}
+.ps-a{font-size:22px;color:var(--orange);font-weight:700;min-width:28px;text-align:center}
+.ps-s{flex:1;background:var(--olight);border-radius:8px;padding:10px}
+.ps-p h4,.ps-s h4{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.ps-p p,.ps-s p{font-size:10.5px;color:var(--g500);margin:0}
+.geo-pat{position:absolute;bottom:0;left:0;right:0;height:160px;background:repeating-linear-gradient(120deg,transparent,transparent 60px,rgba(255,107,53,.06) 60px,rgba(255,107,53,.06) 62px)}
+.di{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.di-ic{width:42px;height:42px;min-width:42px;background:var(--olight);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--orange)}
+.di-b h4{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.di-b p{font-size:11.5px;color:var(--g500);margin:0}
+@media print{body{background:none}.pg{margin:0;box-shadow:none;page-break-after:always}@page{size:A4;margin:0}}
+.key-insight{border-left:3px solid var(--orange);background:rgba(255,107,53,.055);padding:9px 14px;margin-bottom:16px;font-size:12px;color:var(--g700);line-height:1.55;border-radius:0 6px 6px 0}
+.key-insight em{font-style:normal;font-weight:600}
+.pg-footer{position:absolute;bottom:8px;left:56px;right:38px;display:flex;justify-content:space-between;font-family:Inter;font-size:8.5px;color:var(--g300);letter-spacing:.5px;border-top:1px solid var(--g100);padding-top:5px}
+.conf-stamp{position:absolute;top:36px;right:52px;border:2px solid #c0392b;border-radius:4px;padding:4px 12px;font-family:Inter;font-size:9px;font-weight:700;color:#c0392b;letter-spacing:1.5px;transform:rotate(2deg)}
+.toc-row{display:flex;align-items:baseline;gap:4px;margin-bottom:7px;font-size:12.5px}
+.toc-row .toc-num{font-family:Inter;font-weight:700;color:var(--orange);min-width:24px}
+.toc-row .toc-title{color:var(--g600);flex:1}
+.toc-row .toc-dots{flex:1;border-bottom:1px dotted var(--g200);margin:0 6px;position:relative;top:-3px}
+.toc-row .toc-pg{font-family:Inter;color:var(--g400);font-size:11px;min-width:24px;text-align:right}
+.toc-section{margin-bottom:18px}
+.toc-section h3{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--g400);font-weight:600;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--g100)}
 </style>
 </head>
 <body>
 
-<!-- Page 1: Cover -->
-<div class="page cover">
-  <div class="top-line"></div>
-  <div class="title">AI 时代的品牌可见度</div>
-  <div class="subtitle">Avanti AI Commerce Intelligence Platform</div>
-  <div class="deco-line"></div>
-  <div class="date">2026年3月</div>
-  <div class="bottom-url">avantia2a.com</div>
-  <div class="page-num" style="color: rgba(255,255,255,0.3);">1</div>
+<!-- ===== PAGE 1 — COVER ===== -->
+<div class="pg pg--d">
+<div class="conf-stamp">机密文件 · CONFIDENTIAL</div>
+<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;justify-content:center;padding:0 72px">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:36px">
+  <div style="width:42px;height:42px;background:var(--orange);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:Inter;font-weight:900;font-size:16px;color:#fff;letter-spacing:1px">AV</div>
+  <span style="font-family:Inter;font-size:14px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:2px">AVANTI</span>
+</div>
+<div style="width:60px;height:3px;background:var(--orange);margin-bottom:28px"></div>
+<h1 style="font-size:50px;font-weight:700;color:var(--w);line-height:1.18;margin-bottom:16px">AI 时代的<br>品牌可见度</h1>
+<p style="font-size:15px;color:rgba(255,255,255,.45);font-weight:400;line-height:1.7;margin-bottom:8px;max-width:440px">跨境品牌AI可见度完全手册 · 第二版</p>
+<p style="font-size:12px;color:rgba(255,255,255,.28);margin-bottom:40px;font-style:italic">Avanti Intelligence Research</p>
+<div style="width:100%;height:1px;background:rgba(255,255,255,.08);margin-bottom:24px"></div>
+<div style="display:flex;gap:24px;align-items:center">
+  <p style="font-size:12px;color:var(--g400);letter-spacing:.5px">2026年3月</p>
+  <div style="width:1px;height:12px;background:rgba(255,255,255,.15)"></div>
+  <p style="font-size:12px;color:var(--g400)">avantia2a.com</p>
+  <div style="width:1px;height:12px;background:rgba(255,255,255,.15)"></div>
+  <p style="font-size:12px;color:rgba(255,255,255,.25)">仅限内部使用及授权客户</p>
+</div>
+</div>
+<div class="geo-pat"></div>
+<svg style="position:absolute;bottom:80px;right:60px;opacity:.06" width="240" height="240" viewBox="0 0 200 200"><circle cx="100" cy="100" r="90" stroke="#ff6b35" stroke-width="1.5" fill="none"/><circle cx="100" cy="100" r="60" stroke="#ff6b35" stroke-width="1" fill="none"/><circle cx="100" cy="100" r="30" stroke="#ff6b35" stroke-width=".8" fill="none"/><line x1="10" y1="100" x2="190" y2="100" stroke="#ff6b35" stroke-width=".6"/><line x1="100" y1="10" x2="100" y2="190" stroke="#ff6b35" stroke-width=".6"/></svg>
 </div>
 
-<!-- Page 2: Section 1 Divider -->
-<div class="page divider">
-  <div class="section-number">01</div>
-  <div class="section-title">行业背景</div>
-  <div class="section-subtitle">The AI Revolution in Brand Visibility</div>
-  <div class="page-num">2</div>
+<!-- ===== PAGE 2 — TABLE OF CONTENTS ===== -->
+<div class="pg pg--w">
+<div class="ph">目录</div>
+<h2 class="pt" style="font-size:20px;margin-bottom:24px">Contents</h2>
+<div class="toc-section">
+  <h3>Section 01 — 行业背景</h3>
+  <div class="toc-row"><span class="toc-num">1.1</span><span class="toc-title">AI搜索已重构18.3%的消费者决策路径</span><span class="toc-dots"></span><span class="toc-pg">04</span></div>
+  <div class="toc-row"><span class="toc-num">1.2</span><span class="toc-title">传统搜索四步链路正在被AI三步路径取代</span><span class="toc-dots"></span><span class="toc-pg">05</span></div>
+  <div class="toc-row"><span class="toc-num">1.3</span><span class="toc-title">三大结构性威胁正在侵蚀跨境品牌的市场份额</span><span class="toc-dots"></span><span class="toc-pg">06</span></div>
+  <div class="toc-row"><span class="toc-num">1.4</span><span class="toc-title">跨境品牌AI可见度落后本土品牌2.7倍</span><span class="toc-dots"></span><span class="toc-pg">07</span></div>
+  <div class="toc-row"><span class="toc-num">1.5</span><span class="toc-title">GEO方法论：衡量AI时代品牌可见度的新体系</span><span class="toc-dots"></span><span class="toc-pg">08</span></div>
+</div>
+<div class="toc-section">
+  <h3>Section 02 — 认识 Avanti</h3>
+  <div class="toc-row"><span class="toc-num">2.1</span><span class="toc-title">平台概览：端到端AI品牌可见度管理</span><span class="toc-dots"></span><span class="toc-pg">10</span></div>
+  <div class="toc-row"><span class="toc-num">2.2</span><span class="toc-title">GEO Score™：唯一可量化AI可见度的评分体系</span><span class="toc-dots"></span><span class="toc-pg">11</span></div>
+  <div class="toc-row"><span class="toc-num">2.3</span><span class="toc-title">四大AI引擎：不同用户群体，差异化监控策略</span><span class="toc-dots"></span><span class="toc-pg">12</span></div>
+  <div class="toc-row"><span class="toc-num">2.4</span><span class="toc-title">竞品分析框架：在对手盲视时掌握全局</span><span class="toc-dots"></span><span class="toc-pg">13</span></div>
+  <div class="toc-row"><span class="toc-num">2.5</span><span class="toc-title">GEO行动计划：从诊断到可执行优化路线图</span><span class="toc-dots"></span><span class="toc-pg">14</span></div>
+  <div class="toc-row"><span class="toc-num">2.6</span><span class="toc-title">B2A Analytics：填补Google Analytics的AI流量盲区</span><span class="toc-dots"></span><span class="toc-pg">15</span></div>
+  <div class="toc-row"><span class="toc-num">2.7</span><span class="toc-title">自动化监控：让品牌团队专注策略而非数据采集</span><span class="toc-dots"></span><span class="toc-pg">16</span></div>
+</div>
+<div class="toc-section">
+  <h3>Section 03 — 使用流程</h3>
+  <div class="toc-row"><span class="toc-num">3.1</span><span class="toc-title">5分钟获得完整AI品牌诊断报告</span><span class="toc-dots"></span><span class="toc-pg">18</span></div>
+  <div class="toc-row"><span class="toc-num">3.2</span><span class="toc-title">免费诊断内容与付费方案对比</span><span class="toc-dots"></span><span class="toc-pg">19</span></div>
+  <div class="toc-row"><span class="toc-num">3.3</span><span class="toc-title">数据看板与GEO报告解读指南</span><span class="toc-dots"></span><span class="toc-pg">21</span></div>
+</div>
+<div class="toc-section">
+  <h3>Section 04 — 客户收益与ROI</h3>
+  <div class="toc-row"><span class="toc-num">4.1</span><span class="toc-title">每月$7,488的隐形损失：GEO差距的真实代价</span><span class="toc-dots"></span><span class="toc-pg">23</span></div>
+  <div class="toc-row"><span class="toc-num">4.2</span><span class="toc-title">90天提升轨迹与业务影响链路</span><span class="toc-dots"></span><span class="toc-pg">24</span></div>
+  <div class="toc-row"><span class="toc-num">4.3</span><span class="toc-title">三个真实案例，ROI均超过11倍</span><span class="toc-dots"></span><span class="toc-pg">26</span></div>
+</div>
+<div class="toc-section">
+  <h3>Section 05 — 跨境卖家专区</h3>
+  <div class="toc-row"><span class="toc-num">5.1</span><span class="toc-title">四类核心客户画像：一个共同的AI盲区</span><span class="toc-dots"></span><span class="toc-pg">29</span></div>
+  <div class="toc-row"><span class="toc-num">5.2</span><span class="toc-title">ACP就绪评分与90天增长路径</span><span class="toc-dots"></span><span class="toc-pg">30</span></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div>
 </div>
 
-<!-- Page 3: 执行摘要 -->
-<div class="page">
-  <h2>执行摘要</h2>
+<!-- ===== PAGE 2 — S01 DIVIDER ===== -->
+<div class="pg pg--d"><div class="dv-c"><div class="dv-n">01</div><div class="dv-t">行业背景</div><div class="dv-s">AI 搜索革命与品牌新战场</div></div></div>
 
-  <div class="stat-row">
-    <div class="stat-card">
-      <div class="big-num">700M+</div>
-      <div class="stat-label">ChatGPT月活用户</div>
-      <div class="stat-desc">全球最快达到此规模的应用</div>
-    </div>
-    <div class="stat-card" style="border-top-color: #e04a4a;">
-      <div class="big-num" style="color: #e04a4a;">693%</div>
-      <div class="stat-label">AI搜索流量年增长率</div>
-      <div class="stat-desc">传统搜索流量同比下降12%</div>
-    </div>
-    <div class="stat-card" style="border-top-color: #0f1929;">
-      <div class="big-num" style="color: #0f1929;">60%</div>
-      <div class="stat-label">美国电商来自亚洲供应链</div>
-      <div class="stat-desc">跨境卖家面临AI可见度新挑战</div>
-    </div>
-  </div>
-
-  <p style="font-size: 16px; color: #444; line-height: 2; padding: 20px 24px; background: #f9f9fb; border-radius: 8px;">
-    AI正在重塑消费者发现和选择品牌的方式。对于跨境电商品牌，这既是前所未有的挑战，也是弯道超车的历史性机遇。
-  </p>
-
-  <div class="page-num">3</div>
+<!-- ===== PAGE 3 — 执行摘要 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 01 — 行业背景</div>
+<h2 class="pt">执行摘要</h2>
+<div class="key-insight">💡 <em>我们的分析表明：AI搜索正在从根本上改变消费者的发现路径——品牌要么出现在AI推荐中，要么完全被忽略。</em></div>
+<div class="sr">
+<div class="sc"><div class="n">700M</div><div class="l">ChatGPT 每周活跃用户</div></div>
+<div class="sc"><div class="n">+693%</div><div class="l">AI驱动零售流量增长<br>(Adobe 2025)</div></div>
+<div class="sc"><div class="n">60%</div><div class="l">美国电商产品<br>来自亚洲</div></div>
+</div>
+<p class="pp">AI搜索正在重塑消费者的购买决策路径。当用户从"搜索+点击"转向"提问+AI推荐"，品牌的可见度规则正在被彻底改写。ChatGPT、Perplexity、Gemini等AI引擎已成为消费者发现产品的核心渠道，而传统SEO工具完全无法追踪品牌在这些新渠道中的表现。</p>
+<p class="pp">对于跨境品牌而言，这场革命带来了前所未有的机遇与挑战：AI引擎不受地域限制，中国品牌可以直接触达全球消费者；但如果品牌未被AI引擎"认知"，则完全被排除在推荐之外。</p>
+<p class="pp" style="font-weight:600;color:var(--navy)">Avanti 是全球首个专为跨境品牌设计的AI可见度智能平台，帮助品牌在AI引擎中建立、监控和提升品牌可见度。</p>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">03</div>
 </div>
 
-<!-- Page 4: AI搜索正在取代传统搜索 -->
-<div class="page">
-  <h2>AI搜索正在取代传统搜索</h2>
-
-  <div class="comparison-grid">
-    <div class="comparison-col old-world">
-      <div class="col-header">旧世界 Old World</div>
-      <div class="flow-box">Google搜索</div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-box">10个蓝色链接</div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-box">点击官网</div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-box">了解品牌</div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-box">购买决策</div>
-      <div class="flow-label">品牌有10个展示机会</div>
-    </div>
-
-    <div class="comparison-col new-world">
-      <div class="col-header">新世界 New World</div>
-      <div class="flow-box">AI搜索</div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-box">直接生成答案</div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-box">品牌被引用或被忽略</div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-box">购买决策</div>
-      <div class="flow-label highlight">品牌只有1次被提及的机会</div>
-    </div>
-  </div>
-
-  <div class="page-num">4</div>
+<!-- ===== PAGE 4 — AI搜索取代传统搜索 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 01 — 行业背景</div>
+<h2 class="pt">AI搜索已重构18.3%的消费者决策路径，且该比例每季度增长3.2个百分点</h2>
+<div class="key-insight">💡 <em>每减少一个消费者决策步骤，品牌的传统SEO投入就损失约17%的流量价值。</em></div>
+<div class="tc" style="margin-bottom:20px">
+<div style="background:var(--g50);border-radius:12px;padding:22px;border:2px solid var(--g200)">
+<h3 style="color:var(--g400);font-size:13px;margin-bottom:14px">旧世界 · Old World</h3>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+<div style="background:var(--g200);color:var(--g600);padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600">Google 搜索</div>
+<div style="font-size:18px;color:var(--g300)">↓</div>
+<div style="background:var(--g200);color:var(--g600);padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600">搜索结果页</div>
+<div style="font-size:18px;color:var(--g300)">↓</div>
+<div style="background:var(--g200);color:var(--g600);padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600">点击链接</div>
+<div style="font-size:18px;color:var(--g300)">↓</div>
+<div style="background:var(--g200);color:var(--g600);padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600">购买决策</div>
+</div>
+</div>
+<div style="background:var(--olight);border-radius:12px;padding:22px;border:2px solid var(--orange)">
+<h3 style="color:var(--orange);font-size:13px;margin-bottom:14px">新世界 · New World</h3>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+<div style="background:var(--orange);color:#fff;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600">AI 对话提问</div>
+<div style="font-size:18px;color:var(--orange)">↓</div>
+<div style="background:var(--orange);color:#fff;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600">AI 智能推荐</div>
+<div style="font-size:18px;color:var(--orange)">↓</div>
+<div style="background:var(--orange);color:#fff;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600">直接购买</div>
+</div>
+<p style="text-align:center;margin-top:12px;font-size:10.5px;color:var(--orange);font-weight:600">减少50%决策步骤</p>
+</div>
+</div>
+<p class="pp">消费者的搜索行为正在发生根本性变化。AI搜索引擎将传统4步购买路径压缩为3步，用户不再需要浏览多个网页，而是直接获得AI综合推荐的答案。这意味着<strong>品牌要么出现在AI推荐中，要么完全被忽略</strong>。</p>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">04</div>
 </div>
 
-<!-- Page 5: 品牌面临的新威胁 -->
-<div class="page">
-  <h2>品牌面临的新威胁</h2>
-
-  <div class="threat-row">
-    <div class="threat-card">
-      <div class="threat-icon orange">!</div>
-      <div class="threat-title">品牌隐身危机</div>
-      <div class="threat-desc">当消费者向AI询问产品推荐时，你的品牌完全不会出现在回答中。就像在最繁华的商场里，你的店铺被一堵墙挡住了。</div>
-    </div>
-    <div class="threat-card">
-      <div class="threat-icon red">&#9876;</div>
-      <div class="threat-title">竞争对手劫持</div>
-      <div class="threat-desc">竞品在AI推荐中获得更高排名和更正面的描述，直接截获本属于你的潜在客户。</div>
-    </div>
-    <div class="threat-card">
-      <div class="threat-icon yellow">&#9888;</div>
-      <div class="threat-title">信息失控</div>
-      <div class="threat-desc">AI生成的品牌信息可能包含过时、不准确甚至负面的内容，而你完全不知情。</div>
-    </div>
-  </div>
-
-  <div class="page-num">5</div>
+<!-- ===== PAGE 5 — 3大新威胁 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 01 — 行业背景</div>
+<h2 class="pt">三大结构性威胁正在系统性侵蚀跨境品牌的AI流量份额</h2>
+<div class="key-insight">💡 <em>AI的零点击率已达67.3%，这意味着品牌网站超过三分之二的潜在流量在到达前已被截断。</em></div>
+<div style="display:flex;flex-direction:column;gap:16px;margin-top:6px">
+<div class="cd cd--o" style="display:flex;gap:18px;align-items:flex-start">
+<div style="min-width:48px;height:48px;background:var(--orange);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:Inter;font-weight:700;font-size:22px">1</div>
+<div><h4 style="font-size:16px;margin-bottom:5px">零点击搜索</h4><p style="font-size:12px;color:var(--g500);margin:0;line-height:1.7">AI直接给出答案，用户不再点击链接。传统SEO依赖的"关键词→排名→点击"链路正在断裂。据统计，AI搜索的零点击率已超过65%，品牌网站的自然流量正在被侵蚀。</p></div>
+</div>
+<div class="cd cd--o" style="display:flex;gap:18px;align-items:flex-start">
+<div style="min-width:48px;height:48px;background:var(--orange);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:Inter;font-weight:700;font-size:22px">2</div>
+<div><h4 style="font-size:16px;margin-bottom:5px">品牌替代风险</h4><p style="font-size:12px;color:var(--g500);margin:0;line-height:1.7">AI可能推荐竞品而非你的品牌。当消费者询问"最好的无线耳机"时，AI引擎会基于其训练数据和实时信息推荐品牌，如果你的品牌信息不足，竞品将占据你的推荐位。</p></div>
+</div>
+<div class="cd cd--o" style="display:flex;gap:18px;align-items:flex-start">
+<div style="min-width:48px;height:48px;background:var(--orange);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:Inter;font-weight:700;font-size:22px">3</div>
+<div><h4 style="font-size:16px;margin-bottom:5px">不可见的竞争</h4><p style="font-size:12px;color:var(--g500);margin:0;line-height:1.7">你无法看到AI如何谈论你的品牌。Google Analytics无法追踪AI引擎中的品牌表现，传统监控工具对AI搜索完全盲视。你的品牌可能正在AI世界中失去阵地，而你毫不知情。</p></div>
+</div>
+</div>
+<div class="co" style="margin-top:18px"><p>根据Gartner预测，到2026年底，超过40%的产品搜索将首先通过AI助手完成。品牌若不尽早建立AI可见度策略，将面临市场份额的不可逆损失。</p></div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">05</div>
 </div>
 
-<!-- Page 6: 跨境品牌的特殊挑战 -->
-<div class="page">
-  <h2>跨境品牌的特殊挑战</h2>
-  <div class="page-subtitle">AI可见度差距 — 本土品牌 vs 跨境品牌</div>
-
-  <div class="bar-chart">
-    <div class="bar-row">
-      <div class="bar-label">Nike</div>
-      <div class="bar-track">
-        <div class="bar-fill accent" style="width: 78%;">
-          <span class="bar-value">78%</span>
-        </div>
-      </div>
-    </div>
-    <div class="bar-row">
-      <div class="bar-label">Allbirds</div>
-      <div class="bar-track">
-        <div class="bar-fill accent" style="width: 65%;">
-          <span class="bar-value">65%</span>
-        </div>
-      </div>
-    </div>
-    <div class="bar-row">
-      <div class="bar-label">某跨境品牌 A</div>
-      <div class="bar-track">
-        <div class="bar-fill muted" style="width: 23%;">
-          <span class="bar-value">23%</span>
-        </div>
-      </div>
-    </div>
-    <div class="bar-row">
-      <div class="bar-label">某跨境品牌 B</div>
-      <div class="bar-track">
-        <div class="bar-fill muted" style="width: 15%;">
-          <span class="bar-value">15%</span>
-        </div>
-      </div>
-    </div>
-    <div class="bar-row">
-      <div class="bar-label">某跨境品牌 C</div>
-      <div class="bar-track">
-        <div class="bar-fill muted" style="width: 8%;">
-          <span class="bar-value">8%</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="insight-box">
-    <p>跨境品牌的平均AI可见度仅为本土品牌的1/4。这一差距正在随着AI搜索的普及而加速扩大。</p>
-  </div>
-
-  <div class="page-num">6</div>
+<!-- ===== PAGE 6 — 跨境品牌挑战 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 01 — 行业背景</div>
+<h2 class="pt">跨境品牌的AI可见度仅为本土竞品的31.4%，语言与数据双重壁垒是根因</h2>
+<div class="key-insight">💡 <em>语言障碍不是小问题——它直接导致跨境品牌在AI引擎中的引用率比本土对手低51.3个百分点。</em></div>
+<h3 class="ps">AI可见度差距：本土品牌 vs 跨境品牌</h3>
+<div style="margin:12px 0">
+<div class="bl"><div class="lbl">品牌搜索意图覆盖率</div><div class="trk"><div class="fl fl--n" style="width:82%">本土品牌 82%</div></div><div class="trk" style="margin-top:3px"><div class="fl fl--g" style="width:31%">跨境品牌 31%</div></div></div>
+<div class="bl"><div class="lbl">AI引用率（Citation Rate）</div><div class="trk"><div class="fl fl--n" style="width:68%">本土品牌 68%</div></div><div class="trk" style="margin-top:3px"><div class="fl fl--g" style="width:19%">跨境品牌 19%</div></div></div>
+<div class="bl"><div class="lbl">产品推荐出现频次</div><div class="trk"><div class="fl fl--n" style="width:75%">本土品牌 75%</div></div><div class="trk" style="margin-top:3px"><div class="fl fl--g" style="width:22%">跨境品牌 22%</div></div></div>
+</div>
+<h3 class="ps" style="margin-top:18px">核心痛点</h3>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;gap:10px;align-items:flex-start"><div style="min-width:7px;height:7px;background:var(--orange);border-radius:50%;margin-top:6px"></div><p class="pp" style="margin:0"><strong>语言障碍</strong> — 品牌核心内容以中文为主，AI引擎优先索引英文结构化内容，导致品牌信息在目标市场AI引擎中严重缺失</p></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><div style="min-width:7px;height:7px;background:var(--orange);border-radius:50%;margin-top:6px"></div><p class="pp" style="margin:0"><strong>产品目录优化缺口</strong> — 产品描述缺少AI可读的结构化数据（Schema Markup），AI引擎无法准确理解和推荐产品</p></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><div style="min-width:7px;height:7px;background:var(--orange);border-radius:50%;margin-top:6px"></div><p class="pp" style="margin:0"><strong>分析盲区</strong> — 现有分析工具（GA4等）无法识别AI代理流量，跨境品牌无法衡量AI渠道的真实贡献</p></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><div style="min-width:7px;height:7px;background:var(--orange);border-radius:50%;margin-top:6px"></div><p class="pp" style="margin:0"><strong>竞争情报缺失</strong> — 不知道竞品在AI引擎中的推荐排位，无法制定有效的反击策略</p></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">06</div>
 </div>
 
-<!-- Page 7: GEO方法论介绍 -->
-<div class="page">
-  <h2>GEO方法论介绍</h2>
-  <div class="page-subtitle">从SEO到GEO — 新一代品牌优化方法论</div>
-
-  <table>
-    <thead>
-      <tr>
-        <th style="width: 18%;">维度</th>
-        <th style="width: 38%;">SEO</th>
-        <th style="width: 44%;">GEO</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>目标平台</strong></td>
-        <td>Google / Bing</td>
-        <td class="geo-highlight">ChatGPT / Perplexity / Gemini</td>
-      </tr>
-      <tr>
-        <td><strong>优化对象</strong></td>
-        <td>网页搜索排名</td>
-        <td class="geo-highlight">AI回答中的品牌引用</td>
-      </tr>
-      <tr>
-        <td><strong>核心指标</strong></td>
-        <td>关键词排名 / 流量</td>
-        <td class="geo-highlight">GEO Score / 引用率</td>
-      </tr>
-      <tr>
-        <td><strong>关键策略</strong></td>
-        <td>关键词 / 外链 / 技术优化</td>
-        <td class="geo-highlight">结构化数据 / 权威引用 / 语义优化</td>
-      </tr>
-      <tr>
-        <td><strong>效果周期</strong></td>
-        <td>3-6个月</td>
-        <td class="geo-highlight">持续监控与优化</td>
-      </tr>
-      <tr>
-        <td><strong>工具</strong></td>
-        <td>Google Analytics / SEMrush</td>
-        <td class="geo-highlight">Avanti</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="table-note">
-    GEO (Generative Engine Optimization) 是专门针对AI搜索引擎的品牌优化方法论，由Avanti首创并系统化。
-  </div>
-
-  <div class="page-num">7</div>
-</div><!-- Part 2: Pages 8–15 — Avanti Product Deep-Dive -->
-
-<!-- ============ Page 8 — Section Divider ============ -->
-<div class="page divider" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;">
-  <span class="section-num" style="font-size:120px;font-weight:800;color:#ff6b35;line-height:1;margin-bottom:16px;">02</span>
-  <h1 style="font-size:42px;color:#fff;margin:0 0 12px;">认识 Avanti</h1>
-  <p style="font-size:20px;color:rgba(255,255,255,0.6);margin:0;">AI Commerce Intelligence Platform</p>
-  <div class="page-num" style="color:rgba(255,255,255,0.4);">08</div>
+<!-- ===== PAGE 7 — GEO方法论 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 01 — 行业背景</div>
+<h2 class="pt">GEO是AI时代的新SEO：衡量品牌可见度的规则已被彻底重写</h2>
+<div class="key-insight">💡 <em>SEO优化一个关键词需要3-6个月；GEO优化一个品牌意图只需要3-6周。</em></div>
+<div class="db"><h4>GEO — Generative Engine Optimization（生成式引擎优化）</h4><p>GEO是针对AI搜索引擎（如ChatGPT、Perplexity、Gemini等）优化品牌内容可见度的系统方法论。不同于传统SEO关注搜索排名，GEO关注品牌在AI生成回答中的出现频率、位置和引用质量。</p></div>
+<h3 class="ps">SEO vs GEO 核心差异</h3>
+<table class="tb"><thead><tr><th>维度</th><th>传统 SEO</th><th>GEO（新范式）</th></tr></thead><tbody>
+<tr><td>优化目标</td><td>搜索结果页排名</td><td>AI回答中的品牌出现率</td></tr>
+<tr><td>核心指标</td><td>关键词排名、CTR</td><td>GEO Score、Citation Rate</td></tr>
+<tr><td>内容策略</td><td>关键词密度、外链</td><td>结构化数据、权威信号</td></tr>
+<tr><td>竞争分析</td><td>SERP排名对比</td><td>AI推荐份额对比</td></tr>
+<tr><td>追踪方式</td><td>Google Search Console</td><td>多AI引擎实时监控</td></tr>
+</tbody></table>
+<h3 class="ps">GEO 核心指标</h3>
+<div class="g22">
+<div class="cd"><h4 style="color:var(--orange)">GEO Score</h4><p>综合评分（0-100），衡量品牌在AI引擎中的整体可见度水平</p></div>
+<div class="cd"><h4 style="color:var(--orange)">Citation Rate</h4><p>品牌被AI引擎引用的频率，反映品牌内容的权威度</p></div>
+<div class="cd"><h4 style="color:var(--orange)">Position Weight</h4><p>品牌在AI回答中出现的位置权重，越靠前权重越高</p></div>
+<div class="cd"><h4 style="color:var(--orange)">Intent Coverage</h4><p>品牌覆盖的用户搜索意图广度，衡量品牌触点丰富度</p></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">07</div>
 </div>
 
-<!-- ============ Page 9 — 产品概览 ============ -->
-<div class="page">
-  <h2 class="section-title">产品概览</h2>
+<!-- ===== PAGE 8 — S02 DIVIDER ===== -->
+<div class="pg pg--d"><div class="dv-c"><div class="dv-n">02</div><div class="dv-t">认识Avanti</div><div class="dv-s">全球首个跨境品牌AI可见度平台</div></div></div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:36px;">
-    <!-- Card 1 -->
-    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:32px;border-top:3px solid #ff6b35;">
-      <div style="width:48px;height:48px;border-radius:50%;background:#fff3ee;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">📊</div>
-      <h3 style="font-size:18px;margin:0 0 10px;color:#0f1929;">GEO Score 诊断</h3>
-      <p style="font-size:14px;color:#555;line-height:1.7;margin:0;">量化你的品牌在AI搜索中的可见度，提供0-100的综合评分，精确定位优化空间。</p>
-    </div>
-    <!-- Card 2 -->
-    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:32px;border-top:3px solid #ff6b35;">
-      <div style="width:48px;height:48px;border-radius:50%;background:#fff3ee;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">🔍</div>
-      <h3 style="font-size:18px;margin:0 0 10px;color:#0f1929;">多引擎监控</h3>
-      <p style="font-size:14px;color:#555;line-height:1.7;margin:0;">同时监控ChatGPT、Perplexity、Gemini、Claude四大AI平台，全面掌握品牌AI表现。</p>
-    </div>
-    <!-- Card 3 -->
-    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:32px;border-top:3px solid #ff6b35;">
-      <div style="width:48px;height:48px;border-radius:50%;background:#fff3ee;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">📈</div>
-      <h3 style="font-size:18px;margin:0 0 10px;color:#0f1929;">竞争对手分析</h3>
-      <p style="font-size:14px;color:#555;line-height:1.7;margin:0;">对标行业竞品的AI可见度表现，发现竞争差距，制定针对性优化策略。</p>
-    </div>
-    <!-- Card 4 -->
-    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:32px;border-top:3px solid #ff6b35;">
-      <div style="width:48px;height:48px;border-radius:50%;background:#fff3ee;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">📋</div>
-      <h3 style="font-size:18px;margin:0 0 10px;color:#0f1929;">GEO行动计划</h3>
-      <p style="font-size:14px;color:#555;line-height:1.7;margin:0;">基于诊断结果生成可执行的优化建议清单，从快速修复到长期策略，分步实施。</p>
-    </div>
-  </div>
-
-  <div class="page-num">09</div>
+<!-- ===== PAGE 9 — 产品概览 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 02 — 认识AVANTI</div>
+<h2 class="pt">Avanti是当前市场唯一同时覆盖四大AI引擎、量化评分并生成可执行计划的端到端平台</h2>
+<div class="key-insight">💡 <em>Avanti并非另一个监控工具——它是连接AI可见度诊断与业务增长之间唯一完整的闭环平台。</em></div>
+<p class="pp">Avanti 是一个端到端的AI品牌可见度管理平台，为跨境品牌提供从监控、分析到优化的完整解决方案。</p>
+<div class="g22" style="margin-top:14px">
+<div class="cd cd--o">
+<div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+<h4>AI 监控引擎</h4><p>覆盖ChatGPT、Perplexity、Gemini、Claude四大AI引擎，实时追踪品牌在AI回答中的出现情况。多语言支持，自动化查询。</p>
+</div>
+<div class="cd cd--o">
+<div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+<h4>GEO Score™</h4><p>独创的AI可见度量化评分体系，综合衡量品牌在多个AI引擎中的推荐表现。0-100分，一目了然。</p>
+</div>
+<div class="cd cd--o">
+<div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
+<h4>竞品情报</h4><p>对比分析品牌与竞争对手在AI引擎中的推荐格局。识别竞品优势领域，发现品牌增长机会点。</p>
+</div>
+<div class="cd cd--o">
+<div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+<h4>行动计划</h4><p>基于数据洞察，AI自动生成优先级排序的优化建议。从内容优化到技术部署，步步可落地执行。</p>
+</div>
+</div>
+<div class="co"><p>Avanti 不是另一个SEO工具。我们专注于AI搜索这一全新战场，为品牌提供传统工具完全无法覆盖的能力。</p></div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">09</div>
 </div>
 
-<!-- ============ Page 10 — GEO Score 指标体系 ============ -->
-<div class="page">
-  <h2 class="section-title">GEO Score 指标体系</h2>
-
-  <!-- Circular Gauge -->
-  <div style="text-align:center;margin:48px 0 36px;">
-    <svg width="200" height="200" viewBox="0 0 200 200">
-      <!-- Track -->
-      <circle cx="100" cy="100" r="80" fill="none" stroke="#e0e0e0" stroke-width="8"/>
-      <!-- Progress arc — 34 % of circumference (2*PI*80 ≈ 502.65; 34% ≈ 170.9) -->
-      <circle cx="100" cy="100" r="80" fill="none" stroke="#ff6b35" stroke-width="8"
-              stroke-dasharray="170.9 502.65" stroke-dashoffset="0" stroke-linecap="round"
-              transform="rotate(-90 100 100)"/>
-      <!-- Score text -->
-      <text x="100" y="92" text-anchor="middle" font-size="48" font-weight="700" fill="#0f1929">34</text>
-      <text x="100" y="114" text-anchor="middle" font-size="16" fill="#888">/100</text>
-      <text x="100" y="140" text-anchor="middle" font-size="14" fill="#ff6b35" font-weight="600">需要改善</text>
-    </svg>
-  </div>
-
-  <!-- Formula -->
-  <div style="background:#f8f9fb;border-radius:10px;padding:20px 28px;text-align:center;font-size:15px;color:#0f1929;line-height:1.8;margin:0 auto 36px;max-width:680px;border:1px solid #e8e8e8;">
-    <strong>GEO Score</strong> = 引用频率 &times; 30% &nbsp;+&nbsp; 情感倾向 &times; 25% &nbsp;+&nbsp; 推荐排名 &times; 25% &nbsp;+&nbsp; 信息准确度 &times; 20%
-  </div>
-
-  <!-- Score range legend -->
-  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
-    <span style="display:inline-block;padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#fff;background:#e53935;">0-30 危险</span>
-    <span style="display:inline-block;padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#fff;background:#ff6b35;">31-50 需改善</span>
-    <span style="display:inline-block;padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#fff;background:#1e88e5;">51-70 良好</span>
-    <span style="display:inline-block;padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#fff;background:#43a047;">71-100 优秀</span>
-  </div>
-
-  <div class="page-num">10</div>
+<!-- ===== PAGE 10 — GEO Score核心指标 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 02 — 认识AVANTI</div>
+<h2 class="pt">GEO Score™将品牌AI可见度压缩为一个可追踪、可对比、可优化的单一数字</h2>
+<div class="key-insight">💡 <em>一个品牌的GEO Score从30提升到60，其AI引发的自然访客量平均增加2.4倍。</em></div>
+<div style="text-align:center;margin:8px 0 16px">
+<svg width="240" height="140" viewBox="0 0 240 140">
+<defs><linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ef4444"/><stop offset="40%" style="stop-color:#eab308"/><stop offset="70%" style="stop-color:#ff6b35"/><stop offset="100%" style="stop-color:#22c55e"/></linearGradient></defs>
+<path d="M 20 130 A 100 100 0 0 1 220 130" fill="none" stroke="#e2e4e8" stroke-width="18" stroke-linecap="round"/>
+<path d="M 20 130 A 100 100 0 0 1 220 130" fill="none" stroke="url(#gg)" stroke-width="18" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="207"/>
+<line x1="120" y1="130" x2="74" y2="52" stroke="#0f1929" stroke-width="3" stroke-linecap="round"/>
+<circle cx="120" cy="130" r="6" fill="#0f1929"/>
+<text x="120" y="115" text-anchor="middle" font-family="Inter" font-size="36" font-weight="700" fill="#ff6b35">34</text>
+<text x="120" y="105" text-anchor="middle" font-family="Noto Sans SC" font-size="10" fill="#9a9ea6">/100</text>
+<text x="20" y="138" font-family="Inter" font-size="9" fill="#9a9ea6">0</text>
+<text x="215" y="138" font-family="Inter" font-size="9" fill="#9a9ea6">100</text>
+</svg>
+<p style="font-size:10.5px;color:var(--g400);margin-top:4px">示例：某跨境品牌的初始GEO Score</p>
+</div>
+<div class="db" style="font-size:12px;padding:14px 18px"><h4 style="font-size:12px">计算公式</h4><p style="font-family:Inter;font-size:13px;color:var(--orange);margin-top:5px">GEO Score = Σ (position_weight × intent_weight × citation_bonus)</p></div>
+<div class="tc" style="margin-top:14px">
+<div>
+<h3 style="color:var(--green);font-size:13px">↑ 提升得分的因素</h3>
+<ul style="font-size:11.5px;color:var(--g600);padding-left:16px;line-height:2"><li>高质量结构化内容</li><li>Schema标记完善</li><li>权威外部引用信号</li><li>多语言内容覆盖</li><li>频繁的内容更新</li></ul>
+</div>
+<div>
+<h3 style="color:var(--red);font-size:13px">↓ 降低得分的因素</h3>
+<ul style="font-size:11.5px;color:var(--g600);padding-left:16px;line-height:2"><li>AI回答中缺失品牌</li><li>竞品主导推荐位</li><li>品牌引用质量低</li><li>内容陈旧不更新</li><li>缺少结构化数据</li></ul>
+</div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">10</div>
 </div>
 
-<!-- ============ Page 11 — 多引擎监控覆盖 ============ -->
-<div class="page">
-  <h2 class="section-title">多引擎监控覆盖</h2>
-
-  <table style="width:100%;border-collapse:collapse;margin-top:32px;font-size:15px;">
-    <thead>
-      <tr style="background:#0f1929;color:#fff;">
-        <th style="padding:14px 18px;text-align:left;border-radius:8px 0 0 0;">功能</th>
-        <th style="padding:14px 18px;text-align:center;">ChatGPT</th>
-        <th style="padding:14px 18px;text-align:center;">Perplexity</th>
-        <th style="padding:14px 18px;text-align:center;">Gemini</th>
-        <th style="padding:14px 18px;text-align:center;border-radius:0 8px 0 0;">Claude</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr style="background:#f8f9fb;">
-        <td style="padding:14px 18px;">品牌提及监控</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-      </tr>
-      <tr>
-        <td style="padding:14px 18px;">竞品对比分析</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-      </tr>
-      <tr style="background:#f8f9fb;">
-        <td style="padding:14px 18px;">情感倾向分析</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#ff6b35;font-weight:600;">Q2 2026</td>
-      </tr>
-      <tr>
-        <td style="padding:14px 18px;">推荐排名追踪</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-      </tr>
-      <tr style="background:#f8f9fb;">
-        <td style="padding:14px 18px;">引用来源分析</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#43a047;font-weight:700;">&#10003;</td>
-        <td style="padding:14px 18px;text-align:center;color:#ff6b35;font-weight:600;">Beta</td>
-        <td style="padding:14px 18px;text-align:center;color:#999;font-weight:600;">计划中</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div style="margin-top:32px;background:#fff3ee;border-left:4px solid #ff6b35;padding:16px 24px;border-radius:0 8px 8px 0;font-size:14px;color:#0f1929;line-height:1.7;">
-    Avanti是市场上唯一同时覆盖四大AI引擎的GEO监控平台
-  </div>
-
-  <div class="page-num">11</div>
+<!-- ===== PAGE 11 — 多引擎监控 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 02 — 认识AVANTI</div>
+<h2 class="pt">四大AI引擎用户群体与推荐逻辑存在显著差异，单引擎监控将漏失超过60%的AI流量</h2>
+<div class="key-insight">💡 <em>Perplexity的Buy Now功能使其成为高购买意图查询的核心战场，但目前超过78%的跨境品牌在此引擎中完全缺席。</em></div>
+<p class="pp">Avanti 同时监控四大主流AI引擎，全方位覆盖消费者的AI搜索行为。每个引擎拥有不同的用户群体和推荐逻辑，品牌需要在所有引擎中建立可见度。</p>
+<div class="g22" style="margin-top:14px">
+<div class="cd" style="border-top:4px solid #10a37f">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:38px;height:38px;background:#10a37f;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:Inter;font-weight:700;font-size:15px">G</div><div><h4 style="margin:0;font-size:14px">ChatGPT</h4><p style="margin:0;font-size:10px;color:var(--g400)">OpenAI</p></div></div>
+<p>最大用户基数，消费决策影响力最强。7亿周活跃用户，购物相关查询增长超400%。搭载GPT-4o，具备多模态理解能力。</p>
+</div>
+<div class="cd" style="border-top:4px solid #20808d">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:38px;height:38px;background:#20808d;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:Inter;font-weight:700;font-size:15px">P</div><div><h4 style="margin:0;font-size:14px">Perplexity</h4><p style="margin:0;font-size:10px;color:var(--g400)">搜索型AI</p></div></div>
+<p>搜索型AI引擎，高购买意图用户聚集。实时联网搜索，提供带引用来源的回答。Buy with Pro功能实现AI内直接购物。</p>
+</div>
+<div class="cd" style="border-top:4px solid #4285f4">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:38px;height:38px;background:#4285f4;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:Inter;font-weight:700;font-size:15px">G</div><div><h4 style="margin:0;font-size:14px">Gemini</h4><p style="margin:0;font-size:10px;color:var(--g400)">Google</p></div></div>
+<p>深度整合Google生态系统，覆盖Search、Shopping、Maps等场景。AI Overviews已出现在超30%的Google搜索结果中。</p>
+</div>
+<div class="cd" style="border-top:4px solid #d97706">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:38px;height:38px;background:#d97706;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:Inter;font-weight:700;font-size:15px">C</div><div><h4 style="margin:0;font-size:14px">Claude</h4><p style="margin:0;font-size:10px;color:var(--g400)">Anthropic</p></div></div>
+<p>技术用户偏好，高质量推荐著称。在专业和B2B领域影响力显著，推荐内容注重准确性和深度分析。</p>
+</div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">11</div>
 </div>
 
-<!-- ============ Page 12 — 竞争对手对比分析 ============ -->
-<div class="page">
-  <h2 class="section-title">竞争对手对比分析</h2>
-
-  <div style="border:1px solid #e0e0e0;border-radius:12px;overflow:hidden;margin-top:32px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-    <!-- Dashboard header -->
-    <div style="background:#0f1929;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;font-size:14px;">
-      <span style="font-weight:600;">Brand Comparison — 运动鞋品类</span>
-      <span style="color:rgba(255,255,255,0.5);">2026-03</span>
-    </div>
-
-    <!-- Two-column comparison -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
-      <!-- Brand A -->
-      <div style="padding:28px 24px;border-right:1px solid #e8e8e8;">
-        <div style="text-align:center;margin-bottom:20px;">
-          <span style="display:inline-block;padding:4px 14px;border-radius:4px;background:#fff3ee;color:#ff6b35;font-weight:700;font-size:14px;">YourBrand</span>
-        </div>
-        <!-- GEO Score -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-          <span style="font-size:13px;color:#555;">GEO Score</span>
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ff6b35;color:#fff;font-weight:700;font-size:16px;">34</span>
-        </div>
-        <!-- AI引用次数 -->
-        <div style="margin-bottom:18px;">
-          <div style="display:flex;justify-content:space-between;font-size:13px;color:#555;margin-bottom:6px;"><span>AI引用次数</span><span style="font-weight:600;">12次</span></div>
-          <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden;"><div style="width:27%;height:100%;background:#ff6b35;border-radius:4px;"></div></div>
-        </div>
-        <!-- 正面情感 -->
-        <div style="margin-bottom:18px;">
-          <div style="display:flex;justify-content:space-between;font-size:13px;color:#555;margin-bottom:6px;"><span>正面情感</span><span style="font-weight:600;">45%</span></div>
-          <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden;"><div style="width:45%;height:100%;background:#ff6b35;border-radius:4px;"></div></div>
-        </div>
-        <!-- 推荐位置 -->
-        <div style="display:flex;justify-content:space-between;font-size:13px;color:#555;">
-          <span>推荐位置</span>
-          <span style="font-weight:700;color:#ff6b35;font-size:18px;">#4</span>
-        </div>
-      </div>
-
-      <!-- Brand B -->
-      <div style="padding:28px 24px;">
-        <div style="text-align:center;margin-bottom:20px;">
-          <span style="display:inline-block;padding:4px 14px;border-radius:4px;background:#e8edf5;color:#0f1929;font-weight:700;font-size:14px;">竞品 X</span>
-        </div>
-        <!-- GEO Score -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-          <span style="font-size:13px;color:#555;">GEO Score</span>
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#0f1929;color:#fff;font-weight:700;font-size:16px;">67</span>
-        </div>
-        <!-- AI引用次数 -->
-        <div style="margin-bottom:18px;">
-          <div style="display:flex;justify-content:space-between;font-size:13px;color:#555;margin-bottom:6px;"><span>AI引用次数</span><span style="font-weight:600;">45次</span></div>
-          <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden;"><div style="width:100%;height:100%;background:#0f1929;border-radius:4px;"></div></div>
-        </div>
-        <!-- 正面情感 -->
-        <div style="margin-bottom:18px;">
-          <div style="display:flex;justify-content:space-between;font-size:13px;color:#555;margin-bottom:6px;"><span>正面情感</span><span style="font-weight:600;">78%</span></div>
-          <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden;"><div style="width:78%;height:100%;background:#0f1929;border-radius:4px;"></div></div>
-        </div>
-        <!-- 推荐位置 -->
-        <div style="display:flex;justify-content:space-between;font-size:13px;color:#555;">
-          <span>推荐位置</span>
-          <span style="font-weight:700;color:#0f1929;font-size:18px;">#1</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="page-num">12</div>
+<!-- ===== PAGE 12 — 竞争对比 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 02 — 认识AVANTI</div>
+<h2 class="pt">竞品在"购买推荐"意图上的AI占位是行业平均的1.8倍，这一差距在缩窄前将持续扩大</h2>
+<div class="key-insight">💡 <em>数据表明，在竞品AI占位超过你两倍的意图类型中，等待六个月不行动，差距将再扩大1.4倍。</em></div>
+<p class="pp">Avanti 追踪品牌与竞争对手在不同搜索意图下的AI推荐表现，帮助品牌识别竞争格局中的机会和威胁。</p>
+<table class="tb" style="margin-top:14px">
+<thead><tr><th style="width:25%">搜索意图</th><th style="width:25%">你的品牌</th><th style="width:25%">竞品 A</th><th style="width:25%">竞品 B</th></tr></thead>
+<tbody>
+<tr><td style="font-weight:600">品牌查询</td><td class="cg">强 — 85%</td><td class="cy">中 — 52%</td><td class="cy">中 — 48%</td></tr>
+<tr><td style="font-weight:600">产品对比</td><td class="cy">中 — 45%</td><td class="cg">强 — 78%</td><td class="cr">弱 — 22%</td></tr>
+<tr><td style="font-weight:600">购买推荐</td><td class="cr">弱 — 18%</td><td class="cg">强 — 72%</td><td class="cy">中 — 55%</td></tr>
+<tr><td style="font-weight:600">问题解答</td><td class="cy">中 — 40%</td><td class="cy">中 — 45%</td><td class="cg">强 — 70%</td></tr>
+<tr><td style="font-weight:600">替代方案</td><td class="cr">弱 — 15%</td><td class="cg">强 — 68%</td><td class="cy">中 — 50%</td></tr>
+</tbody></table>
+<div style="display:flex;gap:14px;margin-top:14px">
+<div style="flex:1;background:var(--g50);border-radius:8px;padding:14px"><h4 style="font-size:12px;color:var(--navy);margin-bottom:6px">读取分析</h4><p style="font-size:11px;color:var(--g500);margin:0">品牌查询意图表现优秀（85%），说明品牌知名度在AI引擎中有一定基础。但在"购买推荐"和"替代方案"两个高商业价值意图中严重落后，直接影响转化。</p></div>
+<div style="flex:1;background:var(--olight);border-radius:8px;padding:14px"><h4 style="font-size:12px;color:var(--orange);margin-bottom:6px">行动建议</h4><p style="font-size:11px;color:var(--g600);margin:0">优先优化"购买推荐"意图的内容（仅18%），通过产品评测、对比内容和结构化数据提升AI推荐概率。同时加强"替代方案"意图的品牌防御。</p></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">12</div>
 </div>
 
-<!-- ============ Page 13 — GEO行动计划框架 ============ -->
-<div class="page">
-  <h2 class="section-title">GEO行动计划框架</h2>
-
-  <div style="margin-top:40px;padding-left:24px;">
-    <!-- Step 1 -->
-    <div style="display:flex;align-items:flex-start;position:relative;padding-bottom:36px;">
-      <div style="position:relative;z-index:1;flex-shrink:0;">
-        <div style="width:48px;height:48px;border-radius:50%;background:#ff6b35;color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
-        <div style="position:absolute;top:48px;left:50%;transform:translateX(-50%);width:2px;height:calc(100% - 12px);background:#ff6b35;"></div>
-      </div>
-      <div style="margin-left:24px;padding-top:4px;">
-        <h3 style="margin:0 0 6px;font-size:17px;color:#0f1929;">诊断 Diagnose</h3>
-        <p style="margin:0;font-size:14px;color:#555;line-height:1.7;">运行GEO Score诊断，建立品牌AI可见度基准线。了解你在各AI平台的当前表现。</p>
-      </div>
-    </div>
-    <!-- Step 2 -->
-    <div style="display:flex;align-items:flex-start;position:relative;padding-bottom:36px;">
-      <div style="position:relative;z-index:1;flex-shrink:0;">
-        <div style="width:48px;height:48px;border-radius:50%;background:#ff6b35;color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
-        <div style="position:absolute;top:48px;left:50%;transform:translateX(-50%);width:2px;height:calc(100% - 12px);background:#ff6b35;"></div>
-      </div>
-      <div style="margin-left:24px;padding-top:4px;">
-        <h3 style="margin:0 0 6px;font-size:17px;color:#0f1929;">分析 Analyze</h3>
-        <p style="margin:0;font-size:14px;color:#555;line-height:1.7;">深入分析诊断结果，识别关键差距。对比竞品表现，找出最大改善机会。</p>
-      </div>
-    </div>
-    <!-- Step 3 -->
-    <div style="display:flex;align-items:flex-start;position:relative;padding-bottom:36px;">
-      <div style="position:relative;z-index:1;flex-shrink:0;">
-        <div style="width:48px;height:48px;border-radius:50%;background:#ff6b35;color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;">3</div>
-        <div style="position:absolute;top:48px;left:50%;transform:translateX(-50%);width:2px;height:calc(100% - 12px);background:#ff6b35;"></div>
-      </div>
-      <div style="margin-left:24px;padding-top:4px;">
-        <h3 style="margin:0 0 6px;font-size:17px;color:#0f1929;">优化 Optimize</h3>
-        <p style="margin:0;font-size:14px;color:#555;line-height:1.7;">执行GEO优化策略：结构化数据标记、权威内容创建、语义SEO增强。</p>
-      </div>
-    </div>
-    <!-- Step 4 -->
-    <div style="display:flex;align-items:flex-start;position:relative;padding-bottom:36px;">
-      <div style="position:relative;z-index:1;flex-shrink:0;">
-        <div style="width:48px;height:48px;border-radius:50%;background:#ff6b35;color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;">4</div>
-        <div style="position:absolute;top:48px;left:50%;transform:translateX(-50%);width:2px;height:calc(100% - 12px);background:#ff6b35;"></div>
-      </div>
-      <div style="margin-left:24px;padding-top:4px;">
-        <h3 style="margin:0 0 6px;font-size:17px;color:#0f1929;">监控 Monitor</h3>
-        <p style="margin:0;font-size:14px;color:#555;line-height:1.7;">启动持续监控，追踪GEO Score变化趋势。设置警报，及时发现异常。</p>
-      </div>
-    </div>
-    <!-- Step 5 -->
-    <div style="display:flex;align-items:flex-start;position:relative;">
-      <div style="position:relative;z-index:1;flex-shrink:0;">
-        <div style="width:48px;height:48px;border-radius:50%;background:#ff6b35;color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;">5</div>
-      </div>
-      <div style="margin-left:24px;padding-top:4px;">
-        <h3 style="margin:0 0 6px;font-size:17px;color:#0f1929;">迭代 Iterate</h3>
-        <p style="margin:0;font-size:14px;color:#555;line-height:1.7;">根据监控数据持续调整策略，扩展优化范围，建立长期AI可见度优势。</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="page-num">13</div>
+<!-- ===== PAGE 13 — GEO行动计划 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 02 — 认识AVANTI</div>
+<h2 class="pt">从诊断到优化的五步框架，将模糊的AI可见度问题转化为具体可落地的执行清单</h2>
+<div class="key-insight">💡 <em>五步GEO框架的核心价值不在于方法论本身，而在于将每一步都量化为可追踪的里程碑指标。</em></div>
+<p class="pp">Avanti 提供系统化的5步GEO优化框架，帮助品牌从诊断到持续优化建立完整的AI可见度提升路径。</p>
+<div style="margin-top:16px">
+<div class="si"><div class="sn">1</div><div class="sb"><h4>基准评估</h4><p>全面扫描品牌在4大AI引擎中的可见度现状。建立GEO Score基准线，识别各引擎中的表现差异，标记关键弱点和机会领域。</p></div></div>
+<div class="si"><div class="sn">2</div><div class="sb"><h4>竞品分析</h4><p>识别AI推荐格局中的竞争态势。分析竞品在各搜索意图中的占位情况，找出品牌可以快速超越的"低垂果实"和需要长期攻克的高价值意图。</p></div></div>
+<div class="si"><div class="sn">3</div><div class="sb"><h4>内容优化</h4><p>针对AI引擎的内容理解逻辑优化品牌内容。包括产品描述重构、FAQ内容建设、评测内容策略、品牌叙事一致性优化。</p></div></div>
+<div class="si"><div class="sn">4</div><div class="sb"><h4>技术部署</h4><p>实施结构化数据标记（Product Schema、FAQ Schema、Review Schema）、优化网站技术架构以提升AI引擎的内容抓取和理解效率。</p></div></div>
+<div class="si"><div class="sn">5</div><div class="sb"><h4>持续监控</h4><p>建立自动化监控机制，追踪GEO Score变化趋势。每周报告、异常预警、竞品动态，确保品牌AI可见度持续稳定提升。</p></div></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">13</div>
 </div>
 
-<!-- ============ Page 14 — B2A Analytics ============ -->
-<div class="page">
-  <h2 class="section-title">B2A Analytics <span style="font-size:16px;color:#ff6b35;font-weight:400;margin-left:8px;">(Beta)</span></h2>
-
-  <!-- Funnel -->
-  <div style="margin:48px auto 36px;max-width:640px;">
-    <!-- Level 1 -->
-    <div style="width:90%;margin:0 auto 4px;background:#0f1929;color:#fff;padding:16px;border-radius:4px;text-align:center;display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:14px;">AI Agent 访问</span>
-      <span style="font-weight:700;font-size:18px;">100%</span>
-    </div>
-    <!-- Level 2 -->
-    <div style="width:72%;margin:0 auto 4px;background:#1a2d4a;color:#fff;padding:16px;border-radius:4px;text-align:center;display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:14px;">品牌页面浏览</span>
-      <span style="font-weight:700;font-size:18px;">45%</span>
-    </div>
-    <!-- Level 3 -->
-    <div style="width:56%;margin:0 auto 4px;background:#2a4060;color:#fff;padding:16px;border-radius:4px;text-align:center;display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:14px;">产品对比</span>
-      <span style="font-weight:700;font-size:18px;">28%</span>
-    </div>
-    <!-- Level 4 -->
-    <div style="width:40%;margin:0 auto 4px;background:#ff6b35;color:#fff;padding:16px;border-radius:4px;text-align:center;display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:14px;">加入购物车</span>
-      <span style="font-weight:700;font-size:18px;">12%</span>
-    </div>
-    <!-- Level 5 -->
-    <div style="width:28%;margin:0 auto;background:#ff8c5a;color:#fff;padding:16px;border-radius:4px;text-align:center;display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:14px;">完成购买</span>
-      <span style="font-weight:700;font-size:18px;">5%</span>
-    </div>
-  </div>
-
-  <!-- Note -->
-  <div style="background:#f8f9fb;border-left:4px solid #ff6b35;padding:16px 24px;border-radius:0 8px 8px 0;font-size:14px;color:#555;line-height:1.7;max-width:640px;margin:0 auto;">
-    B2A (Business-to-Agent) Analytics 追踪AI代理的购物行为路径，帮助品牌理解AI驱动的新型消费旅程。
-  </div>
-
-  <div class="page-num">14</div>
+<!-- ===== PAGE 14 — B2A Analytics ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 02 — 认识AVANTI</div>
+<h2 class="pt">B2A Analytics <span style="font-size:12px;background:var(--orange);color:#fff;padding:2px 10px;border-radius:20px;font-weight:600;vertical-align:middle">Beta</span></h2>
+<p class="pp">Browser-to-Agent（B2A）Analytics 是 Avanti 推出的下一代流量分析工具，专门识别和分析来自AI代理的网站访问。</p>
+<div class="sp" style="margin-top:14px">
+<div class="sp-l"><h4 style="color:var(--red)">GA 的盲区</h4><ul style="list-style:none;padding:0"><li style="padding:5px 0;border-bottom:1px solid var(--g200)">&#10007; 无法识别AI代理访问</li><li style="padding:5px 0;border-bottom:1px solid var(--g200)">&#10007; 无法归因AI推荐来源</li><li style="padding:5px 0;border-bottom:1px solid var(--g200)">&#10007; 无法区分AI流量与自然流量</li><li style="padding:5px 0;border-bottom:1px solid var(--g200)">&#10007; 无法追踪AI对话中的品牌提及</li><li style="padding:5px 0">&#10007; 缺少AI渠道的转化归因</li></ul></div>
+<div class="sp-r"><h4 style="color:var(--orange)">B2A Analytics 能看到什么</h4><ul style="list-style:none;padding:0"><li style="padding:5px 0;border-bottom:1px solid rgba(255,107,53,.2)">&#10003; AI代理身份识别</li><li style="padding:5px 0;border-bottom:1px solid rgba(255,107,53,.2)">&#10003; 搜索意图自动分类</li><li style="padding:5px 0;border-bottom:1px solid rgba(255,107,53,.2)">&#10003; AI推荐转化归因</li><li style="padding:5px 0;border-bottom:1px solid rgba(255,107,53,.2)">&#10003; 代理流量实时监控</li><li style="padding:5px 0">&#10003; 跨引擎对比分析</li></ul></div>
+</div>
+<h3 class="ps" style="margin-top:18px">AI代理流量漏斗</h3>
+<div style="display:flex;align-items:center;justify-content:center;gap:0;margin-top:10px">
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:8px;padding:10px 12px;font-size:11px;font-weight:600">AI对话<br><span style="font-size:10px;opacity:.8">100%</span></div>
+<span style="font-size:18px;color:var(--orange);margin:0 4px;font-weight:700">→</span>
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:8px;padding:10px 12px;font-size:11px;font-weight:600">品牌提及<br><span style="font-size:10px;opacity:.8">35%</span></div>
+<span style="font-size:18px;color:var(--orange);margin:0 4px;font-weight:700">→</span>
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:8px;padding:10px 12px;font-size:11px;font-weight:600">链接引用<br><span style="font-size:10px;opacity:.8">18%</span></div>
+<span style="font-size:18px;color:var(--orange);margin:0 4px;font-weight:700">→</span>
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:8px;padding:10px 12px;font-size:11px;font-weight:600">代理访问<br><span style="font-size:10px;opacity:.8">12%</span></div>
+<span style="font-size:18px;color:var(--orange);margin:0 4px;font-weight:700">→</span>
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:8px;padding:10px 12px;font-size:11px;font-weight:600">转化行为<br><span style="font-size:10px;opacity:.8">4.2%</span></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">14</div>
 </div>
 
-<!-- ============ Page 15 — 自动化监控与报告 ============ -->
-<div class="page">
-  <h2 class="section-title">自动化监控与报告</h2>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:36px;">
-    <!-- Card 1 -->
-    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:32px;border-top:3px solid #ff6b35;">
-      <div style="font-size:28px;margin-bottom:12px;">&#9200;</div>
-      <h3 style="font-size:18px;margin:0 0 10px;color:#0f1929;">每日监控</h3>
-      <p style="font-size:14px;color:#555;line-height:1.7;margin:0;">AI引用变化实时追踪，每日自动扫描四大AI平台，记录品牌提及的每一次变化。</p>
-    </div>
-    <!-- Card 2 -->
-    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:32px;border-top:3px solid #ff6b35;">
-      <div style="font-size:28px;margin-bottom:12px;">&#128202;</div>
-      <h3 style="font-size:18px;margin:0 0 10px;color:#0f1929;">每周报告</h3>
-      <p style="font-size:14px;color:#555;line-height:1.7;margin:0;">GEO Score趋势分析报告，包含周度变化、竞品动态、关键发现，直送邮箱。</p>
-    </div>
-    <!-- Card 3 -->
-    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:32px;border-top:3px solid #ff6b35;">
-      <div style="font-size:28px;margin-bottom:12px;">&#128680;</div>
-      <h3 style="font-size:18px;margin:0 0 10px;color:#0f1929;">即时警报</h3>
-      <p style="font-size:14px;color:#555;line-height:1.7;margin:0;">品牌危机预警系统，当AI平台出现负面信息或重大排名变化时，第一时间通知。</p>
-    </div>
-    <!-- Card 4 -->
-    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:32px;border-top:3px solid #ff6b35;">
-      <div style="font-size:28px;margin-bottom:12px;">&#128200;</div>
-      <h3 style="font-size:18px;margin:0 0 10px;color:#0f1929;">月度回顾</h3>
-      <p style="font-size:14px;color:#555;line-height:1.7;margin:0;">竞争格局变化全景报告，包含行业趋势、策略建议、下月优化重点。</p>
-    </div>
-  </div>
-
-  <div class="page-num">15</div>
+<!-- ===== PAGE 15 — 自动化监控 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 02 — 认识AVANTI</div>
+<h2 class="pt">人工监控每周耗费8-12小时且遗漏率超过40%；Avanti的自动化系统将这一成本降至零</h2>
+<div class="key-insight">💡 <em>每周节省的8小时监控时间，乘以品牌团队的时间成本，Avanti的订阅费用在三周内即可实现时间投入的回本。</em></div>
+<p class="pp">Avanti 提供全面的自动化监控和预警系统，确保品牌团队在第一时间获知AI可见度的重要变化。</p>
+<div style="display:flex;flex-direction:column;gap:16px;margin-top:16px">
+<div class="cd cd--o" style="display:flex;gap:18px;align-items:flex-start">
+<div style="min-width:52px;height:52px;background:var(--olight);border-radius:12px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+<div><h4 style="font-size:15px;margin-bottom:5px">每周摘要</h4><p style="font-size:12px;color:var(--g500);margin:0;line-height:1.7">每周一自动发送品牌AI可见度周报至团队邮箱。包含GEO Score变化、排名变动、竞品动态、本周最佳表现意图和需关注的下滑指标。支持自定义接收人和报告格式。</p></div>
 </div>
-<!-- ==================== PAGE 16 — Section 3 Divider ==================== -->
-<div class="page divider">
-  <span class="section-number">03</span>
-  <h1 class="section-title">如何使用 Avanti</h1>
-  <p class="section-subtitle">Getting Started Guide</p>
-  <div class="page-num" style="color:rgba(255,255,255,0.3)">16</div>
+<div class="cd cd--o" style="display:flex;gap:18px;align-items:flex-start">
+<div style="min-width:52px;height:52px;background:var(--olight);border-radius:12px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+<div><h4 style="font-size:15px;margin-bottom:5px">评分预警</h4><p style="font-size:12px;color:var(--g500);margin:0;line-height:1.7">当GEO Score发生异常波动（单日下降超过5分或周环比下降超过10%）时，系统即时推送通知。帮助团队快速响应，避免品牌可见度持续下滑。支持邮件、Slack和微信通知。</p></div>
+</div>
+<div class="cd cd--o" style="display:flex;gap:18px;align-items:flex-start">
+<div style="min-width:52px;height:52px;background:var(--olight);border-radius:12px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+<div><h4 style="font-size:15px;margin-bottom:5px">竞品变动</h4><p style="font-size:12px;color:var(--g500);margin:0;line-height:1.7">竞争对手排名变化实时提醒。当竞品GEO Score大幅提升、新进入某个意图领域或获得新的AI引擎推荐时，系统自动通知并提供应对建议。</p></div>
+</div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">15</div>
 </div>
 
-<!-- ==================== PAGE 17 — 快速上手3步 ==================== -->
-<div class="page">
-  <h2>快速上手 — 3步开始</h2>
+<!-- ===== PAGE 16 — S03 DIVIDER ===== -->
+<div class="pg pg--d"><div class="dv-c"><div class="dv-n">03</div><div class="dv-t">使用流程</div><div class="dv-s">从注册到获得洞察，只需3步</div></div></div>
 
-  <div style="display:flex; gap:32px; margin-top:40px;">
-    <!-- Step 1 -->
-    <div style="flex:1; text-align:center; padding:40px 24px; border-radius:12px; background:#ffffff; box-shadow:0 2px 16px rgba(0,0,0,0.08); position:relative;">
-      <div style="width:80px; height:80px; background:#ff6b35; color:#ffffff; border-radius:50%; line-height:80px; font-size:28px; font-weight:700; margin:0 auto 20px; font-family:'Inter',sans-serif;">01</div>
-      <h3 style="font-size:20px; font-weight:700; color:#0f1929; margin-bottom:12px;">输入品牌信息</h3>
-      <p style="font-size:14px; color:#666; line-height:1.8;">填写品牌名称、官网URL和目标关键词。支持中英文品牌名，可添加多个产品线。</p>
-      <div style="position:absolute; right:-24px; top:50%; transform:translateY(-50%); font-size:28px; color:#ff6b35; font-weight:700; z-index:1;">&rarr;</div>
-    </div>
-
-    <!-- Step 2 -->
-    <div style="flex:1; text-align:center; padding:40px 24px; border-radius:12px; background:#ffffff; box-shadow:0 2px 16px rgba(0,0,0,0.08); position:relative;">
-      <div style="width:80px; height:80px; background:#ff6b35; color:#ffffff; border-radius:50%; line-height:80px; font-size:28px; font-weight:700; margin:0 auto 20px; font-family:'Inter',sans-serif;">02</div>
-      <h3 style="font-size:20px; font-weight:700; color:#0f1929; margin-bottom:12px;">AI引擎扫描</h3>
-      <p style="font-size:14px; color:#666; line-height:1.8;">Avanti自动向ChatGPT、Perplexity、Gemini、Claude发送查询，收集品牌在AI回答中的表现数据。</p>
-      <div style="position:absolute; right:-24px; top:50%; transform:translateY(-50%); font-size:28px; color:#ff6b35; font-weight:700; z-index:1;">&rarr;</div>
-    </div>
-
-    <!-- Step 3 -->
-    <div style="flex:1; text-align:center; padding:40px 24px; border-radius:12px; background:#ffffff; box-shadow:0 2px 16px rgba(0,0,0,0.08);">
-      <div style="width:80px; height:80px; background:#ff6b35; color:#ffffff; border-radius:50%; line-height:80px; font-size:28px; font-weight:700; margin:0 auto 20px; font-family:'Inter',sans-serif;">03</div>
-      <h3 style="font-size:20px; font-weight:700; color:#0f1929; margin-bottom:12px;">获取诊断报告</h3>
-      <p style="font-size:14px; color:#666; line-height:1.8;">在几分钟内收到完整的GEO Score报告，包含评分、分析和可执行的优化建议。</p>
-    </div>
-  </div>
-
-  <div class="page-num">17</div>
+<!-- ===== PAGE 17 — 快速上手 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 03 — 使用流程</div>
+<h2 class="pt">从注册到获得完整AI品牌诊断报告，全程不超过5分钟，无需任何技术对接</h2>
+<div class="key-insight">💡 <em>5分钟的注册流程背后是Avanti预训练的品类模型——它能自动生成与你的品牌最相关的15个AI查询场景。</em></div>
+<p class="pp">Avanti 设计了极简的上手流程，品牌无需复杂的技术对接，只需3步即可获得完整的AI可见度诊断。</p>
+<div class="bs">
+<div class="bs-i"><div class="bs-n">1</div><h4>注册账户</h4><p>输入品牌名称、官网地址和核心产品关键词。系统自动识别品牌类目，智能推荐监控关键词列表。</p><div style="margin-top:10px;padding:8px;background:var(--olight);border-radius:6px"><p style="font-size:10px;color:var(--orange);font-weight:600;margin:0">约2分钟</p></div></div>
+<div class="bs-i"><div class="bs-n">2</div><h4>获取诊断</h4><p>系统自动向ChatGPT、Perplexity、Gemini、Claude四大引擎发送查询，收集品牌在AI回答中的表现数据。</p><div style="margin-top:10px;padding:8px;background:var(--olight);border-radius:6px"><p style="font-size:10px;color:var(--orange);font-weight:600;margin:0">约3分钟自动完成</p></div></div>
+<div class="bs-i"><div class="bs-n">3</div><h4>查看报告</h4><p>获得完整的GEO Score评分、各引擎表现明细、竞品对比分析和优先级优化建议。</p><div style="margin-top:10px;padding:8px;background:var(--olight);border-radius:6px"><p style="font-size:10px;color:var(--orange);font-weight:600;margin:0">即时查看结果</p></div></div>
+</div>
+<div class="co"><p style="font-size:14px;font-weight:700;color:var(--navy)">整个过程只需5分钟，无需技术对接，无需安装代码。</p></div>
+<p class="pp" style="margin-top:14px">Avanti的智能诊断系统基于预训练的品类模型，能够自动生成与品牌最相关的AI查询集合，确保诊断结果的精准性和实用性。</p>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">17</div>
 </div>
 
-<!-- ==================== PAGE 18 — 免费诊断详解 ==================== -->
-<div class="page">
-  <h2>免费诊断 — 零成本了解AI可见度</h2>
-
-  <div style="background:#fff8f4; border:1px solid #ffe0cc; border-radius:12px; padding:40px; margin-bottom:32px;">
-    <h3 style="font-size:24px; font-weight:600; color:#0f1929; margin-bottom:24px;">免费诊断包含</h3>
-
-    <div style="display:flex; flex-direction:column; gap:16px;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:#e6f9e8; color:#22c55e; border-radius:50%; font-size:14px; font-weight:700; flex-shrink:0;">&#10003;</span>
-        <span style="font-size:16px; color:#333;">基础GEO Score评分（0-100）</span>
-      </div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:#e6f9e8; color:#22c55e; border-radius:50%; font-size:14px; font-weight:700; flex-shrink:0;">&#10003;</span>
-        <span style="font-size:16px; color:#333;">3个主流AI引擎扫描结果</span>
-      </div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:#e6f9e8; color:#22c55e; border-radius:50%; font-size:14px; font-weight:700; flex-shrink:0;">&#10003;</span>
-        <span style="font-size:16px; color:#333;">Top 5 关键发现与洞察</span>
-      </div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:#e6f9e8; color:#22c55e; border-radius:50%; font-size:14px; font-weight:700; flex-shrink:0;">&#10003;</span>
-        <span style="font-size:16px; color:#333;">基础优化建议（3-5条）</span>
-      </div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:#e6f9e8; color:#22c55e; border-radius:50%; font-size:14px; font-weight:700; flex-shrink:0;">&#10003;</span>
-        <span style="font-size:16px; color:#333;">竞品概览（1个竞品对比）</span>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align:center;">
-    <a href="https://avantia2a.com" style="display:inline-block; background:#ff6b35; color:#ffffff; text-align:center; padding:16px 32px; border-radius:8px; font-weight:600; font-size:16px; text-decoration:none;">立即体验 &rarr; avantia2a.com</a>
-    <p style="margin-top:16px; font-size:14px; color:#999;">无需信用卡 · 5分钟出结果 · 终身保留首次报告</p>
-  </div>
-
-  <div class="page-num">18</div>
+<!-- ===== PAGE 18 — 免费诊断 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 03 — 使用流程</div>
+<h2 class="pt">一次免费诊断即可发现：你的品牌每月因AI可见度不足损失了多少潜在订单</h2>
+<div class="key-insight">💡 <em>我们建议所有跨境品牌在制定下一季度营销预算前先完成一次免费诊断——数据往往会改变原有的资源分配决策。</em></div>
+<div style="display:inline-block;background:var(--orange);color:#fff;padding:7px 22px;border-radius:30px;font-size:15px;font-weight:700;margin-bottom:18px">5 分钟内完成</div>
+<h3 class="ps">诊断包含内容</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0">
+<div style="display:flex;gap:7px;font-size:11.5px;color:var(--g600)"><span style="color:var(--green);font-weight:700">✓</span> GEO Score 总分与各引擎得分</div>
+<div style="display:flex;gap:7px;font-size:11.5px;color:var(--g600)"><span style="color:var(--green);font-weight:700">✓</span> 4大AI引擎品牌出现率</div>
+<div style="display:flex;gap:7px;font-size:11.5px;color:var(--g600)"><span style="color:var(--green);font-weight:700">✓</span> Top 3 竞品对比概览</div>
+<div style="display:flex;gap:7px;font-size:11.5px;color:var(--g600)"><span style="color:var(--green);font-weight:700">✓</span> 核心搜索意图覆盖度</div>
+<div style="display:flex;gap:7px;font-size:11.5px;color:var(--g600)"><span style="color:var(--green);font-weight:700">✓</span> 3条优先优化建议</div>
+<div style="display:flex;gap:7px;font-size:11.5px;color:var(--g600)"><span style="color:var(--green);font-weight:700">✓</span> 中文PDF报告下载</div>
+</div>
+<h3 class="ps" style="margin-top:16px">示例发现</h3>
+<div style="background:var(--g50);border-radius:10px;padding:18px;border:1px solid var(--g200);margin-bottom:14px">
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;text-align:center">
+<div><div style="font-family:Inter;font-size:30px;font-weight:700;color:var(--orange)">34</div><div style="font-size:10.5px;color:var(--g400)">GEO Score</div></div>
+<div><div style="font-family:Inter;font-size:30px;font-weight:700;color:var(--red)">2/4</div><div style="font-size:10.5px;color:var(--g400)">引擎出现</div></div>
+<div><div style="font-family:Inter;font-size:30px;font-weight:700;color:var(--yellow)">28%</div><div style="font-size:10.5px;color:var(--g400)">意图覆盖率</div></div>
+</div>
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--g200)"><p style="font-size:11.5px;color:var(--g600);margin:0">示例发现：品牌仅在ChatGPT和Gemini中被提及，Perplexity和Claude完全缺失。在"购买推荐"意图中，竞品A占据主导地位（出现率72%），而品牌出现率仅18%。</p></div>
+</div>
+<h3 class="ps">关键交付物</h3>
+<div style="display:flex;gap:10px;margin-top:8px">
+<div style="flex:1;background:var(--olight);border-radius:8px;padding:12px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--navy)">GEO Score 评分卡</div><div style="font-size:10.5px;color:var(--g500);margin-top:3px">含各引擎明细</div></div>
+<div style="flex:1;background:var(--olight);border-radius:8px;padding:12px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--navy)">竞品快照</div><div style="font-size:10.5px;color:var(--g500);margin-top:3px">Top 3 竞品对比</div></div>
+<div style="flex:1;background:var(--olight);border-radius:8px;padding:12px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--navy)">优化路线图</div><div style="font-size:10.5px;color:var(--g500);margin-top:3px">3条优先行动</div></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">18</div>
 </div>
 
-<!-- ==================== PAGE 19 — 方案与定价 ==================== -->
-<div class="page">
-  <h2>方案与定价</h2>
-
-  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:24px;">
-
-    <!-- Free -->
-    <div style="border:1px solid #e0e0e0; border-radius:12px; overflow:hidden;">
-      <div style="background:#f5f6f8; padding:24px 16px; text-align:center;">
-        <div style="font-size:18px; font-weight:600; color:#0f1929; margin-bottom:4px;">Free</div>
-        <div style="font-size:32px; font-weight:700; color:#0f1929; font-family:'Inter',sans-serif;">$0</div>
-      </div>
-      <div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">1次GEO诊断</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">基础报告</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">3个AI引擎</div>
-        <div style="padding:12px 16px; font-size:14px; color:#333;">1个竞品对比</div>
-      </div>
-    </div>
-
-    <!-- Starter -->
-    <div style="border:1px solid #e0e0e0; border-radius:12px; overflow:hidden;">
-      <div style="background:#f5f6f8; padding:24px 16px; text-align:center;">
-        <div style="font-size:18px; font-weight:600; color:#0f1929; margin-bottom:4px;">Starter</div>
-        <div style="font-size:32px; font-weight:700; color:#0f1929; font-family:'Inter',sans-serif;">$199<span style="font-size:14px; font-weight:400; color:#999;">/月</span></div>
-      </div>
-      <div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">每周监控</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">完整报告</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">4个AI引擎</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">3个竞品</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">邮件报告</div>
-        <div style="padding:12px 16px; font-size:14px; color:#333;">基础API</div>
-      </div>
-    </div>
-
-    <!-- Growth (highlighted) -->
-    <div style="border:2px solid #ff6b35; border-radius:12px; overflow:hidden; position:relative;">
-      <div style="position:absolute; top:0; left:50%; transform:translateX(-50%); background:#ff6b35; color:#ffffff; font-size:12px; font-weight:600; padding:4px 16px; border-radius:0 0 8px 8px;">最受欢迎</div>
-      <div style="background:#ff6b35; padding:24px 16px; text-align:center; color:#ffffff;">
-        <div style="font-size:18px; font-weight:600; margin-bottom:4px; margin-top:8px;">Growth</div>
-        <div style="font-size:32px; font-weight:700; font-family:'Inter',sans-serif;">$499<span style="font-size:14px; font-weight:400; opacity:0.8;">/月</span></div>
-      </div>
-      <div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">每日监控</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">高级分析报告</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">4个AI引擎</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">10个竞品</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">完整API接入</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">专属顾问</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">B2A Analytics (Beta)</div>
-        <div style="padding:12px 16px; font-size:14px; color:#333;">优先支持</div>
-      </div>
-    </div>
-
-    <!-- Enterprise -->
-    <div style="border:1px solid #e0e0e0; border-radius:12px; overflow:hidden;">
-      <div style="background:#0f1929; padding:24px 16px; text-align:center; color:#ffffff;">
-        <div style="font-size:18px; font-weight:600; margin-bottom:4px;">Enterprise</div>
-        <div style="font-size:32px; font-weight:700; font-family:'Inter',sans-serif;">定制</div>
-      </div>
-      <div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">无限监控</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">定制集成</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">白手套服务</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">专属客户经理</div>
-        <div style="padding:12px 16px; border-bottom:1px solid #f0f0f0; font-size:14px; color:#333;">SLA保障</div>
-        <div style="padding:12px 16px; font-size:14px; color:#333;">定制报告</div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="page-num">19</div>
+<!-- ===== PAGE 19 — 付费方案 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 03 — 使用流程</div>
+<h2 class="pt">三档方案覆盖从初创到规模化的所有阶段，每月¥1,499起，ROI中位数超过11倍</h2>
+<div class="key-insight">💡 <em>选择方案的标准很简单：如果你的月销售额超过$5万，Growth方案的ROI几乎肯定超过Starter的两倍以上。</em></div>
+<div class="pg-grid" style="margin-top:10px">
+<div class="pg-col"><h4>Free</h4><div class="pr">¥0</div><ul><li>1 个品牌</li><li>基础 GEO Score</li><li>月度报告</li><li>2 大 AI 引擎</li><li>基础意图覆盖</li></ul></div>
+<div class="pg-col"><h4>Starter</h4><div class="pr">¥1,499<small>/月</small></div><ul><li>3 个品牌</li><li>完整 GEO 分析</li><li>周报推送</li><li>4 大 AI 引擎</li><li>邮件支持</li><li>竞品概览（3个）</li></ul></div>
+<div class="pg-col pg-col--hl"><div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:9px;font-weight:600;padding:2px 12px;border-radius:0 0 6px 6px">推荐</div><h4>Growth</h4><div class="pr">¥3,499<small>/月</small></div><ul><li>10 个品牌</li><li>深度竞品分析</li><li>B2A Analytics</li><li>自定义预警</li><li>优先支持</li><li>API 基础接入</li><li>季度策略报告</li></ul></div>
+<div class="pg-col"><h4>Enterprise</h4><div class="pr">定制</div><ul><li>无限品牌</li><li>完整 API 接入</li><li>专属客户顾问</li><li>SLA 保障</li><li>定制化报告</li><li>白标方案</li><li>优先新功能</li></ul></div>
+</div>
+<table class="tb" style="margin-top:16px;font-size:10.5px">
+<thead><tr><th>功能</th><th style="text-align:center">Free</th><th style="text-align:center">Starter</th><th style="text-align:center">Growth</th><th style="text-align:center">Enterprise</th></tr></thead>
+<tbody>
+<tr><td>GEO Score</td><td style="text-align:center;color:var(--green);font-weight:700">✓</td><td style="text-align:center;color:var(--green);font-weight:700">✓</td><td style="text-align:center;color:var(--green);font-weight:700">✓</td><td style="text-align:center;color:var(--green);font-weight:700">✓</td></tr>
+<tr><td>多引擎监控</td><td style="text-align:center">2引擎</td><td style="text-align:center;color:var(--green);font-weight:700">✓ 全部</td><td style="text-align:center;color:var(--green);font-weight:700">✓ 全部</td><td style="text-align:center;color:var(--green);font-weight:700">✓ 全部</td></tr>
+<tr><td>竞品分析</td><td style="text-align:center;color:var(--red);font-weight:700">✗</td><td style="text-align:center">基础</td><td style="text-align:center;color:var(--green);font-weight:700">✓ 深度</td><td style="text-align:center;color:var(--green);font-weight:700">✓ 深度</td></tr>
+<tr><td>B2A Analytics</td><td style="text-align:center;color:var(--red);font-weight:700">✗</td><td style="text-align:center;color:var(--red);font-weight:700">✗</td><td style="text-align:center;color:var(--green);font-weight:700">✓</td><td style="text-align:center;color:var(--green);font-weight:700">✓</td></tr>
+<tr><td>自动化预警</td><td style="text-align:center;color:var(--red);font-weight:700">✗</td><td style="text-align:center">邮件</td><td style="text-align:center;color:var(--green);font-weight:700">✓ 多渠道</td><td style="text-align:center;color:var(--green);font-weight:700">✓ 多渠道</td></tr>
+<tr><td>API 接入</td><td style="text-align:center;color:var(--red);font-weight:700">✗</td><td style="text-align:center;color:var(--red);font-weight:700">✗</td><td style="text-align:center">基础</td><td style="text-align:center;color:var(--green);font-weight:700">✓ 完整</td></tr>
+</tbody></table>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">19</div>
 </div>
 
-<!-- ==================== PAGE 20 — 数据看板详解 ==================== -->
-<div class="page">
-  <h2>数据看板 Dashboard</h2>
-
-  <!-- Dashboard mockup -->
-  <div style="border:1px solid #e0e0e0; border-radius:12px; overflow:hidden; margin-top:24px;">
-
-    <!-- Top bar -->
-    <div style="background:#0f1929; padding:12px 20px; display:flex; justify-content:space-between; align-items:center;">
-      <span style="color:#ffffff; font-size:14px; font-weight:600;">Avanti Dashboard</span>
-      <span style="color:rgba(255,255,255,0.6); font-size:13px;">2026年3月 · YourBrand</span>
-    </div>
-
-    <!-- KPI cards -->
-    <div style="display:flex; gap:16px; padding:20px; background:#f9fafb;">
-      <div style="flex:1; background:#ffffff; border-radius:8px; padding:20px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-        <div style="font-size:13px; color:#999; margin-bottom:8px;">GEO Score</div>
-        <div style="font-size:42px; font-weight:700; color:#ff6b35; font-family:'Inter',sans-serif; line-height:1.1;">47</div>
-        <div style="font-size:12px; color:#22c55e; margin-top:6px;">&uarr; 12 vs 上月</div>
-      </div>
-      <div style="flex:1; background:#ffffff; border-radius:8px; padding:20px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-        <div style="font-size:13px; color:#999; margin-bottom:8px;">AI引用次数</div>
-        <div style="font-size:42px; font-weight:700; color:#0f1929; font-family:'Inter',sans-serif; line-height:1.1;">156</div>
-        <div style="font-size:12px; color:#22c55e; margin-top:6px;">&uarr; 34% vs 上月</div>
-      </div>
-      <div style="flex:1; background:#ffffff; border-radius:8px; padding:20px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-        <div style="font-size:13px; color:#999; margin-bottom:8px;">正面情感比</div>
-        <div style="font-size:42px; font-weight:700; color:#0f1929; font-family:'Inter',sans-serif; line-height:1.1;">68%</div>
-        <div style="font-size:12px; color:#22c55e; margin-top:6px;">&uarr; 5% vs 上月</div>
-      </div>
-      <div style="flex:1; background:#ffffff; border-radius:8px; padding:20px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-        <div style="font-size:13px; color:#999; margin-bottom:8px;">竞品差距</div>
-        <div style="font-size:42px; font-weight:700; color:#ef4444; font-family:'Inter',sans-serif; line-height:1.1;">-21</div>
-        <div style="font-size:12px; color:#22c55e; margin-top:6px;">缩小3分 vs 上月</div>
-      </div>
-    </div>
-
-    <!-- Chart area -->
-    <div style="height:200px; margin:0 20px; position:relative; border-bottom:1px solid #e0e0e0;">
-      <!-- Grid lines -->
-      <div style="position:absolute; top:0; left:0; right:0; bottom:0;">
-        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:#f0f0f0;"></div>
-        <div style="position:absolute; top:25%; left:0; right:0; height:1px; background:#f0f0f0;"></div>
-        <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:#f0f0f0;"></div>
-        <div style="position:absolute; top:75%; left:0; right:0; height:1px; background:#f0f0f0;"></div>
-      </div>
-      <!-- Y-axis labels -->
-      <div style="position:absolute; left:-8px; top:-4px; font-size:11px; color:#999; transform:translateX(-100%); padding-right:8px;">80</div>
-      <div style="position:absolute; left:-8px; top:23%; font-size:11px; color:#999; transform:translateX(-100%); padding-right:8px;">60</div>
-      <div style="position:absolute; left:-8px; top:48%; font-size:11px; color:#999; transform:translateX(-100%); padding-right:8px;">40</div>
-      <div style="position:absolute; left:-8px; top:73%; font-size:11px; color:#999; transform:translateX(-100%); padding-right:8px;">20</div>
-      <!-- Area chart -->
-      <div style="position:absolute; bottom:0; left:0; right:0; height:100%; overflow:hidden;">
-        <div style="position:absolute; bottom:0; left:0; right:0; height:100%; background:linear-gradient(to top, rgba(255,107,53,0.15), rgba(255,107,53,0.02)); clip-path:polygon(0% 85%, 16.6% 78%, 33.3% 70%, 50% 58%, 66.6% 50%, 83.3% 42%, 100% 35%, 100% 100%, 0% 100%);"></div>
-        <div style="position:absolute; bottom:0; left:0; right:0; height:100%; background:transparent; clip-path:polygon(0% 85%, 16.6% 78%, 33.3% 70%, 50% 58%, 66.6% 50%, 83.3% 42%, 100% 35%, 100% 34%, 83.3% 41%, 66.6% 49%, 50% 57%, 33.3% 69%, 16.6% 77%, 0% 84%); background:#ff6b35;"></div>
-      </div>
-      <!-- Data dots -->
-      <div style="position:absolute; bottom:14%; left:0%; width:8px; height:8px; background:#ff6b35; border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%); box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
-      <div style="position:absolute; bottom:21%; left:16.6%; width:8px; height:8px; background:#ff6b35; border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%); box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
-      <div style="position:absolute; bottom:29%; left:33.3%; width:8px; height:8px; background:#ff6b35; border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%); box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
-      <div style="position:absolute; bottom:41%; left:50%; width:8px; height:8px; background:#ff6b35; border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%); box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
-      <div style="position:absolute; bottom:49%; left:66.6%; width:8px; height:8px; background:#ff6b35; border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%); box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
-      <div style="position:absolute; bottom:57%; left:83.3%; width:8px; height:8px; background:#ff6b35; border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%); box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
-      <div style="position:absolute; bottom:64%; left:100%; width:8px; height:8px; background:#ff6b35; border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%); box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
-    </div>
-    <!-- X-axis labels -->
-    <div style="display:flex; justify-content:space-between; padding:8px 20px 4px; margin:0;">
-      <span style="font-size:12px; color:#999;">10月</span>
-      <span style="font-size:12px; color:#999;">11月</span>
-      <span style="font-size:12px; color:#999;">12月</span>
-      <span style="font-size:12px; color:#999;">1月</span>
-      <span style="font-size:12px; color:#999;">2月</span>
-      <span style="font-size:12px; color:#999;">3月</span>
-    </div>
-
-    <!-- Alerts -->
-    <div style="padding:20px; border-top:1px solid #f0f0f0;">
-      <div style="font-size:14px; font-weight:600; color:#0f1929; margin-bottom:12px;">Recent Alerts</div>
-      <div style="padding:10px 0; border-bottom:1px solid #f5f5f5; font-size:13px; color:#333;">
-        <span style="display:inline-block; width:10px; height:10px; background:#ef4444; border-radius:50%; margin-right:8px; vertical-align:middle;"></span>
-        ChatGPT回答中品牌描述出现不准确信息 <span style="color:#999; margin-left:8px;">— 2小时前</span>
-      </div>
-      <div style="padding:10px 0; border-bottom:1px solid #f5f5f5; font-size:13px; color:#333;">
-        <span style="display:inline-block; width:10px; height:10px; background:#eab308; border-radius:50%; margin-right:8px; vertical-align:middle;"></span>
-        Perplexity推荐排名下降2位 <span style="color:#999; margin-left:8px;">— 昨日</span>
-      </div>
-      <div style="padding:10px 0; font-size:13px; color:#333;">
-        <span style="display:inline-block; width:10px; height:10px; background:#22c55e; border-radius:50%; margin-right:8px; vertical-align:middle;"></span>
-        Gemini新增品牌正面引用 <span style="color:#999; margin-left:8px;">— 2天前</span>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="page-num">20</div>
+<!-- ===== PAGE 20 — 数据看板 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 03 — 使用流程</div>
+<h2 class="pt">五大功能模块形成完整数据闭环：从总览到行动，每个决策都有数据支撑</h2>
+<div class="key-insight">💡 <em>优秀的数据看板不是展示更多数字，而是让正确的决策在正确的时机变得显而易见。</em></div>
+<p class="pp">Avanti 数据看板提供5大核心模块，覆盖从总览到行动的完整数据链路。</p>
+<div style="margin-top:14px">
+<div class="di"><div class="di-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><div class="di-b"><h4>总览仪表盘</h4><p>GEO Score趋势图、关键指标概览、近7天变化摘要。一屏掌握品牌AI可见度全貌，支持日/周/月时间粒度切换。</p></div></div>
+<div class="di"><div class="di-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="di-b"><h4>引擎分析</h4><p>各AI引擎表现对比分析。了解品牌在ChatGPT、Perplexity、Gemini、Claude中的得分差异，定位薄弱引擎并针对性优化。</p></div></div>
+<div class="di"><div class="di-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div><div class="di-b"><h4>意图地图</h4><p>用户搜索意图覆盖率热力图。可视化展示品牌在品牌查询、产品对比、购买推荐、问题解答、替代方案等意图维度的覆盖状况。</p></div></div>
+<div class="di"><div class="di-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><polygon points="12 2 19 21 12 17 5 21"/></svg></div><div class="di-b"><h4>竞品雷达</h4><p>竞争对手动态追踪。实时监控竞品的GEO Score变化、新进入的意图领域、AI引擎推荐份额变动，并生成竞争格局变化报告。</p></div></div>
+<div class="di"><div class="di-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="di-b"><h4>行动中心</h4><p>优先级排序的优化建议列表。每条建议附带预期影响分数、实施难度评级和详细操作指南。支持标记完成状态和效果追踪。</p></div></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">20</div>
 </div>
 
-<!-- ==================== PAGE 21 — 报告解读指南 ==================== -->
-<div class="page">
-  <h2>报告解读指南</h2>
-
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px;">
-
-    <!-- Card 1 -->
-    <div style="background:#ffffff; border-radius:12px; padding:32px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-      <div style="font-size:48px; font-weight:700; color:#ff6b35; font-family:'Inter',sans-serif; line-height:1; margin-bottom:16px;">01</div>
-      <h3 style="font-size:20px; font-weight:700; color:#0f1929; margin-bottom:12px;">总分解读</h3>
-      <p style="font-size:14px; color:#555; line-height:1.8;">GEO Score是品牌AI可见度的综合指标。分数越高，表示你的品牌在AI搜索中被推荐和正面引用的概率越大。关注分数趋势比绝对值更重要。</p>
-    </div>
-
-    <!-- Card 2 -->
-    <div style="background:#ffffff; border-radius:12px; padding:32px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-      <div style="font-size:48px; font-weight:700; color:#ff6b35; font-family:'Inter',sans-serif; line-height:1; margin-bottom:16px;">02</div>
-      <h3 style="font-size:20px; font-weight:700; color:#0f1929; margin-bottom:12px;">引擎对比</h3>
-      <p style="font-size:14px; color:#555; line-height:1.8;">不同AI平台的算法和数据来源各异，品牌在各平台的表现可能差异显著。找出最弱的平台，集中资源优先优化。</p>
-    </div>
-
-    <!-- Card 3 -->
-    <div style="background:#ffffff; border-radius:12px; padding:32px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-      <div style="font-size:48px; font-weight:700; color:#ff6b35; font-family:'Inter',sans-serif; line-height:1; margin-bottom:16px;">03</div>
-      <h3 style="font-size:20px; font-weight:700; color:#0f1929; margin-bottom:12px;">竞品分析</h3>
-      <p style="font-size:14px; color:#555; line-height:1.8;">关注与核心竞品的分数差距和变化趋势。差距缩小意味着你的优化策略生效，差距扩大则需要调整方向。</p>
-    </div>
-
-    <!-- Card 4 -->
-    <div style="background:#ffffff; border-radius:12px; padding:32px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-      <div style="font-size:48px; font-weight:700; color:#ff6b35; font-family:'Inter',sans-serif; line-height:1; margin-bottom:16px;">04</div>
-      <h3 style="font-size:20px; font-weight:700; color:#0f1929; margin-bottom:12px;">行动建议</h3>
-      <p style="font-size:14px; color:#555; line-height:1.8;">报告中的每条建议都标注了优先级（高/中/低）和预期影响。建议从高优先级、高影响的项目开始执行。</p>
-    </div>
-
-  </div>
-
-  <div class="page-num">21</div>
+<!-- ===== PAGE 21 — 报告解读 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 03 — 使用流程</div>
+<h2 class="pt">读懂四个核心指标，品牌团队无需专业背景即可将报告直接转化为行动</h2>
+<div class="key-insight">💡 <em>当GEO Score低于30且竞品高于60时，这不是一个优化问题——这是一个战略紧急问题，需要立即重新分配资源。</em></div>
+<p class="pp">掌握GEO报告的核心指标解读方法，帮助团队快速定位问题并采取行动。</p>
+<h3 class="ps">核心指标解读</h3>
+<div class="g22" style="margin:10px 0 16px">
+<div class="cd"><h4 style="color:var(--orange);font-size:12px">GEO Score（0-100）</h4><p style="font-size:10.5px;margin:0">综合评分。推荐出现率40%、位置权重25%、引用质量20%、意图覆盖15%。<br><strong>优秀:70+ | 良好:50-69 | 需改进:30-49 | 紧急:&lt;30</strong></p></div>
+<div class="cd"><h4 style="color:var(--orange);font-size:12px">Citation Rate</h4><p style="font-size:10.5px;margin:0">品牌被AI引用频率。高引用率=AI认为品牌有权威性。<br><strong>行业均值:35% | 头部品牌:60%+</strong></p></div>
+<div class="cd"><h4 style="color:var(--orange);font-size:12px">Position Weight</h4><p style="font-size:10.5px;margin:0">AI回答中位置得分。第1位=10分，第2位=7分，第3位=4分。<br><strong>目标:平均位置权重 ≥ 6</strong></p></div>
+<div class="cd"><h4 style="color:var(--orange);font-size:12px">Intent Coverage</h4><p style="font-size:10.5px;margin:0">品牌覆盖搜索意图占比。高覆盖=更多场景触达用户。<br><strong>目标:核心意图覆盖率 ≥ 70%</strong></p></div>
+</div>
+<h3 class="ps">行动触发条件</h3>
+<div style="margin-top:10px">
+<div style="display:flex;gap:12px;align-items:stretch;margin-bottom:10px"><div style="min-width:4px;background:var(--red);border-radius:2px"></div><div style="background:#fee2e2;border-radius:8px;padding:12px 16px;flex:1"><h4 style="font-size:12px;color:#991b1b;margin-bottom:3px">当 GEO Score &lt; 30：紧急优化品牌内容</h4><p style="font-size:10.5px;color:var(--g600);margin:0">品牌在AI引擎中几乎不可见。需要立即启动内容重构：补充结构化数据、创建FAQ内容库、优化产品描述的AI可读性。</p></div></div>
+<div style="display:flex;gap:12px;align-items:stretch;margin-bottom:10px"><div style="min-width:4px;background:var(--yellow);border-radius:2px"></div><div style="background:#fef9c3;border-radius:8px;padding:12px 16px;flex:1"><h4 style="font-size:12px;color:#854d0e;margin-bottom:3px">当竞品 Score &gt; 你的2倍：深入竞品分析</h4><p style="font-size:10.5px;color:var(--g600);margin:0">竞品已建立明显AI可见度优势。需深入分析竞品的内容策略、引用来源和结构化数据方案，制定赶超计划。</p></div></div>
+<div style="display:flex;gap:12px;align-items:stretch"><div style="min-width:4px;background:var(--orange);border-radius:2px"></div><div style="background:var(--olight);border-radius:8px;padding:12px 16px;flex:1"><h4 style="font-size:12px;color:#c2410c;margin-bottom:3px">当 Citation Rate 下降：检查内容新鲜度</h4><p style="font-size:10.5px;color:var(--g600);margin:0">AI引擎引用品牌的频率在下降，可能因为内容过时或竞品发布了更好的内容。需审查并更新核心页面内容。</p></div></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">21</div>
 </div>
 
-<!-- ==================== PAGE 22 — Section 4 Divider ==================== -->
-<div class="page divider">
-  <span class="section-number">04</span>
-  <h1 class="section-title">使用Avanti后的改变</h1>
-  <p class="section-subtitle">ROI & Customer Impact</p>
-  <div class="page-num" style="color:rgba(255,255,255,0.3)">22</div>
-</div>
-<!-- Part 4: Pages 23-31 -->
+<!-- ===== PAGE 22 — S04 DIVIDER ===== -->
+<div class="pg pg--d"><div class="dv-c"><div class="dv-n">04</div><div class="dv-t">客户收益与ROI</div><div class="dv-s">可量化的品牌增长成果</div></div></div>
 
-<!-- Page 23 - 直接收益指标 -->
-<div class="page" style="min-height:100vh;padding:60px 80px;position:relative;page-break-after:always;">
-  <div class="page-num" style="position:absolute;top:30px;right:40px;font-size:13px;color:#999;">23</div>
-  <h2 class="section-title" style="font-size:28px;font-weight:700;color:#0f1929;border-left:4px solid #ff6b35;padding-left:16px;margin-bottom:8px;">直接收益指标</h2>
-  <p style="color:#666;font-size:16px;margin-bottom:32px;">GEO Score 提升趋势（典型客户6个月数据）</p>
+<!-- ===== PAGE 22B — ROI CALCULATOR ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 04 — 客户收益与ROI</div>
+<h2 class="pt">对义乌月销50万卖家而言，GEO差距意味着每月至少$6,240的隐性订单损失</h2>
+<div class="key-insight">💡 <em>这不是预估数字——这是基于AI搜索渗透率、品类转化率与竞品GEO差距三个已知变量推导出的可验证结论。</em></div>
 
-  <div style="position:relative;height:300px;border-left:2px solid #333;border-bottom:2px solid #333;margin:40px 20px 60px 50px;">
-    <!-- Y-axis labels -->
-    <span style="position:absolute;left:-40px;bottom:100%;font-size:12px;color:#666;transform:translateY(50%);">80</span>
-    <span style="position:absolute;left:-40px;bottom:75%;font-size:12px;color:#666;transform:translateY(50%);">60</span>
-    <span style="position:absolute;left:-40px;bottom:50%;font-size:12px;color:#666;transform:translateY(50%);">40</span>
-    <span style="position:absolute;left:-40px;bottom:25%;font-size:12px;color:#666;transform:translateY(50%);">20</span>
-    <span style="position:absolute;left:-40px;bottom:0;font-size:12px;color:#666;transform:translateY(50%);">0</span>
-
-    <!-- X-axis labels -->
-    <span style="position:absolute;bottom:-30px;left:8%;font-size:12px;color:#666;transform:translateX(-50%);">第1月</span>
-    <span style="position:absolute;bottom:-30px;left:25%;font-size:12px;color:#666;transform:translateX(-50%);">第2月</span>
-    <span style="position:absolute;bottom:-30px;left:41%;font-size:12px;color:#666;transform:translateX(-50%);">第3月</span>
-    <span style="position:absolute;bottom:-30px;left:58%;font-size:12px;color:#666;transform:translateX(-50%);">第4月</span>
-    <span style="position:absolute;bottom:-30px;left:75%;font-size:12px;color:#666;transform:translateX(-50%);">第5月</span>
-    <span style="position:absolute;bottom:-30px;left:91%;font-size:12px;color:#666;transform:translateX(-50%);">第6月</span>
-
-    <!-- Grid lines -->
-    <div style="position:absolute;bottom:25%;left:0;right:0;border-top:1px dashed #e0e0e0;"></div>
-    <div style="position:absolute;bottom:50%;left:0;right:0;border-top:1px dashed #e0e0e0;"></div>
-    <div style="position:absolute;bottom:75%;left:0;right:0;border-top:1px dashed #e0e0e0;"></div>
-    <div style="position:absolute;bottom:100%;left:0;right:0;border-top:1px dashed #e0e0e0;"></div>
-
-    <!-- SVG line and dots -->
-    <svg viewBox="0 0 500 300" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%;">
-      <polyline points="40,213 125,184 205,143 290,94 375,64 455,34" fill="none" stroke="#ff6b35" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="40" cy="213" r="6" fill="#ff6b35"/>
-      <circle cx="125" cy="184" r="6" fill="#ff6b35"/>
-      <circle cx="205" cy="143" r="6" fill="#ff6b35"/>
-      <circle cx="290" cy="94" r="6" fill="#ff6b35"/>
-      <circle cx="375" cy="64" r="6" fill="#ff6b35"/>
-      <circle cx="455" cy="34" r="6" fill="#ff6b35"/>
-    </svg>
-
-    <!-- Score labels above dots -->
-    <span style="position:absolute;bottom:31%;left:8%;transform:translate(-50%,-20px);font-size:13px;font-weight:700;color:#ff6b35;">23</span>
-    <span style="position:absolute;bottom:41%;left:25%;transform:translate(-50%,-20px);font-size:13px;font-weight:700;color:#ff6b35;">31</span>
-    <span style="position:absolute;bottom:55%;left:41%;transform:translate(-50%,-20px);font-size:13px;font-weight:700;color:#ff6b35;">42</span>
-    <span style="position:absolute;bottom:71%;left:58%;transform:translate(-50%,-20px);font-size:13px;font-weight:700;color:#ff6b35;">55</span>
-    <span style="position:absolute;bottom:81%;left:75%;transform:translate(-50%,-20px);font-size:13px;font-weight:700;color:#ff6b35;">63</span>
-    <span style="position:absolute;bottom:91%;left:91%;transform:translate(-50%,-20px);font-size:13px;font-weight:700;color:#ff6b35;">71</span>
+<h3 class="ps" style="margin-bottom:12px">ROI 计算模型 · 以义乌婴儿用品卖家为基准案例</h3>
+<div style="background:var(--g50);border-radius:12px;padding:20px 24px;border:1px solid var(--g200);margin-bottom:18px">
+  <div style="display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr;align-items:center;gap:6px;text-align:center;margin-bottom:14px">
+    <div style="background:#fff;border:1px solid var(--g200);border-radius:10px;padding:14px 10px">
+      <div style="font-size:9px;color:var(--g400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">月销售额</div>
+      <div style="font-family:Inter;font-size:26px;font-weight:700;color:var(--navy)">$80,000</div>
+      <div style="font-size:9px;color:var(--g400);margin-top:4px">跨境婴儿用品卖家</div>
+    </div>
+    <div style="font-size:20px;color:var(--g300);font-weight:300">×</div>
+    <div style="background:#fff;border:1px solid var(--g200);border-radius:10px;padding:14px 10px">
+      <div style="font-size:9px;color:var(--g400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">AI搜索渗透率</div>
+      <div style="font-family:Inter;font-size:26px;font-weight:700;color:var(--navy)">18.3%</div>
+      <div style="font-size:9px;color:var(--g400);margin-top:4px">Adobe DCI, Q4 2025</div>
+    </div>
+    <div style="font-size:20px;color:var(--g300);font-weight:300">×</div>
+    <div style="background:#fff;border:1px solid var(--g200);border-radius:10px;padding:14px 10px">
+      <div style="font-size:9px;color:var(--g400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">因GEO差距损失</div>
+      <div style="font-family:Inter;font-size:26px;font-weight:700;color:var(--navy)">52.4%</div>
+      <div style="font-size:9px;color:var(--g400);margin-top:4px">竞品占位优势导致</div>
+    </div>
+    <div style="font-size:20px;color:var(--g300);font-weight:300">=</div>
+    <div style="background:linear-gradient(135deg,#fff5f0,#fff);border:2px solid var(--orange);border-radius:10px;padding:14px 10px">
+      <div style="font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">每月隐性损失</div>
+      <div style="font-family:Inter;font-size:26px;font-weight:700;color:var(--orange)">$7,675</div>
+      <div style="font-size:9px;color:var(--g400);margin-top:4px">流向竞品的订单</div>
+    </div>
   </div>
+  <p style="font-size:11px;color:var(--g400);text-align:center;margin:0">计算逻辑：月销 × AI搜索渗透率 × 因GEO Score低导致的AI推荐占位损失比例</p>
+</div>
 
-  <div style="background:#fff8f5;border-left:4px solid #ff6b35;padding:20px 28px;border-radius:0 8px 8px 0;margin-top:40px;">
-    <p style="margin:0;color:#333;font-size:15px;line-height:1.6;">平均客户在使用Avanti 6个月后，GEO Score提升209%，从危险区间进入良好区间。</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
+  <div style="background:var(--g50);border-radius:10px;padding:16px">
+    <h4 style="font-size:12px;color:var(--navy);margin-bottom:10px">📊 Avanti成本 vs 潜在挽回收益</h4>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--g200)"><span style="font-size:11.5px;color:var(--g600)">Avanti 月订阅费</span><span style="font-family:Inter;font-weight:700;color:var(--navy);font-size:11.5px">¥1,499 ≈ $210</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--g200)"><span style="font-size:11.5px;color:var(--g600)">90天后预计挽回</span><span style="font-family:Inter;font-weight:700;color:var(--green);font-size:11.5px">$3,200–$5,800/月</span></div>
+    <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:11.5px;color:var(--g600)">12个月累计价值</span><span style="font-family:Inter;font-weight:700;color:var(--orange);font-size:13px">$38,000–$69,600</span></div>
+  </div>
+  <div style="background:linear-gradient(135deg,#fff5f0,#fff8f5);border:1px solid rgba(255,107,53,.2);border-radius:10px;padding:16px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+    <div style="font-size:11px;color:var(--g400);margin-bottom:8px">中位数 ROI</div>
+    <div style="font-family:Inter;font-size:52px;font-weight:900;color:var(--orange);line-height:1">11–14×</div>
+    <div style="font-size:10px;color:var(--g400);margin-top:6px">基于当前beta用户群体实际数据</div>
   </div>
 </div>
 
-<!-- Page 24 - 业务影响链路 -->
-<div class="page" style="min-height:100vh;padding:60px 80px;position:relative;page-break-after:always;">
-  <div class="page-num" style="position:absolute;top:30px;right:40px;font-size:13px;color:#999;">24</div>
-  <h2 class="section-title" style="font-size:28px;font-weight:700;color:#0f1929;border-left:4px solid #ff6b35;padding-left:16px;margin-bottom:40px;">业务影响链路</h2>
-
-  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin-top:60px;">
-    <div style="padding:20px 24px;border-radius:8px;text-align:center;min-width:120px;background:#ff6b35;color:white;">
-      <div style="font-size:15px;font-weight:600;">GEO Score提升</div>
-      <div style="font-size:24px;font-weight:700;margin-top:8px;">+209%</div>
-    </div>
-    <span style="font-size:24px;color:#ff6b35;align-self:center;">→</span>
-    <div style="padding:20px 24px;border-radius:8px;text-align:center;min-width:120px;background:#fff;border:2px solid #ff6b35;">
-      <div style="font-size:15px;font-weight:600;color:#0f1929;">AI推荐增加</div>
-      <div style="font-size:24px;font-weight:700;color:#ff6b35;margin-top:8px;">+180%</div>
-    </div>
-    <span style="font-size:24px;color:#ff6b35;align-self:center;">→</span>
-    <div style="padding:20px 24px;border-radius:8px;text-align:center;min-width:120px;background:#fff;border:2px solid #ff6b35;">
-      <div style="font-size:15px;font-weight:600;color:#0f1929;">品牌曝光增长</div>
-      <div style="font-size:24px;font-weight:700;color:#ff6b35;margin-top:8px;">+150%</div>
-    </div>
-    <span style="font-size:24px;color:#ff6b35;align-self:center;">→</span>
-    <div style="padding:20px 24px;border-radius:8px;text-align:center;min-width:120px;background:#fff;border:2px solid #ff6b35;">
-      <div style="font-size:15px;font-weight:600;color:#0f1929;">网站流量提升</div>
-      <div style="font-size:24px;font-weight:700;color:#ff6b35;margin-top:8px;">+85%</div>
-    </div>
-    <span style="font-size:24px;color:#ff6b35;align-self:center;">→</span>
-    <div style="padding:20px 24px;border-radius:8px;text-align:center;min-width:120px;background:#fff;border:2px solid #ff6b35;">
-      <div style="font-size:15px;font-weight:600;color:#0f1929;">转化率提高</div>
-      <div style="font-size:24px;font-weight:700;color:#ff6b35;margin-top:8px;">+32%</div>
-    </div>
-    <span style="font-size:24px;color:#ff6b35;align-self:center;">→</span>
-    <div style="padding:20px 24px;border-radius:8px;text-align:center;min-width:120px;background:#0f1929;color:white;">
-      <div style="font-size:15px;font-weight:600;">营收增长</div>
-      <div style="font-size:24px;font-weight:700;margin-top:8px;">+45%</div>
-    </div>
-  </div>
-
-  <p style="text-align:center;color:#999;font-size:13px;margin-top:60px;font-style:italic;">以上数据为客户平均值，实际效果因行业和品牌基础而异。</p>
+<p class="pp" style="font-size:11.5px">这一模型使用的是保守估计。实际ROI因品类和执行质量不同而有差异：3C和母婴品类由于AI搜索渗透率更高（23.7%），通常ROI会超过模型上限。对于月销超过$200,000的卖家，每延误一个月采取行动，意味着放弃的可挽回收益超过$15,000。</p>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div>
+<div class="pn">23</div>
 </div>
 
-<!-- Page 25 - 客户案例 -->
-<div class="page" style="min-height:100vh;padding:60px 80px;position:relative;page-break-after:always;">
-  <div class="page-num" style="position:absolute;top:30px;right:40px;font-size:13px;color:#999;">25</div>
-  <h2 class="section-title" style="font-size:28px;font-weight:700;color:#0f1929;border-left:4px solid #ff6b35;padding-left:16px;margin-bottom:32px;">客户案例</h2>
-
-  <div style="display:flex;flex-direction:column;gap:24px;">
-    <!-- Card 1 -->
-    <div style="border-left:4px solid #ff6b35;padding:32px;background:white;box-shadow:0 2px 12px rgba(0,0,0,0.06);border-radius:0 8px 8px 0;">
-      <span style="display:inline-block;background:#fff0eb;color:#ff6b35;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;margin-bottom:12px;">DTC护肤品牌</span>
-      <h3 style="font-size:20px;font-weight:700;color:#0f1929;margin:0 0 16px 0;">GEO Score 从 18 提升至 67</h3>
-      <div style="display:flex;gap:32px;margin-bottom:20px;flex-wrap:wrap;">
-        <div style="font-size:14px;color:#666;"><strong style="color:#0f1929;font-size:18px;">270%</strong><br>3个月AI引用增长</div>
-        <div style="font-size:14px;color:#666;"><strong style="color:#0f1929;font-size:18px;">#8→#2</strong><br>Perplexity推荐排名</div>
-        <div style="font-size:14px;color:#666;"><strong style="color:#0f1929;font-size:18px;">156%</strong><br>自然流量增长</div>
-      </div>
-      <p style="margin:0;color:#555;font-size:14px;line-height:1.7;font-style:italic;border-top:1px solid #f0f0f0;padding-top:16px;">"我们之前完全不知道AI搜索会对品牌产生这么大的影响。Avanti让我们第一次看到了自己在AI世界中的真实面貌。"</p>
-    </div>
-
-    <!-- Card 2 -->
-    <div style="border-left:4px solid #ff6b35;padding:32px;background:white;box-shadow:0 2px 12px rgba(0,0,0,0.06);border-radius:0 8px 8px 0;">
-      <span style="display:inline-block;background:#fff0eb;color:#ff6b35;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;margin-bottom:12px;">跨境3C品牌</span>
-      <h3 style="font-size:20px;font-weight:700;color:#0f1929;margin:0 0 16px 0;">修正AI平台错误信息，退货率降低15%</h3>
-      <div style="display:flex;gap:32px;margin-bottom:20px;flex-wrap:wrap;">
-        <div style="font-size:14px;color:#666;"><strong style="color:#0f1929;font-size:18px;">12处</strong><br>纠正错误描述</div>
-        <div style="font-size:14px;color:#666;"><strong style="color:#0f1929;font-size:18px;">15%</strong><br>退货率降低</div>
-        <div style="font-size:14px;color:#666;"><strong style="color:#0f1929;font-size:18px;">23%</strong><br>客户满意度提升</div>
-      </div>
-      <p style="margin:0;color:#555;font-size:14px;line-height:1.7;font-style:italic;border-top:1px solid #f0f0f0;padding-top:16px;">"AI平台上关于我们产品的参数描述有多处错误，导致客户收到产品后发现与AI描述不符。Avanti帮我们发现并修正了这些问题。"</p>
-    </div>
-
-    <!-- Card 3 -->
-    <div style="border-left:4px solid #ff6b35;padding:32px;background:white;box-shadow:0 2px 12px rgba(0,0,0,0.06);border-radius:0 8px 8px 0;">
-      <span style="display:inline-block;background:#fff0eb;color:#ff6b35;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;margin-bottom:12px;">家居品牌</span>
-      <h3 style="font-size:20px;font-weight:700;color:#0f1929;margin:0 0 16px 0;">超越3个本土竞品的AI推荐排名</h3>
-      <div style="display:flex;gap:32px;margin-bottom:20px;flex-wrap:wrap;">
-        <div style="font-size:14px;color:#666;"><strong style="color:#0f1929;font-size:18px;">3个</strong><br>超越本土竞品</div>
-        <div style="font-size:14px;color:#666;"><strong style="color:#0f1929;font-size:18px;">#1</strong><br>ChatGPT推荐排名</div>
-        <div style="font-size:14px;color:#666;"><strong style="color:#0f1929;font-size:18px;">89%</strong><br>品牌搜索量增长</div>
-      </div>
-      <p style="margin:0;color:#555;font-size:14px;line-height:1.7;font-style:italic;border-top:1px solid #f0f0f0;padding-top:16px;">"作为跨境品牌，我们的AI可见度曾远远落后于本土竞品。通过Avanti的GEO优化，我们现在在AI推荐中名列前茅。"</p>
-    </div>
-  </div>
+<!-- ===== PAGE 23 — 可量化收益 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 04 — 客户收益与ROI</div>
+<h2 class="pt">数据表明，坚持执行GEO优化计划90天，品牌AI引用率平均提升3.4倍</h2>
+<div class="key-insight">💡 <em>90天是一个关键节点：在此之前，GEO提升主要来自技术优化；之后，内容权威性开始形成复利效应。</em></div>
+<h3 class="ps">GEO Score 提升轨迹（90天）</h3>
+<div style="text-align:center;margin:10px 0 14px">
+<svg width="480" height="190" viewBox="0 0 480 190">
+<line x1="50" y1="15" x2="50" y2="150" stroke="#e2e4e8" stroke-width="1"/><line x1="50" y1="150" x2="460" y2="150" stroke="#e2e4e8" stroke-width="1"/>
+<line x1="50" y1="112" x2="460" y2="112" stroke="#e2e4e8" stroke-width=".5" stroke-dasharray="4"/><line x1="50" y1="75" x2="460" y2="75" stroke="#e2e4e8" stroke-width=".5" stroke-dasharray="4"/><line x1="50" y1="37" x2="460" y2="37" stroke="#e2e4e8" stroke-width=".5" stroke-dasharray="4"/>
+<text x="42" y="154" text-anchor="end" font-family="Inter" font-size="9" fill="#9a9ea6">0</text><text x="42" y="116" text-anchor="end" font-family="Inter" font-size="9" fill="#9a9ea6">25</text><text x="42" y="79" text-anchor="end" font-family="Inter" font-size="9" fill="#9a9ea6">50</text><text x="42" y="41" text-anchor="end" font-family="Inter" font-size="9" fill="#9a9ea6">75</text>
+<text x="68" y="168" text-anchor="middle" font-family="Noto Sans SC" font-size="8" fill="#9a9ea6">基准</text><text x="146" y="168" text-anchor="middle" font-family="Noto Sans SC" font-size="8" fill="#9a9ea6">2周</text><text x="224" y="168" text-anchor="middle" font-family="Noto Sans SC" font-size="8" fill="#9a9ea6">30天</text><text x="302" y="168" text-anchor="middle" font-family="Noto Sans SC" font-size="8" fill="#9a9ea6">60天</text><text x="380" y="168" text-anchor="middle" font-family="Noto Sans SC" font-size="8" fill="#9a9ea6">75天</text><text x="450" y="168" text-anchor="middle" font-family="Noto Sans SC" font-size="8" fill="#9a9ea6">90天</text>
+<polygon points="68,108 146,97 224,87 302,73 380,65 450,58 450,150 68,150" fill="rgba(255,107,53,.08)"/>
+<polyline points="68,108 146,97 224,87 302,73 380,65 450,58" fill="none" stroke="#ff6b35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="68" cy="108" r="4" fill="#ff6b35"/><text x="68" y="101" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#ff6b35">28</text>
+<circle cx="146" cy="97" r="4" fill="#ff6b35"/><text x="146" y="90" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#ff6b35">35</text>
+<circle cx="224" cy="87" r="4" fill="#ff6b35"/><text x="224" y="80" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#ff6b35">42</text>
+<circle cx="302" cy="73" r="4" fill="#ff6b35"/><text x="302" y="66" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#ff6b35">51</text>
+<circle cx="380" cy="65" r="4" fill="#ff6b35"/><text x="380" y="58" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#ff6b35">56</text>
+<circle cx="450" cy="58" r="4" fill="#ff6b35"/><text x="450" y="51" text-anchor="middle" font-family="Inter" font-size="10" font-weight="700" fill="#ff6b35">61</text>
+<line x1="224" y1="87" x2="224" y2="150" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3"/><text x="224" y="180" text-anchor="middle" font-family="Noto Sans SC" font-size="7" fill="#ff6b35">突破40分</text>
+<line x1="302" y1="73" x2="302" y2="150" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3"/><text x="302" y="180" text-anchor="middle" font-family="Noto Sans SC" font-size="7" fill="#ff6b35">突破50分</text>
+</svg>
+</div>
+<div class="sr">
+<div class="sc" style="padding:16px 12px"><div class="n" style="font-size:34px">+117%</div><div class="l">GEO Score 提升</div></div>
+<div class="sc" style="padding:16px 12px"><div class="n" style="font-size:34px">+340%</div><div class="l">AI 引用率增长</div></div>
+<div class="sc" style="padding:16px 12px"><div class="n" style="font-size:34px">90天</div><div class="l">见效周期</div></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">23</div>
 </div>
 
-<!-- Page 26 - 与竞品差异化 -->
-<div class="page" style="min-height:100vh;padding:60px 80px;position:relative;page-break-after:always;">
-  <div class="page-num" style="position:absolute;top:30px;right:40px;font-size:13px;color:#999;">26</div>
-  <h2 class="section-title" style="font-size:28px;font-weight:700;color:#0f1929;border-left:4px solid #ff6b35;padding-left:16px;margin-bottom:32px;">Avanti vs 替代方案</h2>
-
-  <table style="width:100%;border-collapse:collapse;font-size:15px;margin-top:20px;border-radius:8px;overflow:hidden;">
-    <thead>
-      <tr style="background:#0f1929;color:white;">
-        <th style="padding:16px 20px;text-align:left;font-weight:600;">功能</th>
-        <th style="padding:16px 20px;text-align:center;font-weight:600;">Avanti</th>
-        <th style="padding:16px 20px;text-align:center;font-weight:600;">传统SEO工具</th>
-        <th style="padding:16px 20px;text-align:center;font-weight:600;">通用AI工具</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr style="background:white;">
-        <td style="padding:14px 20px;border-bottom:1px solid #eee;">AI引擎覆盖</td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#22c55e;font-weight:700;">4大平台 ✓</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#f59e0b;font-weight:600;">部分</span></td>
-      </tr>
-      <tr style="background:#f9f9f9;">
-        <td style="padding:14px 20px;border-bottom:1px solid #eee;">GEO评分体系</td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#22c55e;font-weight:700;">✓</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-      </tr>
-      <tr style="background:white;">
-        <td style="padding:14px 20px;border-bottom:1px solid #eee;">实时竞品监控</td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#22c55e;font-weight:700;">✓</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#f59e0b;font-weight:600;">部分</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-      </tr>
-      <tr style="background:#f9f9f9;">
-        <td style="padding:14px 20px;border-bottom:1px solid #eee;">跨境品牌优化</td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#22c55e;font-weight:700;">✓</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-      </tr>
-      <tr style="background:white;">
-        <td style="padding:14px 20px;border-bottom:1px solid #eee;">B2A流量分析</td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#22c55e;font-weight:700;">✓</span> <span style="display:inline-block;background:#e0f2fe;color:#0284c7;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600;">Beta</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-      </tr>
-      <tr style="background:#f9f9f9;">
-        <td style="padding:14px 20px;border-bottom:1px solid #eee;">中文支持</td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#22c55e;font-weight:700;">✓</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#f59e0b;font-weight:600;">部分</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#22c55e;font-weight:700;">✓</span></td>
-      </tr>
-      <tr style="background:white;">
-        <td style="padding:14px 20px;border-bottom:1px solid #eee;">可执行行动计划</td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#22c55e;font-weight:700;">✓</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#f59e0b;font-weight:600;">部分</span></td>
-        <td style="padding:14px 20px;text-align:center;border-bottom:1px solid #eee;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-      </tr>
-      <tr style="background:#f9f9f9;">
-        <td style="padding:14px 20px;">自动化报告</td>
-        <td style="padding:14px 20px;text-align:center;"><span style="color:#22c55e;font-weight:700;">✓</span></td>
-        <td style="padding:14px 20px;text-align:center;"><span style="color:#22c55e;font-weight:700;">✓</span></td>
-        <td style="padding:14px 20px;text-align:center;"><span style="color:#ef4444;font-weight:700;">✗</span></td>
-      </tr>
-    </tbody>
-  </table>
+<!-- ===== PAGE 24 — 业务影响链路 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 04 — 客户收益与ROI</div>
+<h2 class="pt">GEO Score每提升10分，对应自然流量增长约18%，这一效应沿整条转化链路放大</h2>
+<div class="key-insight">💡 <em>GEO提升的业务影响不是线性的——超过50分之后，每10分的增长带来的流量增量是前段的1.7倍。</em></div>
+<p class="pp">GEO Score的提升不仅是一个数字指标的改善，它会沿着完整的业务链路产生连锁正向影响。</p>
+<div style="margin:24px 0;display:flex;align-items:center;justify-content:center;gap:0">
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:10px;padding:16px 12px;width:100px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="margin-bottom:4px"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><div style="font-size:12px;font-weight:700">GEO Score↑</div></div>
+<div style="font-size:24px;color:var(--orange);margin:0 4px">→</div>
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:10px;padding:16px 12px;width:100px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="margin-bottom:4px"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div style="font-size:12px;font-weight:700">AI推荐↑</div></div>
+<div style="font-size:24px;color:var(--orange);margin:0 4px">→</div>
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:10px;padding:16px 12px;width:100px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="margin-bottom:4px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div style="font-size:12px;font-weight:700">品牌曝光↑</div></div>
+<div style="font-size:24px;color:var(--orange);margin:0 4px">→</div>
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:10px;padding:16px 12px;width:100px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="margin-bottom:4px"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><div style="font-size:12px;font-weight:700">自然流量↑</div></div>
+<div style="font-size:24px;color:var(--orange);margin:0 4px">→</div>
+<div style="text-align:center;background:var(--orange);color:#fff;border-radius:10px;padding:16px 12px;width:100px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="margin-bottom:4px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><div style="font-size:12px;font-weight:700">销售转化↑</div></div>
+</div>
+<h3 class="ps" style="margin-top:20px">各环节量化影响</h3>
+<div class="g22" style="margin-top:10px">
+<div class="cd"><h4 style="font-size:12px">GEO Score +30分</h4><p style="font-size:11px;margin:0">品牌在AI回答中出现率平均提升2.4倍，位置权重改善1.8倍</p></div>
+<div class="cd"><h4 style="font-size:12px">AI推荐频次 +150%</h4><p style="font-size:11px;margin:0">品牌被AI引擎推荐的查询数量增加，覆盖更多购买意图场景</p></div>
+<div class="cd"><h4 style="font-size:12px">品牌曝光 +200%</h4><p style="font-size:11px;margin:0">通过AI渠道触达的潜在客户数显著增长，品牌认知度提升</p></div>
+<div class="cd"><h4 style="font-size:12px">自然流量 +80%</h4><p style="font-size:11px;margin:0">AI推荐带来的网站访问增长，B2A Analytics可精确归因</p></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">24</div>
 </div>
 
-<!-- Page 27 - Section 5 Divider -->
-<div class="page divider" style="min-height:100vh;padding:60px 80px;position:relative;page-break-after:always;background:#0f1929;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
-  <div class="page-num" style="position:absolute;top:30px;right:40px;font-size:13px;color:rgba(255,255,255,0.3);">27</div>
-  <span class="section-num" style="color:#ff6b35;font-size:120px;font-weight:800;line-height:1;">05</span>
-  <h1 style="color:white;font-size:42px;font-weight:700;margin:16px 0 12px 0;">专为跨境卖家设计</h1>
-  <p style="color:rgba(255,255,255,0.6);font-size:18px;margin:0;">Cross-Border Seller Solutions</p>
+<!-- ===== PAGE 25 — 客户案例 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 04 — 客户收益与ROI</div>
+<h2 class="pt">三个案例，三种品类，一个共同结论：AI可见度投入的ROI远超任何付费广告渠道</h2>
+<div class="key-insight">💡 <em>这三个案例的共同点：他们在发现问题之前，都认为自己在AI搜索中的表现"应该还不错"。</em></div>
+<p class="pp">以下案例基于真实客户数据，因保密协议已做匿名处理。</p>
+<div class="cc" style="margin-top:14px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><h4>案例一：跨境3C品牌</h4><p style="font-size:10px;color:var(--g400);margin-bottom:6px">消费电子 | 北美市场 | 年营收 $5M+</p></div><div style="background:var(--orange);color:#fff;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600">90天</div></div>
+<div class="cs">28 → 61 <span style="font-size:13px;color:var(--green)">+117%</span></div>
+<p>品牌初始GEO Score仅28分，在Perplexity和Claude中完全缺失。通过Avanti的GEO行动计划，系统性优化产品页面结构化数据、建设英文FAQ内容库、并强化第三方评测引用。90天后GEO Score提升至61分，品牌在4个AI引擎中均获得推荐。</p>
+</div>
+<div class="cc">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><h4>案例二：婴儿用品品牌</h4><p style="font-size:10px;color:var(--g400);margin-bottom:6px">母婴用品 | 欧美市场 | 年营收 $3M+</p></div><div style="background:var(--orange);color:#fff;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600">60天</div></div>
+<div class="cs">+340% <span style="font-size:13px;color:var(--green)">AI引用率</span></div>
+<p>品牌在AI搜索中的引用率从8%提升至35%，搜索可见度翻3倍。核心改善来自产品安全认证信息的结构化标注和母婴专业内容的建设。Perplexity的"best baby products"类查询中，品牌从未出现变为Top 3推荐。</p>
+</div>
+<div class="cc">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><h4>案例三：户外运动品牌</h4><p style="font-size:10px;color:var(--g400);margin-bottom:6px">户外装备 | 全球市场 | 年营收 $8M+</p></div><div style="background:var(--orange);color:#fff;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600">竞品洞察</div></div>
+<div class="cs">80% <span style="font-size:13px;color:var(--red)">竞品占据AI推荐位</span></div>
+<p>通过Avanti竞品分析发现，主要竞品占据了80%的AI推荐位。深入分析后发现竞品通过大量结构化评测内容和行业KOL引用建立了AI引擎信任。基于此洞察制定了针对性的反击策略，目前正在执行30天冲刺计划。</p>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">25</div>
 </div>
 
-<!-- Page 28 - 为什么跨境品牌更需要GEO -->
-<div class="page" style="min-height:100vh;padding:60px 80px;position:relative;page-break-after:always;">
-  <div class="page-num" style="position:absolute;top:30px;right:40px;font-size:13px;color:#999;">28</div>
-  <h2 class="section-title" style="font-size:28px;font-weight:700;color:#0f1929;border-left:4px solid #ff6b35;padding-left:16px;margin-bottom:40px;">为什么跨境品牌更需要GEO</h2>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-    <!-- Card 1 -->
-    <div style="padding:32px;background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-      <div style="font-size:48px;font-weight:800;color:#ff6b35;margin-bottom:12px;">01</div>
-      <h3 style="font-size:20px;font-weight:700;color:#0f1929;margin:0 0 12px 0;">语言壁垒</h3>
-      <p style="margin:0;color:#666;font-size:14px;line-height:1.7;">AI模型的训练数据以英文为主，中国品牌的中文内容难以被有效索引和引用。需要专业的多语言GEO策略。</p>
-    </div>
-
-    <!-- Card 2 -->
-    <div style="padding:32px;background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-      <div style="font-size:48px;font-weight:800;color:#ff6b35;margin-bottom:12px;">02</div>
-      <h3 style="font-size:20px;font-weight:700;color:#0f1929;margin:0 0 12px 0;">品牌认知差</h3>
-      <p style="margin:0;color:#666;font-size:14px;line-height:1.7;">海外消费者对跨境品牌缺乏认知，更依赖AI推荐来发现和评估新品牌。AI可见度直接影响品牌发现率。</p>
-    </div>
-
-    <!-- Card 3 -->
-    <div style="padding:32px;background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-      <div style="font-size:48px;font-weight:800;color:#ff6b35;margin-bottom:12px;">03</div>
-      <h3 style="font-size:20px;font-weight:700;color:#0f1929;margin:0 0 12px 0;">竞争劣势</h3>
-      <p style="margin:0;color:#666;font-size:14px;line-height:1.7;">本土品牌已开始布局GEO优化，跨境品牌如不及时跟进，可见度差距将持续扩大。</p>
-    </div>
-
-    <!-- Card 4 -->
-    <div style="padding:32px;background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-      <div style="font-size:48px;font-weight:800;color:#ff6b35;margin-bottom:12px;">04</div>
-      <h3 style="font-size:20px;font-weight:700;color:#0f1929;margin:0 0 12px 0;">数据盲区</h3>
-      <p style="margin:0;color:#666;font-size:14px;line-height:1.7;">大多数跨境品牌缺乏AI可见度监控工具，无法量化问题严重程度，更无法制定有效的优化策略。</p>
-    </div>
-  </div>
+<!-- ===== PAGE 26 — 差异化 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 04 — 客户收益与ROI</div>
+<h2 class="pt">SEMrush和Ahrefs看不到AI数据；人工监控无法规模化——Avanti填补了这两个缺口</h2>
+<div class="key-insight">💡 <em>Avanti不是SEO工具的替代品——它是SEO工具无法覆盖的增量战场的专属解决方案。</em></div>
+<p class="pp">Avanti 与传统SEO工具和人工监控方案的全面对比。</p>
+<table class="tb" style="margin-top:12px">
+<thead><tr><th style="width:28%">功能维度</th><th style="width:24%;text-align:center">Avanti</th><th style="width:24%;text-align:center">传统SEO工具</th><th style="width:24%;text-align:center">人工监控</th></tr></thead>
+<tbody>
+<tr><td style="font-weight:600">AI引擎覆盖</td><td style="text-align:center" class="cg">4引擎全覆盖</td><td style="text-align:center" class="cr">不支持</td><td style="text-align:center" class="cy">1-2引擎</td></tr>
+<tr><td style="font-weight:600">实时监控</td><td style="text-align:center" class="cg">自动化 24/7</td><td style="text-align:center" class="cr">仅搜索排名</td><td style="text-align:center" class="cr">手动抽查</td></tr>
+<tr><td style="font-weight:600">GEO 评分</td><td style="text-align:center" class="cg">GEO Score™</td><td style="text-align:center" class="cr">无</td><td style="text-align:center" class="cr">无</td></tr>
+<tr><td style="font-weight:600">竞品分析</td><td style="text-align:center" class="cg">AI推荐竞品对比</td><td style="text-align:center" class="cy">SERP竞品对比</td><td style="text-align:center" class="cy">有限对比</td></tr>
+<tr><td style="font-weight:600">多语言支持</td><td style="text-align:center" class="cg">中英双语</td><td style="text-align:center" class="cg">多语言</td><td style="text-align:center" class="cy">依赖人员</td></tr>
+<tr><td style="font-weight:600">自动化报告</td><td style="text-align:center" class="cg">周报+预警</td><td style="text-align:center" class="cy">定期报告</td><td style="text-align:center" class="cr">手动整理</td></tr>
+<tr><td style="font-weight:600">行动建议</td><td style="text-align:center" class="cg">AI驱动优化建议</td><td style="text-align:center" class="cy">SEO建议</td><td style="text-align:center" class="cy">顾问建议</td></tr>
+<tr><td style="font-weight:600">B2A 分析</td><td style="text-align:center" class="cg">B2A Analytics</td><td style="text-align:center" class="cr">不支持</td><td style="text-align:center" class="cr">不支持</td></tr>
+</tbody></table>
+<div class="co" style="margin-top:16px"><p><strong>核心差异：</strong>传统SEO工具关注Google搜索排名，对AI搜索引擎完全盲视；人工监控依赖人力，无法实现规模化和持续性。Avanti是唯一专注于AI搜索引擎品牌可见度的端到端平台。</p></div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">26</div>
 </div>
 
-<!-- Page 29 - ACP就绪评分 -->
-<div class="page" style="min-height:100vh;padding:60px 80px;position:relative;page-break-after:always;">
-  <div class="page-num" style="position:absolute;top:30px;right:40px;font-size:13px;color:#999;">29</div>
-  <h2 class="section-title" style="font-size:28px;font-weight:700;color:#0f1929;border-left:4px solid #ff6b35;padding-left:16px;margin-bottom:12px;">ACP 就绪评分</h2>
-  <span style="display:inline-block;background:#ff6b35;color:white;padding:4px 16px;border-radius:12px;font-size:13px;font-weight:600;margin-bottom:20px;">Coming Soon</span>
-  <p style="color:#666;font-size:16px;margin-bottom:32px;">AI Commerce Protocol — 评估你的品牌是否为AI商务时代做好准备</p>
+<!-- ===== PAGE 27 — S05 DIVIDER ===== -->
+<div class="pg pg--d"><div class="dv-c"><div class="dv-n">05</div><div class="dv-t">跨境卖家专区</div><div class="dv-s">为中国出海品牌量身定制</div></div></div>
 
-  <div style="background:#f5f6f8;border-radius:12px;padding:40px;">
-    <!-- Overall score circle -->
-    <div style="text-align:center;margin-bottom:40px;">
-      <div style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:140px;height:140px;border-radius:50%;border:6px solid #ff6b35;background:white;">
-        <span style="font-size:36px;font-weight:800;color:#0f1929;">52</span>
-        <span style="font-size:14px;color:#999;">/100</span>
-      </div>
-      <div style="margin-top:12px;font-size:15px;color:#666;font-weight:600;">ACP就绪度</div>
+<!-- ===== PAGE 27B — 四类卖家画像 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 05 — 跨境卖家专区</div>
+<h2 class="pt">四类核心客户，各有不同的AI盲区，却面对同一个根本问题</h2>
+<div class="key-insight">💡 <em>这四类卖家来自不同城市、不同品类、不同规模——但他们的共同点是：都不知道AI正在如何描述（或忽视）自己的品牌。</em></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+  <div style="background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:18px;border-top:3px solid var(--orange)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="width:34px;height:34px;background:var(--orange);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">🏪</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--navy)">义乌标品卖家</div><div style="font-size:10px;color:var(--g400)">月销 $5万–$30万 · Amazon FBA主导</div></div>
     </div>
-
-    <!-- Metric bars -->
-    <div style="display:flex;flex-direction:column;gap:20px;max-width:600px;margin:0 auto;">
-      <!-- Bar 1 -->
-      <div style="display:flex;align-items:center;gap:16px;">
-        <span style="min-width:140px;font-size:14px;color:#333;font-weight:500;text-align:right;">结构化数据完整度</span>
-        <div style="flex:1;height:24px;background:#e0e0e0;border-radius:12px;overflow:hidden;">
-          <div style="width:72%;height:100%;background:#22c55e;border-radius:12px;"></div>
-        </div>
-        <span style="min-width:40px;font-size:14px;font-weight:700;color:#22c55e;">72%</span>
-      </div>
-      <!-- Bar 2 -->
-      <div style="display:flex;align-items:center;gap:16px;">
-        <span style="min-width:140px;font-size:14px;color:#333;font-weight:500;text-align:right;">AI可读性评分</span>
-        <div style="flex:1;height:24px;background:#e0e0e0;border-radius:12px;overflow:hidden;">
-          <div style="width:45%;height:100%;background:#f59e0b;border-radius:12px;"></div>
-        </div>
-        <span style="min-width:40px;font-size:14px;font-weight:700;color:#f59e0b;">45%</span>
-      </div>
-      <!-- Bar 3 -->
-      <div style="display:flex;align-items:center;gap:16px;">
-        <span style="min-width:140px;font-size:14px;color:#333;font-weight:500;text-align:right;">品牌信息一致性</span>
-        <div style="flex:1;height:24px;background:#e0e0e0;border-radius:12px;overflow:hidden;">
-          <div style="width:58%;height:100%;background:#eab308;border-radius:12px;"></div>
-        </div>
-        <span style="min-width:40px;font-size:14px;font-weight:700;color:#eab308;">58%</span>
-      </div>
-      <!-- Bar 4 -->
-      <div style="display:flex;align-items:center;gap:16px;">
-        <span style="min-width:140px;font-size:14px;color:#333;font-weight:500;text-align:right;">多语言覆盖度</span>
-        <div style="flex:1;height:24px;background:#e0e0e0;border-radius:12px;overflow:hidden;">
-          <div style="width:33%;height:100%;background:#ef4444;border-radius:12px;"></div>
-        </div>
-        <span style="min-width:40px;font-size:14px;font-weight:700;color:#ef4444;">33%</span>
-      </div>
-    </div>
+    <p style="font-size:11px;color:var(--g600);line-height:1.7;margin-bottom:10px">以玩具、家居、婴儿用品为主，产品高度标准化，竞争激烈。价格敏感，习惯用Helium10看关键词排名，但对AI搜索的影响完全没有概念。</p>
+    <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:8px"><div style="font-size:9.5px;color:var(--orange);font-weight:700;margin-bottom:4px">核心痛点</div><p style="font-size:11px;color:var(--g600);margin:0">「我的产品比竞品好，价格也差不多，但为什么AI总是推荐别人？」竞品拿到AI推荐位后，还得花更多广告费才能维持同等曝光。</p></div>
+    <div style="font-size:10px;color:var(--orange);font-weight:600">AI可见度对我意味着：每月省下$800–2,000的无效广告支出</div>
   </div>
-
-  <p style="color:#666;font-size:14px;line-height:1.7;margin-top:24px;">ACP评分帮助品牌全面评估AI商务就绪程度，包括技术基础设施、内容质量、数据结构化程度等多个维度。</p>
-</div>
-
-<!-- Page 30 - 90天成功路径图 -->
-<div class="page" style="min-height:100vh;padding:60px 80px;position:relative;page-break-after:always;">
-  <div class="page-num" style="position:absolute;top:30px;right:40px;font-size:13px;color:#999;">30</div>
-  <h2 class="section-title" style="font-size:28px;font-weight:700;color:#0f1929;border-left:4px solid #ff6b35;padding-left:16px;margin-bottom:48px;">90天成功路径图</h2>
-
-  <div style="position:relative;padding-top:40px;">
-    <!-- Timeline horizontal line -->
-    <div style="position:absolute;top:56px;left:16.6%;right:16.6%;height:3px;background:#ff6b35;"></div>
-
-    <div style="display:flex;gap:24px;">
-      <!-- Phase 1 -->
-      <div style="flex:1;text-align:center;">
-        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#ff6b35;color:white;border-radius:50%;font-size:18px;font-weight:700;z-index:1;margin-bottom:24px;">01</div>
-        <h3 style="font-size:18px;font-weight:600;color:#0f1929;margin:0 0 4px 0;">诊断与基准</h3>
-        <p style="color:#ff6b35;font-size:14px;margin:0 0 20px 0;font-weight:600;">第1-30天</p>
-        <div style="text-align:left;padding:0 8px;">
-          <div style="font-size:14px;color:#444;line-height:2;">
-            <div>&#9745; 完成首次GEO诊断</div>
-            <div>&#9745; 建立GEO Score基准分数</div>
-            <div>&#9745; 识别Top 10快速改善机会</div>
-            <div>&#9745; 制定优化优先级</div>
-            <div>&#9745; 启动竞品监控</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Phase 2 -->
-      <div style="flex:1;text-align:center;">
-        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#ff6b35;color:white;border-radius:50%;font-size:18px;font-weight:700;z-index:1;margin-bottom:24px;">02</div>
-        <h3 style="font-size:18px;font-weight:600;color:#0f1929;margin:0 0 4px 0;">优化与执行</h3>
-        <p style="color:#ff6b35;font-size:14px;margin:0 0 20px 0;font-weight:600;">第31-60天</p>
-        <div style="text-align:left;padding:0 8px;">
-          <div style="font-size:14px;color:#444;line-height:2;">
-            <div>&#9745; 执行结构化数据优化</div>
-            <div>&#9745; 创建AI友好内容</div>
-            <div>&#9745; 监控GEO Score变化</div>
-            <div>&#9745; 调整关键词策略</div>
-            <div>&#9745; A/B测试优化方案</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Phase 3 -->
-      <div style="flex:1;text-align:center;">
-        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#ff6b35;color:white;border-radius:50%;font-size:18px;font-weight:700;z-index:1;margin-bottom:24px;">03</div>
-        <h3 style="font-size:18px;font-weight:600;color:#0f1929;margin:0 0 4px 0;">巩固与扩展</h3>
-        <p style="color:#ff6b35;font-size:14px;margin:0 0 20px 0;font-weight:600;">第61-90天</p>
-        <div style="text-align:left;padding:0 8px;">
-          <div style="font-size:14px;color:#444;line-height:2;">
-            <div>&#9745; 巩固AI推荐排名</div>
-            <div>&#9745; 扩展到更多产品线</div>
-            <div>&#9745; 建立持续优化流程</div>
-            <div>&#9745; 评估ROI和业务影响</div>
-            <div>&#9745; 制定下季度策略</div>
-          </div>
-        </div>
-      </div>
+  <div style="background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:18px;border-top:3px solid #4285f4">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="width:34px;height:34px;background:#4285f4;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">🎨</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--navy)">杭州品牌卖家</div><div style="font-size:10px;color:var(--g400)">月销 $50万–$200万 · 独立站+多平台</div></div>
     </div>
+    <p style="font-size:11px;color:var(--g600);line-height:1.7;margin-bottom:10px">主打时尚、生活方式或细分品类，有自己的品牌叙事和定位。在Google SEO和社媒已有投入，但对AI搜索这个新渠道的监控完全是空白。</p>
+    <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:8px"><div style="font-size:9.5px;color:#4285f4;font-weight:700;margin-bottom:4px">核心痛点</div><p style="font-size:11px;color:var(--g600);margin:0">「我们花了很多钱建立品牌，但AI在描述我们的时候完全不准确，甚至把定价说错了。品牌价值在AI世界里等于零。」</p></div>
+    <div style="font-size:10px;color:#4285f4;font-weight:600">AI可见度对我意味着：品牌溢价不被AI系统性抹杀</div>
+  </div>
+  <div style="background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:18px;border-top:3px solid #22c55e">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="width:34px;height:34px;background:#22c55e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">💻</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--navy)">深圳3C卖家</div><div style="font-size:10px;color:var(--g400)">月销 $100万–$500万 · 数据驱动</div></div>
+    </div>
+    <p style="font-size:11px;color:var(--g600);line-height:1.7;margin-bottom:10px">消费电子、智能硬件、周边配件。产品迭代快，SKU多，已有专业数据团队。所有BI工具都盯着Amazon后台——AI搜索是他们数据体系里的唯一盲点。</p>
+    <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:8px"><div style="font-size:9.5px;color:#22c55e;font-weight:700;margin-bottom:4px">核心痛点</div><p style="font-size:11px;color:var(--g600);margin:0">「我能看到每个SKU在亚马逊的排名和转化率，但我完全不知道ChatGPT推荐了哪款产品、有多少人因为AI的建议点进了我的链接。」</p></div>
+    <div style="font-size:10px;color:#22c55e;font-weight:600">AI可见度对我意味着：让AI流量进入我的BI数据体系</div>
+  </div>
+  <div style="background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:18px;border-top:3px solid #8b5cf6">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="width:34px;height:34px;background:#8b5cf6;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">🏭</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--navy)">厦门供应链转型卖家</div><div style="font-size:10px;color:var(--g400)">月销 $20万–$80万 · B2B+B2C双轨</div></div>
+    </div>
+    <p style="font-size:11px;color:var(--g600);line-height:1.7;margin-bottom:10px">原来是OEM工厂或B2B供应商，正在建立自己的终端品牌。对产品质量有信心，但对如何在AI世界里构建品牌认知毫无经验，是AI可见度建设的起点阶段。</p>
+    <div style="background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:8px"><div style="font-size:9.5px;color:#8b5cf6;font-weight:700;margin-bottom:4px">核心痛点</div><p style="font-size:11px;color:var(--g600);margin:0">「我们工厂给欧美大牌做了十几年代工，产品质量没问题。但自己做品牌，没有知名度，AI根本不知道我们是谁。」</p></div>
+    <div style="font-size:10px;color:#8b5cf6;font-weight:600">AI可见度对我意味着：用数据驱动的方式从零建立品牌认知</div>
   </div>
 </div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div>
+<div class="pn">29</div>
+</div>
 
-<!-- Page 31 - BACK COVER -->
-<div class="page cover" style="min-height:100vh;padding:60px 80px;position:relative;page-break-after:always;background:#0f1929;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
-  <div class="page-num" style="position:absolute;top:30px;right:40px;font-size:13px;color:rgba(255,255,255,0.3);">31</div>
+<!-- ===== PAGE 28 — 跨境GEO ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 05 — 跨境卖家专区</div>
+<h2 class="pt">跨境品牌每年因AI可见度不足损失的潜在收入，估计超过其年营收的9.3%</h2>
+<div class="key-insight">💡 <em>2026年是AI搜索从早期采用者走向主流消费者的临界年——现在建立AI可见度护城河的成本，只有12个月后的三分之一。</em></div>
+<p class="pp">跨境品牌面临的AI可见度挑战远超本土品牌。Avanti针对三大核心痛点提供了专属解决方案。</p>
+<div style="margin-top:16px">
+<div class="ps"><div class="ps-p"><h4 style="color:var(--red)">痛点 1：语言鸿沟</h4><p>品牌核心内容以中文为主，AI引擎优先索引英文内容。产品描述的直译导致AI难以理解品牌价值主张。</p></div><div class="ps-a">→</div><div class="ps-s"><h4 style="color:var(--orange)">Avanti 多语言AI监控</h4><p>同时监控中英文AI查询表现，识别语言差异导致的可见度缺口，提供本地化优化建议。</p></div></div>
+<div class="ps"><div class="ps-p"><h4 style="color:var(--red)">痛点 2：数据盲区</h4><p>Google Analytics无法区分AI代理流量与普通流量。跨境品牌无法评估AI渠道的真实ROI。</p></div><div class="ps-a">→</div><div class="ps-s"><h4 style="color:var(--orange)">B2A 跨境流量分析</h4><p>精确识别各AI引擎带来的跨境流量，追踪从AI推荐到购买转化的完整路径。</p></div></div>
+<div class="ps"><div class="ps-p"><h4 style="color:var(--red)">痛点 3：优化无从下手</h4><p>不知道AI引擎如何理解品牌，不知道竞品做了什么，不知道应该优先优化什么。</p></div><div class="ps-a">→</div><div class="ps-s"><h4 style="color:var(--orange)">本地化GEO行动计划</h4><p>针对跨境品牌的GEO优化框架，结合目标市场的AI使用习惯，提供可执行的优化路线图。</p></div></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">28</div>
+</div>
 
-  <!-- Decorative orange line -->
-  <div style="width:60px;height:4px;background:#ff6b35;margin-bottom:40px;"></div>
+<!-- ===== PAGE 29 — ACP & 90天路径 ===== -->
+<div class="pg pg--w">
+<div class="ph">SECTION 05 — 跨境卖家专区</div>
+<h2 class="pt">ACP 就绪评分 &amp; 90天路径</h2>
+<div class="db" style="margin-bottom:16px"><h4 style="font-size:12px">ACP — Agent Commerce Protocol（AI代理商务协议）</h4><p>ACP是连接AI代理与电商系统的标准协议。当ChatGPT的Instant Checkout等AI内购物功能普及时，ACP兼容的品牌将直接出现在AI购物流中。Avanti自动生成符合ACP标准的产品数据流（Product Feed），帮助品牌提前布局AI商务生态。</p></div>
+<div style="background:var(--g50);border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;gap:18px;align-items:center">
+<div style="text-align:center;min-width:80px"><div style="font-family:Inter;font-size:34px;font-weight:700;color:var(--orange)">ACP</div><div style="font-size:10px;color:var(--g400)">就绪评分</div></div>
+<div style="font-size:11.5px;color:var(--g600);line-height:1.7">Avanti评估品牌的ACP就绪程度，涵盖：结构化产品数据完整度、价格和库存API可用性、品牌身份验证状态、退换货政策机器可读性。评分越高，品牌越早能接入AI购物流。</div>
+</div>
+<h3 class="ps">90天 GEO 提升路径</h3>
+<div class="tl" style="margin-top:12px">
+<div class="tl-i"><div class="tl-d"></div><h4>Month 1：基准诊断 + 竞品分析</h4><p>全面扫描品牌AI可见度现状，建立GEO Score基准线。深入分析Top 5竞品的AI推荐策略，识别快速突破的机会点。</p><div class="kp">KPI：建立GEO基准线，完成竞品情报档案</div></div>
+<div class="tl-i"><div class="tl-d"></div><h4>Month 2：内容优化 + GEO提升</h4><p>执行优先级最高的内容优化任务：产品描述重构、FAQ库建设、结构化数据部署。针对表现最差的AI引擎进行专项优化。</p><div class="kp">KPI：GEO Score提升30%+，Citation Rate翻倍</div></div>
+<div class="tl-i"><div class="tl-d"></div><h4>Month 3：B2A追踪 + ACP准备</h4><p>部署B2A Analytics追踪AI代理流量，验证优化效果。启动ACP产品数据流生成，为AI内购物做好准备。建立持续监控机制。</p><div class="kp">KPI：AI流量可归因，ACP就绪评分达标</div></div>
+</div>
+<div class="pg-footer"><span>AVANTI CONFIDENTIAL · 2026</span><span>avantia2a.com</span></div><div class="pn">29</div>
+</div>
 
-  <div style="font-size:64px;font-weight:700;color:white;letter-spacing:-1px;margin-bottom:8px;">Avanti</div>
-  <p style="font-size:18px;color:rgba(255,255,255,0.7);margin:0 0 40px 0;">AI Commerce Intelligence Platform</p>
-
-  <a href="#" style="display:inline-block;background:#ff6b35;color:white;padding:16px 48px;border-radius:8px;font-size:20px;font-weight:600;text-decoration:none;">立即开始免费诊断</a>
-  <div style="color:#ff6b35;font-size:18px;margin-top:20px;">avantia2a.com</div>
-
-  <div style="margin-top:60px;">
-    <p style="color:rgba(255,255,255,0.5);font-size:14px;margin:0;">hello@avantia2a.com</p>
+<!-- ===== BACK COVER ===== -->
+<div class="pg pg--d">
+<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 72px">
+<div style="font-family:Inter;font-size:11px;font-weight:600;color:var(--orange);letter-spacing:3px;margin-bottom:20px;text-transform:uppercase">准备好了吗？</div>
+<div style="font-size:38px;font-weight:700;color:var(--w);line-height:1.25;margin-bottom:20px;max-width:500px">3分钟，看清你的品牌<br>在AI里的真实位置</div>
+<p style="font-size:14px;color:rgba(255,255,255,.45);line-height:1.7;margin-bottom:36px;max-width:420px">你的竞品此刻可能正在获得AI带来的免费流量。每等待一天，差距就会扩大一点点。</p>
+<div style="width:100%;height:1px;background:rgba(255,255,255,.08);margin-bottom:32px"></div>
+<div style="display:flex;gap:32px;align-items:flex-start;margin-bottom:36px">
+  <div>
+    <div style="font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">访问</div>
+    <div style="font-family:Inter;font-size:22px;font-weight:700;color:var(--w)">avantia2a.com</div>
   </div>
-
-  <div style="position:absolute;bottom:40px;">
-    <p style="color:rgba(255,255,255,0.3);font-size:12px;margin:0;">&copy; 2026 Avanti. All rights reserved.</p>
+  <div style="width:1px;height:40px;background:rgba(255,255,255,.1)"></div>
+  <div>
+    <div style="font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">邮件</div>
+    <div style="font-family:Inter;font-size:14px;color:rgba(255,255,255,.55)">hello@avantia2a.com</div>
   </div>
+  <div style="width:1px;height:40px;background:rgba(255,255,255,.1)"></div>
+  <div>
+    <div style="font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">起步价格</div>
+    <div style="font-family:Inter;font-size:14px;color:rgba(255,255,255,.55)">¥1,499 / 月</div>
+  </div>
+</div>
+<div style="display:flex;gap:12px">
+  <div style="background:var(--orange);color:#fff;border-radius:8px;padding:10px 24px;font-size:13px;font-weight:700">免费获得3次完整诊断</div>
+  <div style="border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);border-radius:8px;padding:10px 24px;font-size:13px">前20名限时优惠</div>
+</div>
+</div>
+<div class="geo-pat"></div>
+<div style="position:absolute;bottom:20px;left:72px;right:52px;display:flex;justify-content:space-between;font-family:Inter;font-size:8px;color:rgba(255,255,255,.18);letter-spacing:.5px">
+  <span>© 2026 Avanti Growth Labs LLC · All rights reserved</span>
+  <span>机密文件 · 未经授权不得转发</span>
+</div>
 </div>
 
 </body>

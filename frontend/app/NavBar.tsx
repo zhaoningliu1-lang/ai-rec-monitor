@@ -96,34 +96,42 @@ export default function NavBar() {
   ];
 
   /* ── LOGGED-IN: app nav dropdowns ── */
-  const visibilityItems: DropdownItem[] = [
-    { href: h("/trends"),        label: p("Trends",            "行业趋势") },
-    { href: h("/hallucination"), label: p("Accuracy",          "幻觉检测") },
-    { href: h("/reddit"),        label: p("Reddit",            "Reddit 引用") },
-    { href: h("/kol"),           label: p("KOL",               "KOL 追踪") },
-    { href: h("/b2a-analytics"), label: p("B2A Analytics",     "B2A Analytics"), badge: "Beta" },
+  const diagnoseItems: DropdownItem[] = [
+    { href: h("/audit"),    label: p("Audit",      "AI 品牌诊断") },
+    { href: h("/runs/new"), label: p("New Run",    "新建分析") },
   ];
-  const actionItems: DropdownItem[] = [
-    { href: h("/audit"),      label: p("Audit",         "AI 品牌诊断") },
-    { href: h("/geo-action"), label: p("GEO Plan",      "GEO 行动") },
-    { href: h("/optimizer"),  label: p("Optimizer",     "成本优化") },
-    { href: h("/selection"),  label: p("Selection",     "选品情报") },
-    { href: h("/agents"),     label: p("Growth Agent",  "增长引擎") },
-    { href: h("/tiktok"),     label: p("TikTok Flows", "TikTok 工作流"), badge: "New" },
+  const monitorItems: DropdownItem[] = [
+    { href: h("/trends"),        label: p("Trends",        "行业趋势") },
+    { href: h("/hallucination"), label: p("Accuracy",      "幻觉检测") },
+    { href: h("/reddit"),        label: p("Reddit",        "Reddit 引用") },
+    { href: h("/kol"),           label: p("KOL",           "KOL 追踪") },
+    { href: h("/b2a-analytics"), label: p("B2A Analytics", "B2A Analytics"), badge: "Beta" },
+    { href: h("/history"),       label: p("History",       "历史报告") },
+    { href: h("/schedules"),     label: p("Auto Monitor",  "自动监控") },
+    { href: h("/brands"),        label: p("Brands",        "品牌管理") },
   ];
-  const savedItems: DropdownItem[] = [
-    { href: h("/history"),   label: p("History",       "历史报告") },
-    { href: h("/schedules"), label: p("Auto Monitor",  "自动监控") },
-    { href: h("/prompts"),   label: p("Prompts",       "提示词库") },
+  const optimizeItems: DropdownItem[] = [
+    { href: h("/geo-action"),     label: p("GEO Plan",       "GEO 行动") },
+    { href: h("/optimizer"),      label: p("Optimizer",      "成本优化") },
+    { href: h("/agents"),         label: p("Growth Agent",   "增长引擎") },
+    { href: h("/selection"),      label: p("Selection",      "选品情报") },
+    { href: h("/product"),        label: p("Product",        "产品报告") },
+    { href: h("/content-health"), label: p("Content Health", "内容健康") },
+  ];
+  const workspaceItems: DropdownItem[] = [
+    { href: h("/dashboard"), label: p("Dashboard", "数据看板") },
+    { href: h("/account"),   label: p("Account",   "账户设置") },
+    { href: h("/pricing"),   label: p("Pricing",   "定价方案") },
+    { href: h("/tiktok"),    label: p("TikTok Flows", "TikTok 工作流"), badge: "New" },
   ];
 
   /* ── mobile: flatten all links ── */
   const allMobileLinks = loggedIn
     ? [
-        { href: h("/dashboard"), label: p("Dashboard", "数据看板") },
-        ...visibilityItems,
-        ...actionItems,
-        ...(paid ? savedItems : []),
+        ...diagnoseItems,
+        ...monitorItems,
+        ...optimizeItems,
+        ...workspaceItems,
       ]
     : [
         { href: h("/product"),       label: p("Product",        "产品") },
@@ -161,14 +169,10 @@ export default function NavBar() {
         {/* ── LOGGED-IN: app nav ── */}
         {loggedIn && (
           <div className="hidden md:flex items-center gap-1">
-            <Link href={h("/dashboard")}
-              className="text-sm px-3 py-1.5 rounded-full transition-colors hover:text-white"
-              style={isActive(h("/dashboard")) ? { color: "#f0f0f8", background: "rgba(255,107,53,0.12)" } : { color: "#7070a0" }}>
-              {p("Dashboard", "数据看板")}
-            </Link>
-            <NavDropdown label={p("Monitor", "监控")} items={visibilityItems} isActive={isActive} />
-            <NavDropdown label={p("Action", "行动")}     items={actionItems}     isActive={isActive} />
-            {paid && <NavDropdown label={p("Saved", "已保存")} items={savedItems} isActive={isActive} />}
+            <NavDropdown label={p("Diagnose",  "诊断")}  items={diagnoseItems}   isActive={isActive} />
+            <NavDropdown label={p("Monitor",   "监测")}  items={monitorItems}    isActive={isActive} />
+            <NavDropdown label={p("Optimize",  "优化")}  items={optimizeItems}   isActive={isActive} />
+            <NavDropdown label={p("Workspace", "工作台")} items={workspaceItems}  isActive={isActive} />
           </div>
         )}
 
@@ -204,11 +208,6 @@ export default function NavBar() {
           {/* Logged-in CTAs */}
           {loggedIn && (
             <>
-              <Link href={h("/runs/new")}
-                className="text-sm font-medium px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
-                style={{ background: "#ff6b35", color: "#fff" }}>
-                {p("+ New Run", "+ 新建分析")}
-              </Link>
               {/* Account dropdown */}
               <div ref={accountRef} className="relative">
                 <button onClick={() => setAccountOpen((v) => !v)}
