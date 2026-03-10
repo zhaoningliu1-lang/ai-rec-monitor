@@ -11,39 +11,39 @@ const fadeUp = {
 };
 
 const BLIND_SPOTS = [
-  "\u65E0\u6CD5\u533A\u5206 AI \u63A8\u8350\u8BBF\u95EE\u548C\u76F4\u63A5\u6D41\u91CF",
-  "\u770B\u4E0D\u5230\u54EA\u4E9B AI \u5F15\u64CE\u53D1\u9001\u4E86\u7528\u6237",
-  "\u5BF9 AI \u67E5\u8BE2\u610F\u56FE\u96F6\u6D1E\u5BDF",
-  "AI \u56DE\u7B54\u4E2D\u7684\u7ADE\u54C1\u63D0\u53CA\u4E0D\u53EF\u89C1",
+  "无法区分 AI 推荐访问和直接流量",
+  "看不到哪些 AI 引擎发送了用户",
+  "对 AI 查询意图零洞察",
+  "AI 回答中的竞品提及不可见",
 ];
 
 const CAPABILITIES = [
-  "\u5F52\u56E0\u6D41\u91CF\u5230 ChatGPT\u3001Perplexity\u3001Gemini\u3001Claude",
-  "\u67E5\u770B\u89E6\u53D1\u54C1\u724C\u63D0\u53CA\u7684\u786E\u5207\u67E5\u8BE2",
-  "\u8FFD\u8E2A\u7ADE\u54C1\u5728 AI \u56DE\u7B54\u4E2D\u7684\u8BDD\u8BED\u6743",
-  "\u7AEF\u5230\u7AEF\u8861\u91CF AI \u5230\u8F6C\u5316\u6F0F\u6597",
+  "归因流量到 ChatGPT、Perplexity、Gemini、Claude",
+  "查看触发品牌提及的确切查询",
+  "追踪竞品在 AI 回答中的话语权",
+  "端到端衡量 AI 到转化漏斗",
 ];
 
 const METRICS = [
   {
     icon: Activity,
-    title: "AI \u5F15\u64CE\u5F52\u56E0",
-    desc: "\u7CBE\u786E\u77E5\u9053\u6BCF\u4F4D\u8BBF\u5BA2\u6765\u81EA\u54EA\u4E2A AI \u5F15\u64CE \u2014 ChatGPT\u3001Perplexity\u3001Gemini \u6216 Claude",
+    title: "AI 引擎归因",
+    desc: "精确知道每位访客来自哪个 AI 引擎 — ChatGPT、Perplexity、Gemini 或 Claude",
   },
   {
     icon: Search,
-    title: "\u67E5\u8BE2\u610F\u56FE\u5206\u6790",
-    desc: "\u67E5\u770B\u7528\u6237\u5728\u8BBF\u95EE\u4F60\u7F51\u7AD9\u4E4B\u524D\u5411 AI \u63D0\u51FA\u7684\u5B9E\u9645\u95EE\u9898",
+    title: "查询意图分析",
+    desc: "查看用户在访问你网站之前向 AI 提出的实际问题",
   },
   {
     icon: Users,
-    title: "\u7ADE\u54C1\u63D0\u53CA\u8FFD\u8E2A",
-    desc: "\u76D1\u63A7\u7ADE\u54C1\u4F55\u65F6\u4EE5\u53CA\u5982\u4F55\u5728 AI \u56DE\u7B54\u4E2D\u4E0E\u4F60\u7684\u54C1\u724C\u4E00\u8D77\u51FA\u73B0",
+    title: "竞品提及追踪",
+    desc: "监控竞品何时以及如何在 AI 回答中与你的品牌一起出现",
   },
   {
     icon: TrendingUp,
-    title: "Agent \u8F6C\u5316\u6F0F\u6597",
-    desc: "\u8FFD\u8E2A\u4ECE AI \u53D1\u73B0\u5230\u5B8C\u6210\u8D2D\u4E70\u7684\u5B8C\u6574\u65C5\u7A0B",
+    title: "Agent 转化漏斗",
+    desc: "追踪从 AI 发现到完成购买的完整旅程",
   },
 ];
 
@@ -66,24 +66,24 @@ export default function B2AAnalyticsZhPage() {
               border: "1px solid rgba(255,107,53,0.30)",
             }}
           >
-            B2A \u5206\u6790
+            B2A 分析
           </div>
 
           <h1
             className="text-4xl md:text-5xl font-black leading-tight"
             style={{ color: "#f0f0f8" }}
           >
-            \u4F60\u7684\u54C1\u724C\u6B63\u5728\u88AB AI \u53D1\u73B0\u3002
+            你的品牌正在被 AI 发现。
             <br />
-            <span style={{ color: "#ff6b35" }}>\u4F60\u5728\u8861\u91CF\u5417\uFF1F</span>
+            <span style={{ color: "#ff6b35" }}>你在衡量吗？</span>
           </h1>
 
           <p
             className="text-lg max-w-2xl mx-auto leading-relaxed"
             style={{ color: "#9090b0" }}
           >
-            \u4F20\u7EDF\u5206\u6790\u5DE5\u5177\u770B\u4E0D\u5230 AI \u9A71\u52A8\u7684\u6D41\u91CF\u3002B2A Analytics
-            \u8BA9\u4E0D\u53EF\u89C1\u53D8\u4E3A\u53EF\u89C1\u3002
+            传统分析工具看不到 AI 驱动的流量。B2A Analytics
+            让不可见变为可见。
           </p>
 
           <a
@@ -93,7 +93,7 @@ export default function B2AAnalyticsZhPage() {
             className="inline-block px-8 py-3.5 rounded-xl text-base font-semibold transition-opacity hover:opacity-85"
             style={{ background: "#ff6b35", color: "#fff" }}
           >
-            \u7533\u8BF7\u62A2\u5148\u4F53\u9A8C &rarr;
+            申请抢先体验 &rarr;
           </a>
         </motion.section>
 
@@ -118,7 +118,7 @@ export default function B2AAnalyticsZhPage() {
               className="text-sm font-bold uppercase tracking-widest"
               style={{ color: "#7070a0" }}
             >
-              \u65E7\u4E16\u754C\uFF08Google Analytics\uFF09
+              旧世界（Google Analytics）
             </h3>
             <ul className="space-y-3">
               {BLIND_SPOTS.map((item) => (
@@ -148,7 +148,7 @@ export default function B2AAnalyticsZhPage() {
               className="text-sm font-bold uppercase tracking-widest"
               style={{ color: "#22c55e" }}
             >
-              \u65B0\u4E16\u754C\uFF08B2A Analytics\uFF09
+              新世界（B2A Analytics）
             </h3>
             <ul className="space-y-3">
               {CAPABILITIES.map((item) => (
@@ -220,7 +220,7 @@ export default function B2AAnalyticsZhPage() {
             className="text-2xl md:text-3xl font-black"
             style={{ color: "#f0f0f8" }}
           >
-            \u51C6\u5907\u597D\u67E5\u770B\u4F60\u7684 AI \u6D41\u91CF\u4E86\u5417\uFF1F
+            准备好查看你的 AI 流量了吗？
           </h2>
 
           <div className="flex items-center justify-center gap-3 flex-wrap">
@@ -231,7 +231,7 @@ export default function B2AAnalyticsZhPage() {
               className="inline-block px-8 py-3.5 rounded-xl text-base font-semibold transition-opacity hover:opacity-85"
               style={{ background: "#ff6b35", color: "#fff" }}
             >
-              \u7533\u8BF7\u62A2\u5148\u4F53\u9A8C
+              申请抢先体验
             </a>
             <span
               className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full"
