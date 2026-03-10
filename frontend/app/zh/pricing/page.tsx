@@ -10,6 +10,24 @@ const CALENDLY = "https://calendly.com/brivesubscription/30min";
 
 const TIERS = [
   {
+    name: "免费版",
+    nameEn: "Free",
+    price: 0,
+    annual: 0,
+    description: "适合刚开始接触 AI 可见度追踪的品牌。",
+    cta: "免费试用",
+    href: "/zh/signup",
+    highlight: false,
+    badge: null as string | null,
+    features: [
+      "追踪 1 个品牌",
+      "基础 GEO 评分",
+      "月度报告",
+      "2 大 AI 引擎（ChatGPT、Claude）",
+    ],
+    notIncluded: ["完整 SOV 拆解", "Gemini 和 Perplexity", "双周报告", "选品情报"],
+  },
+  {
     name: "入门版",
     nameEn: "Starter",
     price: 99,
@@ -98,20 +116,20 @@ const TIERS = [
 ];
 
 const COMPARISON = [
-  { feature: "追踪品牌数量",       starter: "1",     growth: "3",     agency: "20",         enterprise: "不限" },
-  { feature: "报告频率",            starter: "月度",  growth: "双周",  agency: "每周",        enterprise: "自定义" },
-  { feature: "AI 引擎覆盖",        starter: "4",     growth: "4",     agency: "4 + 定制",    enterprise: "自定义" },
-  { feature: "GEO 评分",           starter: true,    growth: true,    agency: true,          enterprise: true },
-  { feature: "SOV 拆解",           starter: true,    growth: true,    agency: true,          enterprise: true },
-  { feature: "竞品对标",           starter: false,   growth: true,    agency: true,          enterprise: true },
-  { feature: "完整选品情报",       starter: false,   growth: true,    agency: true,          enterprise: true },
-  { feature: "成本优化计算器",     starter: false,   growth: true,    agency: true,          enterprise: true },
-  { feature: "PDF 导出",           starter: false,   growth: true,    agency: true,          enterprise: true },
-  { feature: "白标报告",           starter: false,   growth: false,   agency: true,          enterprise: true },
-  { feature: "API 接入",           starter: false,   growth: false,   agency: true,          enterprise: true },
-  { feature: "定制品类追踪",       starter: false,   growth: false,   agency: true,          enterprise: true },
-  { feature: "子账户 / 转售权限",  starter: false,   growth: false,   agency: true,          enterprise: true },
-  { feature: "专属策略师",         starter: false,   growth: false,   agency: false,         enterprise: true },
+  { feature: "追踪品牌数量",       free: "1",        starter: "1",     growth: "3",     agency: "20",         enterprise: "不限" },
+  { feature: "报告频率",            free: "月度",     starter: "月度",  growth: "双周",  agency: "每周",        enterprise: "自定义" },
+  { feature: "AI 引擎覆盖",        free: "2",        starter: "4",     growth: "4",     agency: "4 + 定制",    enterprise: "自定义" },
+  { feature: "GEO 评分",           free: true,       starter: true,    growth: true,    agency: true,          enterprise: true },
+  { feature: "SOV 拆解",           free: false,      starter: true,    growth: true,    agency: true,          enterprise: true },
+  { feature: "竞品对标",           free: false,      starter: false,   growth: true,    agency: true,          enterprise: true },
+  { feature: "完整选品情报",       free: false,      starter: false,   growth: true,    agency: true,          enterprise: true },
+  { feature: "成本优化计算器",     free: false,      starter: false,   growth: true,    agency: true,          enterprise: true },
+  { feature: "PDF 导出",           free: false,      starter: false,   growth: true,    agency: true,          enterprise: true },
+  { feature: "白标报告",           free: false,      starter: false,   growth: false,   agency: true,          enterprise: true },
+  { feature: "API 接入",           free: false,      starter: false,   growth: false,   agency: true,          enterprise: true },
+  { feature: "定制品类追踪",       free: false,      starter: false,   growth: false,   agency: true,          enterprise: true },
+  { feature: "子账户 / 转售权限",  free: false,      starter: false,   growth: false,   agency: true,          enterprise: true },
+  { feature: "专属策略师",         free: false,      starter: false,   growth: false,   agency: false,         enterprise: true },
 ];
 
 function Check() {
@@ -140,7 +158,7 @@ export default function ZhPricingPage() {
       </div>
 
       {/* Tier cards — 4 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 items-start">
         {TIERS.map((tier) => (
           <div
             key={tier.name}
@@ -275,6 +293,7 @@ export default function ZhPricingPage() {
             <thead>
               <tr style={{ background: "#0f0f17", borderBottom: "1px solid #25253f" }}>
                 <th className="text-left p-4 font-medium text-xs" style={{ color: "#7070a0" }}>功能</th>
+                <th className="text-center p-4 font-medium text-xs">免费版</th>
                 <th className="text-center p-4 font-medium text-xs">入门版</th>
                 <th className="text-center p-4 font-bold text-xs" style={{ color: "#ff6b35" }}>成长版</th>
                 <th className="text-center p-4 font-medium text-xs">代理版</th>
@@ -291,6 +310,11 @@ export default function ZhPricingPage() {
                   }}
                 >
                   <td className="p-3 text-xs" style={{ color: "#f0f0f8" }}>{row.feature}</td>
+                  <td className="p-3 text-center text-xs">
+                    {typeof row.free === "boolean"
+                      ? row.free ? <Check /> : <Cross />
+                      : <span style={{ color: "#f0f0f8" }}>{row.free}</span>}
+                  </td>
                   <td className="p-3 text-center text-xs">
                     {typeof row.starter === "boolean"
                       ? row.starter ? <Check /> : <Cross />

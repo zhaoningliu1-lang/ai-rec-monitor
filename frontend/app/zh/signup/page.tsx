@@ -88,6 +88,14 @@ export default function ZhSignupPage() {
         <p style={{ color: "#3a3a5c", fontSize: 11, textAlign: "center", marginTop: 16 }}>
           注册即表示您同意我们的服务条款和隐私政策。
         </p>
+
+        {/* Bilingual trust badges */}
+        <p style={{ color: "#6060a0", fontSize: 12, textAlign: "center", marginTop: 20 }}>
+          ✓ 免费获得3次完整品牌诊断 &nbsp;✓ 无需信用卡 &nbsp;✓ 随时取消
+        </p>
+        <p style={{ color: "#6060a0", fontSize: 12, textAlign: "center", marginTop: 6 }}>
+          ✓ 3 free brand audits &nbsp;✓ No credit card required &nbsp;✓ Cancel anytime
+        </p>
       </div>
     </div>
   );

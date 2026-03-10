@@ -195,7 +195,7 @@ export default function NavBar() {
               <Link href={isZh ? "/zh/signup" : "/signup"}
                 className="text-sm font-medium px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
                 style={{ background: "#ff6b35", color: "#fff" }}>
-                {p("Start free →", "免费开始 →")}
+                {p("Try Free", "免费试用")}
               </Link>
             </>
           )}
@@ -299,7 +299,7 @@ export default function NavBar() {
                     </Link>
                     <Link href={isZh ? "/zh/signup" : "/signup"} className="text-sm font-medium text-center px-4 py-2.5 rounded-lg"
                       style={{ background: "#ff6b35", color: "#fff" }}>
-                      {p("Start free →", "免费开始 →")}
+                      {p("Try Free", "免费试用")}
                     </Link>
                   </div>
                 )}

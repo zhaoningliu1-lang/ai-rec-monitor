@@ -15,6 +15,28 @@ const reveal = {
 
 const TIERS = [
   {
+    name: "Free",
+    price: 0,
+    annual: 0,
+    description: "For brands just getting started with AI visibility tracking.",
+    cta: "Try Free",
+    href: "/signup",
+    highlight: false,
+    badge: null as string | null,
+    features: [
+      "1 brand tracked",
+      "Basic GEO Score",
+      "Monthly report",
+      "2 AI engines (ChatGPT, Claude)",
+    ],
+    notIncluded: [
+      "Full SOV breakdown",
+      "Gemini & Perplexity",
+      "Bi-weekly reports",
+      "Selection intelligence",
+    ],
+  },
+  {
     name: "Starter",
     price: 99,
     annual: 79,
@@ -106,20 +128,20 @@ const TIERS = [
 ];
 
 const COMPARISON = [
-  { feature: "Brands tracked",               starter: "1",     growth: "3",     agency: "20",     enterprise: "Unlimited" },
-  { feature: "Report frequency",             starter: "Monthly", growth: "Bi-weekly", agency: "Weekly", enterprise: "Custom" },
-  { feature: "AI engines covered",           starter: "4",     growth: "4",     agency: "4 + custom", enterprise: "Custom" },
-  { feature: "GEO Score",                    starter: true,    growth: true,    agency: true,     enterprise: true },
-  { feature: "SOV breakdown",                starter: true,    growth: true,    agency: true,     enterprise: true },
-  { feature: "Competitor benchmarking",      starter: false,   growth: true,    agency: true,     enterprise: true },
-  { feature: "Selection intelligence (full)",starter: false,   growth: true,    agency: true,     enterprise: true },
-  { feature: "Cost optimizer",               starter: false,   growth: true,    agency: true,     enterprise: true },
-  { feature: "PDF export",                   starter: false,   growth: true,    agency: true,     enterprise: true },
-  { feature: "White-label reports",          starter: false,   growth: false,   agency: true,     enterprise: true },
-  { feature: "API access",                   starter: false,   growth: false,   agency: true,     enterprise: true },
-  { feature: "Custom category tracking",     starter: false,   growth: false,   agency: true,     enterprise: true },
-  { feature: "Sub-account / reseller",       starter: false,   growth: false,   agency: true,     enterprise: true },
-  { feature: "Dedicated strategist",         starter: false,   growth: false,   agency: false,    enterprise: true },
+  { feature: "Brands tracked",               free: "1",        starter: "1",     growth: "3",     agency: "20",     enterprise: "Unlimited" },
+  { feature: "Report frequency",             free: "Monthly",  starter: "Monthly", growth: "Bi-weekly", agency: "Weekly", enterprise: "Custom" },
+  { feature: "AI engines covered",           free: "2",        starter: "4",     growth: "4",     agency: "4 + custom", enterprise: "Custom" },
+  { feature: "GEO Score",                    free: true,       starter: true,    growth: true,    agency: true,     enterprise: true },
+  { feature: "SOV breakdown",                free: false,      starter: true,    growth: true,    agency: true,     enterprise: true },
+  { feature: "Competitor benchmarking",      free: false,      starter: false,   growth: true,    agency: true,     enterprise: true },
+  { feature: "Selection intelligence (full)",free: false,      starter: false,   growth: true,    agency: true,     enterprise: true },
+  { feature: "Cost optimizer",               free: false,      starter: false,   growth: true,    agency: true,     enterprise: true },
+  { feature: "PDF export",                   free: false,      starter: false,   growth: true,    agency: true,     enterprise: true },
+  { feature: "White-label reports",          free: false,      starter: false,   growth: false,   agency: true,     enterprise: true },
+  { feature: "API access",                   free: false,      starter: false,   growth: false,   agency: true,     enterprise: true },
+  { feature: "Custom category tracking",     free: false,      starter: false,   growth: false,   agency: true,     enterprise: true },
+  { feature: "Sub-account / reseller",       free: false,      starter: false,   growth: false,   agency: true,     enterprise: true },
+  { feature: "Dedicated strategist",         free: false,      starter: false,   growth: false,   agency: false,    enterprise: true },
 ];
 
 function CheckIcon() {
@@ -151,7 +173,7 @@ export default function PricingPage() {
       {/* Tier cards -- 4 columns */}
       <motion.div
         {...reveal}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-start"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 items-start"
       >
         {TIERS.map((tier) => (
           <div
@@ -288,6 +310,7 @@ export default function PricingPage() {
             <thead>
               <tr style={{ background: "#0f0f17", borderBottom: "1px solid #25253f" }}>
                 <th className="text-left p-4 font-medium text-xs" style={{ color: "#7070a0" }}>Feature</th>
+                <th className="text-center p-4 font-medium text-xs">Free</th>
                 <th className="text-center p-4 font-medium text-xs">Starter</th>
                 <th className="text-center p-4 font-bold text-xs" style={{ color: "#ff6b35" }}>Growth</th>
                 <th className="text-center p-4 font-medium text-xs">Agency</th>
@@ -304,6 +327,11 @@ export default function PricingPage() {
                   }}
                 >
                   <td className="p-3 text-xs" style={{ color: "#f0f0f8" }}>{row.feature}</td>
+                  <td className="p-3 text-center text-xs">
+                    {typeof row.free === "boolean"
+                      ? row.free ? <CheckIcon /> : <CrossMark />
+                      : <span style={{ color: "#f0f0f8" }}>{row.free}</span>}
+                  </td>
                   <td className="p-3 text-center text-xs">
                     {typeof row.starter === "boolean"
                       ? row.starter ? <CheckIcon /> : <CrossMark />

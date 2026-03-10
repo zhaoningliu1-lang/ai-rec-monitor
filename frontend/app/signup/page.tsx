@@ -34,9 +34,6 @@ export default function SignupPage() {
       <div style={{ background: "#12121e", border: "1px solid #25253f", borderRadius: 16 }} className="w-full max-w-md p-8">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div style={{ fontSize: 13, color: "#ff6b35", fontWeight: 700, letterSpacing: "0.08em", marginBottom: 12 }}>
-            FREE — NO CREDIT CARD REQUIRED
-          </div>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: "#f0f0f8" }}>
             Start your free audit
           </h1>
@@ -122,6 +119,14 @@ export default function SignupPage() {
 
         <p style={{ color: "#3a3a5c", fontSize: 11, textAlign: "center", marginTop: 16 }}>
           By signing up you agree to our Terms of Service and Privacy Policy.
+        </p>
+
+        {/* Bilingual trust badges */}
+        <p style={{ color: "#6060a0", fontSize: 12, textAlign: "center", marginTop: 20 }}>
+          ✓ 免费获得3次完整品牌诊断 &nbsp;✓ 无需信用卡 &nbsp;✓ 随时取消
+        </p>
+        <p style={{ color: "#6060a0", fontSize: 12, textAlign: "center", marginTop: 6 }}>
+          ✓ 3 free brand audits &nbsp;✓ No credit card required &nbsp;✓ Cancel anytime
         </p>
       </div>
     </div>
