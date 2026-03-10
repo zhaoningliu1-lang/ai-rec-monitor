@@ -109,6 +109,7 @@ export default function NavBar() {
     { href: h("/optimizer"),  label: p("Optimizer",     "成本优化") },
     { href: h("/selection"),  label: p("Selection",     "选品情报") },
     { href: h("/agents"),     label: p("Growth Agent",  "增长引擎") },
+    { href: h("/tiktok"),     label: p("TikTok Flows", "TikTok 工作流"), badge: "New" },
   ];
   const savedItems: DropdownItem[] = [
     { href: h("/history"),   label: p("History",       "历史报告") },
