@@ -1,0 +1,46 @@
+name: Daily Blog Report
+
+on:
+  schedule:
+    # 6am UTC = 2pm Beijing = 11pm NY (previous day)
+    - cron: "0 6 * * *"
+  workflow_dispatch: # Allow manual trigger from GitHub Actions UI
+
+permissions:
+  contents: write # Required to commit and push new blog posts
+
+jobs:
+  generate-blog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install anthropic openai
+
+      - name: Generate blog post
+        run: python scripts/generate_blog.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Commit and push new blog post
+        run: |
+          git config user.name "Avanti Bot"
+          git config user.email "bot@avantia2a.com"
+          git add frontend/app/blog/ frontend/app/zh/blog/
+          # Only commit if there are staged changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: daily blog post $(date -u +%Y-%m-%d)"
+            git push
+          fi
