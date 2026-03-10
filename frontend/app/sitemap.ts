@@ -14,6 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "/zh/audit",                   priority: 0.8,  changeFrequency: "weekly" as const },
     { url: "/zh/categories",              priority: 0.7,  changeFrequency: "daily"  as const },
     { url: "/zh/book-demo",               priority: 0.6,  changeFrequency: "monthly" as const },
+    { url: "/research",                   priority: 0.8,  changeFrequency: "daily"   as const },
+    { url: "/zh/research",                priority: 0.7,  changeFrequency: "daily"   as const },
     { url: "/company/techvision-pro",     priority: 0.5,  changeFrequency: "monthly" as const },
   ];
 
