@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-03-10-geo-industry-update",
+    tag: "E-commerce",
+    title: "2026 GEO Trends: Boost AI Visibility on Amazon",
+    excerpt:
+      "Discover the latest strategies brands use to enhance AI visibility and boost sales on Amazon.",
+    date: "March 10, 2026",
+    readTime: "5 min read",
+  },
+  {
     slug: "insta360-vs-dji",
     tag: "GEO Case Study",
     title: "Insta360 vs DJI: Who Wins When Buyers Ask AI for Camera Recommendations?",

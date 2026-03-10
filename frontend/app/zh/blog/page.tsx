@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-03-10-geo-industry-update",
+    tag: "电商",
+    title: "2026年GEO趋势：提升亚马逊的AI可见性",
+    excerpt:
+      "探索品牌提升AI可见性和增长亚马逊销售的最新策略。",
+    date: "2026年3月10日",
+    readTime: "5 分钟阅读",
+  },
+  {
     slug: "insta360-vs-dji",
     tag: "GEO 案例分析",
     title: "Insta360 vs DJI：消费者向 AI 询问相机推荐时，谁赢了？",
