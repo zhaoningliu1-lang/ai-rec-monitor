@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { isPaid } from "@/lib/auth";
+import { getCredits, useCredit, initCredits, MAX_FREE_CREDITS } from "@/lib/credits";
 
 const PROVIDER_OPTIONS = ["openai", "claude"] as const;
 const REGION_OPTIONS = ["US", "UK", "DE"] as const;
@@ -21,6 +23,14 @@ export default function NewRunPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [analysisType, setAnalysisType] = useState<AnalysisType>("brand");
+  const [credits, setCredits] = useState(MAX_FREE_CREDITS);
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const paid = isPaid();
+
+  useEffect(() => {
+    initCredits();
+    setCredits(getCredits());
+  }, []);
 
   const [form, setForm] = useState({
     brand_name: "",
@@ -43,6 +53,11 @@ export default function NewRunPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Credit check for free users
+    if (!paid && getCredits() <= 0) {
+      setShowUpgrade(true);
+      return;
+    }
     setLoading(true);
     setError("");
     try {
@@ -58,6 +73,11 @@ export default function NewRunPage() {
         providers: form.providers,
         price_band: form.price_band.trim() || undefined,
       });
+      // Deduct credit for free users after successful run creation
+      if (!paid) {
+        useCredit();
+        setCredits(getCredits());
+      }
       router.push(`/runs/${run.id}`);
     } catch (e) {
       setError(String(e));
@@ -224,6 +244,16 @@ export default function NewRunPage() {
           </div>
         )}
 
+        {/* Credits indicator for free users */}
+        {!paid && (
+          <div className="flex items-center justify-between text-xs" style={{ color: "#7070a0" }}>
+            <span>Credits remaining: {credits}/{MAX_FREE_CREDITS}</span>
+            {credits <= 1 && credits > 0 && (
+              <Link href="/pricing" style={{ color: "#f5a623" }}>Low credits — upgrade →</Link>
+            )}
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={loading || form.providers.length === 0}
@@ -233,6 +263,47 @@ export default function NewRunPage() {
           {loading ? "Starting run…" : "Start run"}
         </button>
       </form>
+
+      {/* Upgrade modal */}
+      {showUpgrade && (
+        <div
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50,
+          }}
+          onClick={() => setShowUpgrade(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="rounded-2xl p-8 max-w-md w-full text-center space-y-4"
+            style={{ background: "#12121e", border: "1px solid #25253f" }}
+          >
+            <div style={{ fontSize: 40 }}>0/{MAX_FREE_CREDITS}</div>
+            <h2 style={{ fontSize: 20, fontWeight: 800, color: "#f0f0f8" }}>
+              Free credits used up
+            </h2>
+            <p style={{ color: "#7070a0", fontSize: 14 }}>
+              Upgrade to Growth or Scale to unlock unlimited diagnostics, trend monitoring, and more.
+            </p>
+            <div className="flex gap-3 justify-center" style={{ paddingTop: 8 }}>
+              <Link
+                href="/pricing"
+                className="px-6 py-2.5 rounded-xl text-sm font-semibold"
+                style={{ background: "#ff6b35", color: "#fff" }}
+              >
+                View plans →
+              </Link>
+              <button
+                onClick={() => setShowUpgrade(false)}
+                className="px-6 py-2.5 rounded-xl text-sm"
+                style={{ background: "#161625", color: "#7070a0", border: "1px solid #25253f" }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { createCheckout, createPortal, fetchMe, logout, type UserProfile } from "@/lib/auth";
+import { createCheckout, createPortal, fetchMe, logout, isPaid as checkIsPaid, type UserProfile } from "@/lib/auth";
+import { getCredits, initCredits, MAX_FREE_CREDITS } from "@/lib/credits";
 
 const TIERS = [
   {
@@ -53,7 +54,11 @@ export default function AccountPage() {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
 
+  const [credits, setCredits] = useState(MAX_FREE_CREDITS);
+
   useEffect(() => {
+    initCredits();
+    setCredits(getCredits());
     fetchMe()
       .then(setUser)
       .catch(() => router.push("/login?next=/account"))
@@ -124,6 +129,36 @@ export default function AccountPage() {
           >
             Sign out
           </button>
+        </div>
+      </div>
+
+      {/* Profile info card */}
+      <div
+        style={{
+          background: "#12121e", border: "1px solid #25253f", borderRadius: 12,
+          padding: "20px 24px", marginBottom: 16,
+          display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16,
+        }}
+      >
+        <div>
+          <p style={{ fontSize: 12, color: "#7070a0", marginBottom: 4 }}>注册日期 / Joined</p>
+          <p style={{ fontSize: 14, fontWeight: 600, color: "#f0f0f8" }}>
+            {user.subscription_current_period_end
+              ? new Date(user.subscription_current_period_end).toLocaleDateString()
+              : "–"}
+          </p>
+        </div>
+        <div>
+          <p style={{ fontSize: 12, color: "#7070a0", marginBottom: 4 }}>订阅计划 / Plan</p>
+          <p style={{ fontSize: 14, fontWeight: 600, color: tierColor(user.subscription_tier) }}>
+            {tierLabel(user.subscription_tier)}
+          </p>
+        </div>
+        <div>
+          <p style={{ fontSize: 12, color: "#7070a0", marginBottom: 4 }}>剩余 Credits</p>
+          <p style={{ fontSize: 14, fontWeight: 600, color: isPaid ? "#22c55e" : credits > 0 ? "#f0f0f8" : "#ff4d6d" }}>
+            {isPaid ? "Unlimited" : `${credits} / ${MAX_FREE_CREDITS}`}
+          </p>
         </div>
       </div>
 

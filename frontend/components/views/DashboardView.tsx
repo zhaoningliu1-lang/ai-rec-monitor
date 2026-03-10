@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Run, api } from "@/lib/api";
-import { getToken } from "@/lib/auth";
+import { getToken, isPaid } from "@/lib/auth";
 import { Lang, tx } from "@/lib/i18n";
+import { getCredits, initCredits, MAX_FREE_CREDITS } from "@/lib/credits";
 
 interface Props {
   lang: Lang;
@@ -55,6 +56,58 @@ function BrandPill({ brand, lang }: { brand: string; lang: Lang }) {
   );
 }
 
+function CreditsBar({ lang }: { lang: Lang }) {
+  const [credits, setCredits] = useState(0);
+  const paid = isPaid();
+
+  useEffect(() => {
+    initCredits();
+    setCredits(getCredits());
+  }, []);
+
+  if (paid) return null;
+
+  const pct = Math.round((credits / MAX_FREE_CREDITS) * 100);
+
+  return (
+    <div
+      className="rounded-xl p-4"
+      style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium" style={{ color: "#f0f0f8" }}>
+          {lang === "zh" ? `剩余诊断次数: ${credits}/${MAX_FREE_CREDITS}` : `Credits remaining: ${credits}/${MAX_FREE_CREDITS}`}
+        </span>
+        {credits === 0 && (
+          <Link
+            href={lang === "zh" ? "/zh/pricing" : "/pricing"}
+            className="text-xs font-semibold px-3 py-1 rounded-lg"
+            style={{ background: "#ff6b35", color: "#fff" }}
+          >
+            {lang === "zh" ? "升级计划 →" : "Upgrade →"}
+          </Link>
+        )}
+      </div>
+      <div className="h-2 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
+        <div
+          className="h-full rounded-full transition-all"
+          style={{
+            width: `${pct}%`,
+            background: credits === 0 ? "#ff4d6d" : credits === 1 ? "#f5a623" : "#22c55e",
+          }}
+        />
+      </div>
+      {credits === 0 && (
+        <p className="text-xs mt-2" style={{ color: "#ff4d6d" }}>
+          {lang === "zh"
+            ? "免费额度已用完，升级以继续使用全部功能"
+            : "Free credits used up — upgrade to continue running diagnostics"}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function DashboardView({ lang }: Props) {
   const [runs, setRuns] = useState<Run[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,6 +152,9 @@ export default function DashboardView({ lang }: Props) {
           {tx("dashboard", "newRun", lang)}
         </Link>
       </div>
+
+      {/* Credits bar (free users only) */}
+      {getToken() && <CreditsBar lang={lang} />}
 
       {/* Brand pills — marquee if >5 */}
       {brands.length > 0 && (
