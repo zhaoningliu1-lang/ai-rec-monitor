@@ -48,8 +48,8 @@ class Settings(BaseSettings):
 
     # Email (Resend)
     resend_api_key: str | None = None
-    from_email: str = "Avanti <hello@avanti.so>"
-    site_url: str = "https://avanti.so"
+    from_email: str = "Avanti <hello@avantia2a.com>"
+    site_url: str = "https://avantia2a.com"
 
     class Config:
         env_file = ".env"

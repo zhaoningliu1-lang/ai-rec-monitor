@@ -15,6 +15,7 @@ from app.routers import agents as agents_router
 from app.routers import auth as auth_router
 from app.routers import billing as billing_router
 from app.routers import prompts as prompts_router
+from app.routers import trends as trends_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -159,6 +160,10 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "ALTER TABLE agent_cycles ADD COLUMN IF NOT EXISTS language VARCHAR(10) NOT NULL DEFAULT 'en'"
         ))
+        # Credit balance for users
+        await conn.execute(text(
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS credit_balance INTEGER NOT NULL DEFAULT 40"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 
@@ -192,8 +197,6 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "https://avantia2a.com",
         "https://www.avantia2a.com",
-        "https://avantiscale.com",
-        "https://www.avantiscale.com",
         *_extra_origins,
     ],
     allow_origin_regex=r"https://.*\.vercel\.app",
@@ -209,6 +212,7 @@ app.include_router(agents_router.router)
 app.include_router(auth_router.router)
 app.include_router(billing_router.router)
 app.include_router(prompts_router.router)
+app.include_router(trends_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s

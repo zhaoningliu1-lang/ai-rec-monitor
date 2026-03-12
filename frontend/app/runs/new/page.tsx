@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { isPaid } from "@/lib/auth";
-import { getCredits, useCredit, initCredits, MAX_FREE_CREDITS } from "@/lib/credits";
+import { fetchCredits } from "@/lib/auth";
 
 const PROVIDER_OPTIONS = ["openai", "claude"] as const;
 const REGION_OPTIONS = ["US", "UK", "DE"] as const;
@@ -23,13 +22,14 @@ export default function NewRunPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [analysisType, setAnalysisType] = useState<AnalysisType>("brand");
-  const [credits, setCredits] = useState(MAX_FREE_CREDITS);
+  const [creditBalance, setCreditBalance] = useState<number | null>(null);
+  const [isPaidUser, setIsPaidUser] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const paid = isPaid();
 
   useEffect(() => {
-    initCredits();
-    setCredits(getCredits());
+    fetchCredits()
+      .then((c) => { setCreditBalance(c.balance); setIsPaidUser(c.is_paid); })
+      .catch(() => { /* not logged in — backend will reject anyway */ });
   }, []);
 
   const [form, setForm] = useState({
@@ -51,10 +51,12 @@ export default function NewRunPage() {
     }));
   };
 
+  const creditCost = Math.max(1, Math.floor(form.num_prompts / 5));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Credit check for free users
-    if (!paid && getCredits() <= 0) {
+    // Pre-check: if free user with insufficient credits, show upgrade modal
+    if (!isPaidUser && creditBalance !== null && creditBalance < creditCost) {
       setShowUpgrade(true);
       return;
     }
@@ -73,14 +75,21 @@ export default function NewRunPage() {
         providers: form.providers,
         price_band: form.price_band.trim() || undefined,
       });
-      // Deduct credit for free users after successful run creation
-      if (!paid) {
-        useCredit();
-        setCredits(getCredits());
+      // Refresh credit balance from server
+      if (!isPaidUser) {
+        fetchCredits()
+          .then((c) => setCreditBalance(c.balance))
+          .catch(() => {});
       }
       router.push(`/runs/${run.id}`);
-    } catch (e) {
-      setError(String(e));
+    } catch (err: unknown) {
+      // Handle 429 credits_exhausted from backend
+      const msg = String(err);
+      if (msg.includes("credits_exhausted") || msg.includes("Credits exhausted")) {
+        setShowUpgrade(true);
+      } else {
+        setError(msg);
+      }
       setLoading(false);
     }
   };
@@ -245,10 +254,10 @@ export default function NewRunPage() {
         )}
 
         {/* Credits indicator for free users */}
-        {!paid && (
+        {!isPaidUser && creditBalance !== null && (
           <div className="flex items-center justify-between text-xs" style={{ color: "#7070a0" }}>
-            <span>Credits remaining: {credits}/{MAX_FREE_CREDITS}</span>
-            {credits <= 1 && credits > 0 && (
+            <span>Credits: {creditBalance} (this run costs {creditCost})</span>
+            {creditBalance <= 5 && creditBalance > 0 && (
               <Link href="/pricing" style={{ color: "#f5a623" }}>Low credits — upgrade →</Link>
             )}
           </div>
@@ -278,12 +287,12 @@ export default function NewRunPage() {
             className="rounded-2xl p-8 max-w-md w-full text-center space-y-4"
             style={{ background: "#12121e", border: "1px solid #25253f" }}
           >
-            <div style={{ fontSize: 40 }}>0/{MAX_FREE_CREDITS}</div>
+            <div style={{ fontSize: 40 }}>{creditBalance ?? 0} credits</div>
             <h2 style={{ fontSize: 20, fontWeight: 800, color: "#f0f0f8" }}>
-              Free credits used up
+              Credits exhausted
             </h2>
             <p style={{ color: "#7070a0", fontSize: 14 }}>
-              Upgrade to Growth or Scale to unlock unlimited diagnostics, trend monitoring, and more.
+              Add a payment method to continue using Avanti. Paid plans include unlimited analyses.
             </p>
             <div className="flex gap-3 justify-center" style={{ paddingTop: 8 }}>
               <Link

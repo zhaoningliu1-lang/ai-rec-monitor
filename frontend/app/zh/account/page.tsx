@@ -177,7 +177,7 @@ export default function ZhAccountPage() {
       </div>
 
       <p style={{ color: "#3a3a5c", fontSize: 12, textAlign: "center", marginTop: 24 }}>
-        企业定制方案？<a href="mailto:hello@avanti.so" style={{ color: "#7070a0" }}>联系我们</a>
+        企业定制方案？<a href="mailto:hello@avantia2a.com" style={{ color: "#7070a0" }}>联系我们</a>
       </p>
     </div>
   );

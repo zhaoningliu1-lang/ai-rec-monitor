@@ -155,26 +155,38 @@ export default function LandingView({ lang }: Props) {
             <p className="text-base mb-3 max-w-xl font-semibold tracking-wide" style={{ color: "#7070a0" }}>
               {lang === "zh" ? "被引用。被信任。成为答案。" : "Be Cited. Be Trusted. Be the Answer."}
             </p>
-            <p className="text-lg mb-10 max-w-xl" style={{ color: "#7070a0" }}>
+            <p className="text-lg mb-4 max-w-xl" style={{ color: "#7070a0" }}>
               {tx("landing", "subheadline", lang)}
             </p>
+            {/* Social proof micro-stat -- NexSpark-inspired outcome-first */}
+            <div
+              className="inline-flex items-center gap-3 rounded-xl px-4 py-2.5 mb-8"
+              style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)" }}
+            >
+              <span className="text-lg font-black" style={{ color: "#22c55e" }}>+5.1</span>
+              <span className="text-xs leading-tight" style={{ color: "#9090b0" }}>
+                {lang === "zh"
+                  ? "厦门跨境卖家首月 GEO 分数提升"
+                  : "GEO Score improvement for Xiamen seller in month 1"}
+              </span>
+            </div>
             <div className="flex items-center gap-4 flex-wrap">
+              <Link
+                href={auditPath}
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-85"
+                style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
+              >
+                {lang === "zh" ? "免费诊断我的品牌 →" : "Free Brand Diagnosis →"}
+              </Link>
               <a
                 href={CALENDLY}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-85"
-                style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
-              >
-                {lang === "zh" ? "预约免费策略通话 →" : "Book a Free Strategy Call →"}
-              </a>
-              <Link
-                href={auditPath}
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium transition-colors hover:text-white"
                 style={{ border: "1px solid #25253f", color: "#7070a0" }}
               >
-                {lang === "zh" ? "先免费自助诊断" : "Start Free Audit"}
-              </Link>
+                {lang === "zh" ? "或预约策略通话" : "or Book Strategy Call"}
+              </a>
             </div>
           </motion.div>
 
@@ -330,6 +342,104 @@ export default function LandingView({ lang }: Props) {
           ? "* Adobe Analytics：AI 驱动零售流量 2025 年假日季同比增长 +693%"
           : "* Adobe Analytics: AI-driven retail traffic grew +693% YoY in 2025 holiday season"}
       </div>
+
+      {/* Case Study -- NexSpark-inspired client results section */}
+      <motion.section
+        {...reveal}
+        className="rounded-2xl overflow-hidden"
+        style={{ background: "#0f0f17", border: "1px solid rgba(255,107,53,0.2)" }}
+      >
+        <div className="px-8 pt-7 pb-2">
+          <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#ff6b35" }}>
+            {lang === "zh" ? "客户案例" : "CASE STUDY"}
+          </div>
+          <h2 className="text-2xl font-black mb-2 leading-tight">
+            {lang === "zh"
+              ? "厦门跨境卖家 DriveX：从 AI 隐身到被推荐"
+              : "DriveX International: From AI Invisible to AI Recommended"}
+          </h2>
+          <p className="text-sm mb-6" style={{ color: "#7070a0" }}>
+            {lang === "zh"
+              ? "Shopee 东南亚 / Amazon 美国 · 汽车配件品类 · 3 个子品牌"
+              : "Shopee SEA / Amazon US · Automotive Accessories · 3 Sub-brands"}
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-px" style={{ background: "#25253f" }}>
+          {[
+            {
+              brand: "JumpStart Pro",
+              cat: lang === "zh" ? "汽车启动电源" : "Jump Starters",
+              before: "0%",
+              after: "23.7%",
+              metric: lang === "zh" ? "高意图 SOV" : "High-Intent SOV",
+              trend: "+5.1 pts/mo",
+              color: "#22c55e",
+              note: lang === "zh"
+                ? "AI 推荐排名从未上榜 → 第 2 位"
+                : "AI rank: Not listed → #2",
+            },
+            {
+              brand: "MagDrive Pro",
+              cat: lang === "zh" ? "车载手机支架" : "Car Phone Mounts",
+              before: "0%",
+              after: "7.8%",
+              metric: lang === "zh" ? "加权 SOV" : "Weighted SOV",
+              trend: lang === "zh" ? "优化中" : "Optimizing",
+              color: "#f5a623",
+              note: lang === "zh"
+                ? "已获 PCMag 编辑推荐"
+                : "Won PCMag Editor's Choice",
+            },
+            {
+              brand: "DriveSafe Pro",
+              cat: lang === "zh" ? "行车记录仪" : "Dash Cameras",
+              before: "0%",
+              after: "5.2%",
+              metric: lang === "zh" ? "加权 SOV" : "Weighted SOV",
+              trend: lang === "zh" ? "诊断完成" : "Diagnosed",
+              color: "#ff4d6d",
+              note: lang === "zh"
+                ? "发现根因：零英文评测覆盖"
+                : "Root cause: Zero English reviews",
+            },
+          ].map((item) => (
+            <div key={item.brand} className="p-6 space-y-3" style={{ background: "#0f0f17" }}>
+              <div>
+                <div className="text-sm font-bold" style={{ color: "#f0f0f8" }}>{item.brand}</div>
+                <div className="text-xs" style={{ color: "#7070a0" }}>{item.cat}</div>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-xs line-through" style={{ color: "#555580" }}>{item.before}</span>
+                <span className="text-xl font-black" style={{ color: item.color }}>{item.after}</span>
+                <span className="text-xs" style={{ color: "#7070a0" }}>{item.metric}</span>
+              </div>
+              <div className="text-xs font-semibold" style={{ color: item.color }}>{item.trend}</div>
+              <div
+                className="text-xs px-3 py-1.5 rounded-lg"
+                style={{ background: `${item.color}10`, color: item.color, border: `1px solid ${item.color}20` }}
+              >
+                {item.note}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="px-8 py-5 flex items-center justify-between flex-wrap gap-4" style={{ borderTop: "1px solid #25253f" }}>
+          <p className="text-xs" style={{ color: "#7070a0" }}>
+            {lang === "zh"
+              ? "Avanti 为 DriveX 制定了完整的 90 天 GEO 行动计划，涵盖内容策略、媒体联系和 OKR 追踪。"
+              : "Avanti built DriveX a full 90-day GEO Action Plan with content strategy, media outreach, and OKR tracking."}
+          </p>
+          <Link
+            href={lang === "zh" ? "/zh/company/techvision-pro" : "/company/techvision-pro"}
+            className="shrink-0 text-xs font-semibold px-4 py-2 rounded-lg transition-opacity hover:opacity-80"
+            style={{ background: "#ff6b35", color: "#fff" }}
+          >
+            {lang === "zh" ? "查看完整案例 →" : "See Full Case Study →"}
+          </Link>
+        </div>
+      </motion.section>
 
       {/* AI Shift urgency banner */}
       <motion.section
@@ -735,24 +845,29 @@ export default function LandingView({ lang }: Props) {
         style={{ background: "linear-gradient(135deg, #0f0f17 0%, #161625 100%)", border: "1px solid rgba(255,107,53,0.25)" }}
       >
         <h2 className="text-2xl font-black mb-2">{tx("landing", "ctaBannerH2", lang)}</h2>
-        <p className="text-sm mb-8" style={{ color: "#7070a0" }}>{tx("landing", "ctaBannerSub", lang)}</p>
+        <p className="text-sm mb-3" style={{ color: "#7070a0" }}>{tx("landing", "ctaBannerSub", lang)}</p>
+        <p className="text-xs mb-8" style={{ color: "#555580" }}>
+          {lang === "zh"
+            ? "5 分钟免费诊断 · 无需信用卡 · 即刻查看你的品牌 AI 可见度"
+            : "5-min free diagnosis · No credit card · See your brand\u2019s AI visibility instantly"}
+        </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
+          <Link
+            href={auditPath}
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all duration-500 hover:opacity-85 hover:[box-shadow:0_0_40px_rgba(255,107,53,0.5)]"
+            style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
+          >
+            {lang === "zh" ? "免费诊断我的品牌 →" : "Free Brand Diagnosis →"}
+          </Link>
           <a
             href={CALENDLY}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all duration-500 hover:opacity-85 hover:[box-shadow:0_0_40px_rgba(255,107,53,0.5)]"
-            style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
-          >
-            {lang === "zh" ? "预约免费策略通话 →" : "Book a Free Strategy Call →"}
-          </a>
-          <Link
-            href={auditPath}
             className="text-sm font-medium transition-colors hover:text-white"
             style={{ color: "#7070a0" }}
           >
-            {lang === "zh" ? "或先免费自助诊断 →" : "or start free audit →"}
-          </Link>
+            {lang === "zh" ? "或预约策略通话 →" : "or book strategy call →"}
+          </a>
         </div>
       </motion.section>
     </div>

@@ -1,0 +1,363 @@
+{
+  "brand": "Baseus",
+  "product_en": "Charger",
+  "report_slug": "baseus-charger",
+  "report_type": "weekly",
+  "report_type_label": "AI 可见度周报",
+  "report_date": "Week 11 · 2026年3月12日",
+  "period_label": "周",
+  "geo_score": 72,
+  "geo_score_level": "优秀",
+  "geo_score_delta": "+0",
+  "geo_score_delta_class": "flat",
+  "category_avg_score": 67,
+  "top_brand_score": 72,
+  "citation_count_90d": 60,
+  "citation_delta": "+0",
+  "citation_delta_class": "flat",
+  "citation_rate": 100,
+  "category_rank": 1,
+  "rank_delta": "-",
+  "rank_delta_class": "flat",
+  "category_total_brands": 3,
+  "top_competitor_name": "Anker",
+  "top_competitor_score": 72,
+  "top_competitor_color": "white",
+  "score_gap": 0,
+  "engine_coverage": 1,
+  "summary_headline": "Baseus 在 US 市场领先 Anker",
+  "key_insights": [
+    "Baseus 的 GEO 得分为 72",
+    "Anker 的 SOV 达 35.9%",
+    "Baseus 的购买意图引用率为 100%",
+    "覆盖 1 个 AI 引擎"
+  ],
+  "engines": [
+    {
+      "name": "ChatGPT",
+      "score": 20,
+      "rank": 0,
+      "color": "#22c55e",
+      "bar_class": "gr"
+    }
+  ],
+  "engine_details": [
+    {
+      "name": "ChatGPT",
+      "score": 20,
+      "color": "#22c55e",
+      "bar_class": "gr",
+      "hi_rate": 0,
+      "comp_rate": 100.0,
+      "info_rate": 0,
+      "n_results": 60,
+      "th_rate": 0,
+      "en_rate": 100.0,
+      "zh_rate": 0
+    }
+  ],
+  "intents": [
+    {
+      "name": "购买推荐",
+      "rate": 0,
+      "bar_class": "bl"
+    },
+    {
+      "name": "产品对比",
+      "rate": 100.0,
+      "bar_class": "or"
+    },
+    {
+      "name": "品牌查询",
+      "rate": 0,
+      "bar_class": "gr"
+    }
+  ],
+  "score_factors": [
+    {
+      "name": "推荐出现率 (40%)",
+      "weight": 40,
+      "score": "100",
+      "color": "#22c55e"
+    },
+    {
+      "name": "位置权重 (25%)",
+      "weight": 25,
+      "score": "7",
+      "color": "#22c55e"
+    },
+    {
+      "name": "引用质量 (20%)",
+      "weight": 20,
+      "score": "0",
+      "color": "#ef4444"
+    },
+    {
+      "name": "意图覆盖 (15%)",
+      "weight": 15,
+      "score": "1",
+      "color": "#ef4444"
+    }
+  ],
+  "intent_comparison": [
+    {
+      "intent": "购买推荐",
+      "self_pct": 0,
+      "self_level": "weak",
+      "comp_vals": [
+        {
+          "name": "Anker",
+          "pct": 0,
+          "level": "weak"
+        },
+        {
+          "name": "Ugreen",
+          "pct": 0,
+          "level": "weak"
+        }
+      ]
+    },
+    {
+      "intent": "产品对比",
+      "self_pct": 100.0,
+      "self_level": "strong",
+      "comp_vals": [
+        {
+          "name": "Anker",
+          "pct": 100.0,
+          "level": "strong"
+        },
+        {
+          "name": "Ugreen",
+          "pct": 86.7,
+          "level": "strong"
+        }
+      ]
+    },
+    {
+      "intent": "品牌查询",
+      "self_pct": 0,
+      "self_level": "weak",
+      "comp_vals": [
+        {
+          "name": "Anker",
+          "pct": 100.0,
+          "level": "strong"
+        },
+        {
+          "name": "Ugreen",
+          "pct": 75.6,
+          "level": "strong"
+        }
+      ]
+    }
+  ],
+  "competitors": [
+    {
+      "name": "Baseus",
+      "sov": 35.9,
+      "geo_score": 72,
+      "citations": 60,
+      "is_self": true,
+      "hi_rate": 0,
+      "comp_rate": 100.0,
+      "info_rate": 0
+    },
+    {
+      "name": "Anker",
+      "sov": 35.9,
+      "geo_score": 72,
+      "citations": 60,
+      "is_self": false,
+      "hi_rate": 0,
+      "comp_rate": 100.0,
+      "info_rate": 100.0
+    },
+    {
+      "name": "Ugreen",
+      "sov": 28.1,
+      "geo_score": 56,
+      "citations": 47,
+      "is_self": false,
+      "hi_rate": 0,
+      "comp_rate": 86.7,
+      "info_rate": 75.6
+    }
+  ],
+  "lang_breakdown": [
+    {
+      "lang": "en",
+      "label": "英语",
+      "flag": "🇺🇸",
+      "hits": 60,
+      "total": 60,
+      "rate": 100
+    }
+  ],
+  "query_samples": [
+    {
+      "query": "What USB-C accessories and charging brand do most Americans buy under $50?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "What USB-C accessories and charging brand do tech reviewers recommend under $50?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "What's the safest USB-C accessories and charging brand to buy online for under $50?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "I need a reliable USB-C accessories and charging under $50 — what do you recommend?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "What are the trending USB-C accessories and charging brands among American buyers?",
+      "lang": "en",
+      "intent": "info",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Which USB-C accessories and charging brand offers more for the money — give me a comparison.",
+      "lang": "en",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "What certifications should a good USB-C accessories and charging brand have?",
+      "lang": "en",
+      "intent": "info",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Side-by-side: which USB-C accessories and charging brand wins for US Amazon shoppers?",
+      "lang": "en",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Compare USB-C accessories and charging brands for durability and value in the US market.",
+      "lang": "en",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Which USB-C accessories and charging brand beats the others in customer satisfaction?",
+      "lang": "en",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Which USB-C accessories and charging would you gift someone for under $50?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "What makes a USB-C accessories and charging brand reliable?",
+      "lang": "en",
+      "intent": "info",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Which USB-C accessories and charging brand offers the best warranty under $50?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Which USB-C accessories and charging brand has the best reviews under $50?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Best USB-C accessories and charging brand for home use under $50?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    }
+  ],
+  "kol_details": [],
+  "hallucination_total": 0,
+  "hallucination_ok": 0,
+  "hallucination_warn": 0,
+  "hallucination_warnings": [],
+  "hallucination_ok_items": [],
+  "expected_score_gain": 5,
+  "actions": [
+    {
+      "title": "Expand FAQ and Comparison Content",
+      "description": "Create dedicated comparison pages and FAQ sections targeting head queries where Baseus ties with Anker at 34.9% SOV. Focus on direct product comparisons (e.g., 'Baseus vs Anker chargers') and common customer questions to capture comparison-intent traffic.",
+      "impact": 5,
+      "difficulty": "中等难度 · 1周内完成",
+      "urgency": "立即"
+    },
+    {
+      "title": "Strengthen Informational Content Strategy",
+      "description": "Baseus leads in info SOV (39.5%) but this advantage is minimal. Develop 15-20 in-depth buying guides, product category overviews, and technical comparison articles to expand the gap versus Ugreen (21.1%) and maintain parity with Anker.",
+      "impact": 5,
+      "difficulty": "中等难度 · 1周内完成",
+      "urgency": "立即"
+    },
+    {
+      "title": "Optimize Structured Product Data",
+      "description": "Audit and enhance schema markup (Product, AggregateRating, Offer) across all product pages to improve visibility in AI-generated recommendations. Ensure consistent, detailed specifications and competitive pricing data are clearly marked.",
+      "impact": 5,
+      "difficulty": "中等难度 · 1周内完成",
+      "urgency": "立即"
+    }
+  ],
+  "next_week_focus": "专注于提高 Baseus 的 GEO 得分和 SOV。",
+  "roi_steps": [
+    {
+      "week": "基准",
+      "score": 72,
+      "action": "当前状态（首次测量）"
+    },
+    {
+      "week": "第2周",
+      "score": 76,
+      "action": "Listing 优化 + 关键词植入"
+    },
+    {
+      "week": "第4周",
+      "score": 81,
+      "action": "达人合作 ×2 条新内容"
+    },
+    {
+      "week": "第8周",
+      "score": 90,
+      "action": "英语内容矩阵补充"
+    },
+    {
+      "week": "第12周",
+      "score": 100,
+      "action": "系统性 GEO 优化完成"
+    }
+  ],
+  "roi_target_w12": 100
+}

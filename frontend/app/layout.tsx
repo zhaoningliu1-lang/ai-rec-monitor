@@ -5,7 +5,7 @@ import NavBar from "./NavBar";
 
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://avanti.so";
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://avantia2a.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),

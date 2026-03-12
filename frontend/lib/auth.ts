@@ -50,6 +50,7 @@ export interface UserProfile {
   subscription_tier: string;
   subscription_status: string;
   subscription_current_period_end: string | null;
+  credit_balance: number;
 }
 
 async function apiFetch(path: string, init: RequestInit = {}) {
@@ -91,6 +92,10 @@ export async function fetchMe(): Promise<UserProfile> {
   const profile = await apiFetch("/auth/me");
   saveTierFromProfile(profile);
   return profile;
+}
+
+export async function fetchCredits(): Promise<{ balance: number; tier: string; is_paid: boolean }> {
+  return apiFetch("/auth/credits");
 }
 
 export async function createCheckout(tier: "growth" | "scale", successUrl: string, cancelUrl: string) {

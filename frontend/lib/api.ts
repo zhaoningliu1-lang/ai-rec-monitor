@@ -144,6 +144,18 @@ export interface AgentCycle {
   completed_at: string | null;
 }
 
+export interface EnrichedLeaderboardEntry extends LeaderboardEntry {
+  sparkline: number[];
+  trend_direction: "rising" | "stable" | "falling";
+  sov_change: number;
+}
+
+export interface GoogleTrendsData {
+  keywords: Record<string, number>;
+  delta_4w_pct: Record<string, number>;
+  rising_queries: string[];
+}
+
 export const api = {
   // Runs
   listRuns: (brand?: string) =>
@@ -186,6 +198,12 @@ export const api = {
   listCategories: () => get<CategoryEntry[]>("/categories"),
   getCategoryLeaderboard: (category: string) =>
     get<LeaderboardEntry[]>(`/categories/${encodeURIComponent(category)}/leaderboard`),
+  getCategoryLeaderboardWithTrends: (category: string, sparklinePoints?: number) =>
+    get<EnrichedLeaderboardEntry[]>(
+      `/categories/${encodeURIComponent(category)}/leaderboard-with-trends${sparklinePoints ? `?sparkline_points=${sparklinePoints}` : ""}`
+    ),
+  getGoogleTrends: (category: string) =>
+    get<GoogleTrendsData>(`/trends/google/${encodeURIComponent(category)}`),
 
   // Schedules
   listSchedules: () => get<Schedule[]>("/schedules"),

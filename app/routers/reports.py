@@ -13,6 +13,7 @@ from app.database import get_db
 from app.models import Recommendation, PromptResult, Run, RunSnapshot
 from app.schemas import (
     CategoryLeaderboardEntry,
+    EnrichedLeaderboardEntry,
     PromptResultDetailResponse,
     RecommendationResponse,
     RunSnapshotResponse,
@@ -922,3 +923,83 @@ async def category_leaderboard(
     )
     rows = await db.execute(stmt)
     return rows.scalars().all()
+
+
+@router.get(
+    "/categories/{category}/leaderboard-with-trends",
+    response_model=list[EnrichedLeaderboardEntry],
+)
+async def category_leaderboard_with_trends(
+    category: str,
+    sparkline_points: int = Query(default=5, ge=2, le=10),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Enriched leaderboard: latest metrics + sparkline data + trend direction per brand.
+    Single query using window functions to avoid N+1 calls.
+    """
+    from collections import defaultdict
+
+    ranked = (
+        select(
+            RunSnapshot.brand_name,
+            RunSnapshot.weighted_sov,
+            RunSnapshot.sov_high,
+            RunSnapshot.sov_comparison,
+            RunSnapshot.sov_info,
+            RunSnapshot.arrs,
+            RunSnapshot.mention_count,
+            RunSnapshot.total_prompts,
+            RunSnapshot.snapshot_at,
+            func.row_number()
+            .over(partition_by=RunSnapshot.brand_name, order_by=RunSnapshot.snapshot_at.desc())
+            .label("rn"),
+        )
+        .join(Run, RunSnapshot.run_id == Run.id)
+        .where(func.lower(Run.category) == category.lower())
+        .subquery()
+    )
+
+    stmt = (
+        select(ranked)
+        .where(ranked.c.rn <= sparkline_points)
+        .order_by(ranked.c.brand_name, ranked.c.snapshot_at.asc())
+    )
+    rows = (await db.execute(stmt)).all()
+
+    brands: dict[str, list] = defaultdict(list)
+    for r in rows:
+        brands[r.brand_name].append(r)
+
+    result = []
+    for brand_name, snapshots in brands.items():
+        latest = snapshots[-1]
+        sparkline = [s.weighted_sov for s in snapshots]
+        sov_change = sparkline[-1] - sparkline[0] if len(sparkline) > 1 else 0.0
+
+        if len(sparkline) < 2:
+            trend = "stable"
+        elif sov_change > 5:
+            trend = "rising"
+        elif sov_change < -5:
+            trend = "falling"
+        else:
+            trend = "stable"
+
+        result.append(EnrichedLeaderboardEntry(
+            brand_name=brand_name,
+            weighted_sov=latest.weighted_sov,
+            sov_high=latest.sov_high,
+            sov_comparison=latest.sov_comparison,
+            sov_info=latest.sov_info,
+            arrs=latest.arrs,
+            mention_count=latest.mention_count,
+            total_prompts=latest.total_prompts,
+            snapshot_at=latest.snapshot_at,
+            sparkline=sparkline,
+            trend_direction=trend,
+            sov_change=round(sov_change, 1),
+        ))
+
+    result.sort(key=lambda e: e.weighted_sov, reverse=True)
+    return result

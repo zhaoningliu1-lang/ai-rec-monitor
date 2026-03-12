@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { createCheckout, createPortal, fetchMe, logout, isPaid as checkIsPaid, type UserProfile } from "@/lib/auth";
-import { getCredits, initCredits, MAX_FREE_CREDITS } from "@/lib/credits";
+import { createCheckout, createPortal, fetchMe, fetchCredits, logout, type UserProfile } from "@/lib/auth";
 
 const TIERS = [
   {
@@ -54,13 +53,11 @@ export default function AccountPage() {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
 
-  const [credits, setCredits] = useState(MAX_FREE_CREDITS);
+  const [creditBalance, setCreditBalance] = useState<number | null>(null);
 
   useEffect(() => {
-    initCredits();
-    setCredits(getCredits());
     fetchMe()
-      .then(setUser)
+      .then((u) => { setUser(u); setCreditBalance(u.credit_balance); })
       .catch(() => router.push("/login?next=/account"))
       .finally(() => setLoading(false));
   }, [router]);
@@ -156,8 +153,8 @@ export default function AccountPage() {
         </div>
         <div>
           <p style={{ fontSize: 12, color: "#7070a0", marginBottom: 4 }}>剩余 Credits</p>
-          <p style={{ fontSize: 14, fontWeight: 600, color: isPaid ? "#22c55e" : credits > 0 ? "#f0f0f8" : "#ff4d6d" }}>
-            {isPaid ? "Unlimited" : `${credits} / ${MAX_FREE_CREDITS}`}
+          <p style={{ fontSize: 14, fontWeight: 600, color: isPaid ? "#22c55e" : (creditBalance ?? 0) > 0 ? "#f0f0f8" : "#ff4d6d" }}>
+            {isPaid ? "Unlimited" : `${creditBalance ?? 0} credits`}
           </p>
         </div>
       </div>
@@ -255,7 +252,7 @@ export default function AccountPage() {
       </div>
 
       <p style={{ color: "#3a3a5c", fontSize: 12, textAlign: "center", marginTop: 24 }}>
-        Enterprise? <a href="mailto:hello@avanti.so" style={{ color: "#7070a0" }}>Contact us</a> for custom pricing.
+        Enterprise? <a href="mailto:hello@avantia2a.com" style={{ color: "#7070a0" }}>Contact us</a> for custom pricing.
       </p>
     </div>
   );

@@ -293,6 +293,9 @@ class User(Base):
         DateTime(timezone=True), nullable=True
     )
 
+    # Credits (1 credit = 5 prompts; free tier starts with 40)
+    credit_balance: Mapped[int] = mapped_column(Integer, nullable=False, default=40)
+
     # Password reset
     password_reset_token: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True)
     password_reset_expires: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

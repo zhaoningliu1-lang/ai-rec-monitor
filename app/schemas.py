@@ -74,6 +74,21 @@ class CategoryLeaderboardEntry(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class EnrichedLeaderboardEntry(BaseModel):
+    brand_name: str
+    weighted_sov: float
+    sov_high: float
+    sov_comparison: float
+    sov_info: float
+    arrs: float
+    mention_count: int
+    total_prompts: int
+    snapshot_at: datetime
+    sparkline: list[float]
+    trend_direction: str  # "rising" | "stable" | "falling"
+    sov_change: float
+
+
 # ── ScheduledRun ──────────────────────────────────────────────────────────────
 
 class CreateScheduleRequest(BaseModel):

@@ -97,8 +97,7 @@ export default function NavBar() {
 
   /* ── LOGGED-IN: app nav dropdowns ── */
   const diagnoseItems: DropdownItem[] = [
-    { href: h("/audit"),    label: p("Audit",      "AI 品牌诊断") },
-    { href: h("/runs/new"), label: p("New Run",    "新建分析") },
+    { href: h("/runs/new"), label: p("New Analysis", "新建分析") },
   ];
   const monitorItems: DropdownItem[] = [
     { href: h("/trends"),        label: p("Trends",        "行业趋势") },
@@ -115,7 +114,6 @@ export default function NavBar() {
     { href: h("/optimizer"),      label: p("Optimizer",      "成本优化") },
     { href: h("/agents"),         label: p("Growth Agent",   "增长引擎") },
     { href: h("/selection"),      label: p("Selection",      "选品情报") },
-    { href: h("/product"),        label: p("Product",        "产品报告") },
     { href: h("/content-health"), label: p("Content Health", "内容健康") },
   ];
   const workspaceItems: DropdownItem[] = [

@@ -6,7 +6,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -48,6 +48,7 @@ class UserOut(BaseModel):
     subscription_tier: str
     subscription_status: str
     subscription_current_period_end: datetime | None
+    credit_balance: int
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -114,6 +115,7 @@ def _user_out(u: User) -> UserOut:
         subscription_tier=u.subscription_tier.value,
         subscription_status=u.subscription_status.value,
         subscription_current_period_end=u.subscription_current_period_end,
+        credit_balance=u.credit_balance,
     )
 
 
@@ -132,6 +134,7 @@ async def register(body: RegisterIn, bg: BackgroundTasks, db: AsyncSession = Dep
         company_name=body.company_name,
         subscription_tier=SubscriptionTier.free,
         subscription_status=SubscriptionStatus.none,
+        credit_balance=40,
     )
     db.add(user)
     await db.commit()
@@ -153,6 +156,42 @@ async def login(body: LoginIn, db: AsyncSession = Depends(get_db)):
 @router.get("/me", response_model=UserOut)
 async def me(user: User = Depends(get_current_user)):
     return _user_out(user)
+
+
+# ── Credits ───────────────────────────────────────────────────────────────────
+
+class CreditUseIn(BaseModel):
+    amount: int = Field(..., ge=1, le=100)
+    reason: str = Field(default="manual", max_length=100)
+
+
+@router.get("/credits")
+async def get_credits(user: User = Depends(get_current_user)):
+    return {
+        "balance": user.credit_balance,
+        "tier": user.subscription_tier.value,
+        "is_paid": user.subscription_tier.value in ("growth", "scale", "enterprise"),
+    }
+
+
+@router.post("/credits/use")
+async def use_credits(body: CreditUseIn, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    """Deduct credits for any feature. Returns updated balance."""
+    if user.subscription_tier.value in ("growth", "scale", "enterprise"):
+        return {"balance": user.credit_balance, "deducted": 0, "message": "Paid plans have unlimited usage."}
+    if user.credit_balance < body.amount:
+        raise HTTPException(
+            status_code=429,
+            detail={
+                "code": "credits_exhausted",
+                "balance": user.credit_balance,
+                "required": body.amount,
+                "message": "Not enough credits. Upgrade to continue.",
+            },
+        )
+    user.credit_balance -= body.amount
+    await db.commit()
+    return {"balance": user.credit_balance, "deducted": body.amount}
 
 
 # ── Password reset ─────────────────────────────────────────────────────────────

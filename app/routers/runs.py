@@ -15,13 +15,9 @@ from app.services.job_runner import run_job
 
 router = APIRouter()
 
-# ── Quota limits per subscription tier ────────────────────────────────────────
-_MONTHLY_QUOTA: dict[str, int] = {
-    "free":       3,
-    "growth":     20,
-    "scale":      100,
-    "enterprise": 99999,
-}
+# ── Credit costs ──────────────────────────────────────────────────────────────
+# 1 credit = 5 prompts; paid tiers have unlimited usage.
+_PAID_TIERS = {"growth", "scale", "enterprise"}
 
 
 def _brand_abbr(brand_name: str) -> str:
@@ -54,28 +50,22 @@ async def create_run(
     db: AsyncSession = Depends(get_db),
     user: User | None = Depends(get_current_user_optional),
 ):
-    # ── Monthly quota check for authenticated users ───────────────────────────
+    # ── Credit check for free-tier authenticated users ──────────────────────────
+    credit_cost = 0
     if user:
         tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
-        quota = _MONTHLY_QUOTA.get(tier, 3)
-        now = datetime.now(timezone.utc)
-        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        monthly_count = await db.scalar(
-            select(func.count(Run.id))
-            .where(Run.user_id == user.id)
-            .where(Run.created_at >= month_start)
-        ) or 0
-        if monthly_count >= quota:
-            raise HTTPException(
-                status_code=429,
-                detail={
-                    "code": "quota_exceeded",
-                    "used": monthly_count,
-                    "limit": quota,
-                    "tier": tier,
-                    "message": f"{tier.capitalize()} plan: {quota} runs/month. Upgrade to continue.",
-                },
-            )
+        if tier not in _PAID_TIERS:
+            credit_cost = max(1, body.num_prompts // 5)
+            if user.credit_balance < credit_cost:
+                raise HTTPException(
+                    status_code=429,
+                    detail={
+                        "code": "credits_exhausted",
+                        "balance": user.credit_balance,
+                        "cost": credit_cost,
+                        "message": "Credits exhausted. Add a payment method to continue.",
+                    },
+                )
 
     run_code = await _generate_run_code(db, body.brand_name)
 
@@ -93,6 +83,8 @@ async def create_run(
         user_id=user.id if user else None,
     )
     db.add(run)
+    if credit_cost > 0:
+        user.credit_balance -= credit_cost
     await db.commit()
     await db.refresh(run)
 

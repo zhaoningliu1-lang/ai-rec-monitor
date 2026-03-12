@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+/* ── Reset & base ─────────────────────────────────── */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:210mm;background:#0d1b2e;color:#fff;
+  font-family:'Arial','-apple-system','sans-serif';font-size:10pt;}
+
+/* ── Layout ───────────────────────────────────────── */
+.page{width:210mm;height:297mm;overflow:hidden;
+  page-break-after:always;position:relative;
+  background:#0d1b2e;display:flex;flex-direction:column;}
+.page:last-child{page-break-after:avoid;}
+
+/* ── Colors ───────────────────────────────────────── */
+:root{
+  --or:#FF6B35;--or2:#e85e2c;
+  --navy:#0d1b2e;--navy2:#152238;--navy3:#1e3050;
+  --muted:rgba(255,255,255,.50);--border:rgba(255,255,255,.10);
+}
+
+/* ── Typography ───────────────────────────────────── */
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:7.5pt;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.tag-or{background:rgba(255,107,53,.18);color:var(--or);}
+.tag-green{background:rgba(34,197,94,.15);color:#22c55e;}
+.tag-red{background:rgba(239,68,68,.15);color:#ef4444;}
+.tag-muted{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);}
+
+/* ── Header bar (pages 2-6) ───────────────────────── */
+.hdr{height:44px;background:var(--navy2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;flex-shrink:0;}
+.hdr-brand{font-size:8pt;font-weight:700;color:var(--or);letter-spacing:1px;}
+.hdr-right{font-size:7.5pt;color:var(--muted);}
+
+/* ── Footer bar ───────────────────────────────────── */
+.ftr{height:36px;background:var(--navy2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;flex-shrink:0;margin-top:auto;}
+.ftr-text{font-size:7pt;color:rgba(255,255,255,.35);}
+
+/* ── Page body ────────────────────────────────────── */
+.body{flex:1;padding:24px 28px;overflow:hidden;}
+
+/* ── Stat cards ───────────────────────────────────── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;
+  padding:16px 14px;}
+.stat-label{font-size:7.5pt;color:var(--muted);margin-bottom:6px;text-transform:uppercase;
+  letter-spacing:.4px;}
+.stat-value{font-size:26pt;font-weight:700;line-height:1;}
+.stat-value.or{color:var(--or);}
+.stat-value.green{color:#22c55e;}
+.stat-value.white{color:#fff;}
+.stat-delta{font-size:8pt;margin-top:5px;}
+.stat-delta.up{color:#22c55e;}
+.stat-delta.down{color:#ef4444;}
+.stat-delta.flat{color:var(--muted);}
+
+/* ── Section title ────────────────────────────────── */
+.sec-title{font-size:13pt;font-weight:700;margin-bottom:4px;}
+.sec-sub{font-size:8.5pt;color:var(--muted);margin-bottom:14px;}
+
+/* ── Progress bar ─────────────────────────────────── */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.prog-label{width:110px;font-size:8.5pt;flex-shrink:0;}
+.prog-track{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;transition:width .3s;}
+.prog-fill.or{background:var(--or);}
+.prog-fill.bl{background:#60a5fa;}
+.prog-fill.gr{background:#22c55e;}
+.prog-fill.pu{background:#a78bfa;}
+.prog-val{width:38px;text-align:right;font-size:8.5pt;font-weight:700;flex-shrink:0;}
+
+/* ── Engine grid ─────────────────────────────────── */
+.engine-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px;}
+.engine-card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;
+  padding:14px;text-align:center;}
+.engine-name{font-size:7.5pt;color:var(--muted);margin-bottom:6px;text-transform:uppercase;
+  letter-spacing:.3px;}
+.engine-score{font-size:22pt;font-weight:700;}
+.engine-rank{font-size:8pt;color:var(--muted);margin-top:3px;}
+
+/* ── 2-col layout ─────────────────────────────────── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* ── Card block ──────────────────────────────────── */
+.card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.card-title{font-size:9pt;font-weight:700;margin-bottom:10px;color:var(--or);}
+
+/* ── Hallucination items ─────────────────────────── */
+.hall-ok{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);
+  border-radius:8px;padding:10px 12px;margin-bottom:7px;}
+.hall-warn{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);
+  border-radius:8px;padding:10px 12px;margin-bottom:7px;}
+.hall-icon{font-size:10pt;margin-right:6px;}
+.hall-claim{font-size:8.5pt;font-weight:700;margin-bottom:2px;}
+.hall-note{font-size:8pt;color:var(--muted);}
+.hall-fix{font-size:7.5pt;color:#fbbf24;margin-top:4px;}
+
+/* ── Action plan ─────────────────────────────────── */
+.action-item{display:flex;gap:12px;margin-bottom:12px;
+  background:var(--navy2);border:1px solid var(--border);
+  border-radius:10px;padding:14px;}
+.action-num{font-size:18pt;font-weight:700;color:var(--or);width:28px;
+  flex-shrink:0;line-height:1;}
+.action-body{}
+.action-title{font-size:9.5pt;font-weight:700;margin-bottom:4px;}
+.action-desc{font-size:8pt;color:var(--muted);line-height:1.5;}
+.action-meta{display:flex;gap:8px;margin-top:6px;}
+.action-impact{font-size:7.5pt;padding:2px 8px;border-radius:12px;
+  background:rgba(255,107,53,.15);color:var(--or);}
+.action-diff{font-size:7.5pt;padding:2px 8px;border-radius:12px;
+  background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);}
+
+/* ── Intent table ────────────────────────────────── */
+.intent-table{width:100%;border-collapse:collapse;font-size:8.5pt;}
+.intent-table th{background:rgba(255,255,255,.06);padding:7px 10px;text-align:left;
+  font-size:7.5pt;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);}
+.intent-table td{padding:7px 10px;border-bottom:1px solid var(--border);}
+.intent-table tr:last-child td{border-bottom:none;}
+.badge-strong{color:#22c55e;font-weight:700;}
+.badge-mid{color:#fbbf24;font-weight:700;}
+.badge-weak{color:#ef4444;font-weight:700;}
+
+/* ── Score ring (SVG-based) ──────────────────────── */
+.ring-wrap{display:flex;align-items:center;gap:20px;}
+.ring-labels{}
+.ring-score-big{font-size:32pt;font-weight:700;color:var(--or);line-height:1;}
+.ring-score-label{font-size:8pt;color:var(--muted);margin-top:2px;}
+
+/* ── Selection signal ────────────────────────────── */
+.sel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.sel-card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;
+  padding:12px;}
+.sel-cat{font-size:8pt;color:var(--muted);margin-bottom:4px;}
+.sel-name{font-size:9.5pt;font-weight:700;margin-bottom:8px;}
+.sel-signal{font-size:7.5pt;font-weight:700;padding:2px 8px;border-radius:12px;
+  display:inline-block;margin-bottom:6px;}
+.sel-signal.buy{background:rgba(34,197,94,.15);color:#22c55e;}
+.sel-signal.watch{background:rgba(251,191,36,.15);color:#fbbf24;}
+.sel-signal.avoid{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);}
+.sel-note{font-size:7.5pt;color:var(--muted);line-height:1.4;}
+
+/* ── Divider ─────────────────────────────────────── */
+.divider{height:1px;background:var(--border);margin:14px 0;}
+
+/* ── Confidential watermark ──────────────────────── */
+.conf-badge{font-size:7pt;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,107,53,.6);border:1px solid rgba(255,107,53,.25);
+  padding:2px 8px;border-radius:4px;}
+
+/* ── Print ───────────────────────────────────────── */
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════
+     PAGE 1 — COVER
+     ════════════════════════════════════════════════════ -->
+<div class="page" style="background:linear-gradient(160deg,#0d1b2e 60%,#1a2e50);">
+
+  <!-- top bar -->
+  <div style="display:flex;align-items:center;justify-content:space-between;
+    padding:22px 30px 0;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:34px;height:34px;background:var(--or);border-radius:8px;
+        display:flex;align-items:center;justify-content:center;
+        font-weight:700;font-size:12pt;color:#fff;">AV</div>
+      <span style="font-size:11pt;font-weight:700;letter-spacing:2px;
+        color:#fff;opacity:.9;">AVANTI</span>
+    </div>
+    <div class="conf-badge">CONFIDENTIAL</div>
+  </div>
+
+  <!-- main content -->
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;
+    padding:0 30px;">
+    <!-- report type pill -->
+    <div class="tag tag-or" style="margin-bottom:16px;font-size:8pt;">
+      AI 可见度周报
+    </div>
+
+    <!-- brand name -->
+    <div style="font-size:36pt;font-weight:700;line-height:1.1;margin-bottom:10px;
+      letter-spacing:-0.5px;">
+      INNOTREE
+    </div>
+
+    <div style="font-size:14pt;color:rgba(255,255,255,.65);margin-bottom:6px;">
+      AI 可见度报告
+    </div>
+    <div style="font-size:10pt;color:rgba(255,255,255,.4);">
+      Week 11 · 2026年3月11日
+    </div>
+
+    <!-- rule -->
+    <div style="height:2px;width:60px;background:var(--or);margin:22px 0;
+      border-radius:2px;"></div>
+
+    <!-- key numbers preview -->
+    <div style="display:flex;gap:32px;">
+      <div>
+        <div style="font-size:7.5pt;color:rgba(255,255,255,.4);
+          text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">
+          GEO SCORE
+        </div>
+        <div style="font-size:24pt;font-weight:700;color:var(--or);">
+          47
+        </div>
+      </div>
+      <div>
+        <div style="font-size:7.5pt;color:rgba(255,255,255,.4);
+          text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">
+          品类排名
+        </div>
+        <div style="font-size:24pt;font-weight:700;color:#fff;">
+          #4
+        </div>
+      </div>
+      <div>
+        <div style="font-size:7.5pt;color:rgba(255,255,255,.4);
+          text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">
+          引擎覆盖
+        </div>
+        <div style="font-size:24pt;font-weight:700;color:#fff;">
+          3/4
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- bottom bar -->
+  <div style="padding:16px 30px;border-top:1px solid rgba(255,255,255,.08);
+    display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:7.5pt;color:rgba(255,255,255,.35);">
+      Avanti Intelligence · avantia2a.com
+    </div>
+    <div style="font-size:7.5pt;color:rgba(255,255,255,.35);">
+      仅限内部使用及授权客户
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     PAGE 2 — EXECUTIVE SUMMARY
+     ════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="hdr">
+    <span class="hdr-brand">INNOTREE · AI 可见度报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月11日 &nbsp;·&nbsp; AI 可见度周报</span>
+  </div>
+
+  <div class="body">
+    <div class="tag tag-or" style="margin-bottom:8px;">执行摘要</div>
+    <div class="sec-title">本周核心数据</div>
+    <div class="sec-sub">GEO Score 连续第 2 周上升，Perplexity 引用率首次突破 20%——但「购买推荐」意图覆盖仍为全品类最弱，是下周核心攻坚方向。</div>
+
+    <!-- 4 big stat cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">GEO Score</div>
+        <div class="stat-value or">47</div>
+        <div class="stat-delta up">
+          +4 vs 上周
+        </div>
+        <div style="margin-top:8px;font-size:7pt;color:var(--muted);">
+          行业均值 38 · 头部品牌 71
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">90天 AI 引用次数</div>
+        <div class="stat-value white">83</div>
+        <div class="stat-delta up">
+          +12 vs 上周
+        </div>
+        <div style="margin-top:8px;font-size:7pt;color:var(--muted);">
+          Citation Rate 23%
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">品类 AI 排名</div>
+        <div class="stat-value white">#4</div>
+        <div class="stat-delta up">
+          ↑1 vs 上周
+        </div>
+        <div style="margin-top:8px;font-size:7pt;color:var(--muted);">
+          共 12 个品牌参与排名
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">竞品最高 GEO Score</div>
+        <div class="stat-value white">71</div>
+        <div class="stat-delta flat">EcoFlow</div>
+        <div style="margin-top:8px;font-size:7pt;color:var(--muted);">
+          差距 24 分
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary insight box -->
+    <div style="background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.25);
+      border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:8pt;font-weight:700;color:var(--or);margin-bottom:6px;">
+        💡 本周关键发现
+      </div>
+      
+      <div style="font-size:8.5pt;color:rgba(255,255,255,.85);
+        margin-bottom:4px;line-height:1.5;">
+        · ChatGPT 和 Gemini 均在便携储能户外露营场景中提及品牌，引用位置稳定在第 3 位
+      </div>
+      
+      <div style="font-size:8.5pt;color:rgba(255,255,255,.85);
+        margin-bottom:4px;line-height:1.5;">
+        · Perplexity 本周新增 6 次引用，主要来源为 Reddit r/overlanding 帖子引用
+      </div>
+      
+      <div style="font-size:8.5pt;color:rgba(255,255,255,.85);
+        margin-bottom:4px;line-height:1.5;">
+        · 竞品 Jackery 本周 GEO Score 下降 3 分（63→60），存在超越机会
+      </div>
+      
+      <div style="font-size:8.5pt;color:rgba(255,255,255,.85);
+        margin-bottom:4px;line-height:1.5;">
+        · AI 发现 1 条产品功率描述错误（1200W 被误报为 1500W），需立即修正
+      </div>
+      
+    </div>
+
+    <!-- Engine overview mini -->
+    <div class="engine-grid">
+      
+      <div class="engine-card">
+        <div class="engine-name">ChatGPT</div>
+        <div class="engine-score" style="color:#22c55e;">52</div>
+        <div class="engine-rank">排名 #3</div>
+      </div>
+      
+      <div class="engine-card">
+        <div class="engine-name">Perplexity</div>
+        <div class="engine-score" style="color:#60a5fa;">44</div>
+        <div class="engine-rank">排名 #4</div>
+      </div>
+      
+      <div class="engine-card">
+        <div class="engine-name">Gemini</div>
+        <div class="engine-score" style="color:#fbbf24;">51</div>
+        <div class="engine-rank">排名 #3</div>
+      </div>
+      
+      <div class="engine-card">
+        <div class="engine-name">Claude</div>
+        <div class="engine-score" style="color:#a78bfa;">38</div>
+        <div class="engine-rank">排名 #5</div>
+      </div>
+      
+    </div>
+  </div>
+
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com</span>
+    <span class="ftr-text">第 2 页 / 共 6 页</span>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     PAGE 3 — GEO SCORE DETAIL
+     ════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="hdr">
+    <span class="hdr-brand">INNOTREE · AI 可见度报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月11日</span>
+  </div>
+
+  <div class="body">
+    <div class="tag tag-or" style="margin-bottom:8px;">GEO Score 详情</div>
+    <div class="sec-title">四大 AI 引擎表现</div>
+    <div class="sec-sub">ChatGPT · Claude · Gemini · Perplexity 全面覆盖</div>
+
+    <div class="two-col" style="margin-bottom:16px;">
+      <!-- Left: Score + engines -->
+      <div>
+        <div style="background:var(--navy2);border:1px solid var(--border);
+          border-radius:10px;padding:16px;margin-bottom:12px;text-align:center;">
+          <div style="font-size:8pt;color:var(--muted);margin-bottom:4px;
+            text-transform:uppercase;letter-spacing:.5px;">综合 GEO Score</div>
+          <div style="font-size:52pt;font-weight:700;color:var(--or);line-height:1;">
+            47
+          </div>
+          <div style="font-size:8pt;color:var(--muted);margin-top:4px;">
+            满分 100 分 · 需改进
+          </div>
+          <!-- mini score bar -->
+          <div style="margin-top:12px;background:rgba(255,255,255,.08);
+            height:8px;border-radius:4px;overflow:hidden;">
+            <div style="height:100%;width:47%;
+              background:linear-gradient(90deg,var(--or),#ff9561);
+              border-radius:4px;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;
+            font-size:7pt;color:rgba(255,255,255,.25);margin-top:3px;">
+            <span>0 紧急</span><span>30 需改进</span>
+            <span>50 良好</span><span>70+ 优秀</span>
+          </div>
+        </div>
+
+        <!-- Engine scores -->
+        
+        <div class="prog-row">
+          <div class="prog-label" style="font-size:8.5pt;">ChatGPT</div>
+          <div class="prog-track">
+            <div class="prog-fill gr"
+              style="width:52%;"></div>
+          </div>
+          <div class="prog-val" style="color:#22c55e;">52</div>
+        </div>
+        
+        <div class="prog-row">
+          <div class="prog-label" style="font-size:8.5pt;">Perplexity</div>
+          <div class="prog-track">
+            <div class="prog-fill bl"
+              style="width:44%;"></div>
+          </div>
+          <div class="prog-val" style="color:#60a5fa;">44</div>
+        </div>
+        
+        <div class="prog-row">
+          <div class="prog-label" style="font-size:8.5pt;">Gemini</div>
+          <div class="prog-track">
+            <div class="prog-fill or"
+              style="width:51%;"></div>
+          </div>
+          <div class="prog-val" style="color:#fbbf24;">51</div>
+        </div>
+        
+        <div class="prog-row">
+          <div class="prog-label" style="font-size:8.5pt;">Claude</div>
+          <div class="prog-track">
+            <div class="prog-fill pu"
+              style="width:38%;"></div>
+          </div>
+          <div class="prog-val" style="color:#a78bfa;">38</div>
+        </div>
+        
+      </div>
+
+      <!-- Right: Intent coverage -->
+      <div>
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-title">搜索意图覆盖率</div>
+          
+          <div class="prog-row">
+            <div class="prog-label" style="font-size:8pt;width:90px;">品牌查询</div>
+            <div class="prog-track">
+              <div class="prog-fill gr"
+                style="width:68%;"></div>
+            </div>
+            <div class="prog-val" style="font-size:8pt;">68%</div>
+          </div>
+          
+          <div class="prog-row">
+            <div class="prog-label" style="font-size:8pt;width:90px;">产品对比</div>
+            <div class="prog-track">
+              <div class="prog-fill or"
+                style="width:42%;"></div>
+            </div>
+            <div class="prog-val" style="font-size:8pt;">42%</div>
+          </div>
+          
+          <div class="prog-row">
+            <div class="prog-label" style="font-size:8pt;width:90px;">购买推荐</div>
+            <div class="prog-track">
+              <div class="prog-fill bl"
+                style="width:18%;"></div>
+            </div>
+            <div class="prog-val" style="font-size:8pt;">18%</div>
+          </div>
+          
+          <div class="prog-row">
+            <div class="prog-label" style="font-size:8pt;width:90px;">问题解答</div>
+            <div class="prog-track">
+              <div class="prog-fill or"
+                style="width:55%;"></div>
+            </div>
+            <div class="prog-val" style="font-size:8pt;">55%</div>
+          </div>
+          
+          <div class="prog-row">
+            <div class="prog-label" style="font-size:8pt;width:90px;">替代方案</div>
+            <div class="prog-track">
+              <div class="prog-fill bl"
+                style="width:22%;"></div>
+            </div>
+            <div class="prog-val" style="font-size:8pt;">22%</div>
+          </div>
+          
+        </div>
+
+        <div class="card">
+          <div class="card-title">评分构成</div>
+          
+          <div style="display:flex;justify-content:space-between;
+            align-items:center;margin-bottom:7px;">
+            <div style="font-size:8pt;">推荐出现率 (40%)</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-size:7.5pt;color:var(--muted);">
+                权重 40%
+              </div>
+              <div style="font-size:8.5pt;font-weight:700;
+                color:#fbbf24;">52</div>
+            </div>
+          </div>
+          
+          <div style="display:flex;justify-content:space-between;
+            align-items:center;margin-bottom:7px;">
+            <div style="font-size:8pt;">位置权重 (25%)</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-size:7.5pt;color:var(--muted);">
+                权重 25%
+              </div>
+              <div style="font-size:8.5pt;font-weight:700;
+                color:#fbbf24;">44</div>
+            </div>
+          </div>
+          
+          <div style="display:flex;justify-content:space-between;
+            align-items:center;margin-bottom:7px;">
+            <div style="font-size:8pt;">引用质量 (20%)</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-size:7.5pt;color:var(--muted);">
+                权重 20%
+              </div>
+              <div style="font-size:8.5pt;font-weight:700;
+                color:#ef4444;">38</div>
+            </div>
+          </div>
+          
+          <div style="display:flex;justify-content:space-between;
+            align-items:center;margin-bottom:7px;">
+            <div style="font-size:8pt;">意图覆盖 (15%)</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-size:7.5pt;color:var(--muted);">
+                权重 15%
+              </div>
+              <div style="font-size:8.5pt;font-weight:700;
+                color:#fbbf24;">41</div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com</span>
+    <span class="ftr-text">第 3 页 / 共 6 页</span>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     PAGE 4 — COMPETITOR ANALYSIS
+     ════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="hdr">
+    <span class="hdr-brand">INNOTREE · AI 可见度报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月11日</span>
+  </div>
+
+  <div class="body">
+    <div class="tag tag-or" style="margin-bottom:8px;">竞品分析</div>
+    <div class="sec-title">AI 推荐格局 · Share of Voice</div>
+    <div class="sec-sub">品类内各品牌在 4 大 AI 引擎中的推荐占比</div>
+
+    <!-- SOV bars -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">AI 推荐份额（SOV）</div>
+      
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;
+          align-items:center;margin-bottom:4px;">
+          <div style="font-size:8.5pt;font-weight:400;
+            color:#fff;">
+            EcoFlow
+          </div>
+          <div style="font-size:9pt;font-weight:700;
+            color:#fff;">
+            34.2%
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);height:10px;
+          border-radius:5px;overflow:hidden;">
+          <div style="height:100%;width:34.2%;border-radius:5px;
+            background:rgba(255,255,255,.25);
+            "></div>
+        </div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:2px;">
+          GEO Score 71 · 引用数 187
+        </div>
+      </div>
+      
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;
+          align-items:center;margin-bottom:4px;">
+          <div style="font-size:8.5pt;font-weight:400;
+            color:#fff;">
+            Jackery
+          </div>
+          <div style="font-size:9pt;font-weight:700;
+            color:#fff;">
+            28.7%
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);height:10px;
+          border-radius:5px;overflow:hidden;">
+          <div style="height:100%;width:28.7%;border-radius:5px;
+            background:rgba(255,255,255,.25);
+            "></div>
+        </div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:2px;">
+          GEO Score 60 · 引用数 142
+        </div>
+      </div>
+      
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;
+          align-items:center;margin-bottom:4px;">
+          <div style="font-size:8.5pt;font-weight:400;
+            color:#fff;">
+            Bluetti
+          </div>
+          <div style="font-size:9pt;font-weight:700;
+            color:#fff;">
+            19.4%
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);height:10px;
+          border-radius:5px;overflow:hidden;">
+          <div style="height:100%;width:19.4%;border-radius:5px;
+            background:rgba(255,255,255,.25);
+            "></div>
+        </div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:2px;">
+          GEO Score 55 · 引用数 98
+        </div>
+      </div>
+      
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;
+          align-items:center;margin-bottom:4px;">
+          <div style="font-size:8.5pt;font-weight:700;
+            color:var(--or);">
+            INNOTREE ← 你
+          </div>
+          <div style="font-size:9pt;font-weight:700;
+            color:var(--or);">
+            9.1%
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);height:10px;
+          border-radius:5px;overflow:hidden;">
+          <div style="height:100%;width:9.1%;border-radius:5px;
+            background:linear-gradient(90deg,#FF6B35,#ff9561);
+            "></div>
+        </div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:2px;">
+          GEO Score 47 · 引用数 83
+        </div>
+      </div>
+      
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;
+          align-items:center;margin-bottom:4px;">
+          <div style="font-size:8.5pt;font-weight:400;
+            color:#fff;">
+            其他品牌
+          </div>
+          <div style="font-size:9pt;font-weight:700;
+            color:#fff;">
+            8.6%
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);height:10px;
+          border-radius:5px;overflow:hidden;">
+          <div style="height:100%;width:8.6%;border-radius:5px;
+            background:rgba(255,255,255,.25);
+            "></div>
+        </div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:2px;">
+          GEO Score 32 · 引用数 41
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Intent comparison table -->
+    <div style="font-size:9pt;font-weight:700;margin-bottom:8px;">
+      意图维度竞品对比
+    </div>
+    <table class="intent-table">
+      <thead>
+        <tr>
+          <th>搜索意图</th>
+          <th>INNOTREE</th>
+          
+          <th>EcoFlow</th>
+          
+          <th>Jackery</th>
+          
+          <th>Bluetti</th>
+          
+          <th>其他品牌</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td style="font-size:8pt;">品牌查询</td>
+          <td>
+            <span class="badge-mid">68%</span>
+          </td>
+          
+          <td>
+            <span class="badge-strong">85%</span>
+          </td>
+          
+          <td>
+            <span class="badge-strong">79%</span>
+          </td>
+          
+          <td>
+            <span class="badge-strong">72%</span>
+          </td>
+          
+        </tr>
+        
+        <tr>
+          <td style="font-size:8pt;">产品对比</td>
+          <td>
+            <span class="badge-mid">42%</span>
+          </td>
+          
+          <td>
+            <span class="badge-strong">78%</span>
+          </td>
+          
+          <td>
+            <span class="badge-strong">65%</span>
+          </td>
+          
+          <td>
+            <span class="badge-mid">58%</span>
+          </td>
+          
+        </tr>
+        
+        <tr>
+          <td style="font-size:8pt;">购买推荐</td>
+          <td>
+            <span class="badge-weak">18%</span>
+          </td>
+          
+          <td>
+            <span class="badge-strong">72%</span>
+          </td>
+          
+          <td>
+            <span class="badge-mid">55%</span>
+          </td>
+          
+          <td>
+            <span class="badge-mid">48%</span>
+          </td>
+          
+        </tr>
+        
+        <tr>
+          <td style="font-size:8pt;">问题解答</td>
+          <td>
+            <span class="badge-mid">55%</span>
+          </td>
+          
+          <td>
+            <span class="badge-strong">62%</span>
+          </td>
+          
+          <td>
+            <span class="badge-mid">45%</span>
+          </td>
+          
+          <td>
+            <span class="badge-strong">70%</span>
+          </td>
+          
+        </tr>
+        
+        <tr>
+          <td style="font-size:8pt;">替代方案</td>
+          <td>
+            <span class="badge-weak">22%</span>
+          </td>
+          
+          <td>
+            <span class="badge-strong">68%</span>
+          </td>
+          
+          <td>
+            <span class="badge-mid">50%</span>
+          </td>
+          
+          <td>
+            <span class="badge-mid">44%</span>
+          </td>
+          
+        </tr>
+        
+      </tbody>
+    </table>
+    <div style="font-size:7.5pt;color:var(--muted);margin-top:6px;">
+      强 ≥60% &nbsp;·&nbsp; 中 30-59% &nbsp;·&nbsp; 弱 &lt;30%
+    </div>
+  </div>
+
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com</span>
+    <span class="ftr-text">第 4 页 / 共 6 页</span>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     PAGE 5 — HALLUCINATION REPORT
+     ════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="hdr">
+    <span class="hdr-brand">INNOTREE · AI 可见度报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月11日</span>
+  </div>
+
+  <div class="body">
+    <div class="tag tag-or" style="margin-bottom:8px;">幻觉检测</div>
+    <div class="sec-title">AI 产品声明核查报告</div>
+    <div class="sec-sub">
+      共核查 7 条声明 ·
+      <span style="color:#22c55e;">5 条已核实</span> ·
+      <span style="color:#ef4444;">2 条存在问题</span>
+    </div>
+
+    <!-- Warning items first -->
+    
+    <div style="font-size:8.5pt;font-weight:700;color:#ef4444;margin-bottom:8px;">
+      ⚠ 发现问题（需立即处理）
+    </div>
+    
+    <div class="hall-warn">
+      <div class="hall-claim">
+        <span class="hall-icon">⚠</span>产品额定功率描述错误
+      </div>
+      <div class="hall-note">AI 描述：「INNOTREE S2000 Pro 提供 1500W 连续输出功率」</div>
+      <div class="hall-note">实际情况：实际额定功率为 1200W，峰值 2400W（非持续）</div>
+      
+      <div class="hall-fix">建议修正：在亚马逊 listing 和官网产品页更新功率说明，并添加 Product Schema 标注正确规格</div>
+      
+    </div>
+    
+    <div class="hall-warn">
+      <div class="hall-claim">
+        <span class="hall-icon">⚠</span>充电时间描述不准确
+      </div>
+      <div class="hall-note">AI 描述：「AC 充电仅需 45 分钟充满」</div>
+      <div class="hall-note">实际情况：标准 AC 充电约 90 分钟，快充模式约 60 分钟</div>
+      
+      <div class="hall-fix">建议修正：在 FAQ 页和 Schema 中明确区分标准/快充两种时间，避免 AI 误引</div>
+      
+    </div>
+    
+    
+
+    <!-- OK items -->
+    
+    <div style="font-size:8.5pt;font-weight:700;color:#22c55e;
+      margin:10px 0 8px;">✓ 已核实声明</div>
+    
+    <div class="hall-ok">
+      <div class="hall-claim">
+        <span class="hall-icon" style="color:#22c55e;">✓</span>电池容量描述正确
+      </div>
+      <div class="hall-note">AI 正确引用 2000Wh 容量，与官方规格一致</div>
+    </div>
+    
+    <div class="hall-ok">
+      <div class="hall-claim">
+        <span class="hall-icon" style="color:#22c55e;">✓</span>重量规格正确
+      </div>
+      <div class="hall-note">AI 描述 22kg 与实际产品重量一致</div>
+    </div>
+    
+    <div class="hall-ok">
+      <div class="hall-claim">
+        <span class="hall-icon" style="color:#22c55e;">✓</span>防水等级描述正确
+      </div>
+      <div class="hall-note">IP67 防水等级已被 Perplexity 正确引用</div>
+    </div>
+    
+    <div class="hall-ok">
+      <div class="hall-claim">
+        <span class="hall-icon" style="color:#22c55e;">✓</span>充电接口数量正确
+      </div>
+      <div class="hall-note">15 个输出接口描述在 ChatGPT 中准确出现</div>
+    </div>
+    
+    <div class="hall-ok">
+      <div class="hall-claim">
+        <span class="hall-icon" style="color:#22c55e;">✓</span>太阳能充电兼容性正确
+      </div>
+      <div class="hall-note">兼容最高 800W 太阳能板输入，已核实</div>
+    </div>
+    
+    
+  </div>
+
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com</span>
+    <span class="ftr-text">第 5 页 / 共 6 页</span>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     PAGE 6 — ACTION PLAN
+     ════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="hdr">
+    <span class="hdr-brand">INNOTREE · AI 可见度报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月11日</span>
+  </div>
+
+  <div class="body">
+    <div class="tag tag-or" style="margin-bottom:8px;">GEO 行动计划</div>
+    <div class="sec-title">本周优先行动清单</div>
+    <div class="sec-sub">按影响力排序 · 执行完成后预计 GEO Score 提升 12 分</div>
+
+    
+    <div class="action-item">
+      <div class="action-num">1</div>
+      <div class="action-body" style="flex:1;">
+        <div class="action-title">修正 AI 误传的产品功率数据</div>
+        <div class="action-desc">立即更新亚马逊 listing 标题和 bullet points 中的功率描述，区分额定功率（1200W）和峰值功率（2400W）。同步更新官网产品页 Product Schema 数据。</div>
+        <div class="action-meta">
+          <span class="action-impact">预计 +4 分</span>
+          <span class="action-diff">低难度 · 1天内完成</span>
+          
+          <span style="font-size:7.5pt;padding:2px 8px;border-radius:12px;
+            background:rgba(239,68,68,.15);color:#ef4444;">立即</span>
+          
+        </div>
+      </div>
+    </div>
+    
+    <div class="action-item">
+      <div class="action-num">2</div>
+      <div class="action-body" style="flex:1;">
+        <div class="action-title">建设购买推荐意图专属内容</div>
+        <div class="action-desc">针对best portable power station for camping/van life/overlanding等查询，在官网创建对比评测长文（1500字+），并提交至 Perplexity 和 Bing 索引。这是当前 GEO Score 提升最高效的路径。</div>
+        <div class="action-meta">
+          <span class="action-impact">预计 +5 分</span>
+          <span class="action-diff">中难度 · 3-5天</span>
+          
+        </div>
+      </div>
+    </div>
+    
+    <div class="action-item">
+      <div class="action-num">3</div>
+      <div class="action-body" style="flex:1;">
+        <div class="action-title">优化 FAQ Schema 结构化标记</div>
+        <div class="action-desc">在官网和产品页添加完整的 FAQ Schema，覆盖：充电时间、容量计算、安全认证、兼容设备等 10 个高频问题。有效提升 Claude 和 Gemini 的引用质量分。</div>
+        <div class="action-meta">
+          <span class="action-impact">预计 +3 分</span>
+          <span class="action-diff">中难度 · 2天</span>
+          
+        </div>
+      </div>
+    </div>
+    
+
+    <!-- Next week preview -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);
+      border-radius:10px;padding:12px 14px;margin-top:4px;">
+      <div style="font-size:8pt;color:var(--or);font-weight:700;margin-bottom:4px;">
+        下周追踪重点
+      </div>
+      <div style="font-size:8pt;color:var(--muted);line-height:1.6;">
+        执行上述 3 项行动后，重点监控 Perplexity 的购买推荐意图覆盖率变化（目标从 18% 提升至 30%+）。同时追踪 Jackery 的 GEO Score 走势——若其继续下滑，我们有机会在第 3 位超越。
+      </div>
+    </div>
+  </div>
+
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · hello@avantia2a.com</span>
+    <span class="ftr-text">第 6 页 / 共 6 页</span>
+  </div>
+</div>
+
+</body>
+</html>

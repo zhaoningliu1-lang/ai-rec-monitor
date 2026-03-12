@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "avanti-geo": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/Users/johnsonliu/Desktop/claude code/ai-rec-monitor/mcp_server/server.py"],
+      "env": {
+        "DATABASE_URL": "postgresql://postgres:postgres@localhost:5433/ai_rec_monitor"
+      }
+    }
+  }
+}

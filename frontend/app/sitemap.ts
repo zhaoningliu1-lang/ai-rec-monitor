@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://avanti.so";
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://avantia2a.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

@@ -11,7 +11,7 @@
 
 **Chinese brand name:** 阿凡提 — 民间故事里永远比市场早一步的聪明商人
 
-**URL:** [PLACEHOLDER — e.g., avanti.so or getavanti.com]
+**URL:** https://avantia2a.com
 
 **Tagline:** Know what AI recommends before your competitors stock it.
 

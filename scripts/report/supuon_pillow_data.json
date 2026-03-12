@@ -1,0 +1,587 @@
+{
+  "brand": "Supuon",
+  "product_en": "Baby Pillow",
+  "report_slug": "supuon-pillow",
+  "report_type": "weekly",
+  "report_type_label": "AI 可见度周报",
+  "report_date": "Week 11 · 2026年3月11日",
+  "period_label": "周",
+  "geo_score": 7,
+  "geo_score_level": "需大幅改进",
+  "geo_score_delta": "+0",
+  "geo_score_delta_class": "flat",
+  "category_avg_score": 2,
+  "top_brand_score": 11,
+  "citation_count_90d": 23,
+  "citation_delta": "+0",
+  "citation_delta_class": "flat",
+  "citation_rate": 3,
+  "category_rank": 2,
+  "rank_delta": "-",
+  "rank_delta_class": "flat",
+  "category_total_brands": 4,
+  "top_competitor_name": "lucklyeveryday",
+  "top_competitor_score": 11,
+  "top_competitor_color": "white",
+  "score_gap": 4,
+  "engine_coverage": 3,
+  "summary_headline": "Supoun在泰国市场落后于lucklyeveryday",
+  "key_insights": [
+    "Supoun的GEO得分仅为7",
+    "lucklyeveryday的SOV达52.1%",
+    "Supoun的购买意图引用率为3%",
+    "Claude平均排名第2"
+  ],
+  "engines": [
+    {
+      "name": "ChatGPT",
+      "score": 7,
+      "rank": 7,
+      "color": "#22c55e",
+      "bar_class": "gr"
+    },
+    {
+      "name": "Perplexity",
+      "score": 6,
+      "rank": 6,
+      "color": "#60a5fa",
+      "bar_class": "bl"
+    },
+    {
+      "name": "Claude",
+      "score": 7,
+      "rank": 2,
+      "color": "#a78bfa",
+      "bar_class": "pu"
+    }
+  ],
+  "engine_details": [
+    {
+      "name": "ChatGPT",
+      "score": 7,
+      "color": "#22c55e",
+      "bar_class": "gr",
+      "hi_rate": 3,
+      "comp_rate": 15,
+      "info_rate": 0,
+      "th_rate": 4,
+      "en_rate": 6,
+      "zh_rate": 9,
+      "n_results": 150
+    },
+    {
+      "name": "Perplexity",
+      "score": 6,
+      "color": "#60a5fa",
+      "bar_class": "bl",
+      "hi_rate": 3,
+      "comp_rate": 13,
+      "info_rate": 0,
+      "th_rate": 4,
+      "en_rate": 6,
+      "zh_rate": 4,
+      "n_results": 150
+    },
+    {
+      "name": "Claude",
+      "score": 7,
+      "color": "#a78bfa",
+      "bar_class": "pu",
+      "hi_rate": 3,
+      "comp_rate": 15,
+      "info_rate": 0,
+      "th_rate": 4,
+      "en_rate": 6,
+      "zh_rate": 9,
+      "n_results": 150
+    }
+  ],
+  "intents": [
+    {
+      "name": "购买推荐",
+      "rate": 3,
+      "bar_class": "bl"
+    },
+    {
+      "name": "产品对比",
+      "rate": 15,
+      "bar_class": "or"
+    },
+    {
+      "name": "品牌查询",
+      "rate": 0,
+      "bar_class": "gr"
+    }
+  ],
+  "score_factors": [
+    {
+      "name": "推荐出现率 (40%)",
+      "weight": 40,
+      "score": "3",
+      "color": "#ef4444"
+    },
+    {
+      "name": "位置权重 (25%)",
+      "weight": 25,
+      "score": "7",
+      "color": "#ef4444"
+    },
+    {
+      "name": "引用质量 (20%)",
+      "weight": 20,
+      "score": "14",
+      "color": "#ef4444"
+    },
+    {
+      "name": "意图覆盖 (15%)",
+      "weight": 15,
+      "score": "0",
+      "color": "#ef4444"
+    }
+  ],
+  "intent_comparison": [
+    {
+      "intent": "购买推荐",
+      "self_pct": 3,
+      "self_level": "weak",
+      "comp_vals": [
+        {
+          "name": "lucklyeveryday",
+          "pct": 0,
+          "level": "weak"
+        },
+        {
+          "name": "Jean suwei",
+          "pct": 0,
+          "level": "weak"
+        },
+        {
+          "name": "Fuji Baby Shop",
+          "pct": 0,
+          "level": "weak"
+        }
+      ]
+    },
+    {
+      "intent": "产品对比",
+      "self_pct": 15,
+      "self_level": "weak",
+      "comp_vals": [
+        {
+          "name": "lucklyeveryday",
+          "pct": 32,
+          "level": "mid"
+        },
+        {
+          "name": "Jean suwei",
+          "pct": 9,
+          "level": "weak"
+        },
+        {
+          "name": "Fuji Baby Shop",
+          "pct": 0,
+          "level": "weak"
+        }
+      ]
+    },
+    {
+      "intent": "品牌查询",
+      "self_pct": 0,
+      "self_level": "weak",
+      "comp_vals": [
+        {
+          "name": "lucklyeveryday",
+          "pct": 0,
+          "level": "weak"
+        },
+        {
+          "name": "Jean suwei",
+          "pct": 0,
+          "level": "weak"
+        },
+        {
+          "name": "Fuji Baby Shop",
+          "pct": 0,
+          "level": "weak"
+        }
+      ]
+    }
+  ],
+  "competitors": [
+    {
+      "name": "lucklyeveryday",
+      "sov": 52.1,
+      "geo_score": 11,
+      "citations": 37,
+      "is_self": false,
+      "hi_rate": 0,
+      "comp_rate": 32,
+      "info_rate": 0
+    },
+    {
+      "name": "Supuon",
+      "sov": 32.4,
+      "geo_score": 7,
+      "citations": 23,
+      "is_self": true,
+      "hi_rate": 3,
+      "comp_rate": 15,
+      "info_rate": 0
+    },
+    {
+      "name": "Jean suwei",
+      "sov": 15.5,
+      "geo_score": 3,
+      "citations": 11,
+      "is_self": false,
+      "hi_rate": 0,
+      "comp_rate": 9,
+      "info_rate": 0
+    },
+    {
+      "name": "Fuji Baby Shop",
+      "sov": 0.0,
+      "geo_score": 0,
+      "citations": 0,
+      "is_self": false,
+      "hi_rate": 0,
+      "comp_rate": 0,
+      "info_rate": 0
+    }
+  ],
+  "lang_breakdown": [
+    {
+      "lang": "th",
+      "label": "泰语",
+      "flag": "🇹🇭",
+      "hits": 9,
+      "total": 225,
+      "rate": 4
+    },
+    {
+      "lang": "en",
+      "label": "英语",
+      "flag": "🇺🇸",
+      "hits": 9,
+      "total": 156,
+      "rate": 6
+    },
+    {
+      "lang": "zh",
+      "label": "中文",
+      "flag": "🇨🇳",
+      "hits": 5,
+      "total": 69,
+      "rate": 7
+    }
+  ],
+  "query_samples": [
+    {
+      "query": "Supuon หมอนทารก รีวิว",
+      "lang": "th",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Supuon กับ lucklyeveryday ต่างกันอย่างไร",
+      "lang": "th",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "lucklyeveryday เทียบกับ Supuon หมอนทารก",
+      "lang": "th",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "หมอนทารกยี่ห้อไหนดีที่สุดในปี 2025",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "แนะนำหมอนทารกสำหรับทารกแรกเกิด",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "ซื้อหมอนทารกยี่ห้อไหนดี",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "หมอนทารกราคาถูกคุณภาพดี",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "อยากซื้อหมอนทารกให้ลูก แนะนำยี่ห้อไหน",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "หมอนทารกที่ดีที่สุดในไทย",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "หมอนทารกยอดนิยม 2025",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "อันดับหมอนทารกที่ดีที่สุด",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "top 5 หมอนทารกปี 2025",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "brand หมอนทารกที่ดีในไทย",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "หมอนทารกสำหรับแม่ลูกอ่อน",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "หมอนทารกที่แม่ๆ แนะนำ",
+      "lang": "th",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Supuon baby pillow review",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "is Supuon a good brand for baby products",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Supuon vs lucklyeveryday baby pillow",
+      "lang": "en",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "best baby pillow Thailand 2025",
+      "lang": "en",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "best baby pillow for newborn baby",
+      "lang": "en",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "top baby pillow brands in Thailand",
+      "lang": "en",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "which baby pillow to buy Thailand",
+      "lang": "en",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "recommended baby pillow for baby",
+      "lang": "en",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "best baby pillow under 500 baht",
+      "lang": "en",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "top rated baby pillow online Thailand",
+      "lang": "en",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "Supuon 婴儿定型枕评测",
+      "lang": "zh",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "泰国婴儿定型枕哪个牌子好",
+      "lang": "zh",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "婴儿定型枕推荐2025",
+      "lang": "zh",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "宝宝婴儿定型枕哪款好用",
+      "lang": "zh",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    },
+    {
+      "query": "新生儿婴儿定型枕推荐",
+      "lang": "zh",
+      "intent": "high",
+      "hit": false,
+      "engine": "ChatGPT"
+    }
+  ],
+  "kol_details": [
+    {
+      "url": "https://www.tiktok.com/@june_kidsshop2023/video/7585554616260185365",
+      "handle": "@june_kidsshop2023",
+      "cited": true,
+      "snippet": "**No, there is no evidence in the available search results that the TikTok creator @june_kidsshop2023 has posted about Baby Pillow products for babies.** The results exclusively feature TikTok Shop pr",
+      "status_label": "AI 已引用",
+      "status_color": "#22c55e"
+    },
+    {
+      "url": "https://www.tiktok.com/@my_pairwa/video/7475153476402580742",
+      "handle": "@my_pairwa",
+      "cited": true,
+      "snippet": "No, there is no evidence of a TikTok creator with the handle @my_pairwa posting about Baby Pillow products (such as baby sleep positioners, wedges, or similar infant pillows) for babies.\n\n### Verifica",
+      "status_label": "AI 已引用",
+      "status_color": "#22c55e"
+    }
+  ],
+  "hallucination_total": 5,
+  "hallucination_ok": 5,
+  "hallucination_warn": 0,
+  "hallucination_warnings": [],
+  "hallucination_ok_items": [
+    {
+      "claim": "Material 描述正确",
+      "note": "官方 listing 标注：100% pure cotton"
+    },
+    {
+      "claim": "Feature 描述正确",
+      "note": "官方 listing 标注：3-side adjustable, removable washable insert"
+    },
+    {
+      "claim": "Safety 描述正确",
+      "note": "官方 listing 标注：breathable anti-flat-head design"
+    },
+    {
+      "claim": "达人 @june_kidsshop2023 内容被 AI 引用",
+      "note": "**No, there is no evidence in the available search results that the TikTok creat"
+    },
+    {
+      "claim": "达人 @my_pairwa 内容被 AI 引用",
+      "note": "No, there is no evidence of a TikTok creator with the handle @my_pairwa posting "
+    }
+  ],
+  "expected_score_gain": 8,
+  "actions": [
+    {
+      "title": "提高内容质量",
+      "description": "分析竞争对手的内容策略，优化Supoun的内容以提高购买意图引用率。",
+      "impact": 4,
+      "difficulty": "中等难度 · 1周内完成",
+      "urgency": "立即"
+    },
+    {
+      "title": "增加社交影响力",
+      "description": "通过与有影响力的育儿博主合作，提高Supoun在TikTok上的品牌认知度。",
+      "impact": 5,
+      "difficulty": "高难度 · 2周内完成",
+      "urgency": null
+    },
+    {
+      "title": "优化搜索排名",
+      "description": "研究关键词优化策略，以提高在搜索引擎中的平均排名。",
+      "impact": 3,
+      "difficulty": "低难度 · 1天内完成",
+      "urgency": "立即"
+    }
+  ],
+  "next_week_focus": "专注于提高Supoun的GEO得分和SOV。",
+  "roi_steps": [
+    {
+      "week": "基准",
+      "score": 7,
+      "action": "当前状态（首次测量）"
+    },
+    {
+      "week": "第2周",
+      "score": 11,
+      "action": "泰语 listing 优化 + 关键词植入"
+    },
+    {
+      "week": "第4周",
+      "score": 16,
+      "action": "达人合作 ×2 条新内容"
+    },
+    {
+      "week": "第8周",
+      "score": 25,
+      "action": "Reddit/Quora 英语内容补充"
+    },
+    {
+      "week": "第12周",
+      "score": 35,
+      "action": "系统性 GEO 优化完成"
+    }
+  ],
+  "roi_target_w12": 35
+}
