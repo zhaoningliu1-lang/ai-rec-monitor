@@ -303,3 +303,30 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+class B2AEvent(Base):
+    """Tracks AI-referred visits detected by the B2A JavaScript snippet."""
+    __tablename__ = "b2a_events"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    # Which client site sent this event (domain of the site embedding b2a.js)
+    site_domain: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    # Which AI engine referred the visitor
+    engine: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    # Full referrer URL
+    referrer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Page the visitor landed on
+    page_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    # User agent string (for AI browser detection)
+    user_agent: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Visitor's country from IP (populated server-side)
+    country: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    # Optional session/visitor ID (for dedup)
+    visitor_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # Timestamp from client
+    event_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )

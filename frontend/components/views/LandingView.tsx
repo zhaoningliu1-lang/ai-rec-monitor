@@ -528,6 +528,122 @@ export default function LandingView({ lang }: Props) {
         </div>
       </motion.section>
 
+      {/* Three competitive edges -- GEO + Selection + Cost */}
+      <motion.section {...reveal} className="space-y-8">
+        <div className="text-center space-y-2 max-w-xl mx-auto">
+          <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7070a0" }}>
+            {lang === "zh" ? "一个平台" : "One platform"}
+          </div>
+          <h2 className="text-3xl font-black">
+            {lang === "zh" ? "三条竞争护城河" : "Three competitive edges"}
+          </h2>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            {
+              icon: "🤖",
+              title:   lang === "zh" ? "GEO 可见度监控"    : "GEO Monitor",
+              desc:    lang === "zh"
+                ? "追踪你的品牌在 ChatGPT、Claude、Gemini 等 4 大 AI 模型中的排名，第一时间发现曝光变化。"
+                : "Track your brand rank across 4 AI models. Know before buyers do.",
+              cta:     lang === "zh" ? "→ 免费诊断"     : "→ Run Free Audit",
+              href:    lang === "zh" ? "/zh/audit"     : "/audit",
+              color:   "#ff6b35",
+            },
+            {
+              icon: "📊",
+              title:   lang === "zh" ? "AI 选品情报"        : "Selection Intelligence",
+              desc:    lang === "zh"
+                ? "了解 AI 正在向买家推荐哪些品类和品牌，在竞争对手备货前发现下一个爆款信号。"
+                : "Know what AI recommends before rivals stock it. 16 categories, live.",
+              cta:     lang === "zh" ? "→ 查看选品数据"  : "→ View Intel",
+              href:    lang === "zh" ? "/zh/selection" : "/selection",
+              color:   "#22c55e",
+            },
+            {
+              icon: "💰",
+              title:   lang === "zh" ? "成本优化 ROI"       : "Cost Optimizer",
+              desc:    lang === "zh"
+                ? "找出哪些运营成本可以用 AI 替代，省下来的钱直接投入 GEO 建设，形成正向飞轮。"
+                : "Find the ops budget to fund GEO. AI savings compound into visibility.",
+              cta:     lang === "zh" ? "→ 计算节省额"    : "→ Calculate Savings",
+              href:    lang === "zh" ? "/zh/optimizer"  : "/optimizer",
+              color:   "#3b82f6",
+            },
+          ].map((pillar) => (
+            <div
+              key={pillar.title}
+              className="rounded-xl p-6 space-y-4 flex flex-col"
+              style={{ background: "#0f0f17", border: `1px solid ${pillar.color}25` }}
+            >
+              <div className="text-3xl">{pillar.icon}</div>
+              <div className="font-bold text-sm">{pillar.title}</div>
+              <p className="text-xs leading-relaxed flex-1" style={{ color: "#7070a0" }}>{pillar.desc}</p>
+              <Link
+                href={pillar.href}
+                className="text-xs font-semibold transition-opacity hover:opacity-70"
+                style={{ color: pillar.color }}
+              >
+                {pillar.cta}
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        {/* Selection preview — 3 mini category cards */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7070a0" }}>
+              {lang === "zh" ? "最新 AI 选品信号" : "Latest AI selection signals"}
+            </div>
+            <Link
+              href={lang === "zh" ? "/zh/selection" : "/selection"}
+              className="text-xs transition-colors hover:text-white"
+              style={{ color: "#ff6b35" }}
+            >
+              {lang === "zh" ? "查看全部 16 品类 →" : "See all 16 categories →"}
+            </Link>
+          </div>
+          <div className="grid md:grid-cols-3 gap-3">
+            {[
+              { cat: lang === "zh" ? "便携储能"     : "Portable Power Stations", trend: "+4.2", brand1: "EcoFlow", sov1: 34.2, brand2: "Jackery",  sov2: 28.7 },
+              { cat: lang === "zh" ? "美容仪器"     : "Skincare Devices",         trend: "+6.3", brand1: "NuFace",  sov1: 28.4, brand2: "Foreo",    sov2: 24.1 },
+              { cat: lang === "zh" ? "汽车启动电源" : "Car Jump Starters",        trend: "+4.7", brand1: "NOCO",    sov1: 44.8, brand2: "Gooloo",   sov2: 16.3 },
+            ].map((item) => (
+              <div
+                key={item.cat}
+                className="rounded-xl p-4 space-y-3"
+                style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="text-xs font-semibold" style={{ color: "#f0f0f8" }}>{item.cat}</div>
+                  <div className="text-xs font-bold shrink-0" style={{ color: "#22c55e" }}>↑ {item.trend} pts</div>
+                </div>
+                <div className="text-xs font-bold px-2 py-0.5 rounded-full inline-block"
+                  style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e" }}>
+                  {lang === "zh" ? "强烈推荐" : "STRONG BUY"}
+                </div>
+                <div className="space-y-1.5">
+                  {[{ name: item.brand1, sov: item.sov1 }, { name: item.brand2, sov: item.sov2 }].map((b) => (
+                    <div key={b.name} className="space-y-0.5">
+                      <div className="flex justify-between text-xs">
+                        <span style={{ color: "#f0f0f8" }}>{b.name}</span>
+                        <span style={{ color: "#7070a0" }}>{b.sov}% SOV</span>
+                      </div>
+                      <div className="h-1 rounded-full" style={{ background: "#25253f" }}>
+                        <div className="h-full rounded-full"
+                          style={{ width: `${(b.sov / item.sov1) * 100}%`, background: "#ff6b35" }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
       {/* How GEO works -- 2-column zigzag */}
       <motion.section {...reveal}>
         <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#7070a0" }}>

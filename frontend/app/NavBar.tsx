@@ -134,6 +134,8 @@ export default function NavBar() {
     : [
         { href: h("/product"),       label: p("Product",        "产品") },
         { href: h("/categories"),    label: p("Index",          "行业指数") },
+        { href: h("/selection"),     label: p("Selection",      "选品情报") },
+        { href: h("/optimizer"),     label: p("Optimizer",      "成本优化") },
         { href: h("/blog"),          label: p("Research",       "研究报告") },
         { href: h("/b2a-analytics"), label: p("B2A Analytics",  "B2A Analytics") },
       ];
@@ -152,8 +154,10 @@ export default function NavBar() {
           <div className="hidden md:flex items-center gap-0.5 rounded-full px-1 py-0.5" style={{ background: "rgba(15,15,23,0.6)", border: "1px solid #25253f" }}>
             <NavDropdown label={p("Product", "产品")} items={productDropdown} isActive={isActive} />
             {[
-              { href: h("/categories"), label: p("Index",    "行业指数") },
-              { href: h("/blog"),       label: p("Research", "研究报告") },
+              { href: h("/categories"), label: p("Index",     "行业指数") },
+              { href: h("/selection"),  label: p("Selection", "选品情报") },
+              { href: h("/optimizer"),  label: p("Optimizer", "成本优化") },
+              { href: h("/blog"),       label: p("Research",  "研究报告") },
             ].map((l) => (
               <Link key={l.href} href={l.href}
                 className="text-sm px-3 py-1.5 rounded-full transition-colors hover:text-white"

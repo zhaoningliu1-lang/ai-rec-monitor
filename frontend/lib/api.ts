@@ -333,6 +333,20 @@ export interface B2ASourceIntelligence {
   category_filter: string | null;
 }
 
+export interface B2ATrafficStats {
+  period_days: number;
+  total_visits: number;
+  engines: {
+    engine: string;
+    visits: number;
+    unique_visitors: number;
+    pct: number;
+  }[];
+  daily: { date: string; visits: number }[];
+  top_pages: { page: string; visits: number }[];
+  site_filter: string | null;
+}
+
 export interface GoogleTrendsData {
   keywords: Record<string, number>;
   delta_4w_pct: Record<string, number>;
@@ -455,5 +469,12 @@ export const api = {
     if (category) q.set("category", category);
     const qs = q.toString();
     return get<B2ASourceIntelligence>(`/b2a/source-intelligence${qs ? `?${qs}` : ""}`);
+  },
+  getTrafficStats: (site?: string, days?: number) => {
+    const q = new URLSearchParams();
+    if (site) q.set("site", site);
+    if (days) q.set("days", String(days));
+    const qs = q.toString();
+    return get<B2ATrafficStats>(`/b2a/traffic-stats${qs ? `?${qs}` : ""}`);
   },
 };

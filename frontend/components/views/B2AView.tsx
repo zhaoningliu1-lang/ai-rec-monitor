@@ -7,6 +7,7 @@ import {
   B2AEngineAttribution,
   B2ACompetitiveLandscape,
   B2ASourceIntelligence,
+  B2ATrafficStats,
   CategoryEntry,
 } from "@/lib/api";
 import { Lang, tx } from "@/lib/i18n";
@@ -64,19 +65,22 @@ export default function B2AView({ lang }: { lang: Lang }) {
   const [selectedCat, setSelectedCat] = useState<string>("");
   const [landscape, setLandscape] = useState<B2ACompetitiveLandscape | null>(null);
   const [sources, setSources] = useState<B2ASourceIntelligence | null>(null);
+  const [traffic, setTraffic] = useState<B2ATrafficStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [snippetCopied, setSnippetCopied] = useState(false);
 
-  // Load attribution and categories on mount
+  // Load attribution, categories, traffic stats on mount
   useEffect(() => {
     Promise.all([
       api.getEngineAttribution().catch(() => null),
       api.listCategories().catch(() => []),
       api.getSourceIntelligence().catch(() => null),
-    ]).then(([attr, cats, src]) => {
+      api.getTrafficStats(undefined, 30).catch(() => null),
+    ]).then(([attr, cats, src, traf]) => {
       setAttribution(attr);
       setCategories(cats);
       setSources(src);
+      setTraffic(traf);
       if (cats.length > 0) setSelectedCat(cats[0].category);
       setLoading(false);
     });
@@ -89,7 +93,7 @@ export default function B2AView({ lang }: { lang: Lang }) {
   }, [selectedCat]);
 
   const copySnippet = () => {
-    navigator.clipboard.writeText('<script src="https://avantia2a.com/b2a.js" async></script>');
+    navigator.clipboard.writeText('<script src="https://ai-rec-monitor-production.up.railway.app/b2a/b2a.js" async></script>');
     setSnippetCopied(true);
     setTimeout(() => setSnippetCopied(false), 2000);
   };
@@ -321,14 +325,92 @@ export default function B2AView({ lang }: { lang: Lang }) {
         </section>
       )}
 
+      {/* Live AI Traffic (from B2A events) */}
+      {traffic && traffic.total_visits > 0 && (
+        <section className="rounded-2xl p-6 space-y-5" style={{ background: "#0f0f17", border: "1px solid rgba(34,197,94,0.30)" }}>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold" style={{ color: "#f0f0f8" }}>
+                {lang === "zh" ? "实时 AI 流量" : "Live AI Traffic"}
+              </h2>
+              <p className="text-sm mt-1" style={{ color: "#7070a0" }}>
+                {lang === "zh" ? `过去 ${traffic.period_days} 天由 AI 引擎带来的访客` : `Visitors referred by AI engines in the last ${traffic.period_days} days`}
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-bold" style={{ color: "#22c55e" }}>
+                {traffic.total_visits.toLocaleString()}
+              </div>
+              <div className="text-xs" style={{ color: "#7070a0" }}>
+                {lang === "zh" ? "AI 访客" : "AI visits"}
+              </div>
+            </div>
+          </div>
+
+          {/* Engine breakdown */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {traffic.engines.slice(0, 4).map((eng) => (
+              <div key={eng.engine} className="rounded-xl p-3" style={{ background: "#161625", border: "1px solid #25253f" }}>
+                <div className="text-lg font-bold" style={{ color: ENGINE_COLORS[eng.engine.toLowerCase()] || "#ff6b35" }}>
+                  {eng.visits}
+                </div>
+                <div className="text-xs" style={{ color: "#9090b0" }}>{eng.engine}</div>
+                <div className="text-[10px]" style={{ color: "#7070a0" }}>{eng.pct}%</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Daily sparkline (simple bar chart) */}
+          {traffic.daily.length > 1 && (
+            <div>
+              <div className="text-xs mb-2" style={{ color: "#7070a0" }}>
+                {lang === "zh" ? "每日趋势" : "Daily Trend"}
+              </div>
+              <div className="flex items-end gap-[2px] h-12">
+                {traffic.daily.slice(-30).map((d, i) => {
+                  const max = Math.max(...traffic.daily.slice(-30).map((x) => x.visits));
+                  const pct = max > 0 ? (d.visits / max) * 100 : 0;
+                  return (
+                    <div
+                      key={i}
+                      className="flex-1 rounded-sm"
+                      style={{ height: `${Math.max(pct, 4)}%`, background: "#22c55e", opacity: 0.7 }}
+                      title={`${d.date}: ${d.visits}`}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Top pages */}
+          {traffic.top_pages.length > 0 && (
+            <div>
+              <div className="text-xs mb-2" style={{ color: "#7070a0" }}>
+                {lang === "zh" ? "AI 访客最多的页面" : "Top Pages by AI Visits"}
+              </div>
+              <div className="space-y-1">
+                {traffic.top_pages.slice(0, 5).map((p) => (
+                  <div key={p.page} className="flex items-center justify-between text-xs px-3 py-1.5 rounded"
+                    style={{ background: "#161625" }}>
+                    <span className="font-mono" style={{ color: "#d0d0e8" }}>{p.page}</span>
+                    <span style={{ color: "#22c55e" }}>{p.visits}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
       {/* B2A JS Snippet */}
       <section className="rounded-2xl p-6 space-y-4" style={{ background: "#0f0f17", border: "1px solid rgba(255,107,53,0.20)" }}>
         <div>
           <h2 className="text-xl font-bold" style={{ color: "#f0f0f8" }}>{s("snippetTitle")}</h2>
           <p className="text-sm mt-1" style={{ color: "#7070a0" }}>{s("snippetDesc")}</p>
         </div>
-        <div className="rounded-lg p-4 font-mono text-sm" style={{ background: "#161625", border: "1px solid #25253f", color: "#22c55e" }}>
-          {'<script src="https://avantia2a.com/b2a.js" async></script>'}
+        <div className="rounded-lg p-4 font-mono text-xs leading-relaxed overflow-x-auto" style={{ background: "#161625", border: "1px solid #25253f", color: "#22c55e" }}>
+          {'<script src="https://ai-rec-monitor-production.up.railway.app/b2a/b2a.js" async></script>'}
         </div>
         <button
           onClick={copySnippet}

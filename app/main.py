@@ -167,6 +167,30 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "ALTER TABLE users ADD COLUMN IF NOT EXISTS credit_balance INTEGER NOT NULL DEFAULT 40"
         ))
+        # B2A events table
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS b2a_events (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                site_domain VARCHAR(255) NOT NULL,
+                engine VARCHAR(50) NOT NULL,
+                referrer TEXT,
+                page_path VARCHAR(500),
+                user_agent TEXT,
+                country VARCHAR(10),
+                visitor_id VARCHAR(64),
+                event_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        """))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_b2a_events_site_domain ON b2a_events (site_domain)"
+        ))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_b2a_events_engine ON b2a_events (engine)"
+        ))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_b2a_events_event_at ON b2a_events (event_at)"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 
