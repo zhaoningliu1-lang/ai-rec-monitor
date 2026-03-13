@@ -93,7 +93,7 @@ export default function B2AView({ lang }: { lang: Lang }) {
   }, [selectedCat]);
 
   const copySnippet = () => {
-    navigator.clipboard.writeText('<script src="https://ai-rec-monitor-production.up.railway.app/b2a/b2a.js" async></script>');
+    navigator.clipboard.writeText('<script src="https://avantia2a.com/b2a/b2a.js" async></script>');
     setSnippetCopied(true);
     setTimeout(() => setSnippetCopied(false), 2000);
   };
@@ -410,7 +410,7 @@ export default function B2AView({ lang }: { lang: Lang }) {
           <p className="text-sm mt-1" style={{ color: "#7070a0" }}>{s("snippetDesc")}</p>
         </div>
         <div className="rounded-lg p-4 font-mono text-xs leading-relaxed overflow-x-auto" style={{ background: "#161625", border: "1px solid #25253f", color: "#22c55e" }}>
-          {'<script src="https://ai-rec-monitor-production.up.railway.app/b2a/b2a.js" async></script>'}
+          {'<script src="https://avantia2a.com/b2a/b2a.js" async></script>'}
         </div>
         <button
           onClick={copySnippet}

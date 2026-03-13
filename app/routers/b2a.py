@@ -9,6 +9,7 @@ Also provides event collection for the B2A tracking snippet.
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
@@ -26,9 +27,11 @@ router = APIRouter(prefix="/b2a", tags=["b2a"])
 
 # ── B2A JS Snippet ────────────────────────────────────────────────────────────
 
-_B2A_JS = """(function(){
+_B2A_ENDPOINT = os.getenv("B2A_ENDPOINT_URL", "https://avantia2a.com")
+
+_B2A_JS_TEMPLATE = """(function(){
 'use strict';
-var E='https://ai-rec-monitor-production.up.railway.app';
+var E='{{ENDPOINT}}';
 var AI={
 'chatgpt.com':'ChatGPT','chat.openai.com':'ChatGPT','openai.com':'ChatGPT',
 'perplexity.ai':'Perplexity','claude.ai':'Claude',
@@ -68,8 +71,9 @@ navigator.sendBeacon(E+'/b2a/event',data);
 @router.get("/b2a.js")
 async def serve_b2a_js():
     """Serve the B2A tracking JavaScript file."""
+    js = _B2A_JS_TEMPLATE.replace("{{ENDPOINT}}", _B2A_ENDPOINT)
     return Response(
-        content=_B2A_JS,
+        content=js,
         media_type="application/javascript",
         headers={
             "Cache-Control": "public, max-age=3600",
@@ -397,7 +401,8 @@ async def source_intelligence(
 @router.get("/snippet")
 async def get_snippet():
     """Returns the B2A tracking JavaScript snippet for client integration."""
+    js = _B2A_JS_TEMPLATE.replace("{{ENDPOINT}}", _B2A_ENDPOINT)
     return {
-        "snippet": f"<script>\n{_B2A_JS}\n</script>",
-        "one_liner": '<script src="https://ai-rec-monitor-production.up.railway.app/b2a/b2a.js" async></script>',
+        "snippet": f"<script>\n{js}\n</script>",
+        "one_liner": f'<script src="{_B2A_ENDPOINT}/b2a/b2a.js" async></script>',
     }

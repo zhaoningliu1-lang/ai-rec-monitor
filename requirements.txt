@@ -48,3 +48,6 @@ resend==2.6.0
 
 # google trends
 pytrends==4.9.2
+
+# reddit
+asyncpraw>=7.7.1

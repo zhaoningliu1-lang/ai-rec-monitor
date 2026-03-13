@@ -1,13 +1,15 @@
 """
 Reddit scraper — fetches live Reddit data for brand monitoring.
 
-Uses Reddit's public JSON API (no auth needed for read-only search).
-Rate limited to ~10 req/min. Results cached 1 hour.
+Uses asyncpraw (Reddit OAuth) when credentials are available (~60 req/min).
+Falls back to public JSON API via httpx (~10 req/min) when no credentials.
+Results cached 1 hour.
 """
 
 import asyncio
 import hashlib
 import logging
+import os
 from datetime import datetime, timezone
 from typing import Any
 
@@ -20,6 +22,16 @@ _cache: dict[str, tuple[float, Any]] = {}
 _CACHE_TTL = 3600  # 1 hour
 
 _USER_AGENT = "AventiGEO/1.0 (AI Visibility Monitor; contact: hello@avantia2a.com)"
+
+# ── Reddit OAuth credentials (optional) ─────────────────────────────────────
+_REDDIT_CLIENT_ID = os.getenv("REDDIT_CLIENT_ID", "")
+_REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET", "")
+_USE_PRAW = bool(_REDDIT_CLIENT_ID and _REDDIT_CLIENT_SECRET)
+
+if _USE_PRAW:
+    logger.info("Reddit PRAW mode enabled (OAuth, ~60 req/min)")
+else:
+    logger.warning("Reddit credentials not set — using public JSON API (~10 req/min)")
 
 # ── Category → subreddit mapping ────────────────────────────────────────────
 CATEGORY_SUBREDDITS: dict[str, list[str]] = {
@@ -56,7 +68,84 @@ def _set_cache(key: str, data: Any) -> None:
     _cache[key] = (datetime.now(timezone.utc).timestamp(), data)
 
 
-# ── Reddit JSON API ─────────────────────────────────────────────────────────
+# ── asyncpraw search ─────────────────────────────────────────────────────────
+
+async def _search_praw(
+    query: str,
+    subreddit: str | None = None,
+    sort: str = "relevance",
+    time_filter: str = "year",
+    limit: int = 10,
+) -> list[dict]:
+    """Search Reddit via asyncpraw (OAuth)."""
+    import asyncpraw
+
+    reddit = asyncpraw.Reddit(
+        client_id=_REDDIT_CLIENT_ID,
+        client_secret=_REDDIT_CLIENT_SECRET,
+        user_agent=_USER_AGENT,
+    )
+
+    try:
+        sub = await reddit.subreddit(subreddit or "all")
+        posts = []
+        async for submission in sub.search(query, sort=sort, time_filter=time_filter, limit=limit):
+            selftext = submission.selftext or ""
+            posts.append({
+                "title": submission.title,
+                "url": f"https://reddit.com{submission.permalink}",
+                "subreddit": submission.subreddit.display_name,
+                "score": submission.score,
+                "num_comments": submission.num_comments,
+                "selftext_snippet": selftext[:300],
+                "created_utc": submission.created_utc,
+                "permalink": submission.permalink,
+            })
+        return posts
+    finally:
+        await reddit.close()
+
+
+# ── httpx fallback search ────────────────────────────────────────────────────
+
+async def _search_httpx(
+    query: str,
+    subreddit: str | None = None,
+    sort: str = "relevance",
+    time_filter: str = "year",
+    limit: int = 10,
+) -> list[dict]:
+    """Search Reddit via public JSON API (no auth, ~10 req/min)."""
+    if subreddit:
+        url = f"https://www.reddit.com/r/{subreddit}/search.json"
+        params = {"q": query, "sort": sort, "t": time_filter, "limit": limit, "restrict_sr": "on"}
+    else:
+        url = "https://www.reddit.com/search.json"
+        params = {"q": query, "sort": sort, "t": time_filter, "limit": limit}
+
+    async with httpx.AsyncClient(timeout=15) as client:
+        resp = await client.get(url, params=params, headers={"User-Agent": _USER_AGENT})
+        resp.raise_for_status()
+        data = resp.json()
+
+    posts = []
+    for child in data.get("data", {}).get("children", []):
+        p = child.get("data", {})
+        selftext = p.get("selftext", "")
+        posts.append({
+            "title": p.get("title", ""),
+            "url": f"https://reddit.com{p.get('permalink', '')}",
+            "subreddit": p.get("subreddit", ""),
+            "score": p.get("score", 0),
+            "num_comments": p.get("num_comments", 0),
+            "selftext_snippet": selftext[:300] if selftext else "",
+            "created_utc": p.get("created_utc", 0),
+            "permalink": p.get("permalink", ""),
+        })
+    return posts
+
+
+# ── Public API (unchanged signatures) ────────────────────────────────────────
 
 async def search_reddit(
     query: str,
@@ -66,7 +155,7 @@ async def search_reddit(
     limit: int = 10,
 ) -> list[dict]:
     """
-    Search Reddit via public JSON API.
+    Search Reddit — uses PRAW when credentials are available, else public JSON API.
     Returns list of post dicts with: title, url, subreddit, score, num_comments,
     selftext_snippet, created_utc, permalink.
     """
@@ -75,39 +164,25 @@ async def search_reddit(
     if cached is not None:
         return cached
 
-    if subreddit:
-        url = f"https://www.reddit.com/r/{subreddit}/search.json"
-        params = {"q": query, "sort": sort, "t": time_filter, "limit": limit, "restrict_sr": "on"}
-    else:
-        url = "https://www.reddit.com/search.json"
-        params = {"q": query, "sort": sort, "t": time_filter, "limit": limit}
-
     try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            resp = await client.get(url, params=params, headers={"User-Agent": _USER_AGENT})
-            resp.raise_for_status()
-            data = resp.json()
-
-        posts = []
-        for child in data.get("data", {}).get("children", []):
-            p = child.get("data", {})
-            selftext = p.get("selftext", "")
-            posts.append({
-                "title": p.get("title", ""),
-                "url": f"https://reddit.com{p.get('permalink', '')}",
-                "subreddit": p.get("subreddit", ""),
-                "score": p.get("score", 0),
-                "num_comments": p.get("num_comments", 0),
-                "selftext_snippet": selftext[:300] if selftext else "",
-                "created_utc": p.get("created_utc", 0),
-                "permalink": p.get("permalink", ""),
-            })
+        if _USE_PRAW:
+            posts = await _search_praw(query, subreddit, sort, time_filter, limit)
+        else:
+            posts = await _search_httpx(query, subreddit, sort, time_filter, limit)
 
         _set_cache(key, posts)
         return posts
 
     except Exception as exc:
         logger.warning("Reddit search failed for q=%s: %s", query, exc)
+        # If PRAW fails, try httpx fallback
+        if _USE_PRAW:
+            try:
+                posts = await _search_httpx(query, subreddit, sort, time_filter, limit)
+                _set_cache(key, posts)
+                return posts
+            except Exception:
+                pass
         return []
 
 
