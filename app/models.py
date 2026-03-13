@@ -79,6 +79,9 @@ class Run(Base):
     recommendation: Mapped["Recommendation | None"] = relationship(
         "Recommendation", back_populates="run", uselist=False, cascade="all, delete-orphan"
     )
+    geo_plan: Mapped["GeoPlan | None"] = relationship(
+        "GeoPlan", back_populates="run", uselist=False, cascade="all, delete-orphan"
+    )
 
 
 class PromptResult(Base):
@@ -177,6 +180,31 @@ class Recommendation(Base):
     model_used: Mapped[str] = mapped_column(String(100), nullable=False, default="claude-haiku-4-5-20251001")
 
     run: Mapped["Run"] = relationship("Run", back_populates="recommendation")
+
+
+# ── GEO Action Plans ─────────────────────────────────────────────────────────
+
+class GeoPlan(Base):
+    __tablename__ = "geo_plans"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    run_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("runs.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
+    brand_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    category: Mapped[str] = mapped_column(String(255), nullable=False)
+    current_geo_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    projected_geo_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    weaknesses: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    actions: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    generated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    model_used: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    run: Mapped["Run"] = relationship("Run", back_populates="geo_plan")
 
 
 # ── Prompt library ────────────────────────────────────────────────────────────

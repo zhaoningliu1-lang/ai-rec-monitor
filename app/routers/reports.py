@@ -10,10 +10,11 @@ from sqlalchemy import distinct, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.models import Recommendation, PromptResult, Run, RunSnapshot, User
+from app.models import GeoPlan, Recommendation, PromptResult, Run, RunSnapshot, User
 from app.schemas import (
     CategoryLeaderboardEntry,
     EnrichedLeaderboardEntry,
+    GeoPlanResponse,
     PromptResultDetailResponse,
     RecommendationResponse,
     RunSnapshotResponse,
@@ -1048,3 +1049,70 @@ async def category_leaderboard_with_trends(
         credits_remaining=user.credit_balance if user and not limited else None,
         credit_cost=credit_cost,
     )
+
+
+# ── GEO Action Plan ──────────────────────────────────────────────────────────
+
+
+@router.get("/runs/{run_id}/geo-plan", response_model=GeoPlanResponse)
+async def get_geo_plan(
+    run_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """Return cached GEO Action Plan for a run (if it exists)."""
+    stmt = select(GeoPlan).where(GeoPlan.run_id == run_id)
+    result = await db.execute(stmt)
+    plan = result.scalar_one_or_none()
+    if not plan:
+        raise HTTPException(
+            status_code=404,
+            detail="GEO Plan not yet generated for this run. Use POST to generate.",
+        )
+    return plan
+
+
+@router.post("/runs/{run_id}/geo-plan", response_model=GeoPlanResponse, status_code=201)
+async def create_geo_plan(
+    run_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
+):
+    """Generate a GEO Action Plan for a completed run (on-demand)."""
+    run = await db.get(Run, run_id)
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+    if run.status.value != "done":
+        raise HTTPException(status_code=400, detail="Run is not completed yet")
+
+    # Check if plan already exists
+    existing = await db.execute(select(GeoPlan).where(GeoPlan.run_id == run_id))
+    if existing.scalar_one_or_none():
+        raise HTTPException(
+            status_code=409,
+            detail="GEO Plan already exists for this run. Use GET to retrieve it.",
+        )
+
+    # Credit check: 2 credits for free-tier users
+    credit_cost = 0
+    if user:
+        tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
+        if tier not in _PAID_TIERS_REPORTS:
+            credit_cost = 2
+            if user.credit_balance < credit_cost:
+                raise HTTPException(
+                    status_code=429,
+                    detail={
+                        "code": "credits_exhausted",
+                        "balance": user.credit_balance,
+                        "cost": credit_cost,
+                        "message": "Not enough credits for GEO Plan generation.",
+                    },
+                )
+            user.credit_balance -= credit_cost
+            await db.commit()
+
+    from app.database import async_session_factory
+    from app.services.geo_plan_generator import generate_geo_plan
+
+    plan = await generate_geo_plan(run_id, async_session_factory)
+    return plan

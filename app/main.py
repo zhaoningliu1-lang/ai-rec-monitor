@@ -191,6 +191,24 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "CREATE INDEX IF NOT EXISTS ix_b2a_events_event_at ON b2a_events (event_at)"
         ))
+        # GEO Action Plans table
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS geo_plans (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                run_id UUID NOT NULL UNIQUE REFERENCES runs(id) ON DELETE CASCADE,
+                brand_name VARCHAR(255) NOT NULL,
+                category VARCHAR(255) NOT NULL,
+                current_geo_score INTEGER NOT NULL,
+                projected_geo_score INTEGER NOT NULL,
+                weaknesses JSON NOT NULL DEFAULT '[]',
+                actions JSON NOT NULL DEFAULT '[]',
+                generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                model_used VARCHAR(100) NOT NULL
+            )
+        """))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_geo_plans_run_id ON geo_plans (run_id)"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 

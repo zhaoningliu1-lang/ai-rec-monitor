@@ -200,3 +200,31 @@ class RecommendationResponse(BaseModel):
     model_used: str
 
     model_config = {"from_attributes": True}
+
+
+# ── GEO Action Plan ──────────────────────────────────────────────────────────
+
+class GeoActionItem(BaseModel):
+    id: str
+    category: Literal["content", "reddit", "schema", "citations", "social", "reviews"]
+    priority: Literal["critical", "high", "medium"]
+    title: str
+    why: str
+    how: str
+    impact: str
+    effort: Literal["low", "medium", "high"]
+
+
+class GeoPlanResponse(BaseModel):
+    id: uuid.UUID
+    run_id: uuid.UUID
+    brand_name: str
+    category: str
+    current_geo_score: int
+    projected_geo_score: int
+    weaknesses: list[str]
+    actions: list[dict]
+    generated_at: datetime
+    model_used: str
+
+    model_config = {"from_attributes": True}

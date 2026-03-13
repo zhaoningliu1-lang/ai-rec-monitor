@@ -353,6 +353,31 @@ export interface GoogleTrendsData {
   rising_queries: string[];
 }
 
+// GEO Action Plan
+export interface GeoActionItem {
+  id: string;
+  category: "content" | "reddit" | "schema" | "citations" | "social" | "reviews";
+  priority: "critical" | "high" | "medium";
+  title: string;
+  why: string;
+  how: string;
+  impact: string;
+  effort: "low" | "medium" | "high";
+}
+
+export interface GeoPlan {
+  id: string;
+  run_id: string;
+  brand_name: string;
+  category: string;
+  current_geo_score: number;
+  projected_geo_score: number;
+  weaknesses: string[];
+  actions: GeoActionItem[];
+  generated_at: string;
+  model_used: string;
+}
+
 export const api = {
   // Runs
   listRuns: (brand?: string) =>
@@ -387,6 +412,10 @@ export const api = {
 
   // Recommendations
   getRecommendations: (runId: string) => get<Recommendation>(`/runs/${runId}/recommendations`),
+
+  // GEO Action Plan
+  getGeoPlan: (runId: string) => getAuth<GeoPlan>(`/runs/${runId}/geo-plan`),
+  createGeoPlan: (runId: string) => postAuth<GeoPlan>(`/runs/${runId}/geo-plan`, {}),
 
   // Sources / citation analysis
   getRunSources: (runId: string) => get<Record<string, unknown>>(`/runs/${runId}/sources`),
