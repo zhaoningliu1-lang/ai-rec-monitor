@@ -16,6 +16,7 @@ from app.routers import auth as auth_router
 from app.routers import billing as billing_router
 from app.routers import prompts as prompts_router
 from app.routers import trends as trends_router
+from app.routers import reddit as reddit_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -213,6 +214,7 @@ app.include_router(auth_router.router)
 app.include_router(billing_router.router)
 app.include_router(prompts_router.router)
 app.include_router(trends_router.router)
+app.include_router(reddit_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s

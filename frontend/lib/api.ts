@@ -169,6 +169,59 @@ export interface TrendsLeaderboardResponse {
   credit_cost: number;
 }
 
+// Reddit
+export interface RedditPost {
+  title: string;
+  url: string;
+  subreddit: string;
+  score: number;
+  num_comments: number;
+  selftext_snippet: string;
+  created_utc: number;
+  sentiment: "positive" | "negative" | "mixed";
+  age_days: number;
+}
+
+export interface RedditSearchResponse {
+  posts: RedditPost[];
+  total: number;
+  limited: boolean;
+  credits_remaining: number | null;
+  credit_cost: number;
+  query: string;
+  category: string | null;
+}
+
+export interface CrossValidationInsight {
+  type: string;
+  icon: string;
+  message_en: string;
+  message_zh: string;
+}
+
+export interface CrossValidationResponse {
+  brand: string;
+  category: string | null;
+  reddit: {
+    score: number;
+    positive_pct: number;
+    negative_pct: number;
+    mixed_pct: number;
+    total_posts: number;
+    top_posts: RedditPost[];
+  };
+  ai_visibility: {
+    weighted_sov: number;
+    arrs: number;
+    mention_count: number;
+    total_prompts: number;
+    snapshot_at: string;
+  } | null;
+  insights: CrossValidationInsight[];
+  credits_remaining: number;
+  credit_cost: number;
+}
+
 export interface GoogleTrendsData {
   keywords: Record<string, number>;
   delta_4w_pct: Record<string, number>;
@@ -223,6 +276,16 @@ export const api = {
     ),
   getGoogleTrends: (category: string) =>
     get<GoogleTrendsData>(`/trends/google/${encodeURIComponent(category)}`),
+
+  // Reddit intelligence
+  searchReddit: (q: string, category?: string) =>
+    getAuth<RedditSearchResponse>(
+      `/reddit/search?q=${encodeURIComponent(q)}${category ? `&category=${encodeURIComponent(category)}` : ""}`
+    ),
+  crossValidate: (brand: string, category?: string) =>
+    getAuth<CrossValidationResponse>(
+      `/reddit/cross-validate/${encodeURIComponent(brand)}${category ? `?category=${encodeURIComponent(category)}` : ""}`
+    ),
 
   // Schedules
   listSchedules: () => get<Schedule[]>("/schedules"),

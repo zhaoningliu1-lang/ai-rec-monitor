@@ -548,6 +548,32 @@ export const t = {
     creditsExhausted:   { en: "Credits exhausted",                  zh: "Credits 已用完" },
     upgradeToView:      { en: "Upgrade to continue viewing Reddit intel", zh: "升级以继续查看 Reddit 情报" },
     upgradeCta:         { en: "Upgrade →",                          zh: "升级 →" },
+    // Live search
+    liveSearchTitle:    { en: "Live Reddit Search",                 zh: "Reddit 实时搜索" },
+    liveSearchSub:      { en: "Search any brand to see real Reddit mentions and AI citation potential.", zh: "搜索任何品牌，查看真实 Reddit 提及和 AI 引用潜力。" },
+    searchBrand:        { en: "Search a brand...",                  zh: "搜索品牌..." },
+    searchBtn:          { en: "Search",                             zh: "搜索" },
+    searching:          { en: "Searching Reddit...",                zh: "正在搜索 Reddit..." },
+    noResults:          { en: "No Reddit posts found for this brand.", zh: "未找到该品牌的 Reddit 帖子。" },
+    livePosts:          { en: "live posts",                         zh: "条实时帖子" },
+    comments:           { en: "comments",                           zh: "条评论" },
+    daysAgo:            { en: "days ago",                           zh: "天前" },
+    // Cross-validation
+    crossTitle:         { en: "Cross-Source Validation",             zh: "多源交叉验证" },
+    crossSub:           { en: "How does Reddit sentiment compare with AI visibility and other signals?", zh: "Reddit 情感与 AI 可见度及其他信号如何比较？" },
+    crossBtn:           { en: "Run Cross-Validation",               zh: "运行交叉验证" },
+    crossRunning:       { en: "Analyzing...",                       zh: "分析中..." },
+    crossCost:          { en: "2 credits",                          zh: "2 credits" },
+    redditSentiment:    { en: "Reddit Sentiment",                   zh: "Reddit 情感" },
+    aiVisibility:       { en: "AI Visibility",                      zh: "AI 可见度" },
+    sovLabel:           { en: "SOV",                                zh: "SOV" },
+    geoScoreLabel:      { en: "GEO Score",                          zh: "GEO 评分" },
+    insightsTitle:      { en: "Intelligence Insights",              zh: "情报洞察" },
+    noAiData:           { en: "No AI audit data available for this brand yet. Run an audit first.", zh: "该品牌暂无 AI 诊断数据。请先运行诊断。" },
+    // Source Intelligence
+    sourceTitle:        { en: "Source Intelligence",                 zh: "信源情报" },
+    sourceSub:          { en: "Key data sources for this category. AI models weight these communities heavily.", zh: "该品类的关键数据源。AI 模型高度依赖这些社区。" },
+    relevantSubs:       { en: "Relevant Subreddits",                zh: "相关 Subreddit" },
   },
 } as const;
 
