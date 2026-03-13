@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Run, api } from "@/lib/api";
+import { Run, Schedule, api } from "@/lib/api";
 import { getToken, isPaid, fetchCredits } from "@/lib/auth";
 import { Lang, tx } from "@/lib/i18n";
 
 interface Props {
   lang: Lang;
 }
+
+type StatusFilter = "all" | "done" | "running" | "failed";
 
 function StatusBadge({ status, lang }: { status: Run["status"]; lang: Lang }) {
   const styles: Record<Run["status"], { bg: string; color: string }> = {
@@ -108,10 +110,96 @@ function CreditsBar({ lang }: { lang: Lang }) {
   );
 }
 
+function SchedulesSummary({ lang }: { lang: Lang }) {
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const h = (p: string) => (lang === "zh" ? `/zh${p}` : p);
+  const d = (k: string) => tx("dashboard", k as never, lang);
+
+  useEffect(() => {
+    api.listSchedules()
+      .then(setSchedules)
+      .catch(() => {})
+      .finally(() => setLoaded(true));
+  }, []);
+
+  if (!loaded) return null;
+
+  const active = schedules.filter((s) => s.enabled);
+  const lastRun = schedules
+    .filter((s) => s.last_run_at)
+    .sort((a, b) => new Date(b.last_run_at!).getTime() - new Date(a.last_run_at!).getTime())[0];
+
+  if (schedules.length === 0) {
+    return (
+      <div
+        className="rounded-2xl p-6"
+        style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+      >
+        <h3 className="text-base font-bold mb-2" style={{ color: "#f0f0f8" }}>
+          {d("schedTitle")}
+        </h3>
+        <p className="text-sm mb-4" style={{ color: "#7070a0" }}>
+          {d("schedSetupDesc")}
+        </p>
+        <Link
+          href={h("/schedules")}
+          className="text-sm font-semibold px-5 py-2.5 rounded-xl transition-opacity hover:opacity-85"
+          style={{ background: "#ff6b35", color: "#fff" }}
+        >
+          {d("schedSetupBtn")}
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="rounded-2xl p-6"
+      style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-base font-bold" style={{ color: "#f0f0f8" }}>
+          {d("schedTitle")}
+        </h3>
+        <Link
+          href={h("/schedules")}
+          className="text-xs font-medium transition-colors hover:text-white"
+          style={{ color: "#ff6b35" }}
+        >
+          {d("schedManage")}
+        </Link>
+      </div>
+      <div className="flex items-center gap-6">
+        <div>
+          <div className="text-2xl font-bold" style={{ color: "#22c55e" }}>{active.length}</div>
+          <div className="text-xs" style={{ color: "#7070a0" }}>{d("schedActive")}</div>
+        </div>
+        {lastRun?.last_run_at && (
+          <div>
+            <div className="text-sm font-medium" style={{ color: "#f0f0f8" }}>
+              {new Date(lastRun.last_run_at).toLocaleDateString()}
+            </div>
+            <div className="text-xs" style={{ color: "#7070a0" }}>{d("schedLastRun")}</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const FILTERS: { key: StatusFilter; i18nKey: string }[] = [
+  { key: "all",     i18nKey: "filterAll" },
+  { key: "done",    i18nKey: "filterDone" },
+  { key: "running", i18nKey: "filterRunning" },
+  { key: "failed",  i18nKey: "filterFailed" },
+];
+
 export default function DashboardView({ lang }: Props) {
   const [runs, setRuns] = useState<Run[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [filter, setFilter] = useState<StatusFilter>("all");
   const newRunPath = lang === "zh" ? "/zh/runs/new" : "/runs/new";
 
   useEffect(() => {
@@ -126,6 +214,10 @@ export default function DashboardView({ lang }: Props) {
   }, []);
 
   const brands = Array.from(new Set(runs.map((r) => r.brand_name))).sort();
+
+  const filtered = filter === "all"
+    ? runs
+    : runs.filter((r) => r.status === filter);
 
   if (loading) {
     return (
@@ -203,124 +295,92 @@ export default function DashboardView({ lang }: Props) {
       )}
 
       {runs.length > 0 && (
-        <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
-          <table className="w-full text-sm">
-            <thead className="text-xs uppercase tracking-wide" style={{ background: "#161625", color: "#7070a0" }}>
-              <tr>
-                <th className="text-left px-4 py-3">{tx("dashboard", "colBrand", lang)}</th>
-                <th className="text-left px-4 py-3">{tx("dashboard", "colCategory", lang)}</th>
-                <th className="text-left px-4 py-3">{tx("dashboard", "colProviders", lang)}</th>
-                <th className="text-left px-4 py-3">{tx("dashboard", "colStatus", lang)}</th>
-                <th className="text-left px-4 py-3">{tx("dashboard", "colProgress", lang)}</th>
-                <th className="text-left px-4 py-3">{tx("dashboard", "colDate", lang)}</th>
-                <th className="text-right px-4 py-3">{tx("dashboard", "colRunId", lang)}</th>
-              </tr>
-            </thead>
-            <tbody style={{ background: "#0f0f17" }}>
-              {runs.map((run) => (
-                <tr key={run.id} className="transition-colors" style={{ borderTop: "1px solid #25253f" }}>
-                  <td className="px-4 py-3 font-medium">
-                    <Link
-                      href={`${lang === "zh" ? "/zh" : ""}/brands/${encodeURIComponent(run.brand_name)}`}
-                      className="hover:underline"
-                      style={{ color: "#ff6b35" }}
-                    >
-                      {run.brand_name}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3" style={{ color: "#7070a0" }}>{run.category}</td>
-                  <td className="px-4 py-3" style={{ color: "#7070a0" }}>{run.providers.join(", ")}</td>
-                  <td className="px-4 py-3">
-                    <StatusBadge status={run.status} lang={lang} />
-                  </td>
-                  <td className="px-4 py-3 w-32">
-                    <ProgressBar done={run.progress_done} total={run.progress_total} />
-                  </td>
-                  <td className="px-4 py-3 text-xs" style={{ color: "#7070a0" }}>
-                    {new Date(run.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`${lang === "zh" ? "/zh" : ""}/runs/${run.id}`}
-                      className="text-xs underline transition-colors hover:text-white"
-                      style={{ color: "#7070a0" }}
-                    >
-                      {run.run_code ?? run.id.slice(0, 8) + "…"}
-                    </Link>
-                  </td>
+        <>
+          {/* Status filter tabs */}
+          <div className="flex items-center gap-1">
+            {FILTERS.map((f) => {
+              const count = f.key === "all" ? runs.length : runs.filter((r) => r.status === f.key).length;
+              const active = filter === f.key;
+              return (
+                <button
+                  key={f.key}
+                  onClick={() => setFilter(f.key)}
+                  className="text-xs px-3 py-1.5 rounded-lg transition-colors"
+                  style={{
+                    background: active ? "rgba(255,107,53,0.15)" : "transparent",
+                    color: active ? "#ff6b35" : "#7070a0",
+                    border: active ? "1px solid rgba(255,107,53,0.3)" : "1px solid transparent",
+                    cursor: "pointer",
+                  }}
+                >
+                  {tx("dashboard", f.i18nKey as never, lang)} ({count})
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+            <table className="w-full text-sm">
+              <thead className="text-xs uppercase tracking-wide" style={{ background: "#161625", color: "#7070a0" }}>
+                <tr>
+                  <th className="text-left px-4 py-3">{tx("dashboard", "colBrand", lang)}</th>
+                  <th className="text-left px-4 py-3">{tx("dashboard", "colCategory", lang)}</th>
+                  <th className="text-left px-4 py-3">{tx("dashboard", "colProviders", lang)}</th>
+                  <th className="text-left px-4 py-3">{tx("dashboard", "colStatus", lang)}</th>
+                  <th className="text-left px-4 py-3">{tx("dashboard", "colProgress", lang)}</th>
+                  <th className="text-left px-4 py-3">{tx("dashboard", "colDate", lang)}</th>
+                  <th className="text-right px-4 py-3">{tx("dashboard", "colRunId", lang)}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody style={{ background: "#0f0f17" }}>
+                {filtered.map((run) => (
+                  <tr key={run.id} className="transition-colors" style={{ borderTop: "1px solid #25253f" }}>
+                    <td className="px-4 py-3 font-medium">
+                      <Link
+                        href={`${lang === "zh" ? "/zh" : ""}/brands/${encodeURIComponent(run.brand_name)}`}
+                        className="hover:underline"
+                        style={{ color: "#ff6b35" }}
+                      >
+                        {run.brand_name}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3" style={{ color: "#7070a0" }}>{run.category}</td>
+                    <td className="px-4 py-3" style={{ color: "#7070a0" }}>{run.providers.join(", ")}</td>
+                    <td className="px-4 py-3">
+                      <StatusBadge status={run.status} lang={lang} />
+                    </td>
+                    <td className="px-4 py-3 w-32">
+                      <ProgressBar done={run.progress_done} total={run.progress_total} />
+                    </td>
+                    <td className="px-4 py-3 text-xs" style={{ color: "#7070a0" }}>
+                      {new Date(run.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link
+                        href={`${lang === "zh" ? "/zh" : ""}/runs/${run.id}`}
+                        className="text-xs underline transition-colors hover:text-white"
+                        style={{ color: "#7070a0" }}
+                      >
+                        {run.run_code ?? run.id.slice(0, 8) + "…"}
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+                {filtered.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-8 text-center text-xs" style={{ color: "#7070a0" }}>
+                      {lang === "zh" ? "无匹配记录" : "No matching runs"}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
-      {/* B2A Analytics — Coming Soon Teaser */}
-      <div
-        className="rounded-2xl p-6 relative overflow-hidden"
-        style={{ background: "#0f0f17", border: "1px solid #25253f" }}
-      >
-        <div className="flex items-center gap-3 mb-4">
-          <h3 className="text-base font-bold" style={{ color: "#f0f0f8" }}>
-            {lang === "zh"
-              ? "B2A Analytics — AI 流量智能（即将推出）"
-              : "B2A Analytics — AI Traffic Intelligence (Coming Soon)"}
-          </h3>
-          <span
-            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-            style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}
-          >
-            Beta
-          </span>
-        </div>
-
-        {/* Blurred mock bar chart */}
-        <div className="relative mb-5">
-          <div style={{ filter: "blur(4px)" }} className="pointer-events-none select-none">
-            <div className="flex items-end gap-3 h-32 px-4">
-              {[
-                { label: "ChatGPT", h: "80%", color: "#22c55e" },
-                { label: "Perplexity", h: "45%", color: "#3b82f6" },
-                { label: "Gemini", h: "30%", color: "#f5a623" },
-                { label: "Claude", h: "15%", color: "#a78bfa" },
-              ].map((bar) => (
-                <div key={bar.label} className="flex-1 flex flex-col items-center gap-1">
-                  <div
-                    className="w-full rounded-t-lg"
-                    style={{ height: bar.h, background: bar.color, minHeight: 8 }}
-                  />
-                  <span className="text-[10px]" style={{ color: "#555580" }}>
-                    {bar.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div
-              className="text-xs font-semibold px-4 py-2 rounded-full"
-              style={{ background: "rgba(15,15,23,0.9)", border: "1px solid #25253f", color: "#7070a0" }}
-            >
-              {lang === "zh" ? "🔒 解锁后可查看完整数据" : "🔒 Unlock to view full data"}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <a
-            href="https://calendly.com/brivesubscription/30min"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-semibold px-5 py-2.5 rounded-xl transition-opacity hover:opacity-85"
-            style={{ background: "#ff6b35", color: "#fff" }}
-          >
-            {lang === "zh" ? "加入 Beta 等待名单 →" : "Join Beta Waitlist →"}
-          </a>
-          <span className="text-xs" style={{ color: "#555580" }}>
-            {lang === "zh" ? "抢先体验 AI 流量归因" : "Early access to AI traffic attribution"}
-          </span>
-        </div>
-      </div>
+      {/* Schedules summary */}
+      {getToken() && <SchedulesSummary lang={lang} />}
     </div>
   );
 }

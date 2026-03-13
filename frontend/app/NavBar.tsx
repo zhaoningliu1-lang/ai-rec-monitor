@@ -105,9 +105,6 @@ export default function NavBar() {
     { href: h("/reddit"),        label: p("Reddit",        "Reddit 引用") },
     { href: h("/kol"),           label: p("KOL",           "KOL 追踪") },
     { href: h("/b2a-analytics"), label: p("B2A Analytics", "B2A Analytics"), badge: "Beta" },
-    { href: h("/history"),       label: p("History",       "历史报告") },
-    { href: h("/schedules"),     label: p("Auto Monitor",  "自动监控") },
-    { href: h("/brands"),        label: p("Brands",        "品牌管理") },
   ];
   const optimizeItems: DropdownItem[] = [
     { href: h("/geo-action"),     label: p("GEO Plan",       "GEO 行动") },
@@ -117,10 +114,11 @@ export default function NavBar() {
     { href: h("/content-health"), label: p("Content Health", "内容健康") },
   ];
   const workspaceItems: DropdownItem[] = [
-    { href: h("/dashboard"), label: p("Dashboard", "数据看板") },
-    { href: h("/account"),   label: p("Account",   "账户设置") },
-    { href: h("/pricing"),   label: p("Pricing",   "定价方案") },
-    { href: h("/tiktok"),    label: p("TikTok Flows", "TikTok 工作流"), badge: "New" },
+    { href: h("/dashboard"),  label: p("Dashboard",    "数据看板") },
+    { href: h("/schedules"),  label: p("Auto Monitor", "自动监控") },
+    { href: h("/account"),    label: p("Account",      "账户设置") },
+    { href: h("/pricing"),    label: p("Pricing",      "定价方案") },
+    { href: h("/tiktok"),     label: p("TikTok Flows", "TikTok 工作流"), badge: "New" },
   ];
 
   /* ── mobile: flatten all links ── */
