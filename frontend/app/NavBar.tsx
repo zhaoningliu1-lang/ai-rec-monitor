@@ -108,7 +108,6 @@ export default function NavBar() {
   ];
   const optimizeItems: DropdownItem[] = [
     { href: h("/geo-action"),     label: p("GEO Plan",       "GEO 行动") },
-    { href: h("/optimizer"),      label: p("Optimizer",      "成本优化") },
     { href: h("/agents"),         label: p("Growth Agent",   "增长引擎") },
     { href: h("/selection"),      label: p("Selection",      "选品情报") },
     { href: h("/content-health"), label: p("Content Health", "内容健康") },
