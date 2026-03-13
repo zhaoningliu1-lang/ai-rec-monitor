@@ -98,6 +98,13 @@ export async function fetchCredits(): Promise<{ balance: number; tier: string; i
   return apiFetch("/auth/credits");
 }
 
+export async function useCredits(amount: number, reason: string): Promise<{ balance: number; deducted: number }> {
+  return apiFetch("/auth/credits/use", {
+    method: "POST",
+    body: JSON.stringify({ amount, reason }),
+  });
+}
+
 export async function createCheckout(tier: "growth" | "scale", successUrl: string, cancelUrl: string) {
   return apiFetch("/billing/checkout", {
     method: "POST",
