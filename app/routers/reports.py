@@ -10,15 +10,19 @@ from sqlalchemy import distinct, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.models import Recommendation, PromptResult, Run, RunSnapshot
+from app.models import Recommendation, PromptResult, Run, RunSnapshot, User
 from app.schemas import (
     CategoryLeaderboardEntry,
     EnrichedLeaderboardEntry,
     PromptResultDetailResponse,
     RecommendationResponse,
     RunSnapshotResponse,
+    TrendsLeaderboardResponse,
 )
+from app.routers.auth import get_current_user_optional
 from app.services.parser import detect_list, score_sentiment
+
+_PAID_TIERS_REPORTS = {"growth", "scale", "enterprise"}
 
 router = APIRouter()
 
@@ -927,19 +931,44 @@ async def category_leaderboard(
 
 @router.get(
     "/categories/{category}/leaderboard-with-trends",
-    response_model=list[EnrichedLeaderboardEntry],
+    response_model=TrendsLeaderboardResponse,
 )
 async def category_leaderboard_with_trends(
     category: str,
     sparkline_points: int = Query(default=5, ge=2, le=10),
     db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
 ):
     """
-    Enriched leaderboard: latest metrics + sparkline data + trend direction per brand.
-    Single query using window functions to avoid N+1 calls.
+    Enriched leaderboard with credit gating:
+    - Anonymous: top 3 brands only (limited=True)
+    - Free user: costs 1 credit per call
+    - Paid user: unlimited
     """
     from collections import defaultdict
 
+    # ── Credit logic ────────────────────────────────────────────────────────
+    credit_cost = 0
+    limited = False
+
+    if user is None:
+        limited = True  # anonymous → top 3 only
+    else:
+        tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
+        if tier not in _PAID_TIERS_REPORTS:
+            credit_cost = 1
+            if user.credit_balance < credit_cost:
+                raise HTTPException(
+                    status_code=429,
+                    detail={
+                        "code": "credits_exhausted",
+                        "balance": user.credit_balance,
+                        "cost": credit_cost,
+                        "message": "Credits exhausted. Upgrade to continue viewing trends.",
+                    },
+                )
+
+    # ── Query ───────────────────────────────────────────────────────────────
     ranked = (
         select(
             RunSnapshot.brand_name,
@@ -971,7 +1000,7 @@ async def category_leaderboard_with_trends(
     for r in rows:
         brands[r.brand_name].append(r)
 
-    result = []
+    entries = []
     for brand_name, snapshots in brands.items():
         latest = snapshots[-1]
         sparkline = [s.weighted_sov for s in snapshots]
@@ -986,7 +1015,7 @@ async def category_leaderboard_with_trends(
         else:
             trend = "stable"
 
-        result.append(EnrichedLeaderboardEntry(
+        entries.append(EnrichedLeaderboardEntry(
             brand_name=brand_name,
             weighted_sov=latest.weighted_sov,
             sov_high=latest.sov_high,
@@ -1001,5 +1030,21 @@ async def category_leaderboard_with_trends(
             sov_change=round(sov_change, 1),
         ))
 
-    result.sort(key=lambda e: e.weighted_sov, reverse=True)
-    return result
+    entries.sort(key=lambda e: e.weighted_sov, reverse=True)
+
+    # ── Deduct credit (after successful query) ──────────────────────────────
+    if credit_cost > 0 and user:
+        user.credit_balance -= credit_cost
+        await db.commit()
+        await db.refresh(user)
+
+    # ── Limit for anonymous users ───────────────────────────────────────────
+    if limited:
+        entries = entries[:3]
+
+    return TrendsLeaderboardResponse(
+        entries=entries,
+        limited=limited,
+        credits_remaining=user.credit_balance if user and not limited else None,
+        credit_cost=credit_cost,
+    )

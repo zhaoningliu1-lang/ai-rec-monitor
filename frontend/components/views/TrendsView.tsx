@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { CategoryEntry, EnrichedLeaderboardEntry, GoogleTrendsData, api } from "@/lib/api";
+import { CategoryEntry, EnrichedLeaderboardEntry, GoogleTrendsData, TrendsLeaderboardResponse, api } from "@/lib/api";
 import { Lang, tx } from "@/lib/i18n";
+import { fetchMe } from "@/lib/auth";
 import { YOUTUBE_SIGNALS, AMAZON_CAR_ELECTRONICS, AMAZON_LIVE_DATE } from "@/lib/amazon-live-data";
 
 /* ── Sparkline ────────────────────────────────────────────────────────────── */
@@ -54,6 +55,32 @@ function SovBar({ value }: { value: number }) {
   );
 }
 
+/* ── Upgrade Modal ────────────────────────────────────────────────────────── */
+function UpgradeModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
+  const h = (path: string) => lang === "zh" ? `/zh${path}` : path;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.6)" }} onClick={onClose}>
+      <div className="rounded-2xl p-8 max-w-sm text-center space-y-4" style={{ background: "#12121e", border: "1px solid #25253f" }} onClick={e => e.stopPropagation()}>
+        <div className="text-3xl">0</div>
+        <h3 className="text-lg font-bold" style={{ color: "#f0f0f8" }}>
+          {tx("trends", "creditsExhausted", lang)}
+        </h3>
+        <p className="text-sm" style={{ color: "#7070a0" }}>
+          {tx("trends", "upgradeToView", lang)}
+        </p>
+        <div className="flex gap-3 justify-center pt-2">
+          <Link href={h("/account")} className="px-5 py-2 rounded-xl text-sm font-semibold" style={{ background: "#ff6b35", color: "#fff" }}>
+            {tx("trends", "upgradeCta", lang)}
+          </Link>
+          <button onClick={onClose} className="px-5 py-2 rounded-xl text-sm" style={{ background: "#1a1a2e", color: "#7070a0", border: "1px solid #25253f" }}>
+            {lang === "zh" ? "关闭" : "Close"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Main component ───────────────────────────────────────────────────────── */
 interface TrendsViewProps {
   categories: CategoryEntry[];
@@ -68,6 +95,28 @@ export default function TrendsView({ categories, lang }: TrendsViewProps) {
   const [googleTrends, setGoogleTrends] = useState<GoogleTrendsData | null>(null);
   const [loadingGt, setLoadingGt] = useState(false);
 
+  // Credit state
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null); // null = checking
+  const [isPaid, setIsPaid] = useState(false);
+  const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
+  const [limited, setLimited] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const viewedCategories = useRef(new Set<string>());
+
+  // Check auth status on mount
+  useEffect(() => {
+    fetchMe()
+      .then((u) => {
+        setIsLoggedIn(true);
+        setCreditsRemaining(u.credit_balance);
+        const tier = u.subscription_tier;
+        setIsPaid(tier === "growth" || tier === "scale" || tier === "enterprise");
+      })
+      .catch(() => {
+        setIsLoggedIn(false);
+      });
+  }, []);
+
   // Auto-select first category if available
   useEffect(() => {
     if (categories.length > 0 && !selectedCategory) {
@@ -79,10 +128,27 @@ export default function TrendsView({ categories, lang }: TrendsViewProps) {
   useEffect(() => {
     if (!selectedCategory) return;
 
+    // Skip API call if already viewed this category in this session (saves credits)
+    if (viewedCategories.current.has(selectedCategory)) {
+      return;
+    }
+
     setLoadingLb(true);
     api.getCategoryLeaderboardWithTrends(selectedCategory, 5)
-      .then(setLeaderboard)
-      .catch(() => setLeaderboard([]))
+      .then((resp: TrendsLeaderboardResponse) => {
+        setLeaderboard(resp.entries);
+        setLimited(resp.limited);
+        if (resp.credits_remaining !== null) {
+          setCreditsRemaining(resp.credits_remaining);
+        }
+        viewedCategories.current.add(selectedCategory);
+      })
+      .catch((err) => {
+        if (err instanceof Error && err.message.startsWith("429")) {
+          setShowUpgradeModal(true);
+        }
+        setLeaderboard([]);
+      })
       .finally(() => setLoadingLb(false));
 
     setLoadingGt(true);
@@ -101,13 +167,42 @@ export default function TrendsView({ categories, lang }: TrendsViewProps) {
   return (
     <div className="max-w-5xl mx-auto px-4 space-y-10" style={{ paddingTop: 32, paddingBottom: 64 }}>
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold mb-2" style={{ color: "#f0f0f8" }}>
-          {tx("trends", "title", lang)}
-        </h1>
-        <p className="text-sm" style={{ color: "#7070a0", maxWidth: 600 }}>
-          {tx("trends", "subtitle", lang)}
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: "#f0f0f8" }}>
+            {tx("trends", "title", lang)}
+          </h1>
+          <p className="text-sm" style={{ color: "#7070a0", maxWidth: 600 }}>
+            {tx("trends", "subtitle", lang)}
+          </p>
+        </div>
+        {/* Credit indicator */}
+        {isLoggedIn !== null && (
+          <div className="shrink-0 text-right">
+            {isLoggedIn ? (
+              isPaid ? (
+                <span className="text-xs px-3 py-1.5 rounded-full font-medium" style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e" }}>
+                  {tx("trends", "unlimited", lang)}
+                </span>
+              ) : (
+                <div className="space-y-1">
+                  <span className="text-xs px-3 py-1.5 rounded-full font-medium" style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35" }}>
+                    {creditsRemaining ?? 0} {tx("trends", "creditsRemaining", lang)}
+                  </span>
+                  <p className="text-xs" style={{ color: "#4a4a6a" }}>
+                    {tx("trends", "creditCost", lang)}
+                  </p>
+                </div>
+              )
+            ) : (
+              <Link href={h("/login?next=" + encodeURIComponent(lang === "zh" ? "/zh/trends" : "/trends"))}
+                className="text-xs px-3 py-1.5 rounded-full font-medium transition-opacity hover:opacity-80"
+                style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35" }}>
+                {tx("trends", "loginToUnlock", lang)}
+              </Link>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Category search + pills */}
@@ -210,6 +305,20 @@ export default function TrendsView({ categories, lang }: TrendsViewProps) {
               </table>
             </div>
           )}
+
+          {/* Limited preview banner for anonymous users */}
+          {limited && (
+            <div className="px-5 py-4 text-center" style={{ borderTop: "1px solid #25253f", background: "rgba(255,107,53,0.04)" }}>
+              <p className="text-sm mb-3" style={{ color: "#9090b0" }}>
+                {tx("trends", "limitedPreview", lang)}
+              </p>
+              <Link href={h("/login?next=" + encodeURIComponent(lang === "zh" ? "/zh/trends" : "/trends"))}
+                className="px-5 py-2 rounded-xl text-sm font-semibold transition-opacity hover:opacity-85 inline-block"
+                style={{ background: "#ff6b35", color: "#fff" }}>
+                {tx("trends", "signupToUnlock", lang)}
+              </Link>
+            </div>
+          )}
         </div>
       )}
 
@@ -273,7 +382,7 @@ export default function TrendsView({ categories, lang }: TrendsViewProps) {
           {YOUTUBE_SIGNALS.map((signal) => (
             <div key={signal.query}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium" style={{ color: "#f0f0f8" }}>"{signal.query}"</span>
+                <span className="text-xs font-medium" style={{ color: "#f0f0f8" }}>&quot;{signal.query}&quot;</span>
                 <span className="text-xs" style={{ color: "#4a4a6a" }}>{(signal.totalViews / 1000).toFixed(0)}K views</span>
               </div>
               <div className="space-y-1">
@@ -338,6 +447,9 @@ export default function TrendsView({ categories, lang }: TrendsViewProps) {
           </Link>
         </div>
       </div>
+
+      {/* Upgrade modal */}
+      {showUpgradeModal && <UpgradeModal lang={lang} onClose={() => setShowUpgradeModal(false)} />}
     </div>
   );
 }

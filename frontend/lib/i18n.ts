@@ -466,6 +466,15 @@ export const t = {
     ctaTitle:          { en: "Track your brand's AI visibility", zh: "追踪你的品牌 AI 可见度" },
     ctaSub:            { en: "See how your brand ranks in real AI model responses. Free audit, no credit card.", zh: "查看你的品牌在 AI 回复中的排名。免费诊断，无需信用卡。" },
     ctaAudit:          { en: "Run Free Audit →",               zh: "运行免费诊断 →" },
+    creditCost:        { en: "1 credit per category",           zh: "每个品类消耗 1 credit" },
+    creditsRemaining:  { en: "credits remaining",               zh: "剩余 credits" },
+    signupToUnlock:    { en: "Sign up free to see all brands",  zh: "免费注册查看所有品牌" },
+    loginToUnlock:     { en: "Log in to see the full leaderboard", zh: "登录查看完整排行榜" },
+    limitedPreview:    { en: "Showing top 3 brands. Sign up to unlock the full leaderboard.", zh: "仅显示前 3 名品牌。注册即可解锁完整排行榜。" },
+    creditsExhausted:  { en: "Credits exhausted",               zh: "Credits 已用完" },
+    upgradeToView:     { en: "Upgrade to continue viewing trends", zh: "升级以继续查看趋势" },
+    upgradeCta:        { en: "Upgrade →",                       zh: "升级 →" },
+    unlimited:         { en: "Unlimited",                       zh: "无限制" },
   },
 } as const;
 

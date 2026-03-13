@@ -104,6 +104,18 @@ async function get<T>(path: string): Promise<T> {
   return res.json();
 }
 
+/** GET with optional Bearer token (reads from localStorage). */
+async function getAuth<T>(path: string): Promise<T> {
+  const headers: Record<string, string> = {};
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("avanti_token");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${BASE}${path}`, { cache: "no-store", headers });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${path}`);
+  return res.json();
+}
+
 async function post<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     method: "POST",
@@ -148,6 +160,13 @@ export interface EnrichedLeaderboardEntry extends LeaderboardEntry {
   sparkline: number[];
   trend_direction: "rising" | "stable" | "falling";
   sov_change: number;
+}
+
+export interface TrendsLeaderboardResponse {
+  entries: EnrichedLeaderboardEntry[];
+  limited: boolean;
+  credits_remaining: number | null;
+  credit_cost: number;
 }
 
 export interface GoogleTrendsData {
@@ -199,7 +218,7 @@ export const api = {
   getCategoryLeaderboard: (category: string) =>
     get<LeaderboardEntry[]>(`/categories/${encodeURIComponent(category)}/leaderboard`),
   getCategoryLeaderboardWithTrends: (category: string, sparklinePoints?: number) =>
-    get<EnrichedLeaderboardEntry[]>(
+    getAuth<TrendsLeaderboardResponse>(
       `/categories/${encodeURIComponent(category)}/leaderboard-with-trends${sparklinePoints ? `?sparkline_points=${sparklinePoints}` : ""}`
     ),
   getGoogleTrends: (category: string) =>

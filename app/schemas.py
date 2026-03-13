@@ -89,6 +89,13 @@ class EnrichedLeaderboardEntry(BaseModel):
     sov_change: float
 
 
+class TrendsLeaderboardResponse(BaseModel):
+    entries: list[EnrichedLeaderboardEntry]
+    limited: bool = False  # True when non-logged-in user sees only top 3
+    credits_remaining: int | None = None  # null for anonymous / paid
+    credit_cost: int = 0  # how many credits this request consumed
+
+
 # ── ScheduledRun ──────────────────────────────────────────────────────────────
 
 class CreateScheduleRequest(BaseModel):
