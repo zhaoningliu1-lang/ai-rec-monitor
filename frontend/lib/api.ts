@@ -126,14 +126,35 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   return res.json();
 }
 
-async function patch<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { method: "PATCH" });
+async function postAuth<T>(path: string, body: unknown): Promise<T> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("avanti_token");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${BASE}${path}`, { method: "POST", headers, body: JSON.stringify(body) });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${path}`);
   return res.json();
 }
 
-async function del(path: string): Promise<void> {
-  const res = await fetch(`${BASE}${path}`, { method: "DELETE" });
+async function patchAuth<T>(path: string): Promise<T> {
+  const headers: Record<string, string> = {};
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("avanti_token");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${BASE}${path}`, { method: "PATCH", headers });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${path}`);
+  return res.json();
+}
+
+async function delAuth(path: string): Promise<void> {
+  const headers: Record<string, string> = {};
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("avanti_token");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${BASE}${path}`, { method: "DELETE", headers });
   if (!res.ok && res.status !== 204) throw new Error(`${res.status}: ${path}`);
 }
 
@@ -276,6 +297,42 @@ export interface KolCrossValidationResponse {
   credit_cost: number;
 }
 
+// B2A Analytics types
+export interface B2AEngineAttribution {
+  engines: {
+    engine: string;
+    total_prompts: number;
+    mentions: number;
+    mention_rate: number;
+    avg_position: number | null;
+    share_of_mentions: number;
+  }[];
+  total_prompts: number;
+  total_mentions: number;
+  brand_filter: string | null;
+  category_filter: string | null;
+}
+
+export interface B2ACompetitiveLandscape {
+  category: string;
+  brands: {
+    brand: string;
+    engines: Record<string, { sov: number; mentions: number; total: number }>;
+    total_mentions: number;
+  }[];
+}
+
+export interface B2ASourceIntelligence {
+  sources: {
+    domain: string;
+    count: number;
+    engines: string[];
+    sample_urls: string[];
+  }[];
+  brand_filter: string | null;
+  category_filter: string | null;
+}
+
 export interface GoogleTrendsData {
   keywords: Record<string, number>;
   delta_4w_pct: Record<string, number>;
@@ -285,7 +342,7 @@ export interface GoogleTrendsData {
 export const api = {
   // Runs
   listRuns: (brand?: string) =>
-    get<Run[]>(`/runs${brand ? `?brand=${encodeURIComponent(brand)}` : ""}`),
+    getAuth<Run[]>(`/runs${brand ? `?brand=${encodeURIComponent(brand)}` : ""}`),
   getRun: (id: string) => get<Run>(`/runs/${id}`),
   createRun: (body: {
     brand_name: string;
@@ -352,7 +409,7 @@ export const api = {
     ),
 
   // Schedules
-  listSchedules: () => get<Schedule[]>("/schedules"),
+  listSchedules: () => getAuth<Schedule[]>("/schedules"),
   createSchedule: (body: {
     brand_name: string;
     competitor_names: string[];
@@ -362,10 +419,10 @@ export const api = {
     price_band?: string;
     cron_expr: string;
     num_prompts: number;
-  }) => post<Schedule>("/schedules", body),
-  enableSchedule: (id: string) => patch<Schedule>(`/schedules/${id}/enable`),
-  disableSchedule: (id: string) => patch<Schedule>(`/schedules/${id}/disable`),
-  deleteSchedule: (id: string) => del(`/schedules/${id}`),
+  }) => postAuth<Schedule>("/schedules", body),
+  enableSchedule: (id: string) => patchAuth<Schedule>(`/schedules/${id}/enable`),
+  disableSchedule: (id: string) => patchAuth<Schedule>(`/schedules/${id}/disable`),
+  deleteSchedule: (id: string) => delAuth(`/schedules/${id}`),
 
   // Agent Growth Cycles
   createCycle: (body: {
@@ -379,4 +436,24 @@ export const api = {
   listCycles: (limit?: number) =>
     get<AgentCycle[]>(`/agents/cycles${limit ? `?limit=${limit}` : ""}`),
   getCycle: (id: string) => get<AgentCycle>(`/agents/cycles/${id}`),
+
+  // B2A Analytics
+  getEngineAttribution: (brand?: string, category?: string) => {
+    const q = new URLSearchParams();
+    if (brand) q.set("brand", brand);
+    if (category) q.set("category", category);
+    const qs = q.toString();
+    return get<B2AEngineAttribution>(`/b2a/engine-attribution${qs ? `?${qs}` : ""}`);
+  },
+  getCompetitiveLandscape: (category: string, limit?: number) =>
+    get<B2ACompetitiveLandscape>(
+      `/b2a/competitive-landscape?category=${encodeURIComponent(category)}${limit ? `&limit=${limit}` : ""}`
+    ),
+  getSourceIntelligence: (brand?: string, category?: string) => {
+    const q = new URLSearchParams();
+    if (brand) q.set("brand", brand);
+    if (category) q.set("category", category);
+    const qs = q.toString();
+    return get<B2ASourceIntelligence>(`/b2a/source-intelligence${qs ? `?${qs}` : ""}`);
+  },
 };

@@ -1,12 +1,11 @@
-import { api, Schedule } from "@/lib/api";
+import type { Metadata } from "next";
 import SchedulesClient from "@/app/schedules/SchedulesClient";
 
-export default async function ZhSchedulesPage() {
-  let schedules: Schedule[] = [];
-  try {
-    schedules = await api.listSchedules();
-  } catch {
-    // API may not be running
-  }
-  return <SchedulesClient initial={schedules} lang="zh" />;
+export const metadata: Metadata = {
+  title: "自动监控 — 阿凡提 GEO",
+  description: "定时自动执行的 AI 可见度分析任务。",
+};
+
+export default function ZhSchedulesPage() {
+  return <SchedulesClient lang="zh" />;
 }
