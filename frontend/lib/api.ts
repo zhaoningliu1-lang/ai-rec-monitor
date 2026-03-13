@@ -222,6 +222,60 @@ export interface CrossValidationResponse {
   credit_cost: number;
 }
 
+// KOL
+export interface KolSearchResult {
+  channel_name: string;
+  channel_id: string;
+  video_id: string;
+  video_title: string;
+  video_url: string;
+  thumbnail: string;
+  views: number;
+  subscribers: number;
+  tier: "mega" | "macro" | "micro";
+  sentiment: "positive" | "negative" | "mixed";
+  published_at: string;
+  description_snippet: string;
+}
+
+export interface KolSearchResponse {
+  kols: KolSearchResult[];
+  total: number;
+  limited: boolean;
+  credits_remaining: number | null;
+  credit_cost: number;
+  query: string;
+  category: string | null;
+  api_available: boolean;
+}
+
+export interface KolCrossValidationResponse {
+  brand: string;
+  category: string | null;
+  kol_coverage: {
+    total_creators: number;
+    positive_pct: number;
+    negative_pct: number;
+    mixed_pct: number;
+    total_views: number;
+    total_subscribers: number;
+    mega_count: number;
+    macro_count: number;
+    micro_count: number;
+    top_kols: KolSearchResult[];
+  };
+  ai_visibility: {
+    weighted_sov: number;
+    arrs: number;
+    mention_count: number;
+    total_prompts: number;
+    snapshot_at: string;
+  } | null;
+  insights: CrossValidationInsight[];
+  credits_remaining: number;
+  credit_cost: number;
+}
+
 export interface GoogleTrendsData {
   keywords: Record<string, number>;
   delta_4w_pct: Record<string, number>;
@@ -285,6 +339,16 @@ export const api = {
   crossValidate: (brand: string, category?: string) =>
     getAuth<CrossValidationResponse>(
       `/reddit/cross-validate/${encodeURIComponent(brand)}${category ? `?category=${encodeURIComponent(category)}` : ""}`
+    ),
+
+  // KOL intelligence
+  searchKols: (q: string, category?: string) =>
+    getAuth<KolSearchResponse>(
+      `/kol/search?q=${encodeURIComponent(q)}${category ? `&category=${encodeURIComponent(category)}` : ""}`
+    ),
+  crossValidateKol: (brand: string, category?: string) =>
+    getAuth<KolCrossValidationResponse>(
+      `/kol/cross-validate/${encodeURIComponent(brand)}${category ? `?category=${encodeURIComponent(category)}` : ""}`
     ),
 
   // Schedules
