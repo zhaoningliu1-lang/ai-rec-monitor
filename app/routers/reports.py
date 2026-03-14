@@ -657,12 +657,72 @@ async def get_run_sources(
 
     pure_gaps = sum(1 for o in opportunities if o["is_pure_gap"])
 
+    # ── Citation Health aggregation ───────────────────────────────────────
+    _HEALTH_BUCKET = {
+        "Review": "expert", "Tech Media": "expert", "News": "expert",
+        "Business": "expert", "Gov": "expert",
+        "Community": "community", "Video": "community",
+        "E-commerce": "retail",
+        "Blog": "auto_generated", "Media": "auto_generated",
+    }
+    _HEALTH_META = {
+        "expert":         {"label": "Expert Reviews & Media", "color": "#22c55e"},
+        "community":      {"label": "Community & Forums",     "color": "#f5a623"},
+        "retail":         {"label": "Retail & Listings",      "color": "#7070a0"},
+        "auto_generated": {"label": "Auto-Generated / SEO",   "color": "#ff4d6d"},
+    }
+
+    bucket_counts: dict[str, int] = {"expert": 0, "community": 0, "retail": 0, "auto_generated": 0}
+    bucket_examples: dict[str, list[str]] = {"expert": [], "community": [], "retail": [], "auto_generated": []}
+    total_citations = sum(d["citation_count"] for d in domains)
+
+    for d in domains:
+        dtype = _classify_domain(d["domain"])
+        bucket = _HEALTH_BUCKET.get(dtype, "auto_generated")
+        bucket_counts[bucket] += d["citation_count"]
+        if len(bucket_examples[bucket]) < 3:
+            bucket_examples[bucket].append(f'{d["domain"]} ({d["citation_count"]})')
+
+    breakdown = []
+    for btype in ("expert", "community", "retail", "auto_generated"):
+        pct = round(bucket_counts[btype] / max(total_citations, 1) * 100) if total_citations else 0
+        meta = _HEALTH_META[btype]
+        entry: dict = {
+            "type": btype,
+            "label": meta["label"],
+            "percent": pct,
+            "count": bucket_counts[btype],
+            "examples": bucket_examples[btype],
+            "color": meta["color"],
+        }
+        if btype == "auto_generated" and pct >= 12:
+            entry["risk_tag"] = "Critical" if pct >= 20 else "Watch"
+        elif btype == "retail" and pct >= 35:
+            entry["risk_tag"] = "At risk"
+        breakdown.append(entry)
+
+    expert_pct = breakdown[0]["percent"]
+    auto_pct = breakdown[3]["percent"]
+    community_pct = breakdown[1]["percent"]
+    health_score = min(100, max(0, round(
+        expert_pct * 1.0 + community_pct * 0.6 - auto_pct * 0.5 + 20
+    )))
+    risk_level = "critical" if auto_pct >= 20 else "warning" if auto_pct >= 12 else "healthy"
+
+    citation_health = {
+        "score": health_score,
+        "risk_level": risk_level,
+        "total_citations": total_citations,
+        "breakdown": breakdown,
+    }
+
     return {
         "domains": domains[:30],
         "opportunities": opportunities[:15],
         "total_unique_domains": len(domain_stats),
         "gap_count": len(opportunities),
         "pure_gap_count": pure_gaps,
+        "citation_health": citation_health,
     }
 
 

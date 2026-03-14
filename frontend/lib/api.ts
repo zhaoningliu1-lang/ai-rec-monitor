@@ -440,6 +440,33 @@ export interface SelectionCategoryDetailResponse {
   credit_cost: number;
 }
 
+// ── Citation Health ──────────────────────────────────────────────────────────
+export interface CitationHealthBreakdown {
+  type: string;
+  label: string;
+  percent: number;
+  count: number;
+  examples: string[];
+  color: string;
+  risk_tag?: string;
+}
+
+export interface CitationHealth {
+  score: number;
+  risk_level: "critical" | "warning" | "healthy";
+  total_citations: number;
+  breakdown: CitationHealthBreakdown[];
+}
+
+export interface RunSourcesResponse {
+  domains: Record<string, unknown>[];
+  opportunities: Record<string, unknown>[];
+  total_unique_domains: number;
+  gap_count: number;
+  pure_gap_count: number;
+  citation_health: CitationHealth;
+}
+
 export const api = {
   // Runs
   listRuns: (brand?: string) =>
@@ -480,7 +507,7 @@ export const api = {
   createGeoPlan: (runId: string) => postAuth<GeoPlan>(`/runs/${runId}/geo-plan`, {}),
 
   // Sources / citation analysis
-  getRunSources: (runId: string) => get<Record<string, unknown>>(`/runs/${runId}/sources`),
+  getRunSources: (runId: string) => getAuth<RunSourcesResponse>(`/runs/${runId}/sources`),
 
   // Category index
   listCategories: () => get<CategoryEntry[]>("/categories"),

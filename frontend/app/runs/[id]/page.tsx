@@ -63,7 +63,7 @@ export default async function RunDetailPage({
           : null
       }
       initialSources={
-        sources.status === "fulfilled" ? (sources.value as Record<string, unknown>) : null
+        sources.status === "fulfilled" ? (sources.value as unknown as Record<string, unknown>) : null
       }
     />
   );

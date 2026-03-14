@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { api, type Run, type GeoPlan } from "@/lib/api";
+import { api, type Run, type GeoPlan, type CitationHealth } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import {
   GEO_BRANDS,
@@ -176,6 +176,149 @@ function ActionCards({
   );
 }
 
+// ── Score gauge (SVG) ─────────────────────────────────────────────────────────
+
+function ScoreGauge({ score, color }: { score: number; color: string }) {
+  const r = 40;
+  const circ = 2 * Math.PI * r;
+  const dash = (score / 100) * circ;
+  return (
+    <svg width={100} height={100} viewBox="0 0 100 100">
+      <circle cx={50} cy={50} r={r} fill="none" stroke="#1a1a2e" strokeWidth={10} />
+      <circle cx={50} cy={50} r={r} fill="none" stroke={color} strokeWidth={10}
+        strokeDasharray={`${dash} ${circ - dash}`} strokeDashoffset={circ / 4}
+        strokeLinecap="round" style={{ transition: "stroke-dasharray 0.6s ease" }} />
+      <text x={50} y={50} textAnchor="middle" dominantBaseline="central" fill="#f0f0f8" fontSize={18} fontWeight={700}>{score}</text>
+      <text x={50} y={65} textAnchor="middle" fill="#7070a0" fontSize={8} fontWeight={500}>/100</text>
+    </svg>
+  );
+}
+
+// ── Citation Health panel ─────────────────────────────────────────────────────
+
+const RISK_CONFIG = {
+  critical: { label: "CRITICAL", color: "#ff4d6d", bg: "rgba(255,77,109,0.08)", border: "rgba(255,77,109,0.3)", desc: "High risk of AI citation removal" },
+  warning:  { label: "WARNING",  color: "#f5a623", bg: "rgba(245,166,35,0.08)", border: "rgba(245,166,35,0.3)", desc: "Monitor closely — trending toward risk" },
+  healthy:  { label: "HEALTHY",  color: "#22c55e", bg: "rgba(34,197,94,0.08)",  border: "rgba(34,197,94,0.3)",  desc: "Strong citation profile" },
+};
+
+function CitationHealthPanel({ health, loading }: { health: CitationHealth | null; loading: boolean }) {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="text-sm animate-pulse" style={{ color: "#7070a0" }}>Analyzing citation sources...</div>
+      </div>
+    );
+  }
+
+  if (!health || health.total_citations === 0) {
+    return (
+      <div className="rounded-2xl p-12 text-center space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+        <p className="text-sm" style={{ color: "#9090b0" }}>No citation data available for this scan.</p>
+        <p className="text-xs" style={{ color: "#555580" }}>Citation health requires AI responses that include source URLs.</p>
+      </div>
+    );
+  }
+
+  const riskCfg = RISK_CONFIG[health.risk_level];
+
+  return (
+    <div className="space-y-6">
+      {/* Risk header */}
+      <div className="rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center gap-6"
+        style={{ background: riskCfg.bg, border: `1px solid ${riskCfg.border}` }}>
+        <ScoreGauge score={health.score} color={riskCfg.color} />
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+              style={{ background: riskCfg.bg, color: riskCfg.color, border: `1px solid ${riskCfg.border}` }}>
+              {riskCfg.label}
+            </span>
+            <span className="text-xs" style={{ color: "#7070a0" }}>{riskCfg.desc}</span>
+          </div>
+          <p className="text-sm" style={{ color: "#9090b0" }}>
+            Citation Health Score based on {health.total_citations} cited sources across all AI responses in this scan.
+          </p>
+        </div>
+      </div>
+
+      {/* Breakdown */}
+      <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+        <div className="px-6 py-4" style={{ background: "#0f0f17", borderBottom: "1px solid #25253f" }}>
+          <h3 className="font-semibold text-sm">Citation Source Breakdown</h3>
+          <p className="text-xs mt-0.5" style={{ color: "#7070a0" }}>Where AI models are pulling citation data from</p>
+        </div>
+
+        {/* Visual bar */}
+        <div className="px-6 pt-5 pb-4" style={{ background: "#0a0a12" }}>
+          <div className="flex rounded-lg overflow-hidden h-4 gap-0.5 mb-2">
+            {health.breakdown.map(b => (
+              <div key={b.type} style={{ width: `${b.percent}%`, background: b.color, opacity: 0.85 }} title={`${b.label}: ${b.percent}%`} />
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {health.breakdown.map(b => (
+              <div key={b.type} className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-sm" style={{ background: b.color }} />
+                <span className="text-xs" style={{ color: "#7070a0" }}>{b.label} <strong style={{ color: "#f0f0f8" }}>{b.percent}%</strong></span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Detail rows */}
+        <div className="divide-y" style={{ borderTop: "1px solid #1a1a2e" }}>
+          {health.breakdown.map(b => (
+            <div key={b.type} className="px-6 py-4 flex items-start gap-4" style={{ background: "#0a0a12" }}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-semibold" style={{ color: "#f0f0f8" }}>{b.label}</span>
+                  {b.risk_tag && (
+                    <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+                      style={{
+                        background: b.risk_tag === "Critical" ? "rgba(255,77,109,0.12)" : "rgba(245,166,35,0.12)",
+                        color: b.risk_tag === "Critical" ? "#ff4d6d" : "#f5a623",
+                      }}>
+                      {b.risk_tag}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs" style={{ color: "#7070a0" }}>{b.examples.join(" \u00b7 ")}</div>
+              </div>
+              <div className="shrink-0 text-right">
+                <div className="text-2xl font-black" style={{ color: b.color }}>{b.percent}%</div>
+                <div className="w-16 h-1.5 rounded-full mt-1 overflow-hidden" style={{ background: "#1a1a2e" }}>
+                  <div className="h-full rounded-full" style={{ width: `${b.percent}%`, background: b.color }} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Three Standards */}
+      <div className="rounded-2xl p-6 space-y-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+        <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#ff6b35" }}>
+          The Three Standards of Healthy AI Citations
+        </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            { n: "\u2460", title: "Real Experts", desc: "Content authored or verified by domain experts. AI models weight expert-attributed content 4\u00d7 higher than anonymous sources.", color: "#22c55e" },
+            { n: "\u2461", title: "Real Data", desc: "Technical specs with verifiable test sources \u2014 PDFs, lab certifications, independent benchmarks. AI prefers factual, data-backed claims.", color: "#f5a623" },
+            { n: "\u2462", title: "Real Structure", desc: "Content following buyer decision journeys \u2014 comparison, use-case, problem-solution. Structured content gets 2.3\u00d7 more AI citations.", color: "#ff6b35" },
+          ].map(s => (
+            <div key={s.n} className="space-y-2">
+              <div className="text-2xl font-black" style={{ color: s.color }}>{s.n}</div>
+              <div className="font-semibold text-sm">{s.title}</div>
+              <p className="text-xs leading-relaxed" style={{ color: "#7070a0" }}>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ────────────────────────────────────────────────────────────────
 
 export default function GeoActionPage() {
@@ -192,6 +335,11 @@ export default function GeoActionPage() {
   const [filterPriority, setFilterPriority] = useState<FilterPriority>("all");
   const [filterCategory, setFilterCategory] = useState<FilterCategory>("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Citation Health tab
+  const [activeTab, setActiveTab] = useState<"actions" | "health">("actions");
+  const [citationHealth, setCitationHealth] = useState<CitationHealth | null>(null);
+  const [healthLoading, setHealthLoading] = useState(false);
 
   // Load runs on mount
   useEffect(() => {
@@ -226,6 +374,8 @@ export default function GeoActionPage() {
     setFilterPriority("all");
     setFilterCategory("all");
     setExpandedId(null);
+    setActiveTab("actions");
+    setCitationHealth(null);
     api.getGeoPlan(selectedRunId)
       .then(p => { setPlan(toPlanData(p)); setPlanNotFound(false); })
       .catch(e => {
@@ -247,6 +397,21 @@ export default function GeoActionPage() {
       setError(String(e));
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleTabSwitch = async (tab: "actions" | "health") => {
+    setActiveTab(tab);
+    if (tab === "health" && !citationHealth && selectedRunId && !isDemo) {
+      setHealthLoading(true);
+      try {
+        const resp = await api.getRunSources(selectedRunId);
+        setCitationHealth(resp.citation_health);
+      } catch {
+        // Silently fail — panel will show "no data"
+      } finally {
+        setHealthLoading(false);
+      }
     }
   };
 
@@ -415,6 +580,28 @@ export default function GeoActionPage() {
             </div>
           </div>
 
+          {/* Tab switcher */}
+          <div className="flex gap-2">
+            {(["actions", "health"] as const).map(tab => (
+              <button key={tab} onClick={() => handleTabSwitch(tab)}
+                className="text-sm px-5 py-2 rounded-xl font-medium transition-colors"
+                style={activeTab === tab
+                  ? { background: "#1a1a2e", color: "#f0f0f8", border: "1px solid #ff6b35" }
+                  : { background: "transparent", color: "#7070a0", border: "1px solid #25253f" }
+                }>
+                {tab === "actions" ? "Action Plan" : "Citation Health"}
+              </button>
+            ))}
+          </div>
+
+          {/* Citation Health tab */}
+          {activeTab === "health" && (
+            <CitationHealthPanel health={citationHealth} loading={healthLoading} />
+          )}
+
+          {/* Actions tab */}
+          {activeTab === "actions" && (
+          <>
           {/* Weaknesses */}
           {plan.weaknesses.length > 0 && (
             <div
@@ -497,6 +684,8 @@ export default function GeoActionPage() {
               setExpandedId={setExpandedId}
             />
           </div>
+          </>
+          )}
         </>
       )}
 

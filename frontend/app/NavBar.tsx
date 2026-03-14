@@ -110,7 +110,6 @@ export default function NavBar() {
     { href: h("/geo-action"),     label: p("GEO Plan",       "GEO 行动") },
     { href: h("/agents"),         label: p("Growth Agent",   "增长引擎") },
     { href: h("/selection"),      label: p("Selection",      "选品情报") },
-    { href: h("/content-health"), label: p("Content Health", "内容健康") },
   ];
   const workspaceItems: DropdownItem[] = [
     { href: h("/dashboard"),  label: p("Dashboard",    "数据看板") },
