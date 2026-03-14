@@ -1,4 +1,9 @@
-"""CRUD endpoints for ScheduledRun — recurring automated run configuration."""
+"""CRUD endpoints for ScheduledRun — recurring automated run configuration.
+
+Auto Monitor is a premium feature:
+- Free users can VIEW schedules but cannot CREATE or ENABLE them.
+- Paid users (growth/scale/enterprise) have unlimited access.
+"""
 import uuid
 from datetime import datetime, timezone
 
@@ -7,10 +12,29 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.models import ScheduledRun
+from app.models import ScheduledRun, User
+from app.routers.auth import get_current_user_optional
 from app.schemas import CreateScheduleRequest, ScheduleResponse
 
 router = APIRouter(prefix="/schedules", tags=["schedules"])
+
+_PAID_TIERS = {"growth", "scale", "enterprise"}
+
+
+def _require_paid(user: User | None):
+    """Raise 403 if user is not on a paid tier."""
+    if user is None:
+        raise HTTPException(status_code=401, detail="Sign in to use Auto Monitor.")
+    tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
+    if tier not in _PAID_TIERS:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "code": "paid_only",
+                "message": "Auto Monitor is a Growth feature. Upgrade to create recurring scans.",
+                "upgrade_url": "/pricing",
+            },
+        )
 
 
 def _compute_next_run(cron_expr: str) -> datetime | None:
@@ -27,7 +51,9 @@ def _compute_next_run(cron_expr: str) -> datetime | None:
 async def create_schedule(
     body: CreateScheduleRequest,
     db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
 ):
+    _require_paid(user)
     next_run = _compute_next_run(body.cron_expr)
     schedule = ScheduledRun(
         brand_name=body.brand_name,
@@ -64,7 +90,12 @@ async def get_schedule(schedule_id: uuid.UUID, db: AsyncSession = Depends(get_db
 
 
 @router.patch("/{schedule_id}/enable", response_model=ScheduleResponse)
-async def enable_schedule(schedule_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+async def enable_schedule(
+    schedule_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
+):
+    _require_paid(user)
     s = await db.get(ScheduledRun, schedule_id)
     if not s:
         raise HTTPException(status_code=404, detail="Schedule not found")

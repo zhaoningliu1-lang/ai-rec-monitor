@@ -115,8 +115,6 @@ export default function NavBar() {
     { href: h("/dashboard"),  label: p("Dashboard",    "数据看板") },
     { href: h("/schedules"),  label: p("Auto Monitor", "自动监控") },
     { href: h("/account"),    label: p("Account",      "账户设置") },
-    { href: h("/pricing"),    label: p("Pricing",      "定价方案") },
-    { href: h("/tiktok"),     label: p("TikTok Flows", "TikTok 工作流"), badge: "New" },
   ];
 
   /* ── mobile: flatten all links ── */

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { api, Schedule } from "@/lib/api";
+import { isLoggedIn, isPaid } from "@/lib/auth";
 import { Lang, tx } from "@/lib/i18n";
 
 const PROVIDER_OPTIONS = ["openai", "claude"] as const;
@@ -9,6 +11,15 @@ const REGION_OPTIONS = ["US", "UK", "DE"] as const;
 
 export default function SchedulesClient({ lang = "en" }: { lang?: Lang }) {
   const s = (k: keyof typeof import("@/lib/i18n").t.schedules) => tx("schedules", k, lang);
+  const pricingHref = lang === "zh" ? "/zh/pricing" : "/pricing";
+
+  const [authed, setAuthed] = useState<boolean | null>(null); // null = loading
+  const [paid, setPaid] = useState(false);
+
+  useEffect(() => {
+    setAuthed(isLoggedIn());
+    setPaid(isPaid());
+  }, []);
 
   const CRON_PRESETS = [
     { label: s("cronMon9"),   value: "0 9 * * 1" },
@@ -98,6 +109,37 @@ export default function SchedulesClient({ lang = "en" }: { lang?: Lang }) {
   const inputStyle = { background: "#161625", border: "1px solid #25253f", color: "#f0f0f8" };
   const focusOn  = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => (e.currentTarget.style.borderColor = "#ff6b35");
   const focusOff = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => (e.currentTarget.style.borderColor = "#25253f");
+
+  /* ── Gate: not logged in or not paid ── */
+  if (authed === false) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold">{s("title")}</h1>
+        <div className="rounded-2xl p-10 text-center space-y-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <p className="text-lg font-semibold">{s("loginRequired")}</p>
+          <Link href={lang === "zh" ? "/zh/login" : "/login"} className="inline-block text-sm font-medium px-6 py-2.5 rounded-xl transition-opacity hover:opacity-80" style={{ background: "#ff6b35", color: "#fff" }}>
+            {s("loginCta")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (authed && !paid) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold">{s("title")}</h1>
+        <div className="rounded-2xl p-10 text-center space-y-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35" }}>Growth</div>
+          <p className="text-lg font-semibold">{s("paidOnly")}</p>
+          <p className="text-sm max-w-md mx-auto" style={{ color: "#7070a0" }}>{s("paidOnlyDesc")}</p>
+          <Link href={pricingHref} className="inline-block text-sm font-medium px-6 py-2.5 rounded-xl transition-opacity hover:opacity-80" style={{ background: "#ff6b35", color: "#fff" }}>
+            {s("upgradeCta")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
