@@ -525,9 +525,10 @@ async def get_category_detail(category: str, db: AsyncSession) -> dict:
     reddit_task = _get_reddit_posts(category)
     kol_task = _get_youtube_kols(category)
     google_task = _get_google_trends(category)
+    tiktok_task = _get_tiktok_trending(category)
 
-    leaderboard, reddit_posts, youtube_kols, google_trends = await asyncio.gather(
-        leaderboard_task, reddit_task, kol_task, google_task,
+    leaderboard, reddit_posts, youtube_kols, google_trends, tiktok_trending = await asyncio.gather(
+        leaderboard_task, reddit_task, kol_task, google_task, tiktok_task,
         return_exceptions=True,
     )
 
@@ -544,6 +545,9 @@ async def get_category_detail(category: str, db: AsyncSession) -> dict:
     if isinstance(google_trends, Exception):
         logger.warning("Google Trends fetch failed: %s", google_trends)
         google_trends = {"keywords": {}, "delta_4w_pct": {}, "rising_queries": []}
+    if isinstance(tiktok_trending, Exception):
+        logger.warning("TikTok trending fetch failed: %s", tiktok_trending)
+        tiktok_trending = []
 
     return {
         "category": category,
@@ -551,6 +555,7 @@ async def get_category_detail(category: str, db: AsyncSession) -> dict:
         "reddit_posts": reddit_posts,
         "youtube_kols": youtube_kols,
         "google_trends": google_trends,
+        "tiktok_trending": tiktok_trending,
     }
 
 
@@ -681,3 +686,22 @@ async def _get_google_trends(category: str) -> dict:
     except Exception as e:
         logger.debug("Google Trends failed for %s: %s", category, e)
         return {"keywords": {}, "delta_4w_pct": {}, "rising_queries": []}
+
+
+async def _get_tiktok_trending(category: str) -> list[dict]:
+    """Fetch TikTok Shop trending products for a category."""
+    try:
+        from app.services.tiktok_shop import get_category_trending
+
+        products = await get_category_trending(category, limit=5)
+        return [
+            {
+                "title": p.get("title", ""),
+                "price": p.get("price", ""),
+                "sales": p.get("sales", 0),
+            }
+            for p in products
+        ]
+    except Exception as e:
+        logger.debug("TikTok trending failed for category %s: %s", category, e)
+        return []

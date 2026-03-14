@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { api, type Run, type GeoPlan, type CitationHealth } from "@/lib/api";
+import { api, type Run, type GeoPlan, type CitationHealth, type MarketSignals } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import {
   GEO_BRANDS,
@@ -17,7 +17,7 @@ import {
 // ── 中文标签 ─────────────────────────────────────────────────────────────────
 
 const PRIORITY_ZH: Record<ActionPriority, string> = { critical: "必须修复", high: "高优先级", medium: "中优先级" };
-const CATEGORY_ZH: Record<ActionCategory, string> = { content: "内容优化", reddit: "Reddit", schema: "结构化标记", citations: "权威引用", social: "社会证明", reviews: "评价管理" };
+const CATEGORY_ZH: Record<ActionCategory, string> = { content: "内容优化", reddit: "Reddit", schema: "结构化标记", citations: "权威引用", social: "社会证明", reviews: "评价管理", tiktok: "TikTok", market_signals: "市场信号" };
 const EFFORT_ZH: Record<"low" | "medium" | "high", string> = { low: "低投入", medium: "中投入", high: "高投入" };
 
 type FilterPriority = "all" | ActionPriority;
@@ -177,6 +177,98 @@ function CitationHealthPanel({ health, loading }: { health: CitationHealth | nul
   );
 }
 
+// ── 市场信号面板 ───────────────────────────────────────────────────────────
+
+const ALIGNMENT_ZH: Record<string, { label: string; color: string; bg: string }> = {
+  strong:    { label: "强对齐",   color: "#22c55e", bg: "rgba(34,197,94,0.08)" },
+  moderate:  { label: "中等对齐", color: "#f5a623", bg: "rgba(245,166,35,0.08)" },
+  weak:      { label: "弱对齐",   color: "#ff6b35", bg: "rgba(255,107,53,0.08)" },
+  divergent: { label: "信号分歧", color: "#ff4d6d", bg: "rgba(255,77,109,0.08)" },
+};
+
+const TREND_ARROW: Record<string, string> = { up: "↑", slightly_up: "↗", stable: "→", slightly_down: "↘", down: "↓", unknown: "–" };
+const TREND_ZH: Record<string, string> = { up: "上升", slightly_up: "微升", stable: "稳定", slightly_down: "微降", down: "下降", unknown: "未知" };
+const SENTIMENT_ZH: Record<string, string> = { positive: "正面", negative: "负面", mixed: "中性", unknown: "未知" };
+
+function MarketSignalsPanel({ signals, loading }: { signals: MarketSignals | null; loading: boolean }) {
+  if (loading) {
+    return <div className="flex items-center justify-center py-16"><div className="text-sm animate-pulse" style={{ color: "#7070a0" }}>正在获取跨平台市场信号...</div></div>;
+  }
+  if (!signals) {
+    return (
+      <div className="rounded-2xl p-12 text-center space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+        <p className="text-sm" style={{ color: "#9090b0" }}>暂无市场信号数据。</p>
+        <p className="text-xs" style={{ color: "#555580" }}>市场信号需要已完成的扫描数据（品牌 + 品类）。</p>
+      </div>
+    );
+  }
+  const alignment = ALIGNMENT_ZH[signals.alignment_label] ?? ALIGNMENT_ZH.moderate;
+  return (
+    <div className="space-y-6">
+      <div className="rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center gap-6" style={{ background: alignment.bg, border: `1px solid ${alignment.color}33` }}>
+        <ScoreGauge score={signals.market_alignment_score} color={alignment.color} />
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: alignment.bg, color: alignment.color, border: `1px solid ${alignment.color}44` }}>{alignment.label}</span>
+          </div>
+          <p className="text-sm" style={{ color: "#9090b0" }}>市场-AI 对齐度评分 — 真实市场信号与品牌 AI 可见度的匹配程度。</p>
+          <p className="text-xs mt-1" style={{ color: "#555580" }}>基于 Reddit 口碑、YouTube KOL 覆盖、TikTok 商城存在度和 Google 搜索趋势。</p>
+        </div>
+      </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* Reddit */}
+        <div className="rounded-2xl p-5 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2"><span className="text-lg">🧵</span><span className="font-semibold text-sm">Reddit 口碑</span></div>
+            <span className="text-2xl font-black" style={{ color: signals.reddit_score >= 60 ? "#22c55e" : signals.reddit_score >= 30 ? "#f5a623" : "#ff4d6d" }}>{signals.reddit_score}%</span>
+          </div>
+          <div className="flex gap-4 text-xs" style={{ color: "#7070a0" }}><span>{signals.reddit_post_count} 篇帖子</span><span>情绪: {SENTIMENT_ZH[signals.reddit_sentiment] ?? signals.reddit_sentiment}</span></div>
+          {signals.reddit_top_posts.length > 0 && <div className="space-y-1.5">{signals.reddit_top_posts.map((p, i) => (
+            <div key={i} className="text-xs truncate" style={{ color: "#9090b0" }}><span style={{ color: "#555580" }}>↑{p.score}</span>{" "}{p.url ? <a href={p.url} target="_blank" rel="noreferrer" className="hover:underline">{p.title}</a> : p.title}</div>
+          ))}</div>}
+        </div>
+        {/* YouTube KOL */}
+        <div className="rounded-2xl p-5 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2"><span className="text-lg">📹</span><span className="font-semibold text-sm">YouTube KOL 覆盖</span></div>
+            <span className="text-2xl font-black" style={{ color: signals.kol_count >= 5 ? "#22c55e" : signals.kol_count >= 2 ? "#f5a623" : "#555580" }}>{signals.kol_count}</span>
+          </div>
+          <div className="flex gap-4 text-xs" style={{ color: "#7070a0" }}><span>{(signals.kol_total_views / 1000).toFixed(0)}K 播放量</span><span>{signals.kol_positive_pct}% 正面</span></div>
+          {signals.kol_top_creators.length > 0 && <div className="space-y-1.5">{signals.kol_top_creators.map((k, i) => (
+            <div key={i} className="text-xs truncate" style={{ color: "#9090b0" }}><span className="px-1.5 py-0.5 rounded text-xs" style={{ background: "#161625", color: "#7070a0" }}>{k.tier}</span>{" "}{k.channel_name} — {(k.views / 1000).toFixed(0)}K</div>
+          ))}</div>}
+        </div>
+        {/* TikTok Shop */}
+        <div className="rounded-2xl p-5 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2"><span className="text-lg">🎵</span><span className="font-semibold text-sm">TikTok 商城</span></div>
+            <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={signals.tiktok_present ? { background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)" } : { background: "#161625", color: "#555580" }}>
+              {signals.tiktok_present ? (signals.tiktok_trending ? "热卖中" : "已上架") : "未上架"}
+            </span>
+          </div>
+          <div className="flex gap-4 text-xs" style={{ color: "#7070a0" }}><span>{signals.tiktok_product_count} 件商品</span>{signals.tiktok_avg_rating > 0 && <span>均分: {signals.tiktok_avg_rating.toFixed(1)}</span>}</div>
+          {signals.tiktok_top_products.length > 0 && <div className="space-y-1.5">{signals.tiktok_top_products.map((p, i) => (
+            <div key={i} className="text-xs truncate" style={{ color: "#9090b0" }}>{p.title} — {p.price} · {p.sales} 单</div>
+          ))}</div>}
+        </div>
+        {/* Google Trends */}
+        <div className="rounded-2xl p-5 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2"><span className="text-lg">📈</span><span className="font-semibold text-sm">Google 搜索趋势</span></div>
+            <span className="text-2xl font-black" style={{ color: signals.google_trend_direction.includes("up") ? "#22c55e" : signals.google_trend_direction.includes("down") ? "#ff4d6d" : "#f5a623" }}>
+              {TREND_ARROW[signals.google_trend_direction] ?? "–"}
+            </span>
+          </div>
+          <div className="flex gap-4 text-xs" style={{ color: "#7070a0" }}>
+            <span>方向: {TREND_ZH[signals.google_trend_direction] ?? signals.google_trend_direction}</span>
+            {signals.google_delta !== null && <span>4 周变化: {signals.google_delta > 0 ? "+" : ""}{signals.google_delta.toFixed(1)}%</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function GeoActionZhPage() {
   const [runs, setRuns] = useState<Run[]>([]);
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
@@ -189,9 +281,11 @@ export default function GeoActionZhPage() {
   const [filterPriority, setFilterPriority] = useState<FilterPriority>("all");
   const [filterCategory, setFilterCategory] = useState<FilterCategory>("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"actions" | "health">("actions");
+  const [activeTab, setActiveTab] = useState<"actions" | "health" | "signals">("actions");
   const [citationHealth, setCitationHealth] = useState<CitationHealth | null>(null);
   const [healthLoading, setHealthLoading] = useState(false);
+  const [marketSignals, setMarketSignals] = useState<MarketSignals | null>(null);
+  const [signalsLoading, setSignalsLoading] = useState(false);
 
   useEffect(() => {
     if (!getToken()) {
@@ -210,7 +304,7 @@ export default function GeoActionZhPage() {
     if (!selectedRunId || isDemo) return;
     setLoading(true); setPlan(null); setPlanNotFound(false); setError(null);
     setFilterPriority("all"); setFilterCategory("all"); setExpandedId(null);
-    setActiveTab("actions"); setCitationHealth(null);
+    setActiveTab("actions"); setCitationHealth(null); setMarketSignals(null);
     api.getGeoPlan(selectedRunId)
       .then(p => { setPlan(toPlanData(p)); setPlanNotFound(false); })
       .catch(e => { if (String(e).includes("404")) setPlanNotFound(true); else setError("加载计划失败"); })
@@ -225,13 +319,19 @@ export default function GeoActionZhPage() {
     finally { setGenerating(false); }
   };
 
-  const handleTabSwitch = async (tab: "actions" | "health") => {
+  const handleTabSwitch = async (tab: "actions" | "health" | "signals") => {
     setActiveTab(tab);
     if (tab === "health" && !citationHealth && selectedRunId && !isDemo) {
       setHealthLoading(true);
       try { const resp = await api.getRunSources(selectedRunId); setCitationHealth(resp.citation_health); }
       catch { /* noop */ }
       finally { setHealthLoading(false); }
+    }
+    if (tab === "signals" && !marketSignals && selectedRunId && !isDemo) {
+      setSignalsLoading(true);
+      try { const data = await api.getMarketSignals(selectedRunId); setMarketSignals(data); }
+      catch { /* noop */ }
+      finally { setSignalsLoading(false); }
     }
   };
 
@@ -323,14 +423,14 @@ export default function GeoActionZhPage() {
 
           {/* Tab switcher */}
           <div className="flex gap-2">
-            {(["actions", "health"] as const).map(tab => (
+            {(["actions", "health", "signals"] as const).map(tab => (
               <button key={tab} onClick={() => handleTabSwitch(tab)}
                 className="text-sm px-5 py-2 rounded-xl font-medium transition-colors"
                 style={activeTab === tab
                   ? { background: "#1a1a2e", color: "#f0f0f8", border: "1px solid #ff6b35" }
                   : { background: "transparent", color: "#7070a0", border: "1px solid #25253f" }
                 }>
-                {tab === "actions" ? "行动计划" : "引用健康度 · 1 cr"}
+                {tab === "actions" ? "行动计划" : tab === "health" ? "引用健康度 · 1 cr" : "市场信号 · 2 cr"}
               </button>
             ))}
           </div>
@@ -338,6 +438,11 @@ export default function GeoActionZhPage() {
           {/* Citation Health tab */}
           {activeTab === "health" && (
             <CitationHealthPanel health={citationHealth} loading={healthLoading} />
+          )}
+
+          {/* Market Signals tab */}
+          {activeTab === "signals" && (
+            <MarketSignalsPanel signals={marketSignals} loading={signalsLoading} />
           )}
 
           {/* Actions tab */}

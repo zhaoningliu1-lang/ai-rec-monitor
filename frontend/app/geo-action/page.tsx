@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { api, type Run, type GeoPlan, type CitationHealth } from "@/lib/api";
+import { api, type Run, type GeoPlan, type CitationHealth, type MarketSignals } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import {
   GEO_BRANDS,
@@ -319,6 +319,164 @@ function CitationHealthPanel({ health, loading }: { health: CitationHealth | nul
   );
 }
 
+// ── Market Signals panel ───────────────────────────────────────────────────
+
+const ALIGNMENT_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  strong:    { label: "Strong Alignment",    color: "#22c55e", bg: "rgba(34,197,94,0.08)" },
+  moderate:  { label: "Moderate Alignment",  color: "#f5a623", bg: "rgba(245,166,35,0.08)" },
+  weak:      { label: "Weak Alignment",      color: "#ff6b35", bg: "rgba(255,107,53,0.08)" },
+  divergent: { label: "Divergent Signals",   color: "#ff4d6d", bg: "rgba(255,77,109,0.08)" },
+};
+
+const TREND_ARROW: Record<string, string> = { up: "↑", slightly_up: "↗", stable: "→", slightly_down: "↘", down: "↓", unknown: "–" };
+
+function MarketSignalsPanel({ signals, loading }: { signals: MarketSignals | null; loading: boolean }) {
+  if (loading) {
+    return <div className="flex items-center justify-center py-16"><div className="text-sm animate-pulse" style={{ color: "#7070a0" }}>Fetching cross-platform market signals...</div></div>;
+  }
+  if (!signals) {
+    return (
+      <div className="rounded-2xl p-12 text-center space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+        <p className="text-sm" style={{ color: "#9090b0" }}>No market signal data available.</p>
+        <p className="text-xs" style={{ color: "#555580" }}>Market signals require a completed scan with brand + category data.</p>
+      </div>
+    );
+  }
+
+  const alignment = ALIGNMENT_CONFIG[signals.alignment_label] ?? ALIGNMENT_CONFIG.moderate;
+
+  return (
+    <div className="space-y-6">
+      {/* Alignment score header */}
+      <div className="rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center gap-6"
+        style={{ background: alignment.bg, border: `1px solid ${alignment.color}33` }}>
+        <ScoreGauge score={signals.market_alignment_score} color={alignment.color} />
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+              style={{ background: alignment.bg, color: alignment.color, border: `1px solid ${alignment.color}44` }}>
+              {alignment.label}
+            </span>
+          </div>
+          <p className="text-sm" style={{ color: "#9090b0" }}>
+            Market-AI Alignment Score — how well real market signals match this brand&apos;s AI visibility.
+          </p>
+          <p className="text-xs mt-1" style={{ color: "#555580" }}>
+            Based on Reddit sentiment, YouTube KOL coverage, TikTok Shop presence, and Google search trends.
+          </p>
+        </div>
+      </div>
+
+      {/* 4 signal cards */}
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* Reddit */}
+        <div className="rounded-2xl p-5 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🧵</span>
+              <span className="font-semibold text-sm">Reddit Sentiment</span>
+            </div>
+            <span className="text-2xl font-black" style={{ color: signals.reddit_score >= 60 ? "#22c55e" : signals.reddit_score >= 30 ? "#f5a623" : "#ff4d6d" }}>
+              {signals.reddit_score}%
+            </span>
+          </div>
+          <div className="flex gap-4 text-xs" style={{ color: "#7070a0" }}>
+            <span>{signals.reddit_post_count} posts</span>
+            <span>Sentiment: {signals.reddit_sentiment}</span>
+          </div>
+          {signals.reddit_top_posts.length > 0 && (
+            <div className="space-y-1.5">
+              {signals.reddit_top_posts.map((p, i) => (
+                <div key={i} className="text-xs truncate" style={{ color: "#9090b0" }}>
+                  <span style={{ color: "#555580" }}>↑{p.score}</span>{" "}
+                  {p.url ? <a href={p.url} target="_blank" rel="noreferrer" className="hover:underline">{p.title}</a> : p.title}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* YouTube KOL */}
+        <div className="rounded-2xl p-5 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">📹</span>
+              <span className="font-semibold text-sm">YouTube KOL Coverage</span>
+            </div>
+            <span className="text-2xl font-black" style={{ color: signals.kol_count >= 5 ? "#22c55e" : signals.kol_count >= 2 ? "#f5a623" : "#555580" }}>
+              {signals.kol_count}
+            </span>
+          </div>
+          <div className="flex gap-4 text-xs" style={{ color: "#7070a0" }}>
+            <span>{(signals.kol_total_views / 1000).toFixed(0)}K views</span>
+            <span>{signals.kol_positive_pct}% positive</span>
+          </div>
+          {signals.kol_top_creators.length > 0 && (
+            <div className="space-y-1.5">
+              {signals.kol_top_creators.map((k, i) => (
+                <div key={i} className="text-xs truncate" style={{ color: "#9090b0" }}>
+                  <span className="px-1.5 py-0.5 rounded text-xs" style={{ background: "#161625", color: "#7070a0" }}>{k.tier}</span>{" "}
+                  {k.channel_name} — {(k.views / 1000).toFixed(0)}K views
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* TikTok Shop */}
+        <div className="rounded-2xl p-5 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🎵</span>
+              <span className="font-semibold text-sm">TikTok Shop</span>
+            </div>
+            <span className="text-xs font-bold px-2.5 py-1 rounded-full"
+              style={signals.tiktok_present
+                ? { background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)" }
+                : { background: "#161625", color: "#555580" }
+              }>
+              {signals.tiktok_present ? (signals.tiktok_trending ? "Trending" : "Present") : "Not Found"}
+            </span>
+          </div>
+          <div className="flex gap-4 text-xs" style={{ color: "#7070a0" }}>
+            <span>{signals.tiktok_product_count} products</span>
+            {signals.tiktok_avg_rating > 0 && <span>Avg rating: {signals.tiktok_avg_rating.toFixed(1)}</span>}
+          </div>
+          {signals.tiktok_top_products.length > 0 && (
+            <div className="space-y-1.5">
+              {signals.tiktok_top_products.map((p, i) => (
+                <div key={i} className="text-xs truncate" style={{ color: "#9090b0" }}>
+                  {p.title} — {p.price} · {p.sales} sales
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Google Trends */}
+        <div className="rounded-2xl p-5 space-y-3" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">📈</span>
+              <span className="font-semibold text-sm">Google Search Trend</span>
+            </div>
+            <span className="text-2xl font-black" style={{
+              color: signals.google_trend_direction.includes("up") ? "#22c55e"
+                : signals.google_trend_direction.includes("down") ? "#ff4d6d" : "#f5a623"
+            }}>
+              {TREND_ARROW[signals.google_trend_direction] ?? "–"}
+            </span>
+          </div>
+          <div className="flex gap-4 text-xs" style={{ color: "#7070a0" }}>
+            <span>Direction: {signals.google_trend_direction.replace("_", " ")}</span>
+            {signals.google_delta !== null && <span>4-week delta: {signals.google_delta > 0 ? "+" : ""}{signals.google_delta.toFixed(1)}%</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ────────────────────────────────────────────────────────────────
 
 export default function GeoActionPage() {
@@ -336,10 +494,12 @@ export default function GeoActionPage() {
   const [filterCategory, setFilterCategory] = useState<FilterCategory>("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // Citation Health tab
-  const [activeTab, setActiveTab] = useState<"actions" | "health">("actions");
+  // Tabs: actions / health / signals
+  const [activeTab, setActiveTab] = useState<"actions" | "health" | "signals">("actions");
   const [citationHealth, setCitationHealth] = useState<CitationHealth | null>(null);
   const [healthLoading, setHealthLoading] = useState(false);
+  const [marketSignals, setMarketSignals] = useState<MarketSignals | null>(null);
+  const [signalsLoading, setSignalsLoading] = useState(false);
 
   // Load runs on mount
   useEffect(() => {
@@ -376,6 +536,7 @@ export default function GeoActionPage() {
     setExpandedId(null);
     setActiveTab("actions");
     setCitationHealth(null);
+    setMarketSignals(null);
     api.getGeoPlan(selectedRunId)
       .then(p => { setPlan(toPlanData(p)); setPlanNotFound(false); })
       .catch(e => {
@@ -400,7 +561,7 @@ export default function GeoActionPage() {
     }
   };
 
-  const handleTabSwitch = async (tab: "actions" | "health") => {
+  const handleTabSwitch = async (tab: "actions" | "health" | "signals") => {
     setActiveTab(tab);
     if (tab === "health" && !citationHealth && selectedRunId && !isDemo) {
       setHealthLoading(true);
@@ -411,6 +572,17 @@ export default function GeoActionPage() {
         // Silently fail — panel will show "no data"
       } finally {
         setHealthLoading(false);
+      }
+    }
+    if (tab === "signals" && !marketSignals && selectedRunId && !isDemo) {
+      setSignalsLoading(true);
+      try {
+        const data = await api.getMarketSignals(selectedRunId);
+        setMarketSignals(data);
+      } catch {
+        // Silently fail
+      } finally {
+        setSignalsLoading(false);
       }
     }
   };
@@ -582,14 +754,14 @@ export default function GeoActionPage() {
 
           {/* Tab switcher */}
           <div className="flex gap-2">
-            {(["actions", "health"] as const).map(tab => (
+            {(["actions", "health", "signals"] as const).map(tab => (
               <button key={tab} onClick={() => handleTabSwitch(tab)}
                 className="text-sm px-5 py-2 rounded-xl font-medium transition-colors"
                 style={activeTab === tab
                   ? { background: "#1a1a2e", color: "#f0f0f8", border: "1px solid #ff6b35" }
                   : { background: "transparent", color: "#7070a0", border: "1px solid #25253f" }
                 }>
-                {tab === "actions" ? "Action Plan" : "Citation Health · 1 cr"}
+                {tab === "actions" ? "Action Plan" : tab === "health" ? "Citation Health · 1 cr" : "Market Signals · 2 cr"}
               </button>
             ))}
           </div>
@@ -597,6 +769,11 @@ export default function GeoActionPage() {
           {/* Citation Health tab */}
           {activeTab === "health" && (
             <CitationHealthPanel health={citationHealth} loading={healthLoading} />
+          )}
+
+          {/* Market Signals tab */}
+          {activeTab === "signals" && (
+            <MarketSignalsPanel signals={marketSignals} loading={signalsLoading} />
           )}
 
           {/* Actions tab */}

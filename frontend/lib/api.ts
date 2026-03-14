@@ -356,13 +356,58 @@ export interface GoogleTrendsData {
 // GEO Action Plan
 export interface GeoActionItem {
   id: string;
-  category: "content" | "reddit" | "schema" | "citations" | "social" | "reviews";
+  category: "content" | "reddit" | "schema" | "citations" | "social" | "reviews" | "tiktok" | "market_signals";
   priority: "critical" | "high" | "medium";
   title: string;
   why: string;
   how: string;
   impact: string;
   effort: "low" | "medium" | "high";
+}
+
+// Market Signals
+export interface MarketSignalRedditPost {
+  title: string;
+  url: string;
+  score: number;
+}
+
+export interface MarketSignalKol {
+  channel_name: string;
+  video_title: string;
+  views: number;
+  tier: string;
+}
+
+export interface MarketSignalTiktokProduct {
+  title: string;
+  price: string;
+  sales: number;
+}
+
+export interface MarketSignals {
+  brand: string;
+  category: string;
+  reddit_score: number;
+  reddit_post_count: number;
+  reddit_sentiment: string;
+  reddit_top_posts: MarketSignalRedditPost[];
+  kol_count: number;
+  kol_total_views: number;
+  kol_positive_pct: number;
+  kol_top_creators: MarketSignalKol[];
+  kol_tier_breakdown: Record<string, number>;
+  tiktok_present: boolean;
+  tiktok_product_count: number;
+  tiktok_avg_rating: number;
+  tiktok_trending: boolean;
+  tiktok_top_products: MarketSignalTiktokProduct[];
+  google_delta: number | null;
+  google_trend_direction: string;
+  market_alignment_score: number;
+  alignment_label: string;
+  credits_remaining: number | null;
+  credit_cost: number;
 }
 
 export interface GeoPlan {
@@ -430,12 +475,19 @@ export interface SelectionDetailKol {
   tier: string;
 }
 
+export interface SelectionDetailTiktokProduct {
+  title: string;
+  price: string;
+  sales: number;
+}
+
 export interface SelectionCategoryDetailResponse {
   category: string;
   leaderboard: Record<string, unknown>[];
   reddit_posts: SelectionDetailRedditPost[];
   youtube_kols: SelectionDetailKol[];
   google_trends: { keywords: Record<string, number>; delta_4w_pct: Record<string, number>; rising_queries: string[] };
+  tiktok_trending: SelectionDetailTiktokProduct[];
   credits_remaining: number | null;
   credit_cost: number;
 }
@@ -508,6 +560,19 @@ export const api = {
 
   // Sources / citation analysis
   getRunSources: (runId: string) => getAuth<RunSourcesResponse>(`/runs/${runId}/sources`),
+
+  // Market Signals
+  getMarketSignals: (runId: string) => getAuth<MarketSignals>(`/runs/${runId}/market-signals`),
+
+  // TikTok Shop
+  searchTiktok: (q: string, category?: string) =>
+    getAuth<{ products: Record<string, unknown>[]; total: number; credits_remaining: number | null; credit_cost: number }>(
+      `/tiktok/search?q=${encodeURIComponent(q)}${category ? `&category=${encodeURIComponent(category)}` : ""}`
+    ),
+  getTiktokTrending: (category: string) =>
+    get<{ products: Record<string, unknown>[]; category: string }>(
+      `/tiktok/trending/${encodeURIComponent(category)}`
+    ),
 
   // Category index
   listCategories: () => get<CategoryEntry[]>("/categories"),

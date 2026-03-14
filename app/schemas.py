@@ -206,7 +206,7 @@ class RecommendationResponse(BaseModel):
 
 class GeoActionItem(BaseModel):
     id: str
-    category: Literal["content", "reddit", "schema", "citations", "social", "reviews"]
+    category: Literal["content", "reddit", "schema", "citations", "social", "reviews", "tiktok", "market_signals"]
     priority: Literal["critical", "high", "medium"]
     title: str
     why: str
@@ -283,11 +283,18 @@ class SelectionDetailKol(BaseModel):
     tier: str
 
 
+class SelectionDetailTiktokProduct(BaseModel):
+    title: str
+    price: str
+    sales: int
+
+
 class SelectionCategoryDetailResponse(BaseModel):
     category: str
     leaderboard: list[dict]
     reddit_posts: list[SelectionDetailRedditPost]
     youtube_kols: list[SelectionDetailKol]
     google_trends: dict
+    tiktok_trending: list[SelectionDetailTiktokProduct] = []
     credits_remaining: int | None = None
     credit_cost: int = 0

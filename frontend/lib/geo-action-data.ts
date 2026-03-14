@@ -9,7 +9,9 @@ export type ActionCategory =
   | "schema"
   | "citations"
   | "social"
-  | "reviews";
+  | "reviews"
+  | "tiktok"
+  | "market_signals";
 
 export interface GeoAction {
   id: string;
@@ -38,7 +40,9 @@ export const CATEGORY_CONFIG: Record<ActionCategory, { label: string; icon: stri
   schema:    { label: "Schema Markup",  icon: "🏷",  color: "#a78bfa" },
   citations: { label: "Citations",      icon: "🔗", color: "#22c55e" },
   social:    { label: "Social Proof",   icon: "⭐", color: "#f5a623" },
-  reviews:   { label: "Reviews",        icon: "💬", color: "#e879f9" },
+  reviews:        { label: "Reviews",        icon: "💬", color: "#e879f9" },
+  tiktok:         { label: "TikTok",         icon: "🎵", color: "#25f4ee" },
+  market_signals: { label: "Market Signal",  icon: "📊", color: "#a78bfa" },
 };
 
 export const GEO_BRANDS: BrandGeoProfile[] = [

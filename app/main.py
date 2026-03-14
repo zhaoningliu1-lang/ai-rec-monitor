@@ -18,6 +18,7 @@ from app.routers import prompts as prompts_router
 from app.routers import trends as trends_router
 from app.routers import reddit as reddit_router
 from app.routers import kol as kol_router
+from app.routers import tiktok as tiktok_router
 from app.routers import b2a as b2a_router
 from app.routers import selection as selection_router
 
@@ -261,6 +262,7 @@ app.include_router(prompts_router.router)
 app.include_router(trends_router.router)
 app.include_router(reddit_router.router)
 app.include_router(kol_router.router)
+app.include_router(tiktok_router.router)
 app.include_router(b2a_router.router)
 app.include_router(selection_router.router)
 

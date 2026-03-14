@@ -119,3 +119,45 @@ async def get_run(run_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
     return run
+
+
+@router.get("/runs/{run_id}/market-signals")
+async def run_market_signals(
+    run_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
+):
+    """Fetch cross-platform market signals for a run's brand + category."""
+    run = await db.get(Run, run_id)
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    # Credit check — 2 credits for free tier
+    credit_cost = 0
+    credits_remaining = None
+    if user:
+        tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
+        if tier not in _PAID_TIERS:
+            credit_cost = 2
+            if user.credit_balance < credit_cost:
+                raise HTTPException(
+                    status_code=429,
+                    detail={
+                        "code": "credits_exhausted",
+                        "balance": user.credit_balance,
+                        "cost": credit_cost,
+                        "message": "Credits exhausted. Add a payment method to continue.",
+                    },
+                )
+            user.credit_balance -= credit_cost
+            await db.commit()
+            await db.refresh(user)
+            credits_remaining = user.credit_balance
+
+    from app.services.market_signals import fetch_market_signals
+
+    signals = await fetch_market_signals(run.brand_name, run.category or "")
+    result = signals.to_dict()
+    result["credits_remaining"] = credits_remaining
+    result["credit_cost"] = credit_cost
+    return result

@@ -1,4 +1,5 @@
 """Generate rich GEO Action Plans from run data using Claude Sonnet."""
+import asyncio
 import json
 import logging
 import random
@@ -31,7 +32,7 @@ Return ONLY a valid JSON object with this exact structure:
   "actions": [
     {
       "id": "a1",
-      "category": "content|reddit|schema|citations|social|reviews",
+      "category": "content|reddit|schema|citations|social|reviews|tiktok|market_signals",
       "priority": "critical|high|medium",
       "title": "Short action title",
       "why": "Why this matters for AI citation (reference specific data points)",
@@ -48,9 +49,16 @@ Rules:
 3. Each "how" must be specific enough to execute immediately.
 4. Impact scores: critical = +5 to +12, high = +3 to +8, medium = +1 to +4.
 5. current_geo_score = round(weighted_sov * 0.7 + (100 - arrs) * 0.3). Adjust for source coverage.
-6. Use ALL 6 categories at least once across the plan.
+6. Use ALL available categories across the plan (content, reddit, schema, citations, social, reviews, tiktok, market_signals).
 7. effort: schema markup = low, content creation = medium, press/outreach = high.
 8. Return ONLY valid JSON, no markdown, no explanation.
+9. If market_signals data is provided, reference SPECIFIC platform data in your actions:
+   - Reddit: cite sentiment score and discussion volume
+   - YouTube: reference KOL count and coverage tier
+   - TikTok: note product presence/trending status on TikTok Shop
+   - Google: cite search demand direction
+10. "tiktok" and "market_signals" are valid action categories. Use them when market data warrants.
+11. Cross-reference AI visibility with market signals — if Reddit sentiment is high but SOV is low, that's a gap to exploit.
 """
 
 
@@ -195,6 +203,18 @@ async def generate_geo_plan(
             ],
         },
     }
+
+    # ── 4b. Fetch cross-platform market signals (non-blocking) ──────────────
+    try:
+        from app.services.market_signals import fetch_market_signals
+
+        signals = await asyncio.wait_for(
+            fetch_market_signals(brand_name, run.category or ""),
+            timeout=20,
+        )
+        data_context["market_signals"] = signals.to_dict()
+    except Exception as e:
+        logger.debug("Market signals fetch failed for GEO plan: %s", e)
 
     prompt = (
         f"{_GEO_PLAN_SYSTEM}\n\n"
