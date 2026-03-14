@@ -242,11 +242,95 @@ async def get_selection_intelligence(db: AsyncSession) -> list[dict]:
     cat_rows = await db.execute(cat_stmt)
     db_categories = {r.category: r.brand_count for r in cat_rows}
 
-    # ── 2. For each DB category, get top 3 brands + trend ───────────────────
-    categories_data: list[dict] = []
+    # ── 2. Group DB categories by meta id (merge variants) ──────────────────
+    # Multiple DB category names may map to the same CATEGORY_META entry
+    # (e.g. "true wireless earbuds", "wireless earbuds and Bluetooth headphones"
+    #  both match meta "wireless earbuds"). Merge them into one card.
+    matched_meta_keys: set[str] = set()
+    # meta_id → list of (cat_name, brand_count)
+    meta_groups: dict[str, list[tuple[str, int]]] = defaultdict(list)
+    # DB categories with no meta match
+    unmatched_cats: list[tuple[str, int]] = []
 
     for cat_name, brand_count in db_categories.items():
-        # Latest snapshot per brand
+        meta = _find_meta(cat_name)
+        if meta:
+            meta_groups[meta["id"]].append((cat_name, brand_count))
+            for k, v in _META_LOOKUP.items():
+                if v is meta:
+                    matched_meta_keys.add(k)
+                    break
+        else:
+            unmatched_cats.append((cat_name, brand_count))
+
+    categories_data: list[dict] = []
+
+    # ── 2a. Build cards for merged meta groups ───────────────────────────────
+    for meta_id, group in meta_groups.items():
+        # Find meta by id
+        meta = next(v for v in CATEGORY_META.values() if v["id"] == meta_id)
+        total_brand_count = sum(bc for _, bc in group)
+        all_cat_names = [cn for cn, _ in group]
+
+        # Query brands across all variant category names
+        conditions = [func.lower(Run.category) == cn.lower() for cn in all_cat_names]
+        from sqlalchemy import or_
+        subq = (
+            select(
+                RunSnapshot.brand_name,
+                RunSnapshot.weighted_sov,
+                RunSnapshot.arrs,
+                RunSnapshot.snapshot_at,
+                func.row_number()
+                .over(partition_by=RunSnapshot.brand_name, order_by=RunSnapshot.snapshot_at.desc())
+                .label("rn"),
+            )
+            .join(Run, RunSnapshot.run_id == Run.id)
+            .where(or_(*conditions))
+            .subquery()
+        )
+        stmt = (
+            select(subq)
+            .where(subq.c.rn == 1)
+            .order_by(subq.c.weighted_sov.desc())
+            .limit(5)
+        )
+        rows = (await db.execute(stmt)).all()
+        top_brands = [
+            {"name": r.brand_name, "sov": round(r.weighted_sov, 1), "arrs": round(r.arrs, 1)}
+            for r in rows[:3]
+        ]
+
+        # Use the primary (most brands) category name for trend
+        primary_cat = max(group, key=lambda x: x[1])[0]
+        trend, trend_pts = await _compute_category_trend(db, primary_cat)
+        google_delta = await _get_google_delta(primary_cat)
+        signal, note_en, note_zh = compute_seller_signal(trend, google_delta, total_brand_count)
+
+        # Find canonical key for display name
+        canon_key = next((k for k in CATEGORY_META if CATEGORY_META[k]["id"] == meta_id), None)
+
+        categories_data.append({
+            "id": meta_id,
+            "category": canon_key.title() if canon_key else primary_cat,
+            "category_zh": meta["zh"],
+            "section": meta["section"],
+            "section_zh": meta["section_zh"],
+            "brand_count": total_brand_count,
+            "top_brands": top_brands,
+            "trend": trend,
+            "trend_pts": trend_pts,
+            "seller_signal": signal,
+            "seller_note": note_en,
+            "seller_note_zh": note_zh,
+            "platforms": meta["platforms"],
+            "google_trends_delta": google_delta,
+            "reddit_posts": None,
+            "youtube_kols": None,
+        })
+
+    # ── 2b. Build cards for unmatched DB categories ──────────────────────────
+    for cat_name, brand_count in unmatched_cats:
         subq = (
             select(
                 RunSnapshot.brand_name,
@@ -268,31 +352,22 @@ async def get_selection_intelligence(db: AsyncSession) -> list[dict]:
             .limit(5)
         )
         rows = (await db.execute(stmt)).all()
-
         top_brands = [
             {"name": r.brand_name, "sov": round(r.weighted_sov, 1), "arrs": round(r.arrs, 1)}
             for r in rows[:3]
         ]
 
-        # Compute trend from recent snapshots
         trend, trend_pts = await _compute_category_trend(db, cat_name)
-
-        # Find metadata
-        meta = _find_meta(cat_name)
-
-        # Google Trends (use cached endpoint logic)
         google_delta = await _get_google_delta(cat_name)
-
-        # Compute seller signal
         signal, note_en, note_zh = compute_seller_signal(trend, google_delta, brand_count)
 
-        cat_id = meta["id"] if meta else cat_name.lower().replace(" ", "-").replace("&", "").replace("'", "")
+        cat_id = cat_name.lower().replace(" ", "-").replace("&", "").replace("'", "")
         categories_data.append({
             "id": cat_id,
             "category": cat_name,
-            "category_zh": meta["zh"] if meta else cat_name,
-            "section": meta["section"] if meta else "Other",
-            "section_zh": meta["section_zh"] if meta else "其他",
+            "category_zh": cat_name,
+            "section": "Other",
+            "section_zh": "其他",
             "brand_count": brand_count,
             "top_brands": top_brands,
             "trend": trend,
@@ -300,16 +375,15 @@ async def get_selection_intelligence(db: AsyncSession) -> list[dict]:
             "seller_signal": signal,
             "seller_note": note_en,
             "seller_note_zh": note_zh,
-            "platforms": meta["platforms"] if meta else ["Amazon"],
+            "platforms": ["Amazon"],
             "google_trends_delta": google_delta,
-            "reddit_posts": None,  # Lazy-loaded in detail endpoint
+            "reddit_posts": None,
             "youtube_kols": None,
         })
 
     # ── 3. Add CATEGORY_META entries not in DB (as empty shells) ────────────
-    db_cats_lower = {c.lower() for c in db_categories}
     for cat_key, meta in CATEGORY_META.items():
-        if cat_key not in db_cats_lower:
+        if cat_key.lower() not in matched_meta_keys:
             google_delta = await _get_google_delta(cat_key)
             signal, note_en, note_zh = compute_seller_signal("stable", google_delta, 0)
             categories_data.append({
