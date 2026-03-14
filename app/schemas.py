@@ -228,3 +228,66 @@ class GeoPlanResponse(BaseModel):
     model_used: str
 
     model_config = {"from_attributes": True}
+
+
+# ── Selection Intelligence ──────────────────────────────────────────────────
+
+class SelectionBrandEntry(BaseModel):
+    name: str
+    sov: float
+    arrs: float
+
+
+class SelectionCategoryEntry(BaseModel):
+    id: str
+    category: str
+    category_zh: str
+    section: str
+    section_zh: str
+    brand_count: int
+    top_brands: list[SelectionBrandEntry]
+    trend: Literal["up", "stable", "down"]
+    trend_pts: str
+    seller_signal: Literal["strong_buy", "watch", "avoid"]
+    seller_note: str
+    seller_note_zh: str
+    platforms: list[str]
+    google_trends_delta: float | None = None
+    reddit_posts: int | None = None
+    youtube_kols: int | None = None
+
+
+class SelectionIntelligenceResponse(BaseModel):
+    categories: list[SelectionCategoryEntry]
+    total: int
+    limited: bool = False
+    credits_remaining: int | None = None
+    credit_cost: int = 0
+
+
+class SelectionDetailRedditPost(BaseModel):
+    title: str
+    url: str
+    subreddit: str
+    score: int
+    sentiment: str
+    age_days: int
+
+
+class SelectionDetailKol(BaseModel):
+    channel_name: str
+    video_title: str
+    video_url: str
+    views: int
+    subscribers: int
+    tier: str
+
+
+class SelectionCategoryDetailResponse(BaseModel):
+    category: str
+    leaderboard: list[dict]
+    reddit_posts: list[SelectionDetailRedditPost]
+    youtube_kols: list[SelectionDetailKol]
+    google_trends: dict
+    credits_remaining: int | None = None
+    credit_cost: int = 0

@@ -19,6 +19,7 @@ from app.routers import trends as trends_router
 from app.routers import reddit as reddit_router
 from app.routers import kol as kol_router
 from app.routers import b2a as b2a_router
+from app.routers import selection as selection_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -261,6 +262,7 @@ app.include_router(trends_router.router)
 app.include_router(reddit_router.router)
 app.include_router(kol_router.router)
 app.include_router(b2a_router.router)
+app.include_router(selection_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s

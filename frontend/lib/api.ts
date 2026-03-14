@@ -378,6 +378,68 @@ export interface GeoPlan {
   model_used: string;
 }
 
+// Selection Intelligence
+export interface SelectionBrandEntry {
+  name: string;
+  sov: number;
+  arrs: number;
+}
+
+export interface SelectionCategoryEntry {
+  id: string;
+  category: string;
+  category_zh: string;
+  section: string;
+  section_zh: string;
+  brand_count: number;
+  top_brands: SelectionBrandEntry[];
+  trend: "up" | "stable" | "down";
+  trend_pts: string;
+  seller_signal: "strong_buy" | "watch" | "avoid";
+  seller_note: string;
+  seller_note_zh: string;
+  platforms: string[];
+  google_trends_delta: number | null;
+  reddit_posts: number | null;
+  youtube_kols: number | null;
+}
+
+export interface SelectionIntelligenceResponse {
+  categories: SelectionCategoryEntry[];
+  total: number;
+  limited: boolean;
+  credits_remaining: number | null;
+  credit_cost: number;
+}
+
+export interface SelectionDetailRedditPost {
+  title: string;
+  url: string;
+  subreddit: string;
+  score: number;
+  sentiment: string;
+  age_days: number;
+}
+
+export interface SelectionDetailKol {
+  channel_name: string;
+  video_title: string;
+  video_url: string;
+  views: number;
+  subscribers: number;
+  tier: string;
+}
+
+export interface SelectionCategoryDetailResponse {
+  category: string;
+  leaderboard: Record<string, unknown>[];
+  reddit_posts: SelectionDetailRedditPost[];
+  youtube_kols: SelectionDetailKol[];
+  google_trends: { keywords: Record<string, number>; delta_4w_pct: Record<string, number>; rising_queries: string[] };
+  credits_remaining: number | null;
+  credit_cost: number;
+}
+
 export const api = {
   // Runs
   listRuns: (brand?: string) =>
@@ -506,4 +568,12 @@ export const api = {
     const qs = q.toString();
     return get<B2ATrafficStats>(`/b2a/traffic-stats${qs ? `?${qs}` : ""}`);
   },
+
+  // Selection Intelligence
+  getSelectionIntelligence: () =>
+    getAuth<SelectionIntelligenceResponse>("/selection/intelligence"),
+  getSelectionCategoryDetail: (category: string) =>
+    getAuth<SelectionCategoryDetailResponse>(
+      `/selection/categories/${encodeURIComponent(category)}/detail`
+    ),
 };
