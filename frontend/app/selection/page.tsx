@@ -223,6 +223,8 @@ export default function SelectionPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
   const [categories, setCategories] = useState<CategoryCard[]>([]);
   const [detail, setDetail] = useState<Record<string, SelectionCategoryDetailResponse>>({});
   const [detailLoading, setDetailLoading] = useState<string | null>(null);
@@ -239,6 +241,8 @@ export default function SelectionPage() {
         if (cards.length > 0 && cards.some(c => c.topBrands.length > 0)) {
           setCategories(cards);
           setIsDemo(resp.limited);
+          setIsLoggedIn(resp.credits_remaining !== null);
+          setCreditsRemaining(resp.credits_remaining);
         } else {
           setCategories(SELECTION_DATA.map(demoToCard));
           setIsDemo(true);
@@ -622,16 +626,26 @@ export default function SelectionPage() {
               </p>
             </div>
             <div className="flex gap-3 flex-wrap justify-center">
-              <Link href="/signup"
-                className="text-sm font-semibold px-5 py-2.5 rounded-lg transition-opacity hover:opacity-80"
-                style={{ background: "#ff6b35", color: "#fff" }}>
-                Sign up free &rarr;
-              </Link>
-              <Link href="/pricing"
-                className="text-sm font-medium px-5 py-2.5 rounded-lg transition-colors hover:text-white"
-                style={{ border: "1px solid #25253f", color: "#7070a0" }}>
-                View pricing
-              </Link>
+              {isLoggedIn ? (
+                <Link href="/pricing"
+                  className="text-sm font-semibold px-5 py-2.5 rounded-lg transition-opacity hover:opacity-80"
+                  style={{ background: "#ff6b35", color: "#fff" }}>
+                  Upgrade for full access &rarr;
+                </Link>
+              ) : (
+                <>
+                  <Link href="/signup"
+                    className="text-sm font-semibold px-5 py-2.5 rounded-lg transition-opacity hover:opacity-80"
+                    style={{ background: "#ff6b35", color: "#fff" }}>
+                    Sign up free &rarr;
+                  </Link>
+                  <Link href="/pricing"
+                    className="text-sm font-medium px-5 py-2.5 rounded-lg transition-colors hover:text-white"
+                    style={{ border: "1px solid #25253f", color: "#7070a0" }}>
+                    View pricing
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -655,13 +669,15 @@ export default function SelectionPage() {
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
         <p className="font-semibold">Is your brand on any of these lists?</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          Run a free audit to see your GEO Score, SOV, and which specific AI queries mention you.
+          {isLoggedIn
+            ? "Run an audit to check your GEO Score, SOV position, and which AI queries mention your brand."
+            : "Run a free audit to see your GEO Score, SOV, and which specific AI queries mention you."}
         </p>
         <div className="flex justify-center gap-3 flex-wrap">
-          <Link href="/signup"
+          <Link href={isLoggedIn ? "/audit" : "/signup"}
             className="text-sm font-medium px-5 py-2.5 rounded-lg transition-opacity hover:opacity-80"
             style={{ background: "#ff6b35", color: "#fff" }}>
-            Run Free Audit &rarr;
+            {isLoggedIn ? "Run Audit →" : "Run Free Audit →"}
           </Link>
           <a href="https://calendly.com/brivesubscription/30min"
             target="_blank" rel="noopener noreferrer"

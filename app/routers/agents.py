@@ -3,14 +3,18 @@
 import asyncio
 import uuid
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import async_session_factory
-from app.models import AgentCycle, CycleStatus
+from app.database import async_session_factory, get_db
+from app.models import AgentCycle, CycleStatus, User
+from app.routers.auth import get_current_user_optional
 
 router = APIRouter(prefix="/agents", tags=["agents"])
+
+_PAID_TIERS = {"growth", "scale", "enterprise"}
 
 
 class CycleCreate(BaseModel):
@@ -57,8 +61,32 @@ def _to_dict(c: AgentCycle) -> dict:
 
 
 @router.post("/cycles")
-async def create_cycle(body: CycleCreate):
-    """Launch a new autonomous growth agent cycle."""
+async def create_cycle(
+    body: CycleCreate,
+    db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
+):
+    """Launch a new autonomous growth agent cycle. Costs 3 credits for free-tier."""
+    credit_cost = 0
+    if user is None:
+        raise HTTPException(status_code=401, detail="Sign in to use Growth Agent.")
+    tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
+    if tier not in _PAID_TIERS:
+        credit_cost = 3
+        if user.credit_balance < credit_cost:
+            raise HTTPException(
+                status_code=429,
+                detail={
+                    "code": "credits_exhausted",
+                    "balance": user.credit_balance,
+                    "cost": credit_cost,
+                    "message": "Not enough credits for Growth Agent. Upgrade for unlimited access.",
+                },
+            )
+        user.credit_balance -= credit_cost
+        await db.commit()
+        await db.refresh(user)
+
     cycle = AgentCycle(
         brand_name=body.brand_name,
         category=body.category,

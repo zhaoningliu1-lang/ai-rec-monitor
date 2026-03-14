@@ -573,15 +573,33 @@ def _opportunity_priority(score: float) -> str:
 async def get_run_sources(
     run_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
 ):
     """
     Aggregate cited domains from AI responses for a run.
     Returns:
     - domains: all cited domains with citation counts and brand/competitor presence
     - opportunities: domains where competitors outrank the brand (sorted by opportunity_score)
-    - summary stats
+    - summary stats + citation_health
+    Costs 1 credit for free-tier users.
     """
     from urllib.parse import urlparse
+
+    credit_cost = 0
+    if user is not None:
+        tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
+        if tier not in _PAID_TIERS_REPORTS:
+            credit_cost = 1
+            if user.credit_balance < credit_cost:
+                raise HTTPException(
+                    status_code=429,
+                    detail={
+                        "code": "credits_exhausted",
+                        "balance": user.credit_balance,
+                        "cost": credit_cost,
+                        "message": "Credits exhausted. Upgrade for citation health analysis.",
+                    },
+                )
 
     run = await db.get(Run, run_id)
     if not run:
@@ -715,6 +733,12 @@ async def get_run_sources(
         "total_citations": total_citations,
         "breakdown": breakdown,
     }
+
+    # Deduct credit after successful computation
+    if credit_cost > 0 and user:
+        user.credit_balance -= credit_cost
+        await db.commit()
+        await db.refresh(user)
 
     return {
         "domains": domains[:30],

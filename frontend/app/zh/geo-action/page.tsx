@@ -330,7 +330,7 @@ export default function GeoActionZhPage() {
                   ? { background: "#1a1a2e", color: "#f0f0f8", border: "1px solid #ff6b35" }
                   : { background: "transparent", color: "#7070a0", border: "1px solid #25253f" }
                 }>
-                {tab === "actions" ? "行动计划" : "引用健康度"}
+                {tab === "actions" ? "行动计划" : "引用健康度 · 1 cr"}
               </button>
             ))}
           </div>

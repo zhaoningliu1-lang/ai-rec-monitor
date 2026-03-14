@@ -229,6 +229,7 @@ export default function ZhSelectionPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [categories, setCategories] = useState<CategoryCard[]>([]);
   const [detail, setDetail] = useState<Record<string, SelectionCategoryDetailResponse>>({});
   const [detailLoading, setDetailLoading] = useState<string | null>(null);
@@ -244,6 +245,7 @@ export default function ZhSelectionPage() {
         if (cards.length > 0 && cards.some(c => c.topBrands.length > 0)) {
           setCategories(cards);
           setIsDemo(resp.limited);
+          setIsLoggedIn(resp.credits_remaining !== null);
         } else {
           setCategories(SELECTION_DATA.map(demoToCard));
           setIsDemo(true);
@@ -629,16 +631,26 @@ export default function ZhSelectionPage() {
               </p>
             </div>
             <div className="flex gap-3 flex-wrap justify-center">
-              <Link href="/zh/signup"
-                className="text-sm font-semibold px-5 py-2.5 rounded-lg transition-opacity hover:opacity-80"
-                style={{ background: "#ff6b35", color: "#fff" }}>
-                免费注册 &rarr;
-              </Link>
-              <Link href="/zh/pricing"
-                className="text-sm font-medium px-5 py-2.5 rounded-lg transition-colors hover:text-white"
-                style={{ border: "1px solid #25253f", color: "#7070a0" }}>
-                查看定价
-              </Link>
+              {isLoggedIn ? (
+                <Link href="/zh/pricing"
+                  className="text-sm font-semibold px-5 py-2.5 rounded-lg transition-opacity hover:opacity-80"
+                  style={{ background: "#ff6b35", color: "#fff" }}>
+                  升级解锁全部品类 &rarr;
+                </Link>
+              ) : (
+                <>
+                  <Link href="/zh/signup"
+                    className="text-sm font-semibold px-5 py-2.5 rounded-lg transition-opacity hover:opacity-80"
+                    style={{ background: "#ff6b35", color: "#fff" }}>
+                    免费注册 &rarr;
+                  </Link>
+                  <Link href="/zh/pricing"
+                    className="text-sm font-medium px-5 py-2.5 rounded-lg transition-colors hover:text-white"
+                    style={{ border: "1px solid #25253f", color: "#7070a0" }}>
+                    查看定价
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -662,13 +674,15 @@ export default function ZhSelectionPage() {
         style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
         <p className="font-semibold">你的品牌在这份榜单里吗？</p>
         <p className="text-sm" style={{ color: "#7070a0" }}>
-          免费诊断，查看你的 GEO 评分、SOV 对比，以及哪些 AI 查询中提到了你。
+          {isLoggedIn
+            ? "运行诊断，查看你的 GEO 评分、SOV 排名，以及哪些 AI 查询提到了你的品牌。"
+            : "免费诊断，查看你的 GEO 评分、SOV 对比，以及哪些 AI 查询中提到了你。"}
         </p>
         <div className="flex justify-center gap-3 flex-wrap">
-          <Link href="/zh/signup"
+          <Link href={isLoggedIn ? "/zh/audit" : "/zh/signup"}
             className="text-sm font-medium px-5 py-2.5 rounded-lg transition-opacity hover:opacity-80"
             style={{ background: "#ff6b35", color: "#fff" }}>
-            立即免费诊断 &rarr;
+            {isLoggedIn ? "运行诊断 →" : "立即免费诊断 →"}
           </Link>
           <a href="https://calendly.com/brivesubscription/30min"
             target="_blank" rel="noopener noreferrer"

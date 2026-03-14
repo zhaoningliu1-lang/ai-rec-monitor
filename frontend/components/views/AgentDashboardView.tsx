@@ -235,14 +235,19 @@ export default function AgentDashboardView({ lang = "en" }: { lang?: Lang }) {
           </div>
         </div>
         {error && <p className="text-sm mb-3" style={{ color: "#ef4444" }}>{error}</p>}
-        <button
-          onClick={launch}
-          disabled={loading || !!isRunning}
-          className="px-6 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-40"
-          style={{ background: "#ff6b35", color: "#fff" }}
-        >
-          {loading ? t("launching", lang) : isRunning ? t("running", lang) : t("launchBtn", lang)}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={launch}
+            disabled={loading || !!isRunning}
+            className="px-6 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-40"
+            style={{ background: "#ff6b35", color: "#fff" }}
+          >
+            {loading ? t("launching", lang) : isRunning ? t("running", lang) : t("launchBtn", lang)}
+          </button>
+          <span className="text-xs" style={{ color: "#555580" }}>
+            {lang === "zh" ? "消耗 3 Credits · 约 30 秒" : "Costs 3 credits · ~30 seconds"}
+          </span>
+        </div>
       </section>
 
       {/* ── Pipeline visualization ─────────────────────────────── */}

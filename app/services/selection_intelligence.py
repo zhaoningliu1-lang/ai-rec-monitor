@@ -150,16 +150,45 @@ CATEGORY_META: dict[str, dict] = {
 # Lowercase lookup
 _META_LOOKUP: dict[str, dict] = {k.lower(): v for k, v in CATEGORY_META.items()}
 
+# Pre-compute word sets for fuzzy matching
+_STOP_WORDS = {"and", "for", "the", "of", "in", "with", "a", "an", "&"}
+_META_WORDS: dict[str, set[str]] = {
+    k: set(w for w in k.split() if w not in _STOP_WORDS)
+    for k in _META_LOOKUP
+}
+
 
 def _find_meta(category: str) -> dict | None:
-    """Find category metadata by case-insensitive partial match."""
+    """Find category metadata by word-level Jaccard similarity.
+
+    Matching strategy (highest confidence first):
+    1. Exact match
+    2. Word overlap ≥ 60% (Jaccard similarity)
+    """
     cat_lower = category.lower()
+
+    # 1. Exact match
     if cat_lower in _META_LOOKUP:
         return _META_LOOKUP[cat_lower]
-    for key, meta in _META_LOOKUP.items():
-        if key in cat_lower or cat_lower in key:
-            return meta
-    return None
+
+    # 2. Word-level Jaccard similarity
+    cat_words = set(w for w in cat_lower.split() if w not in _STOP_WORDS)
+    if not cat_words:
+        return None
+
+    best_score = 0.0
+    best_meta = None
+    for key, key_words in _META_WORDS.items():
+        if not key_words:
+            continue
+        intersection = cat_words & key_words
+        union = cat_words | key_words
+        jaccard = len(intersection) / len(union)
+        if jaccard > best_score:
+            best_score = jaccard
+            best_meta = _META_LOOKUP[key]
+
+    return best_meta if best_score >= 0.5 else None
 
 
 # ── In-memory cache ─────────────────────────────────────────────────────────
