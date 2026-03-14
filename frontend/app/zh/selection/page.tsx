@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { isPaid as checkPaid } from "@/lib/auth";
 import {
   SELECTION_DATA, SECTIONS, PRODUCT_DATA,
   type SellerSignal, type Platform,
@@ -230,6 +231,7 @@ export default function ZhSelectionPage() {
   const [loading, setLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userIsPaid, setUserIsPaid] = useState(false);
   const [categories, setCategories] = useState<CategoryCard[]>([]);
   const [detail, setDetail] = useState<Record<string, SelectionCategoryDetailResponse>>({});
   const [detailLoading, setDetailLoading] = useState<string | null>(null);
@@ -246,6 +248,7 @@ export default function ZhSelectionPage() {
           setCategories(cards);
           setIsDemo(resp.limited);
           setIsLoggedIn(resp.credits_remaining !== null);
+          setUserIsPaid(checkPaid());
         } else {
           setCategories(SELECTION_DATA.map(demoToCard));
           setIsDemo(true);
@@ -308,8 +311,9 @@ export default function ZhSelectionPage() {
       ? categories
       : categories.filter(c => c.parentSection === filter);
 
-  const freeItems = (q.length >= 2 || filter !== "all") ? filtered : filtered.slice(0, FREE_LIMIT);
-  const lockedItems = (q.length >= 2 || filter !== "all") ? [] : filtered.slice(FREE_LIMIT);
+  const unlockAll = userIsPaid || q.length >= 2 || filter !== "all";
+  const freeItems = unlockAll ? filtered : filtered.slice(0, FREE_LIMIT);
+  const lockedItems = unlockAll ? [] : filtered.slice(FREE_LIMIT);
 
   return (
     <div className="space-y-10 py-12">
