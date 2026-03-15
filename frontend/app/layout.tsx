@@ -37,6 +37,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${geist.variable} antialiased min-h-screen`} style={{ background: "#09090f", color: "#f0f0f8" }}>
         <NavBar />
         <main className="max-w-6xl mx-auto px-6 py-8">{children}</main>
+        <footer className="border-t border-white/10 mt-16 py-6 text-center text-xs" style={{ color: "#71717a" }}>
+          <div className="max-w-6xl mx-auto px-6 flex items-center justify-center gap-4">
+            <span>&copy; {new Date().getFullYear()} Avanti Growth Labs LLC</span>
+            <span>·</span>
+            <a href="/privacy" className="hover:underline" style={{ color: "#a1a1aa" }}>Privacy Policy</a>
+            <span>·</span>
+            <a href="mailto:hello@avantia2a.com" className="hover:underline" style={{ color: "#a1a1aa" }}>Contact</a>
+          </div>
+        </footer>
       </body>
     </html>
   );
