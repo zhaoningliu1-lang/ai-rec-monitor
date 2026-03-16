@@ -489,9 +489,9 @@ export const t = {
   },
 
   hallucination: {
-    title:              { en: "AI Hallucination Detector",          zh: "AI 幻觉检测器" },
-    subtitle:           { en: "What is AI getting wrong about your brand? See which facts ChatGPT, Claude, and Gemini are hallucinating.",
-                          zh: "AI 在对你的品牌说什么错话？查看 ChatGPT、Claude、Gemini 各自在编造哪些事实。" },
+    title:              { en: "AI Brand Safety",                    zh: "AI 品牌安全" },
+    subtitle:           { en: "Is AI telling the truth about your brand? Detect hallucinations, false claims, and data poisoning across ChatGPT, Claude, and Gemini.",
+                          zh: "AI 对你的品牌说的是真话吗？检测 ChatGPT、Claude、Gemini 中的幻觉、虚假声明和数据投毒。" },
     hrsLabel:           { en: "Hallucination Risk Score",           zh: "幻觉风险评分" },
     lowRisk:            { en: "LOW RISK",                           zh: "低风险" },
     mediumRisk:         { en: "MEDIUM RISK",                        zh: "中等风险" },
@@ -506,8 +506,8 @@ export const t = {
     whyPrice:           { en: "Wrong prices cost sales. AI-cited prices shape purchase expectations.", zh: "错误价格导致流失。AI 引用的价格影响购买预期。" },
     whySpecs:           { en: "Wrong specs erode trust. Buyers who rely on AI for specs lose confidence.", zh: "错误规格损害信任。依赖 AI 规格信息的买家会失去信心。" },
     whyGeo:             { en: "Lower AI Visibility Score = less visibility. High hallucination rates drag down brand credibility.", zh: "更低的 AI 可见度评分 = 更少的可见度。高幻觉率拖累品牌可信度。" },
-    ctaTitle:           { en: "Check your brand's hallucination risk", zh: "检查你的品牌幻觉风险" },
-    ctaSub:             { en: "Run an AI audit and see exactly what each model is getting wrong.", zh: "运行 AI 诊断，精准查看每个模型在说你什么错话。" },
+    ctaTitle:           { en: "Check your brand's AI safety", zh: "检查你的品牌 AI 安全" },
+    ctaSub:             { en: "Run an AI audit and detect false claims, hallucinations, and data poisoning.", zh: "运行 AI 诊断，检测虚假声明、幻觉和数据投毒。" },
     ctaAudit:           { en: "Run Free Audit →",                   zh: "运行免费诊断 →" },
     creditCost:         { en: "1 credit per brand",                 zh: "每个品牌消耗 1 credit" },
     creditsRemaining:   { en: "credits remaining",                  zh: "剩余 credits" },

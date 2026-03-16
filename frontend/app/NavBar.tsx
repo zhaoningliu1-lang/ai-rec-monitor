@@ -101,9 +101,8 @@ export default function NavBar() {
     { href: h("/runs/new"), label: p("New Analysis", "新建分析") },
   ];
   const monitorItems: DropdownItem[] = [
-    { href: h("/brand-safety"),  label: p("Brand Safety",  "品牌安全"),   badge: "New" },
+    { href: h("/hallucination"), label: p("Brand Safety",  "品牌安全"),   badge: "New" },
     { href: h("/trends"),        label: p("Trends",        "行业趋势") },
-    { href: h("/hallucination"), label: p("Accuracy",      "幻觉检测") },
     { href: h("/reddit"),        label: p("Reddit",        "Reddit 引用") },
     { href: h("/kol"),           label: p("KOL",           "KOL 追踪") },
     { href: h("/b2a-analytics"), label: p("B2A Analytics", "B2A Analytics"), badge: "Beta" },
