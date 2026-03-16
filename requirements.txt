@@ -51,3 +51,6 @@ pytrends==4.9.2
 
 # reddit
 asyncpraw>=7.7.1
+
+# html parsing
+beautifulsoup4==4.12.3
