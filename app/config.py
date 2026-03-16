@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     # Gemini (optional — only required when "gemini" is in a run's providers list)
     gemini_api_key: str | None = None
-    gemini_model: str = "gemini-1.5-flash"
+    gemini_model: str = "gemini-2.5-flash"
 
     # Anthropic/Claude (optional — required when "claude" is in a run's providers list)
     anthropic_api_key: str | None = None
@@ -43,13 +43,18 @@ class Settings(BaseSettings):
     # Stripe
     stripe_secret_key: str | None = None
     stripe_webhook_secret: str | None = None
-    stripe_price_monitor: str | None = None   # STRIPE_PRICE_MONITOR — price ID for $99/mo
-    stripe_price_pro: str | None = None       # STRIPE_PRICE_PRO — price ID for $199/mo
+    stripe_price_starter: str | None = None   # STRIPE_PRICE_STARTER — Starter $99/mo
+    stripe_price_monitor: str | None = None   # STRIPE_PRICE_MONITOR — Growth $249/mo
+    stripe_price_pro: str | None = None       # STRIPE_PRICE_PRO — Agency $999/mo
 
     # Email (Resend)
     resend_api_key: str | None = None
     from_email: str = "Avanti <hello@avantia2a.com>"
     site_url: str = "https://avantia2a.com"
+    admin_email: str = "hello@avantia2a.com"
+
+    # Slack admin notifications
+    slack_webhook_url: str | None = None
 
     class Config:
         env_file = ".env"

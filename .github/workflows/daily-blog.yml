@@ -34,8 +34,8 @@ jobs:
 
       - name: Commit and push new blog post
         run: |
-          git config user.name "Avanti Bot"
-          git config user.email "bot@avantia2a.com"
+          git config user.name "zhaoningliu1-lang"
+          git config user.email "zhaoningliu1-lang@users.noreply.github.com"
           git add frontend/app/blog/ frontend/app/zh/blog/
           # Only commit if there are staged changes
           if git diff --staged --quiet; then

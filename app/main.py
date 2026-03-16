@@ -21,6 +21,7 @@ from app.routers import kol as kol_router
 from app.routers import tiktok as tiktok_router
 from app.routers import b2a as b2a_router
 from app.routers import selection as selection_router
+from app.routers import geo_tools as geo_tools_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -265,6 +266,7 @@ app.include_router(kol_router.router)
 app.include_router(tiktok_router.router)
 app.include_router(b2a_router.router)
 app.include_router(selection_router.router)
+app.include_router(geo_tools_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s
