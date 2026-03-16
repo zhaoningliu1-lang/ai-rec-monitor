@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     # Gemini (optional — only required when "gemini" is in a run's providers list)
     gemini_api_key: str | None = None
-    gemini_model: str = "gemini-1.5-flash"
+    gemini_model: str = "gemini-2.5-flash"
 
     # Anthropic/Claude (optional — required when "claude" is in a run's providers list)
     anthropic_api_key: str | None = None
