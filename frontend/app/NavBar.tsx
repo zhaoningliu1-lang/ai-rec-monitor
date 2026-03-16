@@ -99,17 +99,22 @@ export default function NavBar() {
   /* ── LOGGED-IN: app nav dropdowns ── */
   const diagnoseItems: DropdownItem[] = [
     { href: h("/runs/new"), label: p("New Analysis", "新建分析") },
+    // NEW: Content Analysis Tools
+    { href: h("/semantic-analyzer"), label: p("Semantic Analyzer", "语义分析"), badge: "NEW" },
+    { href: h("/eeat-checker"), label: p("E-E-A-T Checker", "权威检测"), badge: "NEW" },
+    { href: h("/schema-tester"), label: p("Schema Tester", "结构化测试"), badge: "NEW" },
   ];
   const monitorItems: DropdownItem[] = [
-    { href: h("/hallucination"), label: p("Brand Safety",  "品牌安全"),   badge: "New" },
+    { href: h("/hallucination"), label: p("Brand Safety", "品牌安全"),   badge: "New" },
     { href: h("/trends"),        label: p("Trends",        "行业趋势") },
+    // Enhanced: Trends now includes Intent Analyzer & Comparison Builder
     { href: h("/reddit"),        label: p("Reddit",        "Reddit 引用") },
     { href: h("/kol"),           label: p("KOL",           "KOL 追踪") },
     { href: h("/b2a-analytics"), label: p("B2A Analytics", "B2A Analytics"), badge: "Beta" },
   ];
   const optimizeItems: DropdownItem[] = [
-    { href: h("/geo-action"),     label: p("AI Visibility Plan", "AI 行动") },
-    { href: h("/agents"),         label: p("Growth Agent",   "增长引擎") },
+    { href: h("/geo-action"),     label: p("AI Visibility Plan", "AI 行动"), desc: p("+ FAQ Generator", "+ FAQ生成器") },
+    { href: h("/agents"),         label: p("Growth Agent",   "增长引擎"), desc: p("+ Content Brief", "+ 内容Brief") },
     { href: h("/selection"),      label: p("Selection",      "选品情报") },
   ];
   const workspaceItems: DropdownItem[] = [
