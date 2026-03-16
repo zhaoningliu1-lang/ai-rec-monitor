@@ -986,6 +986,39 @@ export default function LandingView({ lang }: Props) {
           </a>
         </div>
       </motion.section>
+
+      {/* Affiliate — recommended tools for cross-border sellers */}
+      <motion.section {...reveal} className="pb-4">
+        <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#7070a0" }}>
+          {lang === "zh" ? "跨境卖家推荐工具" : "Tools We Recommend"}
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { icon: "💡", name: lang === "zh" ? "环形补光灯" : "Ring Light", sub: lang === "zh" ? "产品摄影必备" : "Product photography", href: "https://www.amazon.com/s?k=ring+light+photography&tag=avanti20-20" },
+            { icon: "🖨️", name: lang === "zh" ? "标签打印机" : "Label Printer", sub: lang === "zh" ? "发货出单神器" : "Shipping labels", href: "https://www.amazon.com/s?k=brother+label+printer+shipping&tag=avanti20-20" },
+            { icon: "🔌", name: lang === "zh" ? "USB-C 充电器" : "USB-C Charger", sub: lang === "zh" ? "多口同时快充" : "Multi-device charging", href: "https://www.amazon.com/s?k=usb+c+multiport+charger&tag=avanti20-20" },
+            { icon: "🎧", name: lang === "zh" ? "降噪耳机" : "Noise-Canceling Headphones", sub: lang === "zh" ? "居家办公专注" : "Focus & video calls", href: "https://www.amazon.com/s?k=wireless+noise+canceling+headphones&tag=avanti20-20" },
+          ].map((tool) => (
+            <a
+              key={tool.href}
+              href={tool.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-xl p-3 transition-colors hover:border-orange-500/40"
+              style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+            >
+              <span className="text-2xl">{tool.icon}</span>
+              <div>
+                <div className="text-sm font-semibold">{tool.name}</div>
+                <div className="text-xs" style={{ color: "#7070a0" }}>{tool.sub}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+        <p className="text-xs mt-3" style={{ color: "#4a4a6a" }}>
+          {lang === "zh" ? "* 包含 Amazon 推广链接，点击不额外收费" : "* Amazon affiliate links — no extra cost to you."}
+        </p>
+      </motion.section>
     </div>
   );
 }
