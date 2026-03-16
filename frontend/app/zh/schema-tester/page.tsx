@@ -25,7 +25,7 @@ export default function SchemaTesterPage() {
   const analyze = async () => {
     if (!url) return;
     setLoading(true);
-    
+
     setTimeout(() => {
       setResult({
         hasSchema: true,
@@ -35,31 +35,31 @@ export default function SchemaTesterPage() {
           product: {
             status: "pass",
             items: [
-              "Product schema found",
-              "name, description, image present",
-              "sku and brand defined",
+              "已找到 Product schema",
+              "name、description、image 字段完整",
+              "sku 和 brand 已定义",
             ],
           },
           faq: {
             status: "fail",
             items: [
-              "No FAQ schema detected",
-              "Add FAQ schema to improve AI citation",
+              "未检测到 FAQ schema",
+              "添加 FAQ schema 以提高 AI 引用率",
             ],
           },
           review: {
             status: "warning",
             items: [
-              "AggregateRating found",
-              "Missing individual Review schemas",
+              "已找到 AggregateRating",
+              "缺少独立的 Review schema",
             ],
           },
           organization: {
             status: "pass",
             items: [
-              "Organization schema found",
-              "name, url, logo present",
-              "contactPoint defined",
+              "已找到 Organization schema",
+              "name、url、logo 字段完整",
+              "contactPoint 已定义",
             ],
           },
         },
@@ -115,11 +115,11 @@ export default function SchemaTesterPage() {
             <div className="p-3 rounded-xl" style={{ background: "rgba(168,85,247,0.15)" }}>
               <Code className="w-6 h-6" style={{ color: "#a855f7" }} />
             </div>
-            <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ background: "rgba(168,85,247,0.15)", color: "#a855f7" }}>NEW</span>
+            <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ background: "rgba(168,85,247,0.15)", color: "#a855f7" }}>新功能</span>
           </div>
-          <h1 className="text-3xl font-bold mb-3" style={{ color: "#f0f0f8" }}>Schema Tester</h1>
+          <h1 className="text-3xl font-bold mb-3" style={{ color: "#f0f0f8" }}>Schema 测试器</h1>
           <p className="text-base" style={{ color: "#7070a0" }}>
-            Test your structured data (JSON-LD) for AI compatibility. Proper schema helps AI understand and cite your content.
+            测试您的结构化数据 (JSON-LD) 的 AI 兼容性。正确的 Schema 帮助 AI 理解并引用您的内容。
           </p>
         </div>
 
@@ -127,7 +127,7 @@ export default function SchemaTesterPage() {
         <div className="rounded-2xl p-6 mb-8" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block" style={{ color: "#f0f0f8" }}>Page URL to test</label>
+              <label className="text-sm font-medium mb-2 block" style={{ color: "#f0f0f8" }}>待测试的页面 URL</label>
               <input
                 type="url"
                 value={url}
@@ -142,7 +142,7 @@ export default function SchemaTesterPage() {
               onClick={analyze}
               disabled={loading || !url}
               className="w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-all"
-              style={{ 
+              style={{
                 background: loading || !url ? "#25253f" : "#a855f7",
                 color: loading || !url ? "#5050a0" : "#fff"
               }}
@@ -150,12 +150,12 @@ export default function SchemaTesterPage() {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Analyzing Schema...
+                  分析 Schema 中...
                 </>
               ) : (
                 <>
                   <Code className="w-4 h-4" />
-                  Test Schema
+                  开始测试
                 </>
               )}
             </button>
@@ -167,14 +167,14 @@ export default function SchemaTesterPage() {
           <div className="space-y-6">
             {/* Score Overview */}
             <div className="rounded-2xl p-6" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
-              <h2 className="text-lg font-semibold mb-6" style={{ color: "#f0f0f8" }}>Schema Analysis Results</h2>
-              
+              <h2 className="text-lg font-semibold mb-6" style={{ color: "#f0f0f8" }}>Schema 分析结果</h2>
+
               <div className="flex items-center gap-6 mb-6">
                 <div className="text-5xl font-bold" style={{ color: result.score >= 70 ? "#22c55e" : "#eab308" }}>{result.score}</div>
                 <div>
-                  <div className="text-sm font-medium mb-1" style={{ color: "#f0f0f8" }}>Schema Score</div>
+                  <div className="text-sm font-medium mb-1" style={{ color: "#f0f0f8" }}>Schema 评分</div>
                   <div className="text-xs" style={{ color: "#7070a0" }}>
-                    {result.hasSchema ? `${result.schemaTypes.length} schema types detected` : "No structured data found"}
+                    {result.hasSchema ? `检测到 ${result.schemaTypes.length} 种 schema 类型` : "未发现结构化数据"}
                   </div>
                 </div>
               </div>
@@ -265,14 +265,14 @@ export default function SchemaTesterPage() {
             {/* CTA */}
             <div className="rounded-2xl p-6 text-center" style={{ background: "linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(168,85,247,0.05) 100%)", border: "1px solid rgba(168,85,247,0.2)" }}>
               <p className="text-sm mb-4" style={{ color: "#a0a0c0" }}>
-                Need help adding schema to your pages?
+                需要帮助为页面添加 Schema？
               </p>
               <a
-                href="/geo-action"
+                href="/zh/geo-action"
                 className="inline-flex items-center gap-2 px-6 py-2 rounded-xl font-medium"
                 style={{ background: "#a855f7", color: "#fff" }}
               >
-                Get Schema Implementation Guide <ArrowRight className="w-4 h-4" />
+                获取 Schema 实施指南 <ArrowRight className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -280,19 +280,19 @@ export default function SchemaTesterPage() {
 
         {/* Why Schema Matters */}
         <div className="mt-12">
-          <h2 className="text-lg font-semibold mb-6" style={{ color: "#f0f0f8" }}>Why Structured Data Matters for AI</h2>
+          <h2 className="text-lg font-semibold mb-6" style={{ color: "#f0f0f8" }}>结构化数据对 AI 的重要性</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="rounded-xl p-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
-              <h3 className="text-sm font-medium mb-2" style={{ color: "#f0f0f8" }}>AI Parses Structured Data</h3>
-              <p className="text-xs" style={{ color: "#7070a0" }}>JSON-LD and Schema.org markup help AI extract key facts directly from your pages.</p>
+              <h3 className="text-sm font-medium mb-2" style={{ color: "#f0f0f8" }}>AI 解析结构化数据</h3>
+              <p className="text-xs" style={{ color: "#7070a0" }}>JSON-LD 和 Schema.org 标记帮助 AI 直接从页面提取关键信息。</p>
             </div>
             <div className="rounded-xl p-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
-              <h3 className="text-sm font-medium mb-2" style={{ color: "#f0f0f8" }}>Better Citation Chances</h3>
-              <p className="text-xs" style={{ color: "#7070a0" }}>Pages with proper schema are 3x more likely to be cited in AI responses.</p>
+              <h3 className="text-sm font-medium mb-2" style={{ color: "#f0f0f8" }}>更高的引用概率</h3>
+              <p className="text-xs" style={{ color: "#7070a0" }}>拥有正确 Schema 的页面被 AI 引用的概率高出 3 倍。</p>
             </div>
             <div className="rounded-xl p-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
-              <h3 className="text-sm font-medium mb-2" style={{ color: "#f0f0f8" }}>Rich Results Display</h3>
-              <p className="text-xs" style={{ color: "#7070a0" }}>Schema enables rich snippets in search and helps AI understand your content context.</p>
+              <h3 className="text-sm font-medium mb-2" style={{ color: "#f0f0f8" }}>富媒体结果展示</h3>
+              <p className="text-xs" style={{ color: "#7070a0" }}>Schema 支持搜索中的富媒体摘要，并帮助 AI 理解您的内容上下文。</p>
             </div>
           </div>
         </div>
