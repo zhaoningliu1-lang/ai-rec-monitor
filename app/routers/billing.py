@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import get_db
-from app.emails import send_subscription_upgraded
+from app.emails import notify_admin_new_payment, send_subscription_upgraded
 from app.models import SubscriptionStatus, SubscriptionTier, User
 from app.routers.auth import get_current_user
 
@@ -19,8 +19,10 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/billing", tags=["billing"])
 
 _TIER_MAP = {
+    "starter": (settings.stripe_price_starter, SubscriptionTier.growth),
     "growth": (settings.stripe_price_monitor, SubscriptionTier.growth),
     "scale": (settings.stripe_price_pro, SubscriptionTier.scale),
+    "agency": (settings.stripe_price_pro, SubscriptionTier.scale),
 }
 
 _STATUS_MAP = {
@@ -179,5 +181,6 @@ async def stripe_webhook(request: Request, bg: BackgroundTasks, db: AsyncSession
                 and etype != "customer.subscription.deleted"
             ):
                 bg.add_task(send_subscription_upgraded, user.email, tier_name, user.full_name)
+                bg.add_task(notify_admin_new_payment, user.email, user.full_name, tier_name)
 
     return {"received": True}

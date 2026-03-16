@@ -5,6 +5,9 @@ must never break the main request flow.
 """
 import asyncio
 import logging
+from datetime import datetime, timezone
+
+import httpx
 
 from app.config import settings
 
@@ -107,5 +110,81 @@ async def send_password_reset(to_email: str, reset_url: str, name: str | None = 
         "from": settings.from_email,
         "to": [to_email],
         "subject": "Reset your Avanti password",
+        "html": html,
+    })
+
+
+# ── Admin notifications ────────────────────────────────────────────────────────
+
+def _slack(text: str) -> None:
+    """Post a plain-text message to the admin Slack webhook (best-effort)."""
+    if not settings.slack_webhook_url:
+        return
+    try:
+        httpx.post(settings.slack_webhook_url, json={"text": text}, timeout=5)
+    except Exception:
+        logger.exception("Failed to post Slack notification")
+
+
+async def notify_admin_new_user(email: str, name: str | None, company: str | None) -> None:
+    """Notify admin (email + Slack) when a new user registers."""
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    display = name or "—"
+    co = company or "—"
+
+    # Slack
+    await asyncio.to_thread(
+        _slack,
+        f"🆕 *New signup* — {email}\nName: {display} | Company: {co}\n{now}",
+    )
+
+    # Email
+    html = f"""
+<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#f0f0f8;background:#09090f;padding:32px 24px;border-radius:12px">
+  <div style="font-size:22px;font-weight:900;color:#ff6b35;margin-bottom:16px">AVANTI — New Signup</div>
+  <table style="width:100%;font-size:14px;border-collapse:collapse">
+    <tr><td style="color:#7070a0;padding:6px 0">Email</td><td style="font-weight:600">{email}</td></tr>
+    <tr><td style="color:#7070a0;padding:6px 0">Name</td><td>{display}</td></tr>
+    <tr><td style="color:#7070a0;padding:6px 0">Company</td><td>{co}</td></tr>
+    <tr><td style="color:#7070a0;padding:6px 0">Time</td><td>{now}</td></tr>
+  </table>
+</div>
+"""
+    await asyncio.to_thread(_send, {
+        "from": settings.from_email,
+        "to": [settings.admin_email],
+        "subject": f"[Avanti] New signup: {email}",
+        "html": html,
+    })
+
+
+async def notify_admin_new_payment(email: str, name: str | None, tier: str) -> None:
+    """Notify admin (email + Slack) when a user activates a paid subscription."""
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    tier_label = TIER_LABEL.get(tier, tier.capitalize())
+    display = name or "—"
+
+    # Slack
+    await asyncio.to_thread(
+        _slack,
+        f"💰 *New payment* — {email} subscribed to *{tier_label}*\nName: {display}\n{now}",
+    )
+
+    # Email
+    html = f"""
+<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#f0f0f8;background:#09090f;padding:32px 24px;border-radius:12px">
+  <div style="font-size:22px;font-weight:900;color:#ff6b35;margin-bottom:16px">AVANTI — New Payment</div>
+  <table style="width:100%;font-size:14px;border-collapse:collapse">
+    <tr><td style="color:#7070a0;padding:6px 0">Email</td><td style="font-weight:600">{email}</td></tr>
+    <tr><td style="color:#7070a0;padding:6px 0">Name</td><td>{display}</td></tr>
+    <tr><td style="color:#7070a0;padding:6px 0">Plan</td><td style="color:#ff6b35;font-weight:700">{tier_label}</td></tr>
+    <tr><td style="color:#7070a0;padding:6px 0">Time</td><td>{now}</td></tr>
+  </table>
+</div>
+"""
+    await asyncio.to_thread(_send, {
+        "from": settings.from_email,
+        "to": [settings.admin_email],
+        "subject": f"[Avanti] 💰 New payment: {email} → {tier_label}",
         "html": html,
     })

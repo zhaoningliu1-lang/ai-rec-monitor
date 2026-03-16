@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import get_db
-from app.emails import send_password_reset, send_welcome
+from app.emails import notify_admin_new_user, send_password_reset, send_welcome
 from app.models import SubscriptionStatus, SubscriptionTier, User
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -141,6 +141,7 @@ async def register(body: RegisterIn, bg: BackgroundTasks, db: AsyncSession = Dep
     await db.refresh(user)
 
     bg.add_task(send_welcome, body.email, body.full_name)
+    bg.add_task(notify_admin_new_user, body.email, body.full_name, body.company_name)
     return TokenOut(access_token=_create_token(str(user.id)))
 
 
