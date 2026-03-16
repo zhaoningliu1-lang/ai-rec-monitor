@@ -87,7 +87,7 @@ const TIERS = [
       "概要报告",
     ],
     cta: "开始免费审计",
-    href: "/zh/signup",
+    href: "/zh/runs/new",
     highlight: false,
   },
   {
@@ -105,7 +105,7 @@ const TIERS = [
       "Growth / Agency 方案已包含",
     ],
     cta: "获取完整审计",
-    href: "/zh/signup",
+    href: "/zh/runs/new",
     highlight: true,
   },
   {
@@ -146,8 +146,6 @@ export default function BrandSafetyPageZh() {
           <AnimateIn>
             <div className="inline-flex items-center gap-2 text-xs px-4 py-2 rounded-full font-bold uppercase tracking-wider mb-8"
               style={{ background: "rgba(255,77,109,0.10)", color: "#ff4d6d", border: "1px solid rgba(255,77,109,0.25)" }}>
-              <span>315 晚会</span>
-              <span style={{ opacity: 0.4 }}>|</span>
               <span>AI 品牌保护</span>
             </div>
           </AnimateIn>
@@ -166,7 +164,7 @@ export default function BrandSafetyPageZh() {
 
           <AnimateIn delay={240}>
             <p style={{ fontSize: 17, color: "#7070a0", maxWidth: 640, margin: "0 auto 40px", lineHeight: 1.7 }}>
-              315 晚会揭露了虚假数据正在被注入 AI 模型的黑幕。
+              近期调查揭示，虚假数据正在被大规模注入 AI 模型。
               竞争对手可能已经在污染你品牌的 AI 信息。
               在你的客户发现之前，先搞清楚真相。
             </p>
@@ -174,7 +172,7 @@ export default function BrandSafetyPageZh() {
 
           <AnimateIn delay={320}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/zh/signup"
+              <Link href="/zh/runs/new"
                 className="text-base font-bold px-8 py-3.5 rounded-xl transition-all hover:scale-105"
                 style={{ background: "linear-gradient(135deg, #ff4d6d, #ff6b35)", color: "#fff", boxShadow: "0 8px 32px rgba(255,77,109,0.3)" }}>
                 开始免费审计
@@ -185,6 +183,7 @@ export default function BrandSafetyPageZh() {
                 预约演示
               </Link>
             </div>
+            <p className="mt-3 text-xs" style={{ color: "#555580" }}>所有阿凡提账户免费使用</p>
           </AnimateIn>
         </div>
       </section>
@@ -349,7 +348,7 @@ export default function BrandSafetyPageZh() {
               今天就运行免费 AI 品牌安全审计，精确了解 AI 正在对你的客户说什么。
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/zh/signup"
+              <Link href="/zh/runs/new"
                 className="text-base font-bold px-10 py-4 rounded-xl transition-all hover:scale-105"
                 style={{ background: "linear-gradient(135deg, #ff4d6d, #ff6b35)", color: "#fff", boxShadow: "0 8px 32px rgba(255,77,109,0.3)" }}>
                 开始免费审计
@@ -360,6 +359,7 @@ export default function BrandSafetyPageZh() {
                 预约演示
               </Link>
             </div>
+            <p className="mt-3 text-xs" style={{ color: "#555580" }}>所有阿凡提账户免费使用</p>
           </AnimateIn>
         </div>
       </section>

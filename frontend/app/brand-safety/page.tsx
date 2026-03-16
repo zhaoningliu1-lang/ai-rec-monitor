@@ -87,7 +87,7 @@ const TIERS = [
       "Summary report",
     ],
     cta: "Start Free Audit",
-    href: "/signup",
+    href: "/runs/new",
     highlight: false,
   },
   {
@@ -105,7 +105,7 @@ const TIERS = [
       "Included in Growth & Agency plans",
     ],
     cta: "Get Full Audit",
-    href: "/signup",
+    href: "/runs/new",
     highlight: true,
   },
   {
@@ -146,8 +146,6 @@ export default function BrandSafetyPage() {
           <AnimateIn>
             <div className="inline-flex items-center gap-2 text-xs px-4 py-2 rounded-full font-bold uppercase tracking-wider mb-8"
               style={{ background: "rgba(255,77,109,0.10)", color: "#ff4d6d", border: "1px solid rgba(255,77,109,0.25)" }}>
-              <span>315 Response</span>
-              <span style={{ opacity: 0.4 }}>|</span>
               <span>AI Brand Protection</span>
             </div>
           </AnimateIn>
@@ -166,7 +164,7 @@ export default function BrandSafetyPage() {
 
           <AnimateIn delay={240}>
             <p style={{ fontSize: 17, color: "#7070a0", maxWidth: 640, margin: "0 auto 40px", lineHeight: 1.7 }}>
-              The 315 Gala exposed how fake data is being fed to AI models.
+              Recent investigations have exposed how fake data is being fed to AI models.
               Competitors may already be poisoning your brand's AI presence.
               Find out before your customers do.
             </p>
@@ -174,7 +172,7 @@ export default function BrandSafetyPage() {
 
           <AnimateIn delay={320}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/signup"
+              <Link href="/runs/new"
                 className="text-base font-bold px-8 py-3.5 rounded-xl transition-all hover:scale-105"
                 style={{ background: "linear-gradient(135deg, #ff4d6d, #ff6b35)", color: "#fff", boxShadow: "0 8px 32px rgba(255,77,109,0.3)" }}>
                 Start Free Audit
@@ -185,6 +183,7 @@ export default function BrandSafetyPage() {
                 Book a Demo
               </Link>
             </div>
+            <p className="mt-3 text-xs" style={{ color: "#555580" }}>Free with any Avanti account</p>
           </AnimateIn>
         </div>
       </section>
@@ -349,7 +348,7 @@ export default function BrandSafetyPage() {
               Run your free AI Brand Safety Audit today. See exactly what AI is telling your customers about you.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/signup"
+              <Link href="/runs/new"
                 className="text-base font-bold px-10 py-4 rounded-xl transition-all hover:scale-105"
                 style={{ background: "linear-gradient(135deg, #ff4d6d, #ff6b35)", color: "#fff", boxShadow: "0 8px 32px rgba(255,77,109,0.3)" }}>
                 Start Free Audit
@@ -360,6 +359,7 @@ export default function BrandSafetyPage() {
                 Book a Demo
               </Link>
             </div>
+            <p className="mt-3 text-xs" style={{ color: "#555580" }}>Free with any Avanti account</p>
           </AnimateIn>
         </div>
       </section>
