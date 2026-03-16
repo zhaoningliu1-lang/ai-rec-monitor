@@ -652,7 +652,7 @@ class BriefGenerateIn(BaseModel):
 async def content_brief(
     body: BriefGenerateIn,
     user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     """Generate AI-optimized content brief using LLM."""
     cost = CREDIT_COSTS["content_brief"]
