@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-03-16-beauty-tech-ai-recommendations",
+    tag: "美容科技",
+    title: "美容科技：AI驱动产品推荐分析",
+    excerpt:
+      "深入分析美容科技的AI引用。查看品牌可见性和市场主导地位的变化。",
+    date: "2026年3月16日",
+    readTime: "6 分钟阅读",
+  },
+  {
     slug: "ai-poisoning-vs-visibility",
     tag: "行业立场",
     title: "AI 投毒 vs AI 可见度管理：阿凡提的立场",

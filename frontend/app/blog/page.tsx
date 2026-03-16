@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-03-16-beauty-tech-ai-recommendations",
+    tag: "Beauty Tech",
+    title: "Beauty Tech: AI-Driven Product Recommendations",
+    excerpt:
+      "Dive into top AI citations in beauty tech. See brand visibility and market dominance shifts.",
+    date: "March 16, 2026",
+    readTime: "6 min read",
+  },
+  {
     slug: "ai-poisoning-vs-visibility",
     tag: "Industry Position",
     title: "AI Poisoning vs. AI Visibility Management: Our Position",
