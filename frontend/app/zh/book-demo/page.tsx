@@ -27,7 +27,7 @@ export default function ZhBookDemoPage() {
           <span style={{ color: "#ff6b35" }}>战略咨询通话</span>
         </h1>
         <p style={{ color: "#7070a0", fontSize: 18, maxWidth: 520, margin: "0 auto" }}>
-          我们将实时为你拆解品牌在 AI 搜索中的当前表现，对标竞品差距，并制定 90 天 GEO 行动计划——全程免费。
+          我们将实时为你拆解品牌在 AI 搜索中的当前表现，对标竞品差距，并制定 90 天 AI 可见度行动计划——全程免费。
         </p>
       </div>
 
@@ -36,7 +36,7 @@ export default function ZhBookDemoPage() {
         {[
           { icon: "📊", title: "AI 可见度评分", desc: "精准了解 ChatGPT、Claude、Gemini 提及你品牌的频次，与竞品逐一对比。" },
           { icon: "🎯", title: "竞品差距分析", desc: "找出哪些品牌正在抢占 AI 声量份额，以及它们的打法是什么。" },
-          { icon: "🗺️", title: "90 天 GEO 行动路线图", desc: "通话结束时带走一份定制化内容与引用策略，直接缩小可见度差距。" },
+          { icon: "🗺️", title: "90 天 AI 可见度行动路线图", desc: "通话结束时带走一份定制化内容与引用策略，直接缩小可见度差距。" },
         ].map((item) => (
           <div key={item.title} style={{ background: "#12121e", border: "1px solid #25253f", borderRadius: 12, padding: "24px 20px" }}>
             <div style={{ fontSize: 28, marginBottom: 12 }}>{item.icon}</div>

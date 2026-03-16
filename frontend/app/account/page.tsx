@@ -30,7 +30,7 @@ const TIERS = [
     label: "Scale",
     price: "$199",
     period: "/mo",
-    features: ["Everything in Growth", "10 brands", "GEO Playbook", "Priority support", "Notion export"],
+    features: ["Everything in Growth", "10 brands", "AI Visibility Playbook", "Priority support", "Notion export"],
     cta: "Upgrade to Scale →",
     disabled: false,
   },

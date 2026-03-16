@@ -30,7 +30,7 @@ const TIERS = [
     label: "专业版",
     price: "$199",
     period: "/月",
-    features: ["监控版全部功能", "10 个品牌", "GEO 执行手册", "优先支持", "Notion 导出"],
+    features: ["监控版全部功能", "10 个品牌", "AI 可见度执行手册", "优先支持", "Notion 导出"],
     cta: "升级到专业版 →",
     disabled: false,
   },

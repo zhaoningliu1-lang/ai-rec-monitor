@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 _cache: dict[str, tuple[float, Any]] = {}
 _CACHE_TTL = 3600  # 1 hour
 
-_USER_AGENT = "AventiGEO/1.0 (AI Visibility Monitor; contact: hello@avantia2a.com)"
+_USER_AGENT = "AvantiAIV/1.0 (AI Visibility Monitor; contact: hello@avantia2a.com)"
 
 # ── Reddit OAuth credentials (optional) ─────────────────────────────────────
 _REDDIT_CLIENT_ID = os.getenv("REDDIT_CLIENT_ID", "")

@@ -33,7 +33,7 @@ const STATS = [
   { label: "categories covered",   value: "12" },
   { label: "data freshness",       value: "Monthly" },
   { label: "cross-border markets", value: "14" },
-  { label: "avg GEO Score gap closed",  value: "18 pts" },
+  { label: "avg AI Visibility Score gap closed",  value: "18 pts" },
 ];
 
 /* ── step divider ────────────────────────────────────── */
@@ -74,8 +74,8 @@ export default function ProductPage() {
     ? { href: "/dashboard",  label: "Go to Dashboard →" }
     : { href: "/signup",     label: "Sign up free — Track your brand →" };
   const optimizerCta = loggedIn
-    ? { href: "/runs/new",   label: "Start GEO Monitoring →" }
-    : { href: "/signup",     label: "Sign up — Start Saving + GEO →" };
+    ? { href: "/runs/new",   label: "Start AI Visibility Monitoring →" }
+    : { href: "/signup",     label: "Sign up — Start Saving + AI Visibility →" };
   const bottomCta = loggedIn
     ? { href: "/dashboard",  label: "Go to Dashboard →" }
     : { href: "/signup",     label: "Start free →" };
@@ -183,7 +183,7 @@ export default function ProductPage() {
             <div className="grid md:grid-cols-3 gap-4">
               {[
                 { n:"01", title:"We simulate buyer queries", body:"We run 200+ natural-language queries across ChatGPT, Claude, Gemini, and Perplexity — the same questions real buyers are asking right now." },
-                { n:"02", title:"We score every mention", body:"Every brand mention is logged, weighted by query intent and AI engine authority, and combined into your GEO Score and SOV ranking." },
+                { n:"02", title:"We score every mention", body:"Every brand mention is logged, weighted by query intent and AI engine authority, and combined into your AI Visibility Score and SOV ranking." },
                 { n:"03", title:"You get an action plan", body:"Not just a score — a prioritized list of why competitors rank above you and exactly what content and citation moves will close the gap." },
               ].map((step, i) => (
                 <AnimateIn key={step.n} delay={i * 120} direction="scale"
@@ -214,11 +214,11 @@ export default function ProductPage() {
 
               <div className="space-y-2">
                 {[
-                  ["GEO Score", "Your proprietary visibility score across 4 engines"],
+                  ["AI Visibility Score", "Your proprietary visibility score across 4 engines"],
                   ["Share of Voice vs every competitor", "See exactly how much AI attention your brand captures"],
                   ["Query-level breakdown by buyer intent", "Know which query types you win and which you lose"],
                   ["Citation source analysis", "Understand which third-party sources are driving competitor rankings"],
-                  ["90-day GEO action plan", "Prioritized steps to improve your GEO Score — not vague advice"],
+                  ["90-day AI visibility plan", "Prioritized steps to improve your AI Visibility Score — not vague advice"],
                 ].map(([title, desc]) => (
                   <div key={title} className="flex items-start gap-3 text-sm">
                     <span className="mt-0.5 shrink-0" style={{ color:"#ff6b35" }}>✓</span>
@@ -264,7 +264,7 @@ export default function ProductPage() {
                   68
                 </div>
                 <div>
-                  <div className="text-sm font-semibold">GEO Score: 68 / 100</div>
+                  <div className="text-sm font-semibold">AI Visibility Score: 68 / 100</div>
                   <div className="text-xs mt-1" style={{ color:"#7070a0" }}>
                     Strong visibility — #2 in AI recommendations. Playbook execution working.
                   </div>
@@ -359,7 +359,7 @@ export default function ProductPage() {
           <AnimateIn direction="left" className="rounded-2xl p-6 space-y-5"
             style={{ background:"#0f0f17", border:"1px solid #25253f" }}>
             <div className="flex items-center justify-between">
-              <div className="text-sm font-semibold">GEO Score Trend — AutoCore Global</div>
+              <div className="text-sm font-semibold">AI Visibility Score Trend — AutoCore Global</div>
               <span className="text-xs px-2 py-0.5 rounded" style={{ background:"rgba(34,197,94,.1)", color:"#22c55e" }}>
                 Live tracking
               </span>
@@ -410,14 +410,14 @@ export default function ProductPage() {
             </h3>
             <p className="text-sm leading-relaxed" style={{ color:"#7070a0" }}>
               Publishing a new piece of content? Getting a Wirecutter citation? Avanti tracks your
-              GEO score every week so you can attribute exactly which actions drove which changes —
+              AI Visibility Score every week so you can attribute exactly which actions drove which changes —
               and double down on what works.
             </p>
             <div className="space-y-3">
               {[
-                { event:"JumpStart Pro: Tom's Guide review unit shipped", impact:"GEO +8 pts (3 weeks later)", color:"#22c55e" },
-                { event:"DriveSafe Pro: 46% auto-generated content flagged", impact:"GEO −20 pts (AI quality filter)", color:"#ff4d6d" },
-                { event:"MagDrive Pro: FAQ schema added to product pages", impact:"GEO +4 pts (2 weeks later)", color:"#f5a623" },
+                { event:"JumpStart Pro: Tom's Guide review unit shipped", impact:"AI Visibility +8 pts (3 weeks later)", color:"#22c55e" },
+                { event:"DriveSafe Pro: 46% auto-generated content flagged", impact:"AI Visibility −20 pts (AI quality filter)", color:"#ff4d6d" },
+                { event:"MagDrive Pro: FAQ schema added to product pages", impact:"AI Visibility +4 pts (2 weeks later)", color:"#f5a623" },
               ].map(({ event, impact, color }) => (
                 <div key={event} className="rounded-xl p-4 space-y-1"
                   style={{ background:"#0a0a14", border:`1px solid ${color}20` }}>
@@ -527,9 +527,9 @@ export default function ProductPage() {
             style={{ background:"#0f0f17", border:"1px solid #25253f" }}>
             <div className="font-semibold text-sm">How to read this data</div>
             <div className="space-y-1.5 text-xs" style={{ color:"#7070a0" }}>
-              <div><span style={{ color:"#22c55e" }}>GEO Score &lt; 30</span> — AI consistently recommends this brand. Very hard to displace.</div>
-              <div><span style={{ color:"#f5a623" }}>GEO Score 30–49</span> — Moderate AI presence. Room for a focused challenger to gain share.</div>
-              <div><span style={{ color:"#ff4d6d" }}>GEO Score ≥ 50</span> — Weak AI visibility. New entrants can establish dominance quickly.</div>
+              <div><span style={{ color:"#22c55e" }}>AI Visibility Score &lt; 30</span> — AI consistently recommends this brand. Very hard to displace.</div>
+              <div><span style={{ color:"#f5a623" }}>AI Visibility Score 30–49</span> — Moderate AI presence. Room for a focused challenger to gain share.</div>
+              <div><span style={{ color:"#ff4d6d" }}>AI Visibility Score ≥ 50</span> — Weak AI visibility. New entrants can establish dominance quickly.</div>
               <div className="pt-1">SOV (Share of Voice) — percentage of all AI mentions in this category captured by this brand.</div>
             </div>
           </AnimateIn>
@@ -541,7 +541,7 @@ export default function ProductPage() {
         <AnimateIn>
           <StepHeader
             n="4" label="Optimize & Fund"
-            sub="Cut AI-replaceable ops costs first. Reinvest the savings into GEO — the flywheel that compounds."
+            sub="Cut AI-replaceable ops costs first. Reinvest the savings into AI visibility — the flywheel that compounds."
             color="#60a5fa"
           />
         </AnimateIn>
@@ -556,11 +556,11 @@ export default function ProductPage() {
             <div className="flex flex-col gap-2">
               {[
                 { label:"AI saves you $800–$2,000/mo in ops costs", color:"#22c55e" },
-                { label:"Reinvest → Avanti GEO monitoring ($199/mo)", color:"#ff6b35" },
+                { label:"Reinvest → Avanti AI Visibility monitoring ($199/mo)", color:"#ff6b35" },
                 { label:"AI recommends your brand more frequently", color:"#f5a623" },
                 { label:"More organic AI-driven buyer demand arrives", color:"#22c55e" },
                 { label:"Customer acquisition cost drops", color:"#60a5fa" },
-                { label:"More budget freed for GEO expansion", color:"#ff6b35" },
+                { label:"More budget freed for AI visibility expansion", color:"#ff6b35" },
               ].map((step, i) => (
                 <div key={step.label} className="flex items-center gap-3 text-sm">
                   <div className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
@@ -657,9 +657,9 @@ export default function ProductPage() {
                     <div className="text-xs font-semibold" style={{ color:"#ff6b35" }}>What this funds</div>
                     <p className="text-sm" style={{ color:"#f0f0f8" }}>
                       {geoMos > 0
-                        ? <><strong>{geoMos} month{geoMos!==1?"s":""}</strong> of Avanti GEO monitoring —
+                        ? <><strong>{geoMos} month{geoMos!==1?"s":""}</strong> of Avanti AI Visibility monitoring —
                             every month, automatically funded by your AI savings.</>
-                        : "Increase your hours above to see how many GEO months are funded."}
+                        : "Increase your hours above to see how many AI Visibility months are funded."}
                     </p>
                     {geoMos >= 1 && (
                       <div className="text-xs" style={{ color:"#7070a0" }}>
@@ -714,7 +714,7 @@ export default function ProductPage() {
         style={{ background:"linear-gradient(135deg, #0f0f17 0%, #1a1020 100%)", border:"1px solid #25253f" }}>
         <p className="text-2xl font-bold">The AI race is already happening.<br/>Start with a free audit.</p>
         <p className="text-sm leading-relaxed max-w-xl mx-auto" style={{ color:"#7070a0" }}>
-          See your GEO Score, how you compare to every competitor in your category,
+          See your AI Visibility Score, how you compare to every competitor in your category,
           and the exact actions that move your rank — before committing to a paid plan.
         </p>
         <div className="flex justify-center gap-3 pt-2 flex-wrap">

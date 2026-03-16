@@ -833,7 +833,7 @@ async def get_content_briefs(
         )
 
         prompt = (
-            f"You are a GEO (Generative Engine Optimization) strategist.\n"
+            f"You are an AI Visibility Management strategist.\n"
             f"Brand: {run.brand_name}\n"
             f"Category: {run.category} | Region: {run.region}\n"
             f"Competitors: {', '.join(competitor_names) or 'none specified'}\n\n"
@@ -1143,14 +1143,14 @@ async def get_geo_plan(
     run_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
 ):
-    """Return cached GEO Action Plan for a run (if it exists)."""
+    """Return cached AI Visibility Plan for a run (if it exists)."""
     stmt = select(GeoPlan).where(GeoPlan.run_id == run_id)
     result = await db.execute(stmt)
     plan = result.scalar_one_or_none()
     if not plan:
         raise HTTPException(
             status_code=404,
-            detail="GEO Plan not yet generated for this run. Use POST to generate.",
+            detail="AI Visibility Plan not yet generated for this run. Use POST to generate.",
         )
     return plan
 
@@ -1161,7 +1161,7 @@ async def create_geo_plan(
     db: AsyncSession = Depends(get_db),
     user: User | None = Depends(get_current_user_optional),
 ):
-    """Generate a GEO Action Plan for a completed run (on-demand)."""
+    """Generate an AI Visibility Plan for a completed run (on-demand)."""
     run = await db.get(Run, run_id)
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
@@ -1173,7 +1173,7 @@ async def create_geo_plan(
     if existing.scalar_one_or_none():
         raise HTTPException(
             status_code=409,
-            detail="GEO Plan already exists for this run. Use GET to retrieve it.",
+            detail="AI Visibility Plan already exists for this run. Use GET to retrieve it.",
         )
 
     # Credit check: 2 credits for free-tier users
@@ -1189,7 +1189,7 @@ async def create_geo_plan(
                         "code": "credits_exhausted",
                         "balance": user.credit_balance,
                         "cost": credit_cost,
-                        "message": "Not enough credits for GEO Plan generation.",
+                        "message": "Not enough credits for AI Visibility Plan generation.",
                     },
                 )
             user.credit_balance -= credit_cost

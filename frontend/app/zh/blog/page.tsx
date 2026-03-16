@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "ai-poisoning-vs-visibility",
+    tag: "行业立场",
+    title: "AI 投毒 vs AI 可见度管理：阿凡提的立场",
+    excerpt:
+      "2026 年央视 3.15 晚会曝光了 AI 数据投毒灰产。我们做监测，不做操纵。了解 AI 投毒与正当 AI 可见度管理的本质区别。",
+    date: "2026年3月15日",
+    readTime: "8 分钟阅读",
+  },
+  {
     slug: "2026-03-15-ai-recommendation-sourcing-opportunities",
     tag: "AI推荐",
     title: "利用AI发掘跨境电商采购机会",
@@ -108,6 +117,7 @@ const POSTS = [
 ];
 
 const TAG_COLORS: Record<string, { bg: string; color: string }> = {
+  "行业立场":      { bg: "rgba(255,68,77,0.12)",  color: "#ff4d6d" },
   "GEO 案例分析":  { bg: "rgba(255,107,53,0.12)", color: "#ff6b35" },
   "AI 选品报告":   { bg: "rgba(34,197,94,0.10)",  color: "#22c55e" },
   "GEO 入门指南":  { bg: "rgba(245,166,35,0.10)", color: "#f5a623" },

@@ -166,8 +166,8 @@ export default function LandingView({ lang }: Props) {
               <span className="text-lg font-black" style={{ color: "#22c55e" }}>+5.1</span>
               <span className="text-xs leading-tight" style={{ color: "#9090b0" }}>
                 {lang === "zh"
-                  ? "厦门跨境卖家首月 GEO 分数提升"
-                  : "GEO Score improvement for Xiamen seller in month 1"}
+                  ? "厦门跨境卖家首月 AI 可见度评分提升"
+                  : "AI Visibility Score improvement for Xiamen seller in month 1"}
               </span>
             </div>
             <div className="flex items-center gap-4 flex-wrap">
@@ -227,7 +227,7 @@ export default function LandingView({ lang }: Props) {
                     cursor: "pointer",
                   }}
                 >
-                  {lang === "zh" ? "GEO 分数" : "GEO Score"}
+                  {lang === "zh" ? "AI 可见度评分" : "AI Visibility Score"}
                 </button>
                 <button
                   onClick={() => setHeroTab("traffic")}
@@ -301,7 +301,7 @@ export default function LandingView({ lang }: Props) {
                           {brand.name}
                         </div>
                         <div className="text-xs" style={{ color: "#7070a0" }}>
-                          {lang === "zh" ? "GEO 分数" : "GEO Score"}
+                          {lang === "zh" ? "AI 可见度评分" : "AI Visibility Score"}
                         </div>
                       </div>
                       <div className="text-right">
@@ -428,8 +428,8 @@ export default function LandingView({ lang }: Props) {
         <div className="px-8 py-5 flex items-center justify-between flex-wrap gap-4" style={{ borderTop: "1px solid #25253f" }}>
           <p className="text-xs" style={{ color: "#7070a0" }}>
             {lang === "zh"
-              ? "Avanti 为 DriveX 制定了完整的 90 天 GEO 行动计划，涵盖内容策略、媒体联系和 OKR 追踪。"
-              : "Avanti built DriveX a full 90-day GEO Action Plan with content strategy, media outreach, and OKR tracking."}
+              ? "Avanti 为 DriveX 制定了完整的 90 天 AI 可见度行动计划，涵盖内容策略、媒体联系和 OKR 追踪。"
+              : "Avanti built DriveX a full 90-day AI Visibility Plan with content strategy, media outreach, and OKR tracking."}
           </p>
           <Link
             href={lang === "zh" ? "/zh/company/techvision-pro" : "/company/techvision-pro"}
@@ -543,7 +543,7 @@ export default function LandingView({ lang }: Props) {
           {[
             {
               icon: "🤖",
-              title:   lang === "zh" ? "GEO 可见度监控"    : "GEO Monitor",
+              title:   lang === "zh" ? "AI 可见度监控"    : "AI Visibility Monitor",
               desc:    lang === "zh"
                 ? "追踪你的品牌在 ChatGPT、Claude、Gemini 等 4 大 AI 模型中的排名，第一时间发现曝光变化。"
                 : "Track your brand rank across 4 AI models. Know before buyers do.",
@@ -565,8 +565,8 @@ export default function LandingView({ lang }: Props) {
               icon: "💰",
               title:   lang === "zh" ? "成本优化 ROI"       : "Cost Optimizer",
               desc:    lang === "zh"
-                ? "找出哪些运营成本可以用 AI 替代，省下来的钱直接投入 GEO 建设，形成正向飞轮。"
-                : "Find the ops budget to fund GEO. AI savings compound into visibility.",
+                ? "找出哪些运营成本可以用 AI 替代，省下来的钱直接投入 AI 可见度建设，形成正向飞轮。"
+                : "Find the ops budget to fund AI visibility. AI savings compound into visibility.",
               cta:     lang === "zh" ? "→ 计算节省额"    : "→ Calculate Savings",
               href:    lang === "zh" ? "/zh/optimizer"  : "/optimizer",
               color:   "#3b82f6",
@@ -795,7 +795,7 @@ export default function LandingView({ lang }: Props) {
         {/* Three pillars of healthy GEO */}
         <div>
           <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#ff6b35" }}>
-            {lang === "zh" ? "良性 GEO 的三真标准" : "The Three Standards of Healthy GEO"}
+            {lang === "zh" ? "良性 AI 可见度的三真标准" : "The Three Standards of Healthy AI Visibility"}
           </div>
           <div className="grid md:grid-cols-3 gap-4">
             {[

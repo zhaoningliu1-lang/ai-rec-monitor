@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "ai-poisoning-vs-visibility",
+    tag: "Industry Position",
+    title: "AI Poisoning vs. AI Visibility Management: Our Position",
+    excerpt:
+      "The 2026 CCTV 315 Gala exposed AI data poisoning schemes. We explain the critical difference between manipulating AI and monitoring AI visibility. Avanti measures — we don't manipulate.",
+    date: "March 15, 2026",
+    readTime: "8 min read",
+  },
+  {
     slug: "2026-03-15-ai-recommendation-sourcing-opportunities",
     tag: "AI recommendation",
     title: "Harness AI for Sourcing Opportunities in Cross-Border E-commerce",
@@ -109,6 +118,7 @@ const POSTS = [
 ];
 
 const TAG_COLORS: Record<string, { bg: string; color: string }> = {
+  "Industry Position":  { bg: "rgba(255,68,77,0.12)",  color: "#ff4d6d" },
   "GEO Case Study":     { bg: "rgba(255,107,53,0.12)", color: "#ff6b35" },
   "AI Selection Report":{ bg: "rgba(34,197,94,0.10)",  color: "#22c55e" },
   "GEO Guide":          { bg: "rgba(245,166,35,0.10)", color: "#f5a623" },

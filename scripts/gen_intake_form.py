@@ -157,7 +157,7 @@ def build(output_path: Path):
     intro.paragraph_format.space_after = Pt(12)
     ir = intro.add_run(
         "请填写以下信息，我们将为您生成第一份完整的 AI 品牌基准诊断报告，之后每周持续追踪。\n"
-        "报告包含：GEO Score · 四大 AI 引擎表现 · 竞品对比 · 幻觉检测 · 选品情报 · 优化行动计划"
+        "报告包含：AI Visibility Score · 四大 AI 引擎表现 · 竞品对比 · 幻觉检测 · 选品情报 · 优化行动计划"
     )
     ir.font.size = Pt(9.5)
     ir.font.color.rgb = MUTED
@@ -220,7 +220,7 @@ def build(output_path: Path):
     add_section_header(doc, "PART 5", "这次合作，你最想了解什么？（可多选）")
     t5 = create_table(doc)
     add_checkbox_row(t5, "优先关注项", [
-        "我的品牌 GEO Score 和 AI 引擎排名",
+        "我的品牌 AI Visibility Score 和 AI 引擎排名",
         "竞品在 AI 里的表现和差距",
         "AI 有没有说错关于我们产品的信息（幻觉检测）",
         "当前 AI 正在向买家推荐哪些品类 / 产品（选品情报）",
