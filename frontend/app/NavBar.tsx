@@ -101,6 +101,7 @@ export default function NavBar() {
     { href: h("/runs/new"), label: p("New Analysis", "新建分析") },
   ];
   const monitorItems: DropdownItem[] = [
+    { href: h("/brand-safety"),  label: p("Brand Safety",  "品牌安全"),   badge: "New" },
     { href: h("/trends"),        label: p("Trends",        "行业趋势") },
     { href: h("/hallucination"), label: p("Accuracy",      "幻觉检测") },
     { href: h("/reddit"),        label: p("Reddit",        "Reddit 引用") },
@@ -125,6 +126,7 @@ export default function NavBar() {
         ...monitorItems,
         ...optimizeItems,
         ...workspaceItems,
+        { href: h("/blog"), label: p("Research", "研究报告") },
       ]
     : [
         { href: h("/brand-safety"),  label: p("Brand Safety",   "品牌安全") },
@@ -171,6 +173,11 @@ export default function NavBar() {
             <NavDropdown label={p("Monitor",   "监测")}  items={monitorItems}    isActive={isActive} />
             <NavDropdown label={p("Optimize",  "优化")}  items={optimizeItems}   isActive={isActive} />
             <NavDropdown label={p("Workspace", "工作台")} items={workspaceItems}  isActive={isActive} />
+            <Link href={h("/blog")}
+              className="text-sm px-3 py-1.5 rounded-full transition-colors hover:text-white"
+              style={isActive(h("/blog")) ? { color: "#f0f0f8", background: "rgba(255,107,53,0.12)" } : { color: "#7070a0" }}>
+              {p("Research", "研究报告")}
+            </Link>
           </div>
         )}
 
