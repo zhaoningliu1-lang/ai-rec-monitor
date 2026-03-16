@@ -22,7 +22,7 @@ from app.services.tiktok_shop import (
 
 _REDIRECT_URI = os.getenv(
     "TIKTOK_REDIRECT_URI",
-    "https://avantia2a.com/api/tiktok/callback",
+    "https://ai-rec-monitor-production.up.railway.app/tiktok/callback",
 )
 
 router = APIRouter(prefix="/tiktok", tags=["tiktok"])
