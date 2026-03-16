@@ -73,14 +73,14 @@ function GenerateButton({ onGenerate, generating }: { onGenerate: () => void; ge
     <div className="rounded-2xl p-12 text-center space-y-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
       <div className="text-3xl mb-2">🎯</div>
       <p className="text-sm" style={{ color: "#9090b0" }}>
-        No plan generated yet for this scan. Generate a custom GEO Action Plan based on your scan data.
+        No plan generated yet for this scan. Generate a custom AI Visibility Plan based on your scan data.
       </p>
       <button
         onClick={onGenerate}
         className="px-6 py-3 rounded-xl text-sm font-semibold transition-opacity hover:opacity-85"
         style={{ background: "#ff6b35", color: "#fff" }}
       >
-        Generate GEO Action Plan
+        Generate AI Visibility Plan
       </button>
       <p className="text-xs" style={{ color: "#555580" }}>Costs 2 credits · Takes ~10 seconds</p>
     </div>
@@ -156,7 +156,7 @@ function ActionCards({
                 <div className="pt-3 space-y-3">
                   <div>
                     <div className="text-xs font-semibold mb-1 uppercase tracking-wider" style={{ color: "#7070a0" }}>
-                      Why This Matters for GEO
+                      Why This Matters for AI Visibility
                     </div>
                     <p className="text-sm leading-relaxed" style={{ color: "#9090b0" }}>{action.why}</p>
                   </div>
@@ -601,7 +601,7 @@ export default function GeoActionPage() {
             className="text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full"
             style={{ background: "rgba(96,165,250,0.12)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.25)" }}
           >
-            GEO Action Plan
+            AI Visibility Plan
           </div>
           <div className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(255,107,53,0.08)", color: "#ff6b35" }}>
             Powered by Avanti
@@ -609,7 +609,7 @@ export default function GeoActionPage() {
         </div>
         <h1 className="text-3xl font-black">Your AI Visibility Playbook — Step by Step</h1>
         <p className="text-sm leading-relaxed max-w-2xl" style={{ color: "#9090b0" }}>
-          Knowing your GEO score is only the start. This playbook tells you exactly what to fix, publish,
+          Knowing your AI Visibility Score is only the start. This playbook tells you exactly what to fix, publish,
           and say — so AI models start citing your brand more accurately and more often.
         </p>
       </div>
@@ -623,7 +623,7 @@ export default function GeoActionPage() {
           <span className="text-lg">🔍</span>
           <div className="flex-1">
             <p className="text-sm font-medium" style={{ color: "#f0f0f8" }}>
-              This is a demo plan. Sign in and run a scan to get your custom GEO Action Plan.
+              This is a demo plan. Sign in and run a scan to get your custom AI Visibility Plan.
             </p>
           </div>
           <Link
@@ -671,7 +671,7 @@ export default function GeoActionPage() {
       {!isDemo && runs.length === 0 && !loading && (
         <div className="rounded-2xl p-12 text-center space-y-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
           <p className="text-sm" style={{ color: "#9090b0" }}>
-            Run your first AI visibility scan to get a custom GEO Action Plan.
+            Run your first AI visibility scan to get a custom AI Visibility Plan.
           </p>
           <Link
             href="/audit"
@@ -717,7 +717,7 @@ export default function GeoActionPage() {
           >
             <div className="flex flex-col justify-center">
               <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#7070a0" }}>
-                Current GEO Score
+                Current AI Visibility Score
               </div>
               <div
                 className="text-6xl font-black mb-1"
@@ -786,7 +786,7 @@ export default function GeoActionPage() {
               style={{ background: "rgba(255,77,109,0.04)", border: "1px solid rgba(255,77,109,0.2)" }}
             >
               <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#ff4d6d" }}>
-                What&apos;s Holding Down Your GEO Score
+                What&apos;s Holding Down Your AI Visibility Score
               </div>
               <ul className="space-y-2">
                 {plan.weaknesses.map((w, i) => (
@@ -869,13 +869,13 @@ export default function GeoActionPage() {
       {/* How GEO Works — always show */}
       <div className="rounded-2xl p-6 space-y-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
         <h3 className="font-bold text-sm uppercase tracking-widest" style={{ color: "#ff6b35" }}>
-          How GEO Optimization Works
+          How AI Visibility Optimization Works
         </h3>
         <div className="grid md:grid-cols-3 gap-4">
           {[
             { icon: "📡", title: "AI scrapes the open web", desc: "ChatGPT, Claude, and Gemini pull from your product pages, Reddit, review sites, and news articles. The quality and structure of that content determines what they say." },
             { icon: "⚡", title: "Structure beats content volume", desc: "A single well-structured FAQ with schema markup outperforms 10 blog posts. AI is a parser — give it clean, structured facts and it will cite them." },
-            { icon: "📈", title: "GEO compounds over time", desc: "Each action reinforces the next. Correcting a spec on your product page + responding to a Reddit thread + getting one expert review creates a citation triangle that's hard to displace." },
+            { icon: "📈", title: "AI visibility compounds over time", desc: "Each action reinforces the next. Correcting a spec on your product page + responding to a Reddit thread + getting one expert review creates a citation triangle that's hard to displace." },
           ].map(item => (
             <div key={item.icon} className="flex gap-3">
               <div className="text-xl shrink-0">{item.icon}</div>
@@ -894,7 +894,7 @@ export default function GeoActionPage() {
         style={{ background: "rgba(255,107,53,0.06)", border: "1px solid rgba(255,107,53,0.2)" }}
       >
         <div className="flex-1">
-          <div className="font-semibold mb-1">Get a custom GEO action plan for your brand</div>
+          <div className="font-semibold mb-1">Get a custom AI visibility plan for your brand</div>
           <p className="text-sm" style={{ color: "#9090b0" }}>
             We&apos;ll audit your AI visibility, identify your top citation blockers, and give you a step-by-step playbook to fix them.
           </p>

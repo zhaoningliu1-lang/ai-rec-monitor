@@ -1,4 +1,4 @@
-"""Generate rich GEO Action Plans from run data using Claude Sonnet."""
+"""Generate rich AI Visibility Plans from run data using Claude Sonnet."""
 import asyncio
 import json
 import logging
@@ -16,7 +16,7 @@ from app.models import GeoPlan, PromptResult, Run
 logger = logging.getLogger(__name__)
 
 _GEO_PLAN_SYSTEM = """\
-You are an elite GEO (Generative Engine Optimization) strategist.
+You are an elite AI Visibility Strategist.
 Given a brand's AI visibility data, generate a comprehensive action plan.
 
 You will receive:
@@ -37,7 +37,7 @@ Return ONLY a valid JSON object with this exact structure:
       "title": "Short action title",
       "why": "Why this matters for AI citation (reference specific data points)",
       "how": "Concrete step-by-step implementation instructions",
-      "impact": "+N GEO score",
+      "impact": "+N AI visibility score",
       "effort": "low|medium|high"
     }
   ]
@@ -84,7 +84,7 @@ async def generate_geo_plan(
     run_id: uuid.UUID,
     session_factory: async_sessionmaker[AsyncSession],
 ) -> GeoPlan:
-    """Generate and store a full GEO Action Plan for a completed run."""
+    """Generate and store a full AI Visibility Plan for a completed run."""
     from app.routers.reports import _compute_metrics
 
     # ── Load run data ────────────────────────────────────────────────────────
@@ -219,7 +219,7 @@ async def generate_geo_plan(
     prompt = (
         f"{_GEO_PLAN_SYSTEM}\n\n"
         f"Brand data:\n{json.dumps(data_context, indent=2, ensure_ascii=False)}\n\n"
-        f"Generate the GEO Action Plan JSON."
+        f"Generate the AI Visibility Plan JSON."
     )
 
     # ── 5. Call Claude Sonnet ────────────────────────────────────────────────

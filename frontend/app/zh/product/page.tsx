@@ -132,7 +132,7 @@ export default function ZhProductPage() {
           >1</div>
           <div>
             <div className="text-xs font-semibold uppercase tracking-widest mb-0.5" style={{ color: "#ff6b35" }}>诊断</div>
-            <h2 className="text-2xl font-black">AI 排名第几？GEO 评分诊断你的可见度</h2>
+            <h2 className="text-2xl font-black">AI 排名第几？AI 可见度评分诊断你的可见度</h2>
           </div>
         </div>
 
@@ -141,11 +141,11 @@ export default function ZhProductPage() {
             <p className="text-sm leading-relaxed" style={{ color: "#9090b0" }}>
               阿凡提调用 ChatGPT、Claude、Gemini、Perplexity 四大 AI，
               针对你的品类运行 20+ 个真实买家查询——就像你的目标客户实际会问的那些问题。
-              结果给出 GEO 评分（越低越好）和与竞品的 SOV 声量对比。
+              结果给出 AI 可见度评分（越低越好）和与竞品的 SOV 声量对比。
             </p>
             <ul className="space-y-2 text-sm" style={{ color: "#9090b0" }}>
               {[
-                "GEO 评分 · 越低 = 被推荐越多",
+                "AI 可见度评分 · 越低 = 被推荐越多",
                 "与竞品的声量份额（SOV）对比",
                 "按查询意图（高意向 / 对比 / 资讯）分类分析",
                 "引用来源追溯（YouTube / 评测网站 / 社区）",
@@ -177,9 +177,9 @@ export default function ZhProductPage() {
                 style={{ background: "rgba(245,166,35,0.12)", border: "2px solid #f5a623", color: "#f5a623" }}
               >41</div>
               <div>
-                <div className="text-sm font-semibold">GEO 评分</div>
+                <div className="text-sm font-semibold">AI 可见度评分</div>
                 <div className="text-xs mt-0.5" style={{ color: "#f5a623" }}>观望区间 — 竞品正在侵蚀你的 AI 份额</div>
-                <div className="text-xs mt-1" style={{ color: "#7070a0" }}>GEO 综合分：68/100 · 趋势 ↑</div>
+                <div className="text-xs mt-1" style={{ color: "#7070a0" }}>AI 可见度综合分：68/100 · 趋势 ↑</div>
               </div>
             </div>
             <div className="space-y-2">
@@ -225,7 +225,7 @@ export default function ZhProductPage() {
 
         <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
           <div className="px-6 py-4 flex items-center gap-3" style={{ background: "#0f0f17", borderBottom: "1px solid #25253f" }}>
-            <span className="text-sm font-semibold">DriveX International — 4 周 GEO 趋势</span>
+            <span className="text-sm font-semibold">DriveX International — 4 周 AI 可见度趋势</span>
             <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(255,107,53,0.08)", color: "#ff6b35" }}>
               Shopee SEA · Amazon US
             </span>
@@ -263,10 +263,10 @@ export default function ZhProductPage() {
         >
           <div className="text-3xl shrink-0">📊</div>
           <div>
-            <div className="font-semibold text-sm mb-1">GEO → 平台销量信号相关性</div>
+            <div className="font-semibold text-sm mb-1">AI 可见度 → 平台销量信号相关性</div>
             <p className="text-sm leading-relaxed" style={{ color: "#9090b0" }}>
-              JumpStart Pro GEO 分 4 周 +16 → Shopee MY 同期搜索量 +23%。
-              DriveSafe Pro GEO 分 −20 → 独立站流量 −18%。
+              JumpStart Pro AI 可见度分 4 周 +16 → Shopee MY 同期搜索量 +23%。
+              DriveSafe Pro AI 可见度分 −20 → 独立站流量 −18%。
               AI 可见度是平台流量的领先指标，提前 2–4 周预警。
             </p>
           </div>
@@ -316,7 +316,7 @@ export default function ZhProductPage() {
                   <div className="text-xs" style={{ color: "#7070a0" }}>AI 提及</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-sm font-bold" style={{ color: ARRS_COLOR(p.arrs) }}>GEO {p.arrs}</div>
+                  <div className="text-sm font-bold" style={{ color: ARRS_COLOR(p.arrs) }}>AI {p.arrs}</div>
                   <div className="text-xs" style={{ color: "#7070a0" }}>{p.priceRange}</div>
                 </div>
               </div>
@@ -384,7 +384,7 @@ export default function ZhProductPage() {
             style={{ background: "rgba(96,165,250,0.12)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.35)" }}>4</div>
           <div>
             <div className="text-xs font-semibold uppercase tracking-widest mb-0.5" style={{ color: "#60a5fa" }}>优化 & 资金</div>
-            <h2 className="text-2xl font-black">省下的运营成本，正好能支付 GEO 订阅</h2>
+            <h2 className="text-2xl font-black">省下的运营成本，正好能支付 AI 可见度监控订阅</h2>
           </div>
         </div>
 
@@ -439,14 +439,14 @@ export default function ZhProductPage() {
                 <div className="rounded-lg p-4 space-y-1" style={{ background: "rgba(255,107,53,.08)", border: "1px solid rgba(255,107,53,.2)" }}>
                   <div className="text-xs font-semibold" style={{ color: "#ff6b35" }}>这笔钱能做什么</div>
                   <p className="text-sm" style={{ color: "#f0f0f8" }}>
-                    {geoMos > 0 ? <><strong>{geoMos} 个月</strong>的阿凡提 GEO 监控，每月自动运行。</> : "拖动滑块增加工时，查看可支持的 GEO 月数。"}
+                    {geoMos > 0 ? <><strong>{geoMos} 个月</strong>的阿凡提 AI 可见度监控，每月自动运行。</> : "拖动滑块增加工时，查看可支持的 AI 可见度监控月数。"}
                   </p>
                 </div>
               )}
               <Link href={loggedIn ? "/runs/new" : "/zh/signup"}
                 className="block text-center text-sm font-semibold px-4 py-3 rounded-xl transition-opacity hover:opacity-85"
                 style={{ background: "#ff6b35", color: "#fff" }}>
-                {loggedIn ? "开始 GEO 监控 →" : "注册——开始节省并投入 GEO →"}
+                {loggedIn ? "开始 AI 可见度监控 →" : "注册——开始节省并投入 AI 可见度 →"}
               </Link>
             </div>
           </div>

@@ -89,9 +89,10 @@ export default function NavBar() {
 
   /* ── LOGGED-OUT: marketing pill links ── */
   const productDropdown: DropdownItem[] = [
+    { href: h("/brand-safety"),  label: p("Brand Safety",    "品牌安全"),       desc: p("AI brand safety audit — 315 response", "AI 品牌安全审计 — 315 专项"),  badge: "New" },
     { href: h("/audit"),         label: p("AI Audit",        "AI 品牌诊断"),    desc: p("See what AI says about your brand", "查询 AI 对你品牌的真实评价") },
     { href: h("/trends"),        label: p("Trend Monitor",   "行业趋势"),       desc: p("Monthly AI recommendation shifts",  "月度 AI 推荐热榜") },
-    { href: h("/geo-action"),    label: p("GEO Action Plan", "GEO 行动计划"),   desc: p("Step-by-step visibility playbook",  "分步提升 AI 可见度") },
+    { href: h("/geo-action"),    label: p("AI Visibility Plan", "AI 可见度行动计划"),   desc: p("Step-by-step visibility playbook",  "分步提升 AI 可见度") },
     { href: h("/b2a-analytics"), label: p("B2A Analytics",   "B2A Analytics"), desc: p("Agent traffic you can't see in GA", "GA 看不到的 AI 来源流量"), badge: "Beta" },
   ];
 
@@ -107,7 +108,7 @@ export default function NavBar() {
     { href: h("/b2a-analytics"), label: p("B2A Analytics", "B2A Analytics"), badge: "Beta" },
   ];
   const optimizeItems: DropdownItem[] = [
-    { href: h("/geo-action"),     label: p("GEO Plan",       "GEO 行动") },
+    { href: h("/geo-action"),     label: p("AI Visibility Plan", "AI 行动") },
     { href: h("/agents"),         label: p("Growth Agent",   "增长引擎") },
     { href: h("/selection"),      label: p("Selection",      "选品情报") },
   ];
@@ -126,6 +127,7 @@ export default function NavBar() {
         ...workspaceItems,
       ]
     : [
+        { href: h("/brand-safety"),  label: p("Brand Safety",   "品牌安全") },
         { href: h("/product"),       label: p("Product",        "产品") },
         { href: h("/categories"),    label: p("Index",          "行业指数") },
         { href: h("/selection"),     label: p("Selection",      "选品情报") },

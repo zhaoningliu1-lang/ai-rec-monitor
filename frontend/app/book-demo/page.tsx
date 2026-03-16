@@ -29,7 +29,7 @@ export default function BookDemoPage() {
           <span style={{ color: "#ff6b35" }}>strategy call</span>
         </h1>
         <p style={{ color: "#7070a0", fontSize: 18, maxWidth: 520, margin: "0 auto" }}>
-          We&apos;ll walk through your brand&apos;s current AI search presence, benchmark it against competitors, and map out a 90-day GEO action plan — live, for free.
+          We&apos;ll walk through your brand&apos;s current AI search presence, benchmark it against competitors, and map out a 90-day AI visibility plan — live, for free.
         </p>
       </div>
 
@@ -38,7 +38,7 @@ export default function BookDemoPage() {
         {[
           { icon: "📊", title: "Your AI Visibility Score", desc: "See exactly how often ChatGPT, Claude & Gemini mention your brand vs competitors." },
           { icon: "🎯", title: "Competitor Gap Analysis", desc: "Identify which brands are winning Share of Voice — and why." },
-          { icon: "🗺️", title: "90-Day GEO Roadmap", desc: "Leave with a custom content + citation plan to close the visibility gap." },
+          { icon: "🗺️", title: "90-Day AI Visibility Roadmap", desc: "Leave with a custom content + citation plan to close the visibility gap." },
         ].map((item) => (
           <div key={item.title} style={{ background: "#12121e", border: "1px solid #25253f", borderRadius: 12, padding: "24px 20px" }}>
             <div style={{ fontSize: 28, marginBottom: 12 }}>{item.icon}</div>
@@ -53,7 +53,7 @@ export default function BookDemoPage() {
         <div style={{ fontSize: 32 }}>💬</div>
         <div>
           <p style={{ fontSize: 14, color: "#d0d0e8", lineHeight: 1.6, fontStyle: "italic" }}>
-            &ldquo;After the strategy call we knew exactly which AI queries to target. Our GEO Score dropped from 58 to 31 in 6 weeks.&rdquo;
+            &ldquo;After the strategy call we knew exactly which AI queries to target. Our AI Visibility Score dropped from 58 to 31 in 6 weeks.&rdquo;
           </p>
           <p style={{ fontSize: 12, color: "#7070a0", marginTop: 8 }}>— DTC Brand Founder, Consumer Electronics</p>
         </div>

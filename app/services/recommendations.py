@@ -12,7 +12,7 @@ from app.models import Recommendation
 logger = logging.getLogger(__name__)
 
 _SYSTEM_PROMPT = """\
-You are an AI search optimization expert specializing in GEO (Generative Engine Optimization).
+You are an AI search optimization expert specializing in AI Visibility Management.
 Given brand visibility metrics from AI recommendation queries, return a JSON array of 3-5
 concrete, actionable items a brand can implement within 2 weeks.
 

@@ -172,8 +172,8 @@ async def cross_validate(
             insights.append({
                 "type": "opportunity",
                 "icon": "💡",
-                "message_en": f"Reddit sentiment is positive ({reddit_score}%) but AI visibility is low (SOV {sov}%). GEO optimization could capture this goodwill.",
-                "message_zh": f"Reddit 情感正面（{reddit_score}%）但 AI 可见度低（SOV {sov}%）。GEO 优化可利用这一好感度。",
+                "message_en": f"Reddit sentiment is positive ({reddit_score}%) but AI visibility is low (SOV {sov}%). AI visibility optimization could capture this goodwill.",
+                "message_zh": f"Reddit 情感正面（{reddit_score}%）但 AI 可见度低（SOV {sov}%）。AI 可见度优化可利用这一好感度。",
             })
         elif reddit_score < 40 and sov >= 30:
             insights.append({

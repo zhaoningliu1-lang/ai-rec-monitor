@@ -54,7 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <ul className="space-y-2 text-xs" style={{ color: "#52526e" }}>
                   <li><a href="/audit" className="hover:text-white transition-colors">AI Brand Audit</a></li>
                   <li><a href="/trends" className="hover:text-white transition-colors">Trend Monitor</a></li>
-                  <li><a href="/geo-action" className="hover:text-white transition-colors">GEO Action Plan</a></li>
+                  <li><a href="/geo-action" className="hover:text-white transition-colors">AI Visibility Plan</a></li>
                   <li><a href="/selection" className="hover:text-white transition-colors">Selection Intelligence</a></li>
                   <li><a href="/pricing" className="hover:text-white transition-colors">Pricing</a></li>
                 </ul>

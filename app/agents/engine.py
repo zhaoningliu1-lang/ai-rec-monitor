@@ -229,7 +229,7 @@ async def analyst_node(state: GrowthState) -> dict:
 
     await _update_cycle(cycle_id, status=CycleStatus.analyzing)
 
-    prompt = f"""You are an AI Search Optimization Analyst for GEO (Generative Engine Optimization).
+    prompt = f"""You are an AI Search Optimization Analyst for AI Visibility Management.
 
 Brand: {state["brand_name"]}
 Category: {state["category"]}
@@ -272,7 +272,7 @@ Analyze the brand's AI visibility. Return ONLY valid JSON:
 # ── Node: Strategist ──────────────────────────────────────────────────────────
 
 async def strategist_node(state: GrowthState) -> dict:
-    """Generate GEO optimization experiment hypotheses."""
+    """Generate AI visibility optimization experiment hypotheses."""
     cycle_id = state["cycle_id"]
     analyst = state["analyst_output"]
     monitor = state["monitor_output"]
@@ -281,7 +281,7 @@ async def strategist_node(state: GrowthState) -> dict:
 
     await _update_cycle(cycle_id, status=CycleStatus.strategizing)
 
-    prompt = f"""You are a GEO Strategist designing experiments to improve brand visibility in AI engines (ChatGPT, Claude, Gemini).
+    prompt = f"""You are an AI Visibility Strategist designing experiments to improve brand visibility in AI engines (ChatGPT, Claude, Gemini).
 
 Brand: {state["brand_name"]}
 Category: {state["category"]}
@@ -294,7 +294,7 @@ Analysis:
 - Opportunities: {json.dumps(analyst.get("opportunities", []), ensure_ascii=False)}
 - Summary: {analyst.get("executive_summary", "")}
 
-Design 3 GEO optimization experiments. Return ONLY a valid JSON array:
+Design 3 AI visibility optimization experiments. Return ONLY a valid JSON array:
 [
   {{
     "id": 1,
