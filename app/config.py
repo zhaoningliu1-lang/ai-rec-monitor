@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     site_url: str = "https://avantia2a.com"
     admin_email: str = "hello@avantia2a.com"
 
+    # Amazon (Rainforest API — product data, BSR, search rankings)
+    rainforest_api_key: str | None = None
+
     # Slack admin notifications
     slack_webhook_url: str | None = None
 

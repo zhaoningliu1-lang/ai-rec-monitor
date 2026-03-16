@@ -734,9 +734,9 @@ def page_cross_platform_overview(d):
         <div style="font-size:7pt;color:var(--muted);margin-top:3px;">商品数据</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Google Trends</div>
-        <div class="stat-value white">{'有' if google else '无'}</div>
-        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">搜索趋势</div>
+        <div class="stat-label">Amazon</div>
+        <div class="stat-value white">{d.get('amazon', {}).get('presence', {}).get('product_count', 0)} SKU</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">Amazon 在售</div>
       </div>
     </div>"""
 
@@ -907,6 +907,99 @@ def page_tiktok_google(d):
       <div class="narrative"><p>品类在泰国 Google 搜索中的热度与 AI 推荐频率存在正相关性。搜索趋势上升的品类，AI 引擎更倾向于主动推荐。{brand} 需要确保在搜索热度高峰期前完成内容优化，以最大化 AI 推荐的转化价值。TikTok Shop 的销售数据和达人内容也会反哺 AI 引擎的推荐模型——高销量、好评多的商品更容易被 AI 推荐给消费者。</p></div>
     </div>"""
     return page(d['brand'], d.get('report_date',''), 12, body)
+
+
+def page_amazon(d):
+    """Amazon presence page — BSR, keyword rankings, vs competitors."""
+    amz = d.get("amazon", {})
+    brand = esc(d["brand"])
+
+    if not amz.get("available") or not amz.get("presence", {}).get("product_count"):
+        body = f"""
+    <div class="section-tag">第二部分 · 跨平台验证</div>
+    <h1 class="page-title">Amazon 平台存在感</h1>
+    <p class="page-subtitle">Amazon Product Intelligence — AI 曝光与 Amazon 销售力相关分析</p>
+    <div class="card">
+      <div class="card-title">数据状态</div>
+      <div class="narrative"><p>Amazon 数据暂不可用（API 未配置或未查到相关商品）。</p></div>
+    </div>"""
+        return page(d["brand"], d.get("report_date", ""), 13, body)
+
+    presence = amz.get("presence", {})
+    kw_rankings = amz.get("keyword_rankings", [])
+    domain = amz.get("domain", "amazon.com")
+
+    # Top products table
+    products_rows = ""
+    for p in presence.get("top_products", [])[:5]:
+        bsr = p.get("bsr")
+        bsr_str = f"#{bsr:,}" if bsr else "—"
+        products_rows += f"""<tr>
+          <td style="font-size:7.5pt;max-width:200px;">{esc(trunc(p.get('title',''), 60))}</td>
+          <td style="font-weight:700;color:var(--or);">{bsr_str}</td>
+          <td>{p.get('rating', 0):.1f} ★</td>
+          <td>{p.get('reviews', 0):,}</td>
+          <td>${p.get('price', 0):.2f}</td>
+        </tr>"""
+
+    # Keyword rankings
+    kw_rows = ""
+    for kw in kw_rankings[:3]:
+        rank = kw.get("brand_rank")
+        rank_str = f"#{rank}" if rank else "未进入前页"
+        rank_color = "#22c55e" if rank and rank <= 10 else "#fbbf24" if rank and rank <= 30 else "#ef4444"
+        kw_rows += f"""<tr>
+          <td style="font-size:8pt;">{esc(kw.get('keyword',''))}</td>
+          <td style="font-weight:700;color:{rank_color};">{rank_str}</td>
+          <td style="font-size:7.5pt;color:var(--muted);">{kw.get('total_results', 0):,} 个结果</td>
+        </tr>"""
+
+    avg_rating = presence.get("avg_rating", 0)
+    product_count = presence.get("product_count", 0)
+    avg_reviews = presence.get("avg_reviews", 0)
+
+    body = f"""
+    <div class="section-tag">第二部分 · 跨平台验证</div>
+    <h1 class="page-title">Amazon 平台存在感</h1>
+    <p class="page-subtitle">Amazon Product Intelligence — AI 曝光与 Amazon 销售力相关分析</p>
+
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">Amazon 在售商品</div>
+        <div class="stat-value orange">{product_count}</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">相关 SKU</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">平均评分</div>
+        <div class="stat-value green">{avg_rating:.1f} ★</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">买家评分</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">平均评论数</div>
+        <div class="stat-value white">{avg_reviews:,}</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">每 SKU 均值</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="gap:16px;">
+      <div class="card">
+        <div class="card-title">Top 商品 — BSR & 评分</div>
+        <table class="data-table">
+          <thead><tr><th>商品名称</th><th>BSR</th><th>评分</th><th>评论</th><th>价格</th></tr></thead>
+          <tbody>{products_rows}</tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">关键词搜索排位</div>
+        <table class="data-table">
+          <thead><tr><th>关键词</th><th>排位</th><th>竞争规模</th></tr></thead>
+          <tbody>{kw_rows if kw_rows else '<tr><td colspan="3" style="color:var(--muted);">暂无关键词数据</td></tr>'}</tbody>
+        </table>
+        <div class="narrative" style="margin-top:10px;"><p>AI 推荐排名与 Amazon 搜索排位存在正相关性——AI 引擎倾向于推荐在 Amazon 具有强销售信号（高 BSR、高评分、大量评论）的品牌。提升 Amazon 搜索排位可间接强化 AI 推荐概率。</p></div>
+      </div>
+    </div>"""
+
+    return page(d["brand"], d.get("report_date", ""), 13, body)
 
 
 def page_competitor_overview(d):
@@ -2038,6 +2131,7 @@ def build_report_html(data: dict) -> str:
         page_reddit(data),
         page_youtube(data),
         page_tiktok_google(data),
+        page_amazon(data),
         page_competitor_overview(data),
         page_competitor_strengths(data),
         *page_competitor_beat(data),                        # auto-splits if long

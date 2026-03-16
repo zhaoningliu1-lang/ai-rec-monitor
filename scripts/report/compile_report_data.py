@@ -11,6 +11,7 @@ Output: scripts/report/<brand>-<product>_data.json
 """
 
 import argparse
+import asyncio
 import json
 import os
 import re
@@ -21,6 +22,14 @@ from pathlib import Path
 
 import psycopg2
 import psycopg2.extras
+
+# Add project root to path for amazon_service import
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+try:
+    from app.services.amazon_service import get_brand_amazon_summary
+    _AMAZON_AVAILABLE = True
+except ImportError:
+    _AMAZON_AVAILABLE = False
 
 # ---------------------------------------------------------------------------
 # DB connection
@@ -391,6 +400,22 @@ def compile_data(run_id: str | None = None, brand: str | None = None,
         {"week": "第12周", "score": min(100, geo_score + 28), "action": "系统性 GEO 优化完成"},
     ]
 
+    # --------------- Amazon presence (Rainforest API) ---------------
+    amazon_data: dict = {"available": False}
+    if _AMAZON_AVAILABLE:
+        try:
+            # Build keywords: brand name + product category
+            category = (product or run.get("category", "")).lower()
+            kw_extras = [f"{brand_name} {category}".strip(), category] if category else []
+            amazon_domain = "amazon.com" if region in ("us", "gb", "ca", "au") else "amazon.com"
+            amazon_data = asyncio.run(
+                get_brand_amazon_summary(brand_name, kw_extras or None, amazon_domain)
+            )
+            logger.info("Amazon data fetched for %s", brand_name) if False else None
+            print(f"[Amazon] brand '{brand_name}' — products: {amazon_data.get('presence', {}).get('product_count', 0)}")
+        except Exception as e:
+            print(f"[Amazon] fetch failed (non-fatal): {e}", file=sys.stderr)
+
     # --------------- Assemble ---------------
     product_label = product or run.get("category", "Product")
     report_slug = f"{brand_name.lower()}-{(product or 'report').lower().replace(' ', '-')}"
@@ -449,6 +474,7 @@ def compile_data(run_id: str | None = None, brand: str | None = None,
         "next_week_focus": f"专注于提高 {brand_name} 的 GEO 得分和 SOV。",
         "roi_steps": roi_steps,
         "roi_target_w12": roi_steps[-1]["score"],
+        "amazon": amazon_data,
     }
 
     return data
