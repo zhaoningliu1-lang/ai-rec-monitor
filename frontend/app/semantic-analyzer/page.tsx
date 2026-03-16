@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Brain, CheckCircle, AlertCircle, ArrowRight, Loader2, CreditCard } from "lucide-react";
-import { useAuth } from "@/lib/auth";
+
 
 interface AnalysisResult {
   score: number;
@@ -82,8 +82,6 @@ export default function SemanticAnalyzerPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { user, isPaid } = useAuth();
-  
   const isZh = typeof window !== "undefined" && window.location?.pathname?.startsWith("/zh");
   const t = translations[isZh ? "zh" : "en"];
 
