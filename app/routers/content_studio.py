@@ -14,6 +14,35 @@ from app.models import ContentDraft, User
 from app.routers.auth import get_current_user_optional
 from app.services.content_generator import generate_batch, generate_content
 
+# ── Credit costs (Execute layer — highest value actions) ──────────────────────
+_PAID_TIERS = {"growth", "scale", "enterprise"}
+_CREDITS_PER_PIECE = 10   # single content generation
+_CREDITS_PER_BATCH_ITEM = 10  # per item in batch
+
+
+def _user_tier(user: User) -> str:
+    return user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
+
+
+def _check_and_deduct_credits(user: User | None, cost: int) -> None:
+    """Raise 429 if free-tier user has insufficient credits. Does NOT commit."""
+    if not user:
+        return
+    tier = _user_tier(user)
+    if tier in _PAID_TIERS:
+        return
+    if user.credit_balance < cost:
+        raise HTTPException(
+            status_code=429,
+            detail={
+                "code": "credits_exhausted",
+                "balance": user.credit_balance,
+                "cost": cost,
+                "message": f"Content generation costs {cost} credits. Your balance: {user.credit_balance}. Upgrade to Growth for unlimited generation.",
+            },
+        )
+    user.credit_balance -= cost
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/content", tags=["content-studio"])
@@ -88,9 +117,15 @@ def _draft_out(d: ContentDraft) -> dict:
 @router.post("/generate")
 async def generate(
     req: GenerateRequest,
+    db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_current_user_optional),
 ) -> dict:
-    """Generate content for a single platform using Claude Sonnet."""
+    """Generate content for a single platform using Claude Sonnet.
+    Execute layer: costs _CREDITS_PER_PIECE credits for free-tier users.
+    """
+    # Deduct before generation (fail fast)
+    _check_and_deduct_credits(current_user, _CREDITS_PER_PIECE)
+
     try:
         result = await generate_content(
             brand=req.brand,
@@ -101,7 +136,11 @@ async def generate(
             keywords=req.keywords,
             language=req.language,
         )
-        # Determine content_type from platform
+        # Persist credit deduction only on success
+        if current_user:
+            await db.commit()
+            await db.refresh(current_user)
+
         content_type_map = {
             "reddit": "post",
             "x": "post",
@@ -115,7 +154,11 @@ async def generate(
             "platform": req.platform,
             "content_type": content_type_map.get(req.platform, "post"),
             "brand": req.brand,
+            "credits_deducted": _CREDITS_PER_PIECE if current_user and _user_tier(current_user) not in _PAID_TIERS else 0,
+            "credits_remaining": current_user.credit_balance if current_user else None,
         }
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
@@ -126,15 +169,30 @@ async def generate(
 @router.post("/generate/batch")
 async def generate_batch_endpoint(
     req: BatchGenerateRequest,
+    db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_current_user_optional),
 ) -> dict:
-    """Batch-generate content for multiple platform/keyword combos."""
+    """Batch-generate content for multiple platform/keyword combos.
+    Execute layer: costs _CREDITS_PER_BATCH_ITEM × n for free-tier users.
+    """
     if len(req.items) > 20:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Max 20 items per batch.")
+    total_cost = _CREDITS_PER_BATCH_ITEM * len(req.items)
+    _check_and_deduct_credits(current_user, total_cost)
     try:
         items = [item.model_dump() for item in req.items]
         results = await generate_batch(items)
-        return {"results": results, "total": len(results)}
+        if current_user:
+            await db.commit()
+            await db.refresh(current_user)
+        return {
+            "results": results,
+            "total": len(results),
+            "credits_deducted": total_cost if current_user and _user_tier(current_user) not in _PAID_TIERS else 0,
+            "credits_remaining": current_user.credit_balance if current_user else None,
+        }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception("Batch generation failed")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

@@ -43,6 +43,9 @@ async def health():
     return {"status": "ok"}
 
 
+_FREE_TIER_SCANS_PER_MONTH = 2  # Measure layer is free; just cap monthly volume
+
+
 @router.post("/runs", response_model=RunResponse, status_code=202)
 async def create_run(
     body: CreateRunRequest,
@@ -50,20 +53,28 @@ async def create_run(
     db: AsyncSession = Depends(get_db),
     user: User | None = Depends(get_current_user_optional),
 ):
-    # ── Credit check for free-tier authenticated users ──────────────────────────
-    credit_cost = 0
+    # ── Measure layer is FREE — no credits deducted for scans.
+    # Free-tier users are limited to _FREE_TIER_SCANS_PER_MONTH scans/month.
     if user:
         tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
         if tier not in _PAID_TIERS:
-            credit_cost = max(1, body.num_prompts // 5)
-            if user.credit_balance < credit_cost:
+            from datetime import datetime, timezone
+            now = datetime.now(timezone.utc)
+            month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            monthly_count = await db.scalar(
+                select(func.count(Run.id)).where(
+                    Run.user_id == user.id,
+                    Run.created_at >= month_start,
+                )
+            ) or 0
+            if monthly_count >= _FREE_TIER_SCANS_PER_MONTH:
                 raise HTTPException(
                     status_code=429,
                     detail={
-                        "code": "credits_exhausted",
-                        "balance": user.credit_balance,
-                        "cost": credit_cost,
-                        "message": "Credits exhausted. Add a payment method to continue.",
+                        "code": "scan_limit_reached",
+                        "monthly_scans": monthly_count,
+                        "limit": _FREE_TIER_SCANS_PER_MONTH,
+                        "message": f"Free plan allows {_FREE_TIER_SCANS_PER_MONTH} scans/month. Upgrade to Starter for unlimited scans.",
                     },
                 )
 
@@ -83,8 +94,6 @@ async def create_run(
         user_id=user.id if user else None,
     )
     db.add(run)
-    if credit_cost > 0:
-        user.credit_balance -= credit_cost
     await db.commit()
     await db.refresh(run)
 
@@ -132,32 +141,11 @@ async def run_market_signals(
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
 
-    # Credit check — 2 credits for free tier
-    credit_cost = 0
-    credits_remaining = None
-    if user:
-        tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
-        if tier not in _PAID_TIERS:
-            credit_cost = 2
-            if user.credit_balance < credit_cost:
-                raise HTTPException(
-                    status_code=429,
-                    detail={
-                        "code": "credits_exhausted",
-                        "balance": user.credit_balance,
-                        "cost": credit_cost,
-                        "message": "Credits exhausted. Add a payment method to continue.",
-                    },
-                )
-            user.credit_balance -= credit_cost
-            await db.commit()
-            await db.refresh(user)
-            credits_remaining = user.credit_balance
-
+    # Market signals are part of the Measure layer — free for all tiers.
     from app.services.market_signals import fetch_market_signals
 
     signals = await fetch_market_signals(run.brand_name, run.category or "")
     result = signals.to_dict()
-    result["credits_remaining"] = credits_remaining
-    result["credit_cost"] = credit_cost
+    result["credits_remaining"] = user.credit_balance if user else None
+    result["credit_cost"] = 0
     return result

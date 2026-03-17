@@ -21,16 +21,20 @@ router = APIRouter(prefix="/geo-tools", tags=["geo-tools"])
 # Initialize OpenAI client
 openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
 
-# Credit costs for each tool
+# Credit costs — aligned with Measure → Diagnose → Execute framework.
+# Diagnose tools: low cost (1-2 credits) — help users understand root causes.
+# Execute tools: higher cost (5 credits) — generate/rewrite actionable content.
 CREDIT_COSTS = {
-    "semantic_analyze": 2,
-    "eeat_check": 2,
+    # Diagnose layer
+    "semantic_analyze": 1,
+    "eeat_check": 1,
     "schema_test": 1,
     "intent_analyze": 1,
-    "comparison_build": 2,
-    "faq_generate": 2,
-    "content_brief": 3,
-    "content_score": 2,
+    "comparison_build": 1,
+    "content_score": 1,
+    # Execute layer
+    "faq_generate": 5,
+    "content_brief": 5,
 }
 
 

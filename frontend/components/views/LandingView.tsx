@@ -495,13 +495,15 @@ export default function LandingView({ lang: _lang }: Props) {
               name: p("Free", "免费版"),
               price: "$0",
               per: null,
-              desc: p("One-time GEO diagnosis", "一次性 GEO 诊断"),
+              badge: null,
+              desc: p("2 scans/mo · 50 exec credits", "2 次扫描/月 · 50 执行 credits"),
               highlight: false,
               features: [
-                p("1 brand audit", "1 次品牌诊断"),
-                p("GEO Score report", "GEO 评分报告"),
-                p("Top 3 competitors", "前 3 名竞品对比"),
-                p("Basic recommendations", "基础优化建议"),
+                p("2 GEO scans/month", "每月 2 次 GEO 扫描"),
+                p("GEO Score + SOV report", "GEO 评分 + 声量报告"),
+                p("Competitor comparison", "竞品对比"),
+                p("50 exec credits (one-time)", "50 执行 credits（一次性赠送）"),
+                p("Diagnose tools (1 credit each)", "诊断工具（1 credit/次）"),
               ],
               cta: p("Start Free →", "免费开始 →"),
               href: auditPath,
@@ -511,16 +513,17 @@ export default function LandingView({ lang: _lang }: Props) {
               name: p("Starter", "入门版"),
               price: "$49",
               per: p("/mo", "/月"),
-              desc: p("Monthly monitoring", "每月监控"),
+              badge: null,
+              desc: p("Unlimited scans · 300 exec credits/mo", "无限扫描 · 300 执行 credits/月"),
               highlight: false,
               features: [
-                p("Weekly GEO scans", "每周 GEO 扫描"),
+                p("Unlimited GEO scans", "无限 GEO 扫描"),
                 p("4 AI engines tracked", "4 大 AI 引擎追踪"),
-                p("Competitor benchmarking", "竞品基准对比"),
                 p("Reddit + KOL signals", "Reddit + KOL 信号"),
-                p("Email alerts", "邮件预警"),
+                p("Hallucination monitoring", "幻觉检测监控"),
+                p("300 exec credits/mo", "300 执行 credits/月"),
               ],
-              cta: p("Get Started →", "立即开始 →"),
+              cta: p("Get Starter →", "立即开始 →"),
               href: auditPath,
               external: false,
             },
@@ -528,13 +531,14 @@ export default function LandingView({ lang: _lang }: Props) {
               name: p("Growth", "成长版"),
               price: "$149",
               per: p("/mo", "/月"),
-              desc: p("Monitor + Execute", "监控 + 执行"),
+              badge: p("Most Popular", "最受欢迎"),
+              desc: p("Unlimited scans · 1500 exec credits/mo", "无限扫描 · 1500 执行 credits/月"),
               highlight: true,
               features: [
                 p("Everything in Starter", "入门版全部功能"),
-                p("Content Studio (50 posts/mo)", "Content Studio（50 篇/月）"),
-                p("Auto-publish to social", "自动发布到社交平台"),
-                p("GEO-scored Amazon listings", "Amazon Listing GEO 评分"),
+                p("1500 exec credits/mo + rollover", "1500 执行 credits/月 + 滚存"),
+                p("Content Studio (Generate + Publish)", "Content Studio（生成 + 发布）"),
+                p("Amazon Listing GEO rewrite", "Amazon Listing GEO 改写"),
                 p("Priority support", "优先支持"),
               ],
               cta: p("Start Growth →", "开始成长版 →"),
@@ -545,14 +549,15 @@ export default function LandingView({ lang: _lang }: Props) {
               name: p("Agency", "代理版"),
               price: "$799",
               per: p("/mo", "/月"),
-              desc: p("Unlimited brands", "不限品牌数"),
+              badge: null,
+              desc: p("Unlimited everything · 20 brands", "无限一切 · 20 个品牌"),
               highlight: false,
               features: [
                 p("Everything in Growth", "成长版全部功能"),
+                p("Unlimited exec credits", "无限执行 credits"),
                 p("Up to 20 brands", "最多 20 个品牌"),
                 p("White-label reports", "白标报告"),
-                p("API access", "API 接入"),
-                p("Dedicated account manager", "专属客户经理"),
+                p("API access + account manager", "API 接入 + 专属客户经理"),
               ],
               cta: p("Book Demo →", "预约演示 →"),
               href: CALENDLY,
@@ -568,12 +573,12 @@ export default function LandingView({ lang: _lang }: Props) {
                 boxShadow: plan.highlight ? "0 0 40px rgba(255,107,53,0.08)" : "none",
               }}
             >
-              {plan.highlight && (
+              {plan.badge && (
                 <div
                   className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full self-start mb-4"
                   style={{ background: "rgba(255,107,53,0.15)", color: "#ff6b35" }}
                 >
-                  {p("Most Popular", "最受欢迎")}
+                  {plan.badge}
                 </div>
               )}
               <div className="font-bold text-sm mb-1" style={{ color: "#a0a0c8" }}>{plan.name}</div>
@@ -617,6 +622,35 @@ export default function LandingView({ lang: _lang }: Props) {
               )}
             </div>
           ))}
+        </div>
+
+        {/* Credit explainer */}
+        <div
+          className="mt-6 rounded-xl px-6 py-4 flex flex-col md:flex-row items-start md:items-center gap-4"
+          style={{ background: "#0b0b14", border: "1px solid #1e1e30" }}
+        >
+          <div className="text-xs font-black uppercase tracking-widest shrink-0" style={{ color: "#ff6b35", fontFamily: "monospace" }}>
+            {p("EXEC CREDITS", "执行 CREDITS")}
+          </div>
+          <div className="flex-1 text-xs leading-relaxed" style={{ color: "#555580" }}>
+            {p(
+              "Scans (Measure) and diagnostics (Diagnose) are always free — credits are only consumed when you generate content (Execute). 1 piece = 10 credits.",
+              "扫描（量化）和诊断工具永远免费——只有生成内容时（执行层）才消耗 credits。1 篇内容 = 10 credits。"
+            )}
+          </div>
+          <div className="flex items-center gap-4 shrink-0 flex-wrap">
+            {[
+              { action: p("Blog post", "博客文章"),  cost: "10" },
+              { action: p("Amazon listing", "Amazon Listing"), cost: "10" },
+              { action: p("Reddit reply", "Reddit 回复"), cost: "3" },
+              { action: p("FAQ page", "FAQ 页面"),  cost: "5" },
+            ].map((item) => (
+              <div key={item.action} className="text-center">
+                <div className="text-sm font-black" style={{ color: "#f0f0f8" }}>{item.cost}</div>
+                <div className="text-[10px]" style={{ color: "#333355" }}>{item.action}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </motion.section>
 
