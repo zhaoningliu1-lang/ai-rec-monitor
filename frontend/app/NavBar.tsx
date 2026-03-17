@@ -120,9 +120,10 @@ export default function NavBar() {
     { href: h("/b2a-analytics"), label: p("B2A Analytics", "B2A Analytics"), badge: "Beta" },
   ];
   const optimizeItems: DropdownItem[] = [
-    { href: h("/geo-action"),     label: p("AI Visibility Plan", "AI 行动") },
-    { href: h("/agents"),         label: p("Growth Agent",   "增长引擎") },
-    { href: h("/selection"),      label: p("Selection",      "选品情报") },
+    { href: h("/geo-action"),       label: p("AI Visibility Plan", "AI 行动") },
+    { href: h("/agents"),           label: p("Growth Agent",       "增长引擎") },
+    { href: h("/content-studio"),   label: p("Content Studio",     "内容工作室"), badge: "New" },
+    { href: h("/selection"),        label: p("Selection",          "选品情报") },
   ];
   const workspaceItems: DropdownItem[] = [
     { href: h("/dashboard"),  label: p("Dashboard",    "数据看板") },

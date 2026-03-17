@@ -669,3 +669,117 @@ export const api = {
       `/selection/categories/${encodeURIComponent(category)}/detail`
     ),
 };
+
+// ── Content Studio ────────────────────────────────────────────────────────────
+
+export interface ContentGenerateRequest {
+  brand: string;
+  product: string;
+  platform: "reddit" | "x" | "linkedin" | "amazon" | "blog" | "tiktok";
+  market?: string;
+  geo_gaps?: Record<string, string | number>;
+  keywords?: string[];
+  language?: string;
+}
+
+export interface ContentGenerateResult {
+  title: string;
+  body: string;
+  hashtags: string[];
+  metadata: Record<string, unknown>;
+  platform: string;
+  content_type: string;
+  brand: string;
+}
+
+export interface ContentDraft {
+  id: string;
+  user_id: string | null;
+  brand: string;
+  platform: string;
+  content_type: string;
+  title: string | null;
+  body: string;
+  keywords: string[];
+  status: "draft" | "scheduled" | "published";
+  scheduled_at: string | null;
+  published_at: string | null;
+  platform_url: string | null;
+  created_at: string | null;
+}
+
+export interface ContentDraftCreate {
+  brand: string;
+  platform: string;
+  content_type: string;
+  title?: string;
+  body: string;
+  keywords?: string[];
+  status?: string;
+  scheduled_at?: string;
+}
+
+export interface ContentDraftUpdate {
+  title?: string;
+  body?: string;
+  keywords?: string[];
+  status?: string;
+  scheduled_at?: string;
+  platform_url?: string;
+}
+
+async function patchAuthBody<T>(path: string, body: unknown): Promise<T> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("avanti_token");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${BASE}${path}`, { method: "PATCH", headers, body: JSON.stringify(body) });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${path}`);
+  return res.json();
+}
+
+export const contentApi = {
+  generate: (req: ContentGenerateRequest) =>
+    postAuth<ContentGenerateResult>("/content/generate", req),
+
+  generateBatch: (items: ContentGenerateRequest[]) =>
+    postAuth<{ results: Array<{ index: number; result?: ContentGenerateResult; error?: string }>; total: number }>(
+      "/content/generate/batch",
+      { items }
+    ),
+
+  listDrafts: (params?: { brand?: string; platform?: string; status?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.brand) q.set("brand", params.brand);
+    if (params?.platform) q.set("platform", params.platform);
+    if (params?.status) q.set("status", params.status);
+    const qs = q.toString();
+    return getAuth<{ drafts: ContentDraft[]; total: number }>(`/content/drafts${qs ? `?${qs}` : ""}`);
+  },
+
+  createDraft: (body: ContentDraftCreate) =>
+    postAuth<ContentDraft>("/content/drafts", body),
+
+  updateDraft: (id: string, body: ContentDraftUpdate) =>
+    patchAuthBody<ContentDraft>(`/content/drafts/${id}`, body),
+
+  deleteDraft: (id: string) =>
+    delAuth(`/content/drafts/${id}`),
+
+  publishDraft: (id: string) =>
+    postAuth<{ status: string; url?: string; message: string; draft: ContentDraft }>(
+      `/content/publish/${id}`,
+      {}
+    ),
+
+  scheduleDraft: (id: string, scheduledAt: string) =>
+    postAuth<ContentDraft>(`/content/schedule/${id}?scheduled_at=${encodeURIComponent(scheduledAt)}`, {}),
+
+  getCalendar: (brand?: string) => {
+    const q = new URLSearchParams();
+    if (brand) q.set("brand", brand);
+    const qs = q.toString();
+    return getAuth<{ events: ContentDraft[]; total: number }>(`/content/calendar${qs ? `?${qs}` : ""}`);
+  },
+};

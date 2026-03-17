@@ -22,6 +22,7 @@ from app.routers import tiktok as tiktok_router
 from app.routers import b2a as b2a_router
 from app.routers import selection as selection_router
 from app.routers import geo_tools as geo_tools_router
+from app.routers import content_studio as content_studio_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -212,6 +213,30 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "CREATE INDEX IF NOT EXISTS ix_geo_plans_run_id ON geo_plans (run_id)"
         ))
+        # Content Studio drafts table
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS content_drafts (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+                brand VARCHAR(255) NOT NULL,
+                platform VARCHAR(50) NOT NULL,
+                content_type VARCHAR(50) NOT NULL,
+                title TEXT,
+                body TEXT NOT NULL,
+                keywords JSON NOT NULL DEFAULT '[]',
+                status VARCHAR(20) NOT NULL DEFAULT 'draft',
+                scheduled_at TIMESTAMPTZ,
+                published_at TIMESTAMPTZ,
+                platform_url VARCHAR(500),
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        """))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_content_drafts_brand ON content_drafts (brand)"
+        ))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_content_drafts_user_id ON content_drafts (user_id)"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 
@@ -267,6 +292,7 @@ app.include_router(tiktok_router.router)
 app.include_router(b2a_router.router)
 app.include_router(selection_router.router)
 app.include_router(geo_tools_router.router)
+app.include_router(content_studio_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s
