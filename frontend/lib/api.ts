@@ -782,4 +782,62 @@ export const contentApi = {
     const qs = q.toString();
     return getAuth<{ events: ContentDraft[]; total: number }>(`/content/calendar${qs ? `?${qs}` : ""}`);
   },
+
+  getGeoContext: (brand: string) =>
+    getAuth<GeoContextResponse>(`/content/geo-context?brand=${encodeURIComponent(brand)}`),
+};
+
+// ── GEO Context & Content Score types ────────────────────────────────────────
+
+export interface GeoContextResponse {
+  brand: string;
+  found: boolean;
+  run_id?: string;
+  run_code?: string;
+  scanned_at?: string;
+  region?: string;
+  providers?: string[];
+  geo_gaps: Record<string, string>;
+  snapshot?: {
+    sov_overall: number;
+    sov_high: number;
+    mention_count: number;
+    total_prompts: number;
+    arrs: number;
+  };
+}
+
+export interface ContentScoreRequest {
+  content: string;
+  platform?: string;
+  brand?: string;
+  keywords?: string[];
+}
+
+export interface ContentScoreIssue {
+  type: string;
+  severity: "high" | "medium" | "low";
+  detail: string;
+}
+
+export interface ContentScoreResponse {
+  score: number;
+  grade: string;
+  dimension_scores: {
+    keyword_density: number;
+    structure: number;
+    factual_specificity: number;
+    ai_friendly_language: number;
+  };
+  issues: ContentScoreIssue[];
+  improved_version: string;
+  platform: string;
+  brand: string;
+  credits_remaining: number;
+  credits_deducted: number;
+}
+
+export const geoToolsApi = {
+  scoreContent: (body: ContentScoreRequest) =>
+    postAuth<ContentScoreResponse>("/geo-tools/content/score", body),
 };

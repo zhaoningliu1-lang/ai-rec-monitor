@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { contentApi, ContentDraft, ContentGenerateRequest, ContentGenerateResult } from "@/lib/api";
+import { contentApi, geoToolsApi, ContentDraft, ContentGenerateRequest, ContentGenerateResult, ContentScoreResponse } from "@/lib/api";
 
 /* ── i18n ────────────────────────────────────────────────────────── */
 const T: Record<string, Record<string, string>> = {
@@ -47,6 +47,18 @@ const T: Record<string, Record<string, string>> = {
   publishResult:  { en: "Publish result",                           zh: "发布结果" },
   noEvents:       { en: "Nothing scheduled.",                       zh: "暂无排期。" },
   scheduledAt:    { en: "Scheduled for",                            zh: "排期时间" },
+  tabScore:       { en: "Score",                                    zh: "评分" },
+  autoLoaded:     { en: "Auto-loaded from",                        zh: "自动加载自" },
+  noRunFound:     { en: "No GEO scan found — fill gaps manually.", zh: "未找到 GEO 记录，请手动填写。" },
+  scoreTitle:     { en: "GEO Score Existing Content",              zh: "GEO 评分现有内容" },
+  scoreSubtitle:  { en: "Paste your existing copy and get an AI-visibility score + rewrite.", zh: "粘贴现有文案，获取 AI 可见度评分与改写建议。" },
+  pasteContent:   { en: "Paste your content here…",                zh: "在此粘贴内容…" },
+  analyzeBtn:     { en: "🔍 Analyze GEO Score",                   zh: "🔍 分析 GEO 评分" },
+  analyzing:      { en: "Analyzing…",                              zh: "分析中…" },
+  geoScore:       { en: "GEO Score",                               zh: "GEO 评分" },
+  issuesFound:    { en: "Issues Found",                            zh: "发现问题" },
+  improvedVersion:{ en: "Improved Version",                        zh: "改写建议" },
+  useInGenerate:  { en: "Use in Generate →",                       zh: "用于生成 →" },
 };
 type Lang = "en" | "zh";
 const t = (key: string, lang: Lang) => T[key]?.[lang] ?? T[key]?.en ?? key;
@@ -101,7 +113,11 @@ function PlatformIcon({ platform }: { platform: string }) {
 }
 
 /* ── Tab 1: Generate ─────────────────────────────────────────────── */
-function GenerateTab({ lang }: { lang: Lang }) {
+function GenerateTab({ lang, improvedContent, onImprovedContentUsed }: {
+  lang: Lang;
+  improvedContent?: string | null;
+  onImprovedContentUsed?: () => void;
+}) {
   const [brand, setBrand] = useState("Olayks");
   const [product, setProduct] = useState("Electric Hot Pot");
   const [market, setMarket] = useState("US");
@@ -112,12 +128,45 @@ function GenerateTab({ lang }: { lang: Lang }) {
   const [gapMention, setGapMention] = useState("22%");
   const [gapReddit, setGapReddit] = useState("4 posts");
   const [gapYoutube, setGapYoutube] = useState("496×");
+  const [autoLoadedFrom, setAutoLoadedFrom] = useState<string | null>(null);
+  const [geoContextLoading, setGeoContextLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ContentGenerateResult | null>(null);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [savedMsg, setSavedMsg] = useState("");
+
+  // Auto-load GEO context when brand changes (debounced 600ms)
+  const fetchGeoContext = useCallback(async (brandName: string) => {
+    if (!brandName || brandName.length < 2) return;
+    setGeoContextLoading(true);
+    try {
+      const ctx = await contentApi.getGeoContext(brandName);
+      if (ctx.found && ctx.geo_gaps) {
+        if (ctx.geo_gaps.mention_rate)     setGapMention(ctx.geo_gaps.mention_rate);
+        if (ctx.geo_gaps.high_intent_sov)  setGapPurchase(ctx.geo_gaps.high_intent_sov);
+        if (ctx.geo_gaps.competitor_gap)   setGapYoutube(ctx.geo_gaps.competitor_gap);
+        setAutoLoadedFrom(ctx.run_code || ctx.scanned_at?.slice(0, 10) || null);
+      } else {
+        setAutoLoadedFrom(null);
+      }
+    } catch {
+      setAutoLoadedFrom(null);
+    } finally {
+      setGeoContextLoading(false);
+    }
+  }, []);
+
+  const handleBrandChange = useCallback((val: string) => {
+    setBrand(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchGeoContext(val), 600);
+  }, [fetchGeoContext]);
+
+  // Load on mount for default brand
+  useEffect(() => { fetchGeoContext("Olayks"); }, [fetchGeoContext]);
 
   const handleGenerate = useCallback(async () => {
     if (!brand || !product) return;
@@ -181,10 +230,13 @@ function GenerateTab({ lang }: { lang: Lang }) {
       {/* Input row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div>
-          <label className="block text-xs text-[#a0a0c0] mb-1">{t("brand", lang)}</label>
+          <label className="block text-xs text-[#a0a0c0] mb-1">
+            {t("brand", lang)}
+            {geoContextLoading && <span className="ml-1 text-[#ff6b35] animate-pulse">⟳</span>}
+          </label>
           <input
             className="w-full bg-[#16162a] border border-[#25253f] rounded-lg px-3 py-2 text-sm text-[#f0f0f8] focus:outline-none focus:border-[#ff6b35]"
-            value={brand} onChange={e => setBrand(e.target.value)}
+            value={brand} onChange={e => handleBrandChange(e.target.value)}
             placeholder="Brand name"
           />
         </div>
@@ -240,7 +292,14 @@ function GenerateTab({ lang }: { lang: Lang }) {
 
       {/* GEO Gaps */}
       <div>
-        <label className="block text-xs text-[#a0a0c0] mb-2">{t("geoGaps", lang)}</label>
+        <div className="flex items-center gap-2 mb-2">
+          <label className="text-xs text-[#a0a0c0]">{t("geoGaps", lang)}</label>
+          {autoLoadedFrom && (
+            <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+              ✓ {t("autoLoaded", lang)} {autoLoadedFrom}
+            </span>
+          )}
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {[
             { key: "gapPurchase", label: t("purchaseRate", lang), val: gapPurchase, set: setGapPurchase },
@@ -268,6 +327,20 @@ function GenerateTab({ lang }: { lang: Lang }) {
           placeholder="electric hot pot, dorm cooking, budget kitchen..."
         />
       </div>
+
+      {/* Improved content banner from Score tab */}
+      {improvedContent && (
+        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-3 flex items-start justify-between gap-3">
+          <div>
+            <div className="text-xs font-semibold text-emerald-400 mb-1">✓ {t("improvedVersion", lang)}</div>
+            <div className="text-xs text-[#a0a0c0] line-clamp-2">{improvedContent.slice(0, 120)}…</div>
+          </div>
+          <button
+            onClick={() => onImprovedContentUsed?.()}
+            className="text-xs text-[#a0a0c0] hover:text-[#f0f0f8] shrink-0"
+          >✕</button>
+        </div>
+      )}
 
       {/* Generate button */}
       <button
@@ -753,12 +826,196 @@ function CalendarTab({ lang }: { lang: Lang }) {
   );
 }
 
+/* ── Tab 5: Score ────────────────────────────────────────────────── */
+function ScoreTab({ lang, onUseContent }: { lang: Lang; onUseContent?: (body: string) => void }) {
+  const [content, setContent] = useState("");
+  const [platform, setPlatform] = useState("amazon");
+  const [brand, setBrand] = useState("Olayks");
+  const [keywords, setKeywords] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<ContentScoreResponse | null>(null);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const handleAnalyze = useCallback(async () => {
+    if (!content.trim()) return;
+    setLoading(true);
+    setError("");
+    setResult(null);
+    try {
+      const res = await geoToolsApi.scoreContent({
+        content,
+        platform,
+        brand,
+        keywords: keywords ? keywords.split(",").map(k => k.trim()).filter(Boolean) : [],
+      });
+      setResult(res);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Analysis failed.");
+    } finally {
+      setLoading(false);
+    }
+  }, [content, platform, brand, keywords]);
+
+  const gradeColor: Record<string, string> = {
+    A: "text-emerald-400", B: "text-green-400", C: "text-amber-300",
+    D: "text-orange-400",  F: "text-red-400",
+  };
+
+  const severityColors: Record<string, string> = {
+    high:   "bg-red-500/10 border-red-500/30 text-red-400",
+    medium: "bg-amber-500/10 border-amber-500/30 text-amber-300",
+    low:    "bg-blue-500/10 border-blue-500/30 text-blue-400",
+  };
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-base font-semibold text-[#f0f0f8]">{t("scoreTitle", lang)}</h2>
+        <p className="text-xs text-[#a0a0c0] mt-0.5">{t("scoreSubtitle", lang)}</p>
+      </div>
+
+      {/* Controls */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div>
+          <label className="block text-xs text-[#a0a0c0] mb-1">{t("brand", lang)}</label>
+          <input
+            className="w-full bg-[#16162a] border border-[#25253f] rounded-lg px-3 py-2 text-sm text-[#f0f0f8] focus:outline-none focus:border-[#ff6b35]"
+            value={brand} onChange={e => setBrand(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-[#a0a0c0] mb-1">{t("platform", lang)}</label>
+          <select
+            className="w-full bg-[#16162a] border border-[#25253f] rounded-lg px-3 py-2 text-sm text-[#f0f0f8] focus:outline-none focus:border-[#ff6b35]"
+            value={platform} onChange={e => setPlatform(e.target.value)}
+          >
+            {PLATFORMS.map(p => <option key={p.id} value={p.id}>{p.icon} {p.label}</option>)}
+            <option value="general">🌐 General</option>
+          </select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-xs text-[#a0a0c0] mb-1">{t("keywords", lang)}</label>
+          <input
+            className="w-full bg-[#16162a] border border-[#25253f] rounded-lg px-3 py-2 text-sm text-[#f0f0f8] focus:outline-none focus:border-[#ff6b35]"
+            value={keywords} onChange={e => setKeywords(e.target.value)}
+            placeholder="keyword1, keyword2…"
+          />
+        </div>
+      </div>
+
+      {/* Paste area */}
+      <textarea
+        className="w-full h-40 bg-[#16162a] border border-[#25253f] rounded-xl px-4 py-3 text-sm text-[#f0f0f8] focus:outline-none focus:border-[#ff6b35] resize-none"
+        placeholder={t("pasteContent", lang)}
+        value={content} onChange={e => setContent(e.target.value)}
+      />
+
+      <button
+        onClick={handleAnalyze}
+        disabled={loading || !content.trim()}
+        className="w-full py-3 rounded-xl bg-[#ff6b35] hover:bg-[#ff8555] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm transition-all"
+      >
+        {loading ? t("analyzing", lang) : t("analyzeBtn", lang)}
+      </button>
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-red-400 text-sm">{error}</div>
+      )}
+
+      {/* Result */}
+      {result && (
+        <div className="space-y-4">
+          {/* Score header */}
+          <div className="bg-[#16162a] border border-[#25253f] rounded-xl p-5">
+            <div className="flex items-center gap-6">
+              <div className="text-center">
+                <div className={`text-4xl font-bold ${gradeColor[result.grade] ?? "text-[#f0f0f8]"}`}>
+                  {result.score}
+                </div>
+                <div className="text-xs text-[#a0a0c0] mt-0.5">{t("geoScore", lang)}</div>
+              </div>
+              <div className={`text-5xl font-bold ${gradeColor[result.grade] ?? "text-[#f0f0f8]"}`}>
+                {result.grade}
+              </div>
+              {/* Dimension scores */}
+              <div className="flex-1 grid grid-cols-2 gap-2">
+                {Object.entries(result.dimension_scores || {}).map(([key, val]) => (
+                  <div key={key} className="flex items-center justify-between bg-[#0d0d1a] rounded px-3 py-1.5">
+                    <span className="text-[10px] text-[#a0a0c0] capitalize">{key.replace(/_/g, " ")}</span>
+                    <span className="text-xs font-semibold text-[#f0f0f8]">{val}/25</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Issues */}
+          {result.issues?.length > 0 && (
+            <div>
+              <div className="text-xs font-semibold text-[#a0a0c0] uppercase tracking-wide mb-2">{t("issuesFound", lang)}</div>
+              <div className="space-y-2">
+                {result.issues.map((issue, i) => (
+                  <div key={i} className={`flex gap-3 items-start rounded-lg border px-3 py-2 text-sm ${severityColors[issue.severity] ?? severityColors.low}`}>
+                    <span className="text-[10px] font-bold uppercase mt-0.5 shrink-0">{issue.severity}</span>
+                    <span>{issue.detail}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Improved version */}
+          {result.improved_version && (
+            <div className="bg-[#16162a] border border-emerald-500/20 rounded-xl p-4 space-y-3">
+              <div className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">{t("improvedVersion", lang)}</div>
+              <div className="text-[#c0c0d8] text-sm leading-relaxed whitespace-pre-wrap max-h-64 overflow-y-auto">
+                {result.improved_version}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(result.improved_version);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="px-3 py-1.5 rounded-lg border border-[#25253f] hover:border-[#ff6b35]/50 text-[#a0a0c0] hover:text-[#f0f0f8] text-xs transition-all"
+                >
+                  {copied ? t("copied", lang) : t("copyBtn", lang)}
+                </button>
+                {onUseContent && (
+                  <button
+                    onClick={() => onUseContent(result.improved_version)}
+                    className="px-3 py-1.5 rounded-lg bg-[#ff6b35]/10 border border-[#ff6b35]/30 text-[#ff6b35] text-xs hover:bg-[#ff6b35]/20 transition-all"
+                  >
+                    {t("useInGenerate", lang)}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 /* ── Main component ──────────────────────────────────────────────── */
 export default function ContentStudioView({ lang = "en" }: { lang?: Lang }) {
-  const [activeTab, setActiveTab] = useState<"generate" | "publish" | "templates" | "calendar">("generate");
+  const [activeTab, setActiveTab] = useState<"generate" | "publish" | "templates" | "calendar" | "score">("generate");
+
+  // Shared state: Score tab can send improved content to Generate tab
+  const [improvedContent, setImprovedContent] = useState<string | null>(null);
+
+  const handleUseImprovedContent = useCallback((body: string) => {
+    setImprovedContent(body);
+    setActiveTab("generate");
+  }, []);
 
   const tabs = [
     { id: "generate",  label: t("tabGenerate",  lang), icon: "✨" },
+    { id: "score",     label: t("tabScore",     lang), icon: "🎯" },
     { id: "publish",   label: t("tabPublish",   lang), icon: "🚀" },
     { id: "templates", label: t("tabTemplates", lang), icon: "📋" },
     { id: "calendar",  label: t("tabCalendar",  lang), icon: "📅" },
@@ -773,12 +1030,12 @@ export default function ContentStudioView({ lang = "en" }: { lang?: Lang }) {
       </div>
 
       {/* Tab nav */}
-      <div className="flex gap-1 bg-[#16162a] border border-[#25253f] rounded-xl p-1">
+      <div className="flex gap-1 bg-[#16162a] border border-[#25253f] rounded-xl p-1 overflow-x-auto">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap min-w-[80px] ${
               activeTab === tab.id
                 ? "bg-[#ff6b35] text-white"
                 : "text-[#a0a0c0] hover:text-[#f0f0f8]"
@@ -792,7 +1049,8 @@ export default function ContentStudioView({ lang = "en" }: { lang?: Lang }) {
 
       {/* Tab content */}
       <div>
-        {activeTab === "generate"  && <GenerateTab  lang={lang} />}
+        {activeTab === "generate"  && <GenerateTab  lang={lang} improvedContent={improvedContent} onImprovedContentUsed={() => setImprovedContent(null)} />}
+        {activeTab === "score"     && <ScoreTab     lang={lang} onUseContent={handleUseImprovedContent} />}
         {activeTab === "publish"   && <PublishTab   lang={lang} />}
         {activeTab === "templates" && <TemplatesTab lang={lang} />}
         {activeTab === "calendar"  && <CalendarTab  lang={lang} />}

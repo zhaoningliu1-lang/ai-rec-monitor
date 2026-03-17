@@ -399,3 +399,86 @@ def _draft_url_linkedin(draft: ContentDraft) -> dict:
     text = (draft.body or "")[:1000]
     url = f"https://www.linkedin.com/sharing/share-offsite/?text={urllib.parse.quote(text)}"
     return {"status": "draft_url", "url": url, "message": "Open the link to post on LinkedIn."}
+
+
+# ── GEO Context (Diagnose → Execute loop closure) ─────────────────────────────
+
+@router.get("/geo-context")
+async def get_geo_context(
+    brand: str = Query(..., description="Brand name to look up"),
+    db: AsyncSession = Depends(get_db),
+    current_user: User | None = Depends(get_current_user_optional),
+) -> dict:
+    """
+    Return the latest GEO scan metrics for a brand.
+    Used by Content Studio to auto-populate GEO gaps in the Generate tab.
+    """
+    from app.models import Run, RunSnapshot, RunStatus, PromptResult
+
+    # Latest completed run for this brand
+    stmt = (
+        select(Run, RunSnapshot)
+        .join(RunSnapshot, RunSnapshot.run_id == Run.id)
+        .where(
+            Run.brand_name.ilike(f"%{brand.strip()}%"),
+            Run.status == RunStatus.done,
+        )
+        .order_by(Run.finished_at.desc())
+        .limit(1)
+    )
+    result = await db.execute(stmt)
+    row = result.first()
+
+    if not row:
+        return {"brand": brand, "found": False, "geo_gaps": {}}
+
+    run, snap = row
+
+    # Top competitor from prompt_results aggregation
+    comp_stmt = select(PromptResult).where(PromptResult.run_id == run.id).limit(200)
+    comp_result = await db.execute(comp_stmt)
+    prompt_results = comp_result.scalars().all()
+
+    # Aggregate competitor mentions
+    comp_counts: dict[str, int] = {}
+    for pr in prompt_results:
+        for comp_name, comp_data in (pr.competitors_data or {}).items():
+            if isinstance(comp_data, dict) and comp_data.get("mentioned"):
+                comp_counts[comp_name] = comp_counts.get(comp_name, 0) + 1
+
+    top_competitor = max(comp_counts, key=lambda k: comp_counts[k]) if comp_counts else None
+    top_comp_count = comp_counts.get(top_competitor, 0) if top_competitor else 0
+
+    # Build geo_gaps dict for Content Studio
+    mention_rate_pct = round((snap.mention_count / snap.total_prompts * 100) if snap.total_prompts else 0, 1)
+    high_intent_pct = round(snap.sov_high * 100, 1) if snap.sov_high else 0
+
+    geo_gaps: dict[str, str] = {
+        "mention_rate": f"{mention_rate_pct}%",
+        "high_intent_sov": f"{high_intent_pct}%",
+        "weighted_sov": f"{round(snap.weighted_sov * 100, 1)}%",
+    }
+    if top_competitor and top_comp_count > 0 and snap.mention_count > 0:
+        ratio = round(top_comp_count / max(snap.mention_count, 1), 1)
+        geo_gaps["top_competitor"] = top_competitor
+        geo_gaps["competitor_gap"] = f"{top_competitor} {ratio}× more mentions"
+    elif top_competitor:
+        geo_gaps["top_competitor"] = top_competitor
+
+    return {
+        "brand": run.brand_name,
+        "found": True,
+        "run_id": str(run.id),
+        "run_code": run.run_code,
+        "scanned_at": run.finished_at.isoformat() if run.finished_at else None,
+        "region": run.region,
+        "providers": run.providers or [],
+        "geo_gaps": geo_gaps,
+        "snapshot": {
+            "sov_overall": round(snap.sov_overall * 100, 1),
+            "sov_high": high_intent_pct,
+            "mention_count": snap.mention_count,
+            "total_prompts": snap.total_prompts,
+            "arrs": round(snap.arrs, 3),
+        },
+    }

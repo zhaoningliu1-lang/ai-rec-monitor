@@ -30,6 +30,7 @@ CREDIT_COSTS = {
     "comparison_build": 2,
     "faq_generate": 2,
     "content_brief": 3,
+    "content_score": 2,
 }
 
 
@@ -724,6 +725,111 @@ Create a brief that optimizes for AI citation while serving human readers."""
     
     return {
         **result,
+        "credits_remaining": user.credit_balance,
+        "credits_deducted": cost,
+    }
+
+
+# ── Content GEO Score ─────────────────────────────────────────────────────────
+
+class ContentScoreRequest(BaseModel):
+    content: str
+    platform: str = "general"   # amazon / reddit / blog / x / linkedin / tiktok / general
+    brand: str = ""
+    keywords: list[str] = []
+
+
+@router.post("/content/score")
+async def score_content(
+    body: ContentScoreRequest,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """
+    Score existing content for GEO (AI-visibility) friendliness.
+    Returns a 0-100 score, specific issues, and an improved rewrite.
+    Cost: 2 credits.
+    """
+    cost = CREDIT_COSTS["content_score"]
+    _check_credits(user, cost)
+
+    platform_context = {
+        "amazon": "Amazon product listing (title + bullets + description)",
+        "reddit": "Reddit post or comment",
+        "blog": "Blog article or landing page",
+        "x": "X/Twitter post or thread",
+        "linkedin": "LinkedIn post",
+        "tiktok": "TikTok video script or caption",
+        "general": "general web content",
+    }.get(body.platform, "general web content")
+
+    brand_line = f"Brand: {body.brand}" if body.brand else ""
+    keywords_line = f"Target keywords: {', '.join(body.keywords)}" if body.keywords else ""
+
+    prompt = f"""You are a GEO (Generative Engine Optimization) expert. Score the following {platform_context} for AI-visibility — how likely an AI assistant (ChatGPT, Claude, Gemini) would cite or reference this content when answering buyer questions.
+
+{brand_line}
+{keywords_line}
+
+CONTENT TO SCORE:
+\"\"\"
+{body.content[:3000]}
+\"\"\"
+
+Score on 4 dimensions (0-25 each):
+1. **Brand/Keyword Density** — Does the brand name and key product terms appear naturally and frequently enough for AI to attribute?
+2. **Structure** — Is there clear structure (lists, FAQs, headers) that AI can easily parse and quote?
+3. **Factual Specificity** — Does it contain citable facts (ratings, specs, numbers, comparisons) that AI trusts?
+4. **AI-Friendly Language** — Does it use clear, definitive statements (not vague marketing fluff) that AI would reproduce?
+
+Return ONLY valid JSON:
+{{
+  "score": <total 0-100>,
+  "grade": "<A/B/C/D/F>",
+  "dimension_scores": {{
+    "keyword_density": <0-25>,
+    "structure": <0-25>,
+    "factual_specificity": <0-25>,
+    "ai_friendly_language": <0-25>
+  }},
+  "issues": [
+    {{"type": "keyword_density", "severity": "high|medium|low", "detail": "<specific actionable issue>"}},
+    {{"type": "structure", "severity": "high|medium|low", "detail": "<specific actionable issue>"}},
+    {{"type": "factual_specificity", "severity": "high|medium|low", "detail": "<specific actionable issue>"}}
+  ],
+  "improved_version": "<rewritten version of the content with all issues fixed, same platform/format>"
+}}"""
+
+    client = AsyncOpenAI(api_key=settings.openai_api_key)
+
+    try:
+        response = await client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=2000,
+            temperature=0.3,
+        )
+        raw = response.choices[0].message.content or "{}"
+        if "```json" in raw:
+            raw = raw.split("```json")[1].split("```")[0].strip()
+        elif "```" in raw:
+            raw = raw.split("```")[1].split("```")[0].strip()
+        result = json.loads(raw)
+    except Exception as e:
+        result = {
+            "score": 0,
+            "grade": "F",
+            "dimension_scores": {"keyword_density": 0, "structure": 0, "factual_specificity": 0, "ai_friendly_language": 0},
+            "issues": [{"type": "error", "severity": "high", "detail": str(e)}],
+            "improved_version": body.content,
+        }
+
+    await _deduct_credits(user, db, cost)
+
+    return {
+        **result,
+        "platform": body.platform,
+        "brand": body.brand,
         "credits_remaining": user.credit_balance,
         "credits_deducted": cost,
     }
