@@ -23,6 +23,7 @@ from app.routers import b2a as b2a_router
 from app.routers import selection as selection_router
 from app.routers import geo_tools as geo_tools_router
 from app.routers import content_studio as content_studio_router
+from app.routers import dashboard as dashboard_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -293,6 +294,7 @@ app.include_router(b2a_router.router)
 app.include_router(selection_router.router)
 app.include_router(geo_tools_router.router)
 app.include_router(content_studio_router.router)
+app.include_router(dashboard_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s

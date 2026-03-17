@@ -113,17 +113,18 @@ function PlatformIcon({ platform }: { platform: string }) {
 }
 
 /* ── Tab 1: Generate ─────────────────────────────────────────────── */
-function GenerateTab({ lang, improvedContent, onImprovedContentUsed }: {
+function GenerateTab({ lang, improvedContent, onImprovedContentUsed, prefill }: {
   lang: Lang;
   improvedContent?: string | null;
   onImprovedContentUsed?: () => void;
+  prefill?: { brand?: string; platform?: string; keywords?: string } | null;
 }) {
-  const [brand, setBrand] = useState("Olayks");
+  const [brand, setBrand] = useState(prefill?.brand ?? "Olayks");
   const [product, setProduct] = useState("Electric Hot Pot");
   const [market, setMarket] = useState("US");
   const [language, setLanguage] = useState("en");
-  const [selectedPlatform, setSelectedPlatform] = useState<PlatformId>("reddit");
-  const [keywords, setKeywords] = useState("");
+  const [selectedPlatform, setSelectedPlatform] = useState<PlatformId>((prefill?.platform as PlatformId) ?? "reddit");
+  const [keywords, setKeywords] = useState(prefill?.keywords ?? "");
   const [gapPurchase, setGapPurchase] = useState("4%");
   const [gapMention, setGapMention] = useState("22%");
   const [gapReddit, setGapReddit] = useState("4 posts");
@@ -1004,6 +1005,21 @@ function ScoreTab({ lang, onUseContent }: { lang: Lang; onUseContent?: (body: st
 /* ── Main component ──────────────────────────────────────────────── */
 export default function ContentStudioView({ lang = "en" }: { lang?: Lang }) {
   const [activeTab, setActiveTab] = useState<"generate" | "publish" | "templates" | "calendar" | "score">("generate");
+  const [prefill, setPrefill] = useState<{ brand?: string; platform?: string; keywords?: string } | null>(null);
+
+  // Read URL prefill params on mount (avoids useSearchParams Suspense requirement)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.get("prefill") === "1") {
+      setPrefill({
+        brand: sp.get("brand") ?? undefined,
+        platform: sp.get("platform") ?? undefined,
+        keywords: sp.get("keywords") ?? undefined,
+      });
+      setActiveTab("generate");
+    }
+  }, []);
 
   // Shared state: Score tab can send improved content to Generate tab
   const [improvedContent, setImprovedContent] = useState<string | null>(null);
@@ -1049,7 +1065,7 @@ export default function ContentStudioView({ lang = "en" }: { lang?: Lang }) {
 
       {/* Tab content */}
       <div>
-        {activeTab === "generate"  && <GenerateTab  lang={lang} improvedContent={improvedContent} onImprovedContentUsed={() => setImprovedContent(null)} />}
+        {activeTab === "generate"  && <GenerateTab  lang={lang} improvedContent={improvedContent} onImprovedContentUsed={() => setImprovedContent(null)} prefill={prefill} />}
         {activeTab === "score"     && <ScoreTab     lang={lang} onUseContent={handleUseImprovedContent} />}
         {activeTab === "publish"   && <PublishTab   lang={lang} />}
         {activeTab === "templates" && <TemplatesTab lang={lang} />}

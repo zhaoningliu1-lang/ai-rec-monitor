@@ -96,6 +96,7 @@ export default function NavBar() {
 
   /* ── LOGGED-IN: Measure layer ── */
   const measureItems: DropdownItem[] = [
+    { href: h("/geo-cmo"),       label: p("GEO Command",   "GEO 指挥台"),  desc: p("AI CMO dashboard · opportunities + fix", "AI CMO 仪表盘 · 机会 + 一键执行"), badge: "New" },
     { href: h("/dashboard"),     label: p("Dashboard",     "数据看板"),    desc: p("GEO Score overview",          "GEO 评分总览") },
     { href: h("/runs/new"),      label: p("New Scan",      "新建扫描"),    desc: p("Run a new AI visibility scan", "运行新的 AI 可见度扫描") },
     { href: h("/trends"),        label: p("Trends",        "行业趋势"),    desc: p("AI recommendation shifts",    "AI 推荐热榜变化") },

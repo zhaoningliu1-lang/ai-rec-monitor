@@ -841,3 +841,78 @@ export const geoToolsApi = {
   scoreContent: (body: ContentScoreRequest) =>
     postAuth<ContentScoreResponse>("/geo-tools/content/score", body),
 };
+
+// ── Dashboard / GEO Command Center ───────────────────────────────────────────
+
+export interface GeoProvider {
+  name: string;
+  key: string;
+  score: number;
+  mentions: number;
+  total: number;
+  avg_position: number | null;
+  status: "ok" | "warn";
+}
+
+export interface GeoCompetitor {
+  name: string;
+  sov: number;
+}
+
+export interface GeoAnalytics {
+  brand: string;
+  run_id: string;
+  run_code: string;
+  scanned_at: string | null;
+  geo: {
+    score: number;
+    sov_overall: number;
+    sov_high: number;
+    mention_count: number;
+    total_prompts: number;
+    sentiment: number;
+    avg_position: number | null;
+    arrs: number;
+  };
+  providers: GeoProvider[];
+  competitors: GeoCompetitor[];
+  category: string | null;
+  region: string | null;
+}
+
+export interface GeoOpportunityFix {
+  route: string;
+  label: string;
+  prefill: {
+    brand: string;
+    product: string | null;
+    platform: string;
+    keywords: string[];
+  };
+}
+
+export interface GeoOpportunity {
+  id: string;
+  type: string;
+  severity: "critical" | "high" | "medium" | "low";
+  title: string;
+  description: string;
+  credit_cost: number;
+  fix: GeoOpportunityFix;
+}
+
+export interface GeoOpportunitiesResponse {
+  brand: string;
+  run_code: string;
+  opportunities: GeoOpportunity[];
+  total: number;
+}
+
+export const dashboardApi = {
+  getAnalytics: (brand: string) =>
+    getAuth<GeoAnalytics>(`/dashboard/analytics?brand=${encodeURIComponent(brand)}`),
+  getOpportunities: (brand: string) =>
+    getAuth<GeoOpportunitiesResponse>(`/dashboard/opportunities?brand=${encodeURIComponent(brand)}`),
+  getBrands: () =>
+    getAuth<{ brands: string[] }>("/dashboard/brands"),
+};
