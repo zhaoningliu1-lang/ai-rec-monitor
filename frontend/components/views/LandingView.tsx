@@ -3,920 +3,616 @@
 import Link from "next/link";
 import { Lang, tx } from "@/lib/i18n";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Search, BarChart2, TrendingUp, Globe, Package } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const CALENDLY = "https://calendly.com/brivesubscription/30min";
 
 const reveal = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 24 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 },
+  transition: { duration: 0.6 },
 };
 
 interface Props {
   lang: Lang;
 }
 
-function GeoScoreRing({ score }: { score: number }) {
-  const r = 28;
+/* ─── Animated counter ─── */
+function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    const step = to / 60;
+    const id = setInterval(() => {
+      start += step;
+      if (start >= to) { setVal(to); clearInterval(id); }
+      else setVal(Math.floor(start));
+    }, 16);
+    return () => clearInterval(id);
+  }, [to]);
+  return <>{val}{suffix}</>;
+}
+
+/* ─── GEO Score ring ─── */
+function ScoreRing({ score, color = "#ff6b35" }: { score: number; color?: string }) {
+  const r = 32;
   const circ = 2 * Math.PI * r;
   const dash = (score / 100) * circ;
   return (
-    <svg width="72" height="72" viewBox="0 0 72 72">
-      <circle cx="36" cy="36" r={r} fill="none" stroke="#25253f" strokeWidth="5" />
+    <svg width="80" height="80" viewBox="0 0 80 80">
+      <circle cx="40" cy="40" r={r} fill="none" stroke="#1e1e30" strokeWidth="5" />
       <circle
-        cx="36" cy="36" r={r} fill="none"
-        stroke="#ff6b35" strokeWidth="5"
+        cx="40" cy="40" r={r} fill="none"
+        stroke={color} strokeWidth="5"
         strokeDasharray={`${dash} ${circ}`}
         strokeLinecap="round"
-        transform="rotate(-90 36 36)"
+        transform="rotate(-90 40 40)"
+        style={{ filter: `drop-shadow(0 0 6px ${color}60)` }}
       />
-      <text x="36" y="40" textAnchor="middle" fontSize="13" fontWeight="800" fill="#f0f0f8">{score}</text>
+      <text x="40" y="45" textAnchor="middle" fontSize="14" fontWeight="900" fill="#f0f0f8">{score}</text>
     </svg>
   );
 }
 
-export default function LandingView({ lang }: Props) {
-  const [heroTab, setHeroTab] = useState<"geo" | "traffic">("geo");
+/* ─── Bracket decoration (nexspark-inspired) ─── */
+function SectionBracket({ num, label }: { num: string; label: string }) {
+  return (
+    <div className="flex items-center gap-3 mb-6">
+      <div
+        className="text-xs font-black tracking-[0.2em] px-2 py-1 rounded"
+        style={{
+          color: "#ff6b35",
+          border: "1px solid rgba(255,107,53,0.4)",
+          background: "rgba(255,107,53,0.06)",
+          fontFamily: "monospace",
+        }}
+      >
+        {num}
+      </div>
+      <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#555580" }}>
+        {label}
+      </div>
+      <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, #25253f, transparent)" }} />
+    </div>
+  );
+}
+
+export default function LandingView({ lang: _lang }: Props) {
+  const lang = _lang;
   const auditPath = lang === "zh" ? "/zh/audit" : "/audit";
+  const p = (en: string, zh: string) => (lang === "zh" ? zh : en);
 
-  const stats = [
-    { val: tx("landing", "stat1Val", lang), label: tx("landing", "stat1Label", lang) },
-    { val: tx("landing", "stat2Val", lang), label: tx("landing", "stat2Label", lang) },
-    { val: tx("landing", "stat3Val", lang), label: tx("landing", "stat3Label", lang) },
-    { val: tx("landing", "stat4Val", lang), label: tx("landing", "stat4Label", lang) },
-  ];
-
-  const plans = [
-    {
-      nameKey: "planFree" as const,
-      priceKey: "planFreePrice" as const,
-      perKey: null as null,
-      descKey: "planFreeDesc" as const,
-      ctaKey: "planCtaFree" as const,
-      ctaHref: auditPath,
-      external: false,
-      featureKeys: ["freeF1", "freeF2", "freeF3", "freeF4"] as const,
-      highlight: false,
-    },
-    {
-      nameKey: "planGrowth" as const,
-      priceKey: "planGrowthPrice" as const,
-      perKey: "planGrowthPer" as const,
-      descKey: "planGrowthDesc" as const,
-      ctaKey: "planCta" as const,
-      ctaHref: auditPath,
-      external: false,
-      featureKeys: ["growthF1", "growthF2", "growthF3", "growthF4", "growthF5"] as const,
-      highlight: false,
-    },
-    {
-      nameKey: "planScale" as const,
-      priceKey: "planScalePrice" as const,
-      perKey: "planGrowthPer" as const,
-      descKey: "planScaleDesc" as const,
-      ctaKey: "planCta" as const,
-      ctaHref: auditPath,
-      external: false,
-      featureKeys: ["scaleF1", "scaleF2", "scaleF3", "scaleF4", "scaleF5"] as const,
-      highlight: true,
-    },
-    {
-      nameKey: "planEnterprise" as const,
-      priceKey: "planEntPrice" as const,
-      perKey: null as null,
-      descKey: "planEntDesc" as const,
-      ctaKey: "planCtaEnt" as const,
-      ctaHref: CALENDLY,
-      external: true,
-      featureKeys: ["entF1", "entF2", "entF3", "entF4", "entF5"] as const,
-      highlight: false,
-    },
-  ];
+  const [heroTab, setHeroTab] = useState<"score" | "traffic">("score");
 
   const mockBrands = [
-    { name: "Anker", score: 78, color: "#22c55e" },
-    { name: lang === "zh" ? "你的品牌" : "Your Brand", score: 34, color: "#ff4d6d" },
-    { name: "NOCO", score: 61, color: "#f5a623" },
-  ];
-
-  const howSteps = [
-    {
-      num: "01",
-      titleKey: "how1Title" as const,
-      descKey: "how1Desc" as const,
-      color: "#ff6b35",
-      Icon: Search,
-    },
-    {
-      num: "02",
-      titleKey: "how2Title" as const,
-      descKey: "how2Desc" as const,
-      color: "#f5a623",
-      Icon: BarChart2,
-    },
-    {
-      num: "03",
-      titleKey: "how3Title" as const,
-      descKey: "how3Desc" as const,
-      color: "#22c55e",
-      Icon: TrendingUp,
-    },
+    { name: "Anker",                    score: 78, color: "#22c55e" },
+    { name: p("Your Brand", "你的品牌"), score: 34, color: "#ff4d6d" },
+    { name: "NOCO",                     score: 61, color: "#f5a623" },
   ];
 
   return (
-    <div className="space-y-24 pb-24">
-      {/* Hero -- asymmetric split layout */}
-      <section className="pt-16 pb-8 relative overflow-hidden">
-        {/* Background orbs */}
+    <div className="pb-32 space-y-28 max-w-5xl mx-auto">
+
+      {/* ═══════════════════════════════════
+          HERO
+      ═══════════════════════════════════ */}
+      <section className="pt-20 relative overflow-hidden">
+        {/* Ambient glow */}
         <div
-          className="absolute top-0 left-1/4 w-[600px] h-[400px] pointer-events-none animate-orb"
-          style={{ background: "radial-gradient(ellipse at center, rgba(255,107,53,0.18) 0%, transparent 70%)", filter: "blur(60px)" }}
-        />
-        <div
-          className="absolute top-16 left-[10%] w-72 h-72 pointer-events-none animate-orb delay-400"
-          style={{ background: "radial-gradient(circle at center, rgba(245,166,35,0.12) 0%, transparent 70%)", filter: "blur(50px)" }}
+          className="absolute -top-20 left-1/3 w-[700px] h-[500px] pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(255,107,53,0.14) 0%, transparent 70%)",
+            filter: "blur(80px)",
+          }}
         />
 
-        <div className="relative z-10 grid md:grid-cols-[55fr_45fr] gap-10 items-center">
-          {/* Left column -- text */}
+        <div className="relative z-10 grid md:grid-cols-[58fr_42fr] gap-12 items-center">
+          {/* Left — copy */}
           <motion.div {...reveal}>
+            {/* Pill */}
             <div
-              className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-6"
-              style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.25)" }}
+              className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full mb-8"
+              style={{ background: "rgba(255,107,53,0.1)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.25)" }}
             >
-              {tx("landing", "pill", lang)}
+              <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+              {p("AI Recommendation Visibility Platform", "AI 推荐可见度监控平台")}
             </div>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tight leading-none mb-4" style={{ color: "#f0f0f8" }}>
-              {tx("landing", "heroLine1", lang)}<br />
-              <span className="shimmer-text">{tx("landing", "heroAccent", lang)}</span>
+
+            {/* Headline */}
+            <h1
+              className="font-black tracking-tight leading-[1.02] mb-5"
+              style={{ fontSize: "clamp(2.4rem, 5vw, 3.6rem)", color: "#f0f0f8" }}
+            >
+              {lang === "zh" ? (
+                <><span style={{ color: "#ff6b35" }}>AI 在推荐</span><br />你的品牌吗？</>
+              ) : (
+                <>Is your brand<br /><span style={{ color: "#ff6b35" }}>visible to AI?</span></>
+              )}
             </h1>
-            <p className="text-base mb-3 max-w-xl font-semibold tracking-wide" style={{ color: "#7070a0" }}>
-              {lang === "zh" ? "被引用。被信任。成为答案。" : "Be Cited. Be Trusted. Be the Answer."}
+
+            <p className="text-lg leading-relaxed mb-3 max-w-lg" style={{ color: "#7070a0" }}>
+              {p(
+                "When buyers ask ChatGPT, Claude, or Gemini for product recommendations — is your brand in the answer?",
+                "当消费者向 ChatGPT、Claude、Gemini 询问产品推荐时——你的品牌出现在答案里了吗？"
+              )}
             </p>
-            <p className="text-lg mb-4 max-w-xl" style={{ color: "#7070a0" }}>
-              {tx("landing", "subheadline", lang)}
+            <p className="text-sm font-semibold mb-8 max-w-lg" style={{ color: "#555580" }}>
+              {p(
+                "Avanti measures, diagnoses, and helps you fix your AI visibility — before your competitors do.",
+                "Avanti 帮你量化、诊断并提升 AI 可见度——在竞争对手之前。"
+              )}
             </p>
-            {/* Social proof micro-stat -- NexSpark-inspired outcome-first */}
-            <div
-              className="inline-flex items-center gap-3 rounded-xl px-4 py-2.5 mb-8"
-              style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)" }}
-            >
-              <span className="text-lg font-black" style={{ color: "#22c55e" }}>+5.1</span>
-              <span className="text-xs leading-tight" style={{ color: "#9090b0" }}>
-                {lang === "zh"
-                  ? "厦门跨境卖家首月 AI 可见度评分提升"
-                  : "AI Visibility Score improvement for Xiamen seller in month 1"}
-              </span>
-            </div>
+
+            {/* CTA */}
             <div className="flex items-center gap-4 flex-wrap">
               <Link
                 href={auditPath}
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-85"
-                style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-sm font-black transition-all duration-300 hover:opacity-90 hover:translate-y-[-1px]"
+                style={{
+                  background: "#ff6b35",
+                  color: "#fff",
+                  boxShadow: "0 0 28px rgba(255,107,53,0.4), 0 4px 16px rgba(255,107,53,0.25)",
+                  letterSpacing: "0.02em",
+                }}
               >
-                {lang === "zh" ? "免费诊断我的品牌 →" : "Free Brand Diagnosis →"}
+                {p("Get Free GEO Diagnosis →", "免费诊断我的品牌 →")}
               </Link>
               <a
                 href={CALENDLY}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium transition-colors hover:text-white"
-                style={{ border: "1px solid #25253f", color: "#7070a0" }}
+                className="text-sm transition-colors hover:text-white"
+                style={{ color: "#555580" }}
               >
-                {lang === "zh" ? "或预约策略通话" : "or Book Strategy Call"}
+                {p("or book a strategy call", "或预约策略通话")}
               </a>
+            </div>
+
+            {/* Trust micro-stat */}
+            <div className="flex items-center gap-6 mt-8 flex-wrap">
+              {[
+                { val: "4", label: p("AI engines tracked", "AI 引擎实时追踪") },
+                { val: "+693%", label: p("AI-driven retail traffic YoY", "AI 零售流量年增") },
+                { val: "5 min", label: p("to your first GEO Score", "获得首份 GEO 评分") },
+              ].map((s) => (
+                <div key={s.val}>
+                  <div className="text-base font-black" style={{ color: "#ff6b35" }}>{s.val}</div>
+                  <div className="text-xs" style={{ color: "#555580" }}>{s.label}</div>
+                </div>
+              ))}
             </div>
           </motion.div>
 
-          {/* Right column -- mock dashboard card */}
+          {/* Right — product preview */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="hidden md:block"
           >
             <div
-              className="rounded-2xl p-6 space-y-5"
-              style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+              className="rounded-2xl overflow-hidden"
+              style={{ background: "#0b0b14", border: "1px solid #25253f", boxShadow: "0 24px 80px rgba(0,0,0,0.6)" }}
             >
-              <div className="flex items-center justify-between">
-                <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7070a0" }}>
-                  {lang === "zh" ? "AI 可见性监控" : "AI Visibility Monitor"}
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full animate-pulse"
-                    style={{ background: "#22c55e" }}
-                  />
-                  <span className="text-xs" style={{ color: "#22c55e" }}>
-                    {lang === "zh" ? "实时" : "Live"}
-                  </span>
-                </div>
+              {/* Window bar */}
+              <div className="flex items-center gap-1.5 px-4 py-3" style={{ borderBottom: "1px solid #1e1e30" }}>
+                {["#ff4d6d", "#f5a623", "#22c55e"].map((c) => (
+                  <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ background: c, opacity: 0.7 }} />
+                ))}
+                <div className="ml-3 text-xs font-mono" style={{ color: "#555580" }}>avantia2a.com — AI Visibility</div>
               </div>
 
-              <div className="flex gap-1 rounded-lg p-0.5" style={{ background: "#161625" }}>
-                <button
-                  onClick={() => setHeroTab("geo")}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
-                  style={{
-                    background: heroTab === "geo" ? "#25253f" : "transparent",
-                    color: heroTab === "geo" ? "#f0f0f8" : "#555580",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  {lang === "zh" ? "AI 可见度评分" : "AI Visibility Score"}
-                </button>
-                <button
-                  onClick={() => setHeroTab("traffic")}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5"
-                  style={{
-                    background: heroTab === "traffic" ? "#25253f" : "transparent",
-                    color: heroTab === "traffic" ? "#f0f0f8" : "#555580",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  {lang === "zh" ? "AI 流量" : "AI Traffic"}
-                  <span
-                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                    style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}
-                  >
-                    +693%
-                  </span>
-                </button>
-              </div>
-
-              {heroTab === "traffic" ? (
-                <>
+              <div className="p-5 space-y-4">
+                {/* Tab bar */}
+                <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: "#161625" }}>
                   {[
-                    { engine: "ChatGPT", sessions: 412, color: "#22c55e", pct: 100 },
-                    { engine: "Perplexity", sessions: 187, color: "#3b82f6", pct: 45 },
-                    { engine: "Gemini", sessions: 94, color: "#f5a623", pct: 23 },
-                    { engine: "Claude", sessions: 31, color: "#a78bfa", pct: 8 },
-                  ].map((item) => (
-                    <div
-                      key={item.engine}
-                      className="flex items-center gap-4 rounded-xl px-4 py-3"
-                      style={{ background: "#161625", border: "1px solid #25253f" }}
+                    { key: "score" as const, label: p("GEO Score", "GEO 评分") },
+                    { key: "traffic" as const, label: p("AI Traffic +693%", "AI 流量 +693%"), badge: true },
+                  ].map((t) => (
+                    <button
+                      key={t.key}
+                      onClick={() => setHeroTab(t.key)}
+                      className="flex-1 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors flex items-center justify-center gap-1.5"
+                      style={{
+                        background: heroTab === t.key ? "#25253f" : "transparent",
+                        color: heroTab === t.key ? "#f0f0f8" : "#555580",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold mb-1" style={{ color: "#f0f0f8" }}>
-                          {item.engine}
-                        </div>
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
-                          <div
-                            className="h-full rounded-full"
-                            style={{ width: `${item.pct}%`, background: item.color }}
-                          />
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-black" style={{ color: item.color }}>
-                          {item.sessions}
-                        </div>
-                        <div className="text-xs" style={{ color: "#7070a0" }}>
-                          {lang === "zh" ? "本周会话" : "sessions/wk"}
-                        </div>
-                      </div>
-                    </div>
+                      {t.label}
+                      {t.badge && heroTab === t.key && (
+                        <span className="text-[9px] px-1 py-0.5 rounded-full font-bold"
+                          style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}>LIVE</span>
+                      )}
+                    </button>
                   ))}
-                  <div className="text-xs text-center pt-1" style={{ color: "#555580" }}>
-                    {lang === "zh" ? "模拟数据 · 仅供展示" : "Simulated data · For illustration"}
-                  </div>
-                </>
-              ) : (
-                <>
-                  {mockBrands.map((brand) => (
-                    <div
-                      key={brand.name}
-                      className="flex items-center gap-4 rounded-xl px-4 py-3"
-                      style={{ background: "#161625", border: "1px solid #25253f" }}
-                    >
-                      <GeoScoreRing score={brand.score} />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold mb-0.5" style={{ color: "#f0f0f8" }}>
-                          {brand.name}
-                        </div>
-                        <div className="text-xs" style={{ color: "#7070a0" }}>
-                          {lang === "zh" ? "AI 可见度评分" : "AI Visibility Score"}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-black" style={{ color: brand.color }}>
-                          {brand.score}
-                        </div>
-                        <div className="text-xs" style={{ color: "#7070a0" }}>/100</div>
-                      </div>
-                    </div>
-                  ))}
+                </div>
 
-                  <div className="text-xs text-center pt-1" style={{ color: "#555580" }}>
-                    {lang === "zh" ? "4 AI 引擎 · 实时追踪" : "4 AI Engines · Real-time Tracking"}
+                {heroTab === "score" ? (
+                  <div className="space-y-2.5">
+                    {mockBrands.map((b) => (
+                      <div
+                        key={b.name}
+                        className="flex items-center gap-3 rounded-xl px-4 py-3"
+                        style={{ background: "#161625", border: "1px solid #1e1e30" }}
+                      >
+                        <ScoreRing score={b.score} color={b.color} />
+                        <div className="flex-1">
+                          <div className="text-sm font-bold mb-0.5" style={{ color: "#f0f0f8" }}>{b.name}</div>
+                          <div className="text-xs" style={{ color: "#555580" }}>
+                            {p("AI Visibility Score", "AI 可见度评分")}
+                          </div>
+                        </div>
+                        <div className="text-2xl font-black" style={{ color: b.color }}>{b.score}</div>
+                      </div>
+                    ))}
+                    <div className="text-[11px] text-center pt-1" style={{ color: "#333355" }}>
+                      {p("Simulated · For illustration only", "模拟数据 · 仅供展示")}
+                    </div>
                   </div>
-                </>
-              )}
+                ) : (
+                  <div className="space-y-2.5">
+                    {[
+                      { engine: "ChatGPT",    sessions: 412, color: "#22c55e", pct: 100 },
+                      { engine: "Perplexity", sessions: 187, color: "#3b82f6", pct: 45 },
+                      { engine: "Gemini",     sessions:  94, color: "#f5a623", pct: 23 },
+                      { engine: "Claude",     sessions:  31, color: "#a78bfa", pct:  8 },
+                    ].map((row) => (
+                      <div
+                        key={row.engine}
+                        className="flex items-center gap-3 rounded-xl px-4 py-3"
+                        style={{ background: "#161625", border: "1px solid #1e1e30" }}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold mb-1" style={{ color: "#f0f0f8" }}>{row.engine}</div>
+                          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
+                            <div className="h-full rounded-full transition-all duration-700"
+                              style={{ width: `${row.pct}%`, background: row.color }} />
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="text-lg font-black" style={{ color: row.color }}>{row.sessions}</div>
+                          <div className="text-[11px]" style={{ color: "#555580" }}>{p("sessions/wk", "会话/周")}</div>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="text-[11px] text-center pt-1" style={{ color: "#333355" }}>
+                      {p("Simulated · For illustration only", "模拟数据 · 仅供展示")}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Stats bar */}
-      <motion.section
-        {...reveal}
-        className="rounded-2xl px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center"
-        style={{ background: "#0f0f17", border: "1px solid #25253f" }}
-      >
-        {stats.map((s) => (
-          <div key={s.label} className="group">
-            <div className="text-3xl font-black mb-1 transition-all duration-500 hover:text-white" style={{ color: "#ff6b35" }}>{s.val}</div>
-            <div className="text-xs" style={{ color: "#7070a0" }}>{s.label}</div>
-          </div>
-        ))}
-      </motion.section>
-
-      <div className="text-xs mt-3 text-center" style={{ color: "#555580" }}>
-        {lang === "zh"
-          ? "* Adobe Analytics：AI 驱动零售流量 2025 年假日季同比增长 +693%"
-          : "* Adobe Analytics: AI-driven retail traffic grew +693% YoY in 2025 holiday season"}
-      </div>
-
-      {/* Case Study -- NexSpark-inspired client results section */}
-      <motion.section
-        {...reveal}
-        className="rounded-2xl overflow-hidden"
-        style={{ background: "#0f0f17", border: "1px solid rgba(255,107,53,0.2)" }}
-      >
-        <div className="px-8 pt-7 pb-2">
-          <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#ff6b35" }}>
-            {lang === "zh" ? "客户案例" : "CASE STUDY"}
-          </div>
-          <h2 className="text-2xl font-black mb-2 leading-tight">
-            {lang === "zh"
-              ? "厦门跨境卖家 DriveX：从 AI 隐身到被推荐"
-              : "DriveX International: From AI Invisible to AI Recommended"}
-          </h2>
-          <p className="text-sm mb-6" style={{ color: "#7070a0" }}>
-            {lang === "zh"
-              ? "Shopee 东南亚 / Amazon 美国 · 汽车配件品类 · 3 个子品牌"
-              : "Shopee SEA / Amazon US · Automotive Accessories · 3 Sub-brands"}
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-px" style={{ background: "#25253f" }}>
+      {/* ═══════════════════════════════════
+          THE SHIFT
+      ═══════════════════════════════════ */}
+      <motion.section {...reveal}>
+        <SectionBracket num="00" label={p("The AI Shift", "AI 搜索变局")} />
+        <div className="grid md:grid-cols-4 gap-px rounded-2xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
           {[
-            {
-              brand: "JumpStart Pro",
-              cat: lang === "zh" ? "汽车启动电源" : "Jump Starters",
-              before: "0%",
-              after: "23.7%",
-              metric: lang === "zh" ? "高意图 SOV" : "High-Intent SOV",
-              trend: "+5.1 pts/mo",
-              color: "#22c55e",
-              note: lang === "zh"
-                ? "AI 推荐排名从未上榜 → 第 2 位"
-                : "AI rank: Not listed → #2",
-            },
-            {
-              brand: "MagDrive Pro",
-              cat: lang === "zh" ? "车载手机支架" : "Car Phone Mounts",
-              before: "0%",
-              after: "7.8%",
-              metric: lang === "zh" ? "加权 SOV" : "Weighted SOV",
-              trend: lang === "zh" ? "优化中" : "Optimizing",
-              color: "#f5a623",
-              note: lang === "zh"
-                ? "已获 PCMag 编辑推荐"
-                : "Won PCMag Editor's Choice",
-            },
-            {
-              brand: "DriveSafe Pro",
-              cat: lang === "zh" ? "行车记录仪" : "Dash Cameras",
-              before: "0%",
-              after: "5.2%",
-              metric: lang === "zh" ? "加权 SOV" : "Weighted SOV",
-              trend: lang === "zh" ? "诊断完成" : "Diagnosed",
-              color: "#ff4d6d",
-              note: lang === "zh"
-                ? "发现根因：零英文评测覆盖"
-                : "Root cause: Zero English reviews",
-            },
-          ].map((item) => (
-            <div key={item.brand} className="p-6 space-y-3" style={{ background: "#0f0f17" }}>
-              <div>
-                <div className="text-sm font-bold" style={{ color: "#f0f0f8" }}>{item.brand}</div>
-                <div className="text-xs" style={{ color: "#7070a0" }}>{item.cat}</div>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-xs line-through" style={{ color: "#555580" }}>{item.before}</span>
-                <span className="text-xl font-black" style={{ color: item.color }}>{item.after}</span>
-                <span className="text-xs" style={{ color: "#7070a0" }}>{item.metric}</span>
-              </div>
-              <div className="text-xs font-semibold" style={{ color: item.color }}>{item.trend}</div>
-              <div
-                className="text-xs px-3 py-1.5 rounded-lg"
-                style={{ background: `${item.color}10`, color: item.color, border: `1px solid ${item.color}20` }}
-              >
-                {item.note}
-              </div>
+            { val: "47%",   color: "#ff4d6d", label: p("of online shoppers now use AI for purchase decisions",        "的线上购物者已用 AI 辅助购买决策") },
+            { val: "+693%", color: "#f5a623", label: p("AI-driven retail traffic growth in 2025 (Adobe Analytics)",  "AI 驱动零售流量 2025 年同比增长（Adobe）") },
+            { val: "0",     color: "#ff4d6d", label: p("brands out of 50 we tested score above 60 on first audit",   "首次诊断品牌中超过 60 分的比例极低") },
+            { val: "3×",    color: "#22c55e", label: p("higher conversion when AI recommends your brand by name",     "AI 点名推荐时，转化率提升幅度") },
+          ].map((s, i) => (
+            <div
+              key={i}
+              className="px-8 py-8"
+              style={{ background: "#0b0b14" }}
+            >
+              <div className="text-4xl font-black mb-2" style={{ color: s.color }}>{s.val}</div>
+              <div className="text-xs leading-relaxed" style={{ color: "#555580" }}>{s.label}</div>
             </div>
           ))}
         </div>
-
-        <div className="px-8 py-5 flex items-center justify-between flex-wrap gap-4" style={{ borderTop: "1px solid #25253f" }}>
-          <p className="text-xs" style={{ color: "#7070a0" }}>
-            {lang === "zh"
-              ? "Avanti 为 DriveX 制定了完整的 90 天 AI 可见度行动计划，涵盖内容策略、媒体联系和 OKR 追踪。"
-              : "Avanti built DriveX a full 90-day AI Visibility Plan with content strategy, media outreach, and OKR tracking."}
-          </p>
-          <Link
-            href={lang === "zh" ? "/zh/company/techvision-pro" : "/company/techvision-pro"}
-            className="shrink-0 text-xs font-semibold px-4 py-2 rounded-lg transition-opacity hover:opacity-80"
-            style={{ background: "#ff6b35", color: "#fff" }}
-          >
-            {lang === "zh" ? "查看完整案例 →" : "See Full Case Study →"}
-          </Link>
-        </div>
-      </motion.section>
-
-      {/* AI Shift urgency banner */}
-      <motion.section
-        {...reveal}
-        className="rounded-2xl p-8 transition-all duration-700 hover:[box-shadow:0_0_30px_rgba(245,166,35,0.1)]"
-        style={{ background: "linear-gradient(135deg, #100a06 0%, #0f0f17 100%)", border: "1px solid rgba(245,166,35,0.25)" }}
-      >
-        <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#f5a623" }}>
-          {tx("landing", "shiftLabel", lang)}
-        </div>
-        <h2 className="text-2xl font-black mb-3 leading-tight">
-          {tx("landing", "shiftHeadline", lang)}
-        </h2>
-        <p className="text-sm leading-relaxed mb-8 max-w-2xl" style={{ color: "#7070a0" }}>
-          {tx("landing", "shiftSub", lang)}
+        <p className="text-[11px] mt-2.5" style={{ color: "#2a2a45" }}>
+          * {p("Adobe Analytics Holiday Report 2025", "Adobe Analytics 2025 假日季报告")}
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[
-            { val: tx("landing", "shiftStat1Val", lang), lab: tx("landing", "shiftStat1Lab", lang), color: "#ff4d6d" },
-            { val: tx("landing", "shiftStat2Val", lang), lab: tx("landing", "shiftStat2Lab", lang), color: "#f5a623" },
-            { val: tx("landing", "shiftStat3Val", lang), lab: tx("landing", "shiftStat3Lab", lang), color: "#22c55e" },
-            { val: tx("landing", "shiftStat4Val", lang), lab: tx("landing", "shiftStat4Lab", lang), color: "#22c55e" },
-          ].map((s) => (
-            <div key={s.val}>
-              <div className="text-3xl font-black mb-1" style={{ color: s.color }}>{s.val}</div>
-              <div className="text-xs leading-snug" style={{ color: "#7070a0" }}>{s.lab}</div>
-            </div>
-          ))}
-        </div>
       </motion.section>
 
-      {/* SEO vs GEO comparison */}
+      {/* ═══════════════════════════════════
+          3-LAYER FRAMEWORK
+      ═══════════════════════════════════ */}
       <motion.section {...reveal}>
-        <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#ff6b35" }}>
-          {tx("landing", "vsLabel", lang)}
-        </div>
-        <h2 className="text-3xl font-black mb-3">{tx("landing", "vsHeadline", lang)}</h2>
-        <p className="text-sm mb-10 max-w-xl" style={{ color: "#7070a0" }}>{tx("landing", "vsSub", lang)}</p>
-        <div className="grid md:grid-cols-2 gap-4">
-          {/* SEO column */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 0.7, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="rounded-2xl p-6 transition-all duration-300 hover:scale-[1.015] hover:[box-shadow:0_4px_24px_rgba(0,0,0,0.4)]"
-            style={{ background: "#0f0f17", border: "1px solid #25253f" }}
-          >
-            <div
-              className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-5 uppercase tracking-widest"
-              style={{ background: "#1a1a2e", color: "#7070a0", border: "1px solid #25253f" }}
-            >
-              {tx("landing", "seoLabel", lang)}
-            </div>
-            <ul className="space-y-3">
-              {(["seoR1", "seoR2", "seoR3", "seoR4", "seoR5"] as const).map((k) => (
-                <li key={k} className="flex items-start gap-2.5 text-sm" style={{ color: "#7070a0" }}>
-                  <span style={{ color: "#ff4d6d", flexShrink: 0 }}>x</span>
-                  {tx("landing", k, lang)}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-          {/* GEO column */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="rounded-2xl p-6 transition-all duration-300 hover:scale-[1.015] hover:[box-shadow:0_4px_24px_rgba(0,0,0,0.4)]"
-            style={{ background: "linear-gradient(135deg, #0f1a0f 0%, #0f0f17 100%)", border: "1px solid rgba(34,197,94,0.3)" }}
-          >
-            <div
-              className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-5 uppercase tracking-widest"
-              style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" }}
-            >
-              {tx("landing", "geoLabel", lang)}
-            </div>
-            <ul className="space-y-3">
-              {(["geoR1", "geoR2", "geoR3", "geoR4", "geoR5"] as const).map((k) => (
-                <li key={k} className="flex items-start gap-2.5 text-sm" style={{ color: "#a0a0c8" }}>
-                  <span style={{ color: "#22c55e", flexShrink: 0 }}>&#10003;</span>
-                  {tx("landing", k, lang)}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Three competitive edges -- GEO + Selection + Cost */}
-      <motion.section {...reveal} className="space-y-8">
-        <div className="text-center space-y-2 max-w-xl mx-auto">
-          <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7070a0" }}>
-            {lang === "zh" ? "一个平台" : "One platform"}
-          </div>
-          <h2 className="text-3xl font-black">
-            {lang === "zh" ? "三条竞争护城河" : "Three competitive edges"}
-          </h2>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          {[
-            {
-              icon: "🤖",
-              title:   lang === "zh" ? "AI 可见度监控"    : "AI Visibility Monitor",
-              desc:    lang === "zh"
-                ? "追踪你的品牌在 ChatGPT、Claude、Gemini 等 4 大 AI 模型中的排名，第一时间发现曝光变化。"
-                : "Track your brand rank across 4 AI models. Know before buyers do.",
-              cta:     lang === "zh" ? "→ 免费诊断"     : "→ Run Free Audit",
-              href:    lang === "zh" ? "/zh/audit"     : "/audit",
-              color:   "#ff6b35",
-            },
-            {
-              icon: "📊",
-              title:   lang === "zh" ? "AI 选品情报"        : "Selection Intelligence",
-              desc:    lang === "zh"
-                ? "了解 AI 正在向买家推荐哪些品类和品牌，在竞争对手备货前发现下一个爆款信号。"
-                : "Know what AI recommends before rivals stock it. 16 categories, live.",
-              cta:     lang === "zh" ? "→ 查看选品数据"  : "→ View Intel",
-              href:    lang === "zh" ? "/zh/selection" : "/selection",
-              color:   "#22c55e",
-            },
-            {
-              icon: "💰",
-              title:   lang === "zh" ? "成本优化 ROI"       : "Cost Optimizer",
-              desc:    lang === "zh"
-                ? "找出哪些运营成本可以用 AI 替代，省下来的钱直接投入 AI 可见度建设，形成正向飞轮。"
-                : "Find the ops budget to fund AI visibility. AI savings compound into visibility.",
-              cta:     lang === "zh" ? "→ 计算节省额"    : "→ Calculate Savings",
-              href:    lang === "zh" ? "/zh/optimizer"  : "/optimizer",
-              color:   "#3b82f6",
-            },
-          ].map((pillar) => (
-            <div
-              key={pillar.title}
-              className="rounded-xl p-6 space-y-4 flex flex-col"
-              style={{ background: "#0f0f17", border: `1px solid ${pillar.color}25` }}
-            >
-              <div className="text-3xl">{pillar.icon}</div>
-              <div className="font-bold text-sm">{pillar.title}</div>
-              <p className="text-xs leading-relaxed flex-1" style={{ color: "#7070a0" }}>{pillar.desc}</p>
-              <Link
-                href={pillar.href}
-                className="text-xs font-semibold transition-opacity hover:opacity-70"
-                style={{ color: pillar.color }}
-              >
-                {pillar.cta}
-              </Link>
-            </div>
-          ))}
-        </div>
-
-        {/* Selection preview — 3 mini category cards */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7070a0" }}>
-              {lang === "zh" ? "最新 AI 选品信号" : "Latest AI selection signals"}
-            </div>
-            <Link
-              href={lang === "zh" ? "/zh/selection" : "/selection"}
-              className="text-xs transition-colors hover:text-white"
-              style={{ color: "#ff6b35" }}
-            >
-              {lang === "zh" ? "查看全部 16 品类 →" : "See all 16 categories →"}
-            </Link>
-          </div>
-          <div className="grid md:grid-cols-3 gap-3">
-            {[
-              { cat: lang === "zh" ? "便携储能"     : "Portable Power Stations", trend: "+4.2", brand1: "EcoFlow", sov1: 34.2, brand2: "Jackery",  sov2: 28.7 },
-              { cat: lang === "zh" ? "美容仪器"     : "Skincare Devices",         trend: "+6.3", brand1: "NuFace",  sov1: 28.4, brand2: "Foreo",    sov2: 24.1 },
-              { cat: lang === "zh" ? "汽车启动电源" : "Car Jump Starters",        trend: "+4.7", brand1: "NOCO",    sov1: 44.8, brand2: "Gooloo",   sov2: 16.3 },
-            ].map((item) => (
-              <div
-                key={item.cat}
-                className="rounded-xl p-4 space-y-3"
-                style={{ background: "#0f0f17", border: "1px solid #25253f" }}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="text-xs font-semibold" style={{ color: "#f0f0f8" }}>{item.cat}</div>
-                  <div className="text-xs font-bold shrink-0" style={{ color: "#22c55e" }}>↑ {item.trend} pts</div>
-                </div>
-                <div className="text-xs font-bold px-2 py-0.5 rounded-full inline-block"
-                  style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e" }}>
-                  {lang === "zh" ? "强烈推荐" : "STRONG BUY"}
-                </div>
-                <div className="space-y-1.5">
-                  {[{ name: item.brand1, sov: item.sov1 }, { name: item.brand2, sov: item.sov2 }].map((b) => (
-                    <div key={b.name} className="space-y-0.5">
-                      <div className="flex justify-between text-xs">
-                        <span style={{ color: "#f0f0f8" }}>{b.name}</span>
-                        <span style={{ color: "#7070a0" }}>{b.sov}% SOV</span>
-                      </div>
-                      <div className="h-1 rounded-full" style={{ background: "#25253f" }}>
-                        <div className="h-full rounded-full"
-                          style={{ width: `${(b.sov / item.sov1) * 100}%`, background: "#ff6b35" }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* How GEO works -- 2-column zigzag */}
-      <motion.section {...reveal}>
-        <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#7070a0" }}>
-          {tx("landing", "howLabel", lang)}
-        </div>
-        <h2 className="text-3xl font-black mb-3">{tx("landing", "howHeadline", lang)}</h2>
-        <p className="text-sm mb-10 max-w-xl" style={{ color: "#7070a0" }}>{tx("landing", "howSub", lang)}</p>
-
-        <div className="space-y-6">
-          {howSteps.map((step, i) => {
-            const isEven = i % 2 === 1;
-            const textBlock = (
-              <div className="flex-1 space-y-3">
-                <div className="text-4xl font-black opacity-20" style={{ color: step.color }}>
-                  {step.num}
-                </div>
-                <h3 className="text-lg font-bold" style={{ color: step.color }}>
-                  {tx("landing", step.titleKey, lang)}
-                </h3>
-                <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
-                  {tx("landing", step.descKey, lang)}
-                </p>
-              </div>
-            );
-            const iconBlock = (
-              <div
-                className="flex items-center justify-center rounded-2xl w-full md:w-auto md:min-w-[200px] aspect-square max-w-[200px]"
-                style={{ background: "#0f0f17", border: `1px solid ${step.color}30` }}
-              >
-                <step.Icon size={64} style={{ color: step.color }} strokeWidth={1.2} />
-              </div>
-            );
-
-            return (
-              <motion.div
-                key={step.num}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="grid md:grid-cols-[1fr_auto] gap-8 items-center rounded-2xl p-7"
-                style={{
-                  background: "#0f0f17",
-                  border: "1px solid #25253f",
-                  direction: isEven ? "rtl" : "ltr",
-                }}
-              >
-                <div style={{ direction: "ltr" }}>{textBlock}</div>
-                <div style={{ direction: "ltr" }}>{iconBlock}</div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.section>
-
-      {/* Built for Cross-border Brands */}
-      <motion.section {...reveal}>
-        <div
-          className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4"
-          style={{ background: "rgba(255,107,53,0.12)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.25)" }}
+        <SectionBracket num="01" label={p("How Avanti Works", "Avanti 如何工作")} />
+        <h2
+          className="font-black tracking-tight mb-3 leading-tight"
+          style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.4rem)", color: "#f0f0f8" }}
         >
-          {lang === "zh" ? "跨境卖家专区" : "CROSS-BORDER SELLERS"}
-        </div>
-        <h2 className="text-3xl font-black mb-3 leading-tight">
-          {lang === "zh"
-            ? "美国 60% 的电商产品来自亚洲。AI 能找到你吗？"
-            : "60% of US e-commerce products come from Asia. Is yours visible to AI?"}
+          {lang === "zh" ? (
+            <>量化。诊断。<span style={{ color: "#ff6b35" }}>执行。</span></>
+          ) : (
+            <>Measure. Diagnose. <span style={{ color: "#ff6b35" }}>Execute.</span></>
+          )}
         </h2>
-        <p className="text-sm mb-10 max-w-2xl" style={{ color: "#7070a0" }}>
-          {lang === "zh"
-            ? "你的竞争对手已经在 AI 里消失了。Avanti 帮你抢回曝光。"
-            : "Your competitors are already invisible to ChatGPT. Avanti bridges the gap."}
+        <p className="text-sm mb-12 max-w-xl" style={{ color: "#7070a0" }}>
+          {p(
+            "Most brands don't know they're invisible to AI. We built a three-layer system to fix that.",
+            "大多数品牌不知道自己在 AI 里是隐形的。我们构建了三层系统来解决这个问题。"
+          )}
         </p>
-        <div className="grid md:grid-cols-3 gap-4">
+
+        <div className="space-y-4">
           {[
             {
-              Icon: Globe,
-              title: lang === "zh" ? "AI 不识别蹩脚英语" : "AI doesn\u2019t speak broken English",
-              desc: lang === "zh"
-                ? "我们优化你在 AI 引擎面前的内容权威性"
-                : "We optimize your AI-facing content for fluency and authority",
+              num: "01",
+              phase: p("Measure", "量化"),
+              title: p("Know Your GEO Score", "了解你的 GEO 评分"),
+              desc: p(
+                "Run queries across ChatGPT, Claude, Gemini, and Perplexity. Get your brand's mention rate, Share of Voice, and ARRS benchmark — your baseline for everything.",
+                "跨 ChatGPT、Claude、Gemini、Perplexity 执行查询。获得品牌提及率、声量份额和 ARRS 基准——你所有优化的起点。"
+              ),
               color: "#ff6b35",
+              cta: null,
             },
             {
-              Icon: Package,
-              title: lang === "zh" ? "产品目录需要机器可读" : "Your catalog needs to be machine-readable",
-              desc: lang === "zh"
-                ? "ACP Feed 生成器让 AI Agent 发现并购买你的产品"
-                : "ACP Feed Generator helps AI agents discover and buy your products",
+              num: "02",
+              phase: p("Diagnose", "诊断"),
+              title: p("Understand Why You're Invisible", "诊断你隐形的原因"),
+              desc: p(
+                "Reddit citation audit, YouTube KOL coverage, Amazon listing GEO score, E-E-A-T check, hallucination detection. We surface every root cause, not just symptoms.",
+                "Reddit 引用审计、YouTube KOL 覆盖、Amazon Listing GEO 评分、E-E-A-T 检测、幻觉检测。我们找出每一个根本原因，而不仅仅是症状。"
+              ),
               color: "#f5a623",
+              cta: null,
             },
             {
-              Icon: BarChart2,
-              title: lang === "zh" ? "Agent 流量对 GA 不可见" : "Agent traffic is invisible to GA",
-              desc: lang === "zh"
-                ? "B2A Analytics 揭示 GA 看不到的 AI 来源流量"
-                : "B2A Analytics shows you what Google Analytics misses",
+              num: "03",
+              phase: p("Execute", "执行"),
+              title: p("Generate Content That Gets Cited", "生成能被 AI 引用的内容"),
+              desc: p(
+                "Content Studio turns your diagnosis into action: AI-powered blog posts, Amazon listings, and social copy optimized for GEO. Auto-publish on schedule. Track results.",
+                "Content Studio 将诊断转化为行动：AI 驱动的博客文章、Amazon Listing 和社交文案，全部针对 GEO 优化。按计划自动发布，追踪效果。"
+              ),
               color: "#22c55e",
+              cta: { href: auditPath, label: p("Start with a free diagnosis →", "从免费诊断开始 →") },
             },
-          ].map((card) => (
+          ].map((step, i) => (
             <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="rounded-2xl p-6 space-y-3 transition-all duration-300 hover:scale-[1.02] hover:[box-shadow:0_4px_20px_rgba(0,0,0,0.3)]"
-              style={{ background: "#0f0f17", border: `1px solid ${card.color}25` }}
+              key={step.num}
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="flex gap-6 rounded-2xl p-7 transition-all duration-300 hover:[box-shadow:0_0_24px_rgba(0,0,0,0.4)]"
+              style={{ background: "#0b0b14", border: `1px solid ${step.color}22` }}
             >
-              <card.Icon size={28} style={{ color: card.color }} strokeWidth={1.5} />
-              <h3 className="text-sm font-bold" style={{ color: "#f0f0f8" }}>
-                {card.title}
-              </h3>
-              <p className="text-xs leading-relaxed" style={{ color: "#7070a0" }}>
-                {card.desc}
-              </p>
+              {/* Number */}
+              <div
+                className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-black text-sm"
+                style={{ background: `${step.color}12`, color: step.color, border: `1px solid ${step.color}30`, fontFamily: "monospace" }}
+              >
+                {step.num}
+              </div>
+              <div className="flex-1">
+                <div className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: step.color }}>
+                  {step.phase}
+                </div>
+                <h3 className="text-base font-bold mb-2" style={{ color: "#f0f0f8" }}>{step.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>{step.desc}</p>
+                {step.cta && (
+                  <Link
+                    href={step.cta.href}
+                    className="inline-block mt-4 text-sm font-semibold transition-opacity hover:opacity-75"
+                    style={{ color: step.color }}
+                  >
+                    {step.cta.label}
+                  </Link>
+                )}
+              </div>
             </motion.div>
           ))}
         </div>
       </motion.section>
 
-      {/* AI Quality Cleanup Warning */}
-      <motion.section {...reveal} className="space-y-6">
-        {/* Warning banner */}
+      {/* ═══════════════════════════════════
+          CASE STUDY
+      ═══════════════════════════════════ */}
+      <motion.section {...reveal}>
+        <SectionBracket num="02" label={p("Case Study", "客户案例")} />
         <div
-          className="rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center gap-5"
-          style={{ background: "rgba(255,77,109,0.06)", border: "1px solid rgba(255,77,109,0.25)" }}
+          className="rounded-2xl overflow-hidden"
+          style={{ background: "#0b0b14", border: "1px solid rgba(255,107,53,0.2)" }}
         >
-          <div className="text-3xl shrink-0 animate-pulse" style={{ color: "#ff4d6d", fontWeight: 900 }}>!</div>
-          <div className="flex-1">
-            <div className="font-bold text-base mb-1" style={{ color: "#ff4d6d" }}>
-              {lang === "zh"
-                ? "AI 大清洗正在发生：30% 品牌一夜消失"
-                : "AI Quality Cleanup: 30% of brands disappeared overnight"}
-            </div>
-            <p className="text-sm leading-relaxed" style={{ color: "#9090b0" }}>
-              {lang === "zh"
-                ? "DeepSeek、ChatGPT 等主流 AI 已完成质量过滤升级——靠批量自动生成内容冲上 AI 推荐位的品牌，正在被系统性清洗。你的品牌引用来自权威评测，还是低质自动内容？"
-                : "DeepSeek and ChatGPT have upgraded their quality filters. Brands that relied on auto-generated content spam are being systematically removed. Do you know the quality of your AI citations?"}
+          <div className="px-8 py-7">
+            <h2 className="text-xl font-black mb-1" style={{ color: "#f0f0f8" }}>
+              {p("DriveX: From AI Invisible to #2 Recommended", "DriveX：从 AI 隐形到第 2 位推荐")}
+            </h2>
+            <p className="text-sm" style={{ color: "#555580" }}>
+              {p("Automotive accessories · Shopee SEA / Amazon US · 90-day program", "汽车配件 · Shopee 东南亚 / Amazon 美国 · 90 天计划")}
             </p>
           </div>
-          <a
-            href={lang === "zh" ? "/zh/geo-action" : "/geo-action"}
-            className="shrink-0 text-sm font-semibold px-5 py-2.5 rounded-xl transition-opacity hover:opacity-85 whitespace-nowrap"
-            style={{ background: "#ff4d6d", color: "#fff" }}
-          >
-            {lang === "zh" ? "检测我的内容健康度 →" : "Check My Citation Health →"}
-          </a>
-        </div>
 
-        {/* Three pillars of healthy GEO */}
-        <div>
-          <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#ff6b35" }}>
-            {lang === "zh" ? "良性 AI 可见度的三真标准" : "The Three Standards of Healthy AI Visibility"}
-          </div>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-px" style={{ background: "#25253f" }}>
             {[
               {
-                num: "1",
-                title: lang === "zh" ? "真专家" : "Real Experts",
-                desc: lang === "zh"
-                  ? "内容由领域专家署名并校验，非 AI 自动生成。AI 优先引用有专家背书的内容。"
-                  : "Content authored or verified by domain experts -- not AI-generated. AI models heavily favor expert-attributed content.",
+                brand: "JumpStart Pro",
+                cat: p("Jump Starters", "汽车启动电源"),
+                metric: p("High-Intent SOV", "高意图 SOV"),
+                before: "0%", after: "23.7%",
                 color: "#22c55e",
+                note: p("AI rank: Not listed → #2", "AI 排名：未上榜 → 第 2 位"),
               },
               {
-                num: "2",
-                title: lang === "zh" ? "真数据" : "Real Data",
-                desc: lang === "zh"
-                  ? "技术参数有可公开验证的测试来源（PDF 报告/认证）。AI 偏爱有数据支撑的事实陈述。"
-                  : "Technical specs with publicly verifiable test sources. AI strongly prefers factual claims backed by data.",
+                brand: "MagDrive Pro",
+                cat: p("Car Phone Mounts", "车载手机支架"),
+                metric: p("Weighted SOV", "加权 SOV"),
+                before: "0%", after: "7.8%",
                 color: "#f5a623",
+                note: p("Won PCMag Editor's Choice", "获 PCMag 编辑推荐"),
               },
               {
-                num: "3",
-                title: lang === "zh" ? "真结构" : "Real Structure",
-                desc: lang === "zh"
-                  ? "内容按用户决策旅程布局（需求 → 对比 → 结论），而非关键词堆砌。AI 的 RAG 系统更容易提取完整答案。"
-                  : "Content structured around buyer decision journeys (need, compare, conclude). AI RAG systems extract this easily.",
-                color: "#3b82f6",
+                brand: "DriveSafe Pro",
+                cat: p("Dash Cameras", "行车记录仪"),
+                metric: p("Weighted SOV", "加权 SOV"),
+                before: "0%", after: "5.2%",
+                color: "#ff4d6d",
+                note: p("Root cause: Zero English reviews", "根因：零英文评测"),
               },
-            ].map((p) => (
-              <motion.div
-                key={p.num}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="rounded-xl p-5 space-y-3 transition-all duration-300 hover:scale-[1.02] hover:[box-shadow:0_4px_20px_rgba(0,0,0,0.3)]"
-                style={{ background: "#0f0f17", border: `1px solid ${p.color}25` }}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-xl font-black" style={{ color: p.color }}>{p.num}</span>
-                  <span className="font-bold text-sm">{p.title}</span>
+            ].map((item) => (
+              <div key={item.brand} className="p-6" style={{ background: "#0b0b14" }}>
+                <div className="text-sm font-bold mb-0.5" style={{ color: "#f0f0f8" }}>{item.brand}</div>
+                <div className="text-xs mb-4" style={{ color: "#555580" }}>{item.cat}</div>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-xs line-through" style={{ color: "#333355" }}>{item.before}</span>
+                  <span className="text-2xl font-black" style={{ color: item.color }}>{item.after}</span>
+                  <span className="text-xs" style={{ color: "#555580" }}>{item.metric}</span>
                 </div>
-                <p className="text-xs leading-relaxed" style={{ color: "#7070a0" }}>{p.desc}</p>
-              </motion.div>
+                <div
+                  className="text-xs px-2.5 py-1 rounded-lg inline-block"
+                  style={{ background: `${item.color}10`, color: item.color, border: `1px solid ${item.color}20` }}
+                >
+                  {item.note}
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </motion.section>
 
-      {/* Pricing */}
+      {/* ═══════════════════════════════════
+          PRICING
+      ═══════════════════════════════════ */}
       <motion.section {...reveal} id="pricing">
-        <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#ff6b35" }}>
-          {tx("landing", "pricingLabel", lang)}
-        </div>
-        <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
-          <div>
-            <h2 className="text-3xl font-black">{tx("landing", "pricingTitle", lang)}</h2>
-            <p className="text-sm mt-1" style={{ color: "#7070a0" }}>{tx("landing", "pricingSubtitle", lang)}</p>
-          </div>
-          <div
-            className="text-xs px-3 py-1.5 rounded-full font-semibold"
-            style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)" }}
-          >
-            {tx("landing", "pricingAnnual", lang)}
-          </div>
-        </div>
+        <SectionBracket num="03" label={p("Pricing", "定价")} />
+        <h2
+          className="font-black mb-2 tracking-tight"
+          style={{ fontSize: "clamp(1.8rem, 3vw, 2.2rem)", color: "#f0f0f8" }}
+        >
+          {p("Simple, transparent pricing", "简单透明的定价")}
+        </h2>
+        <p className="text-sm mb-10" style={{ color: "#7070a0" }}>
+          {p("Start free. Scale when you see results.", "免费开始，见效后升级。")}
+        </p>
+
         <div className="grid md:grid-cols-4 gap-4">
-          {plans.map((plan) => (
+          {[
+            {
+              name: p("Free", "免费版"),
+              price: "$0",
+              per: null,
+              desc: p("One-time GEO diagnosis", "一次性 GEO 诊断"),
+              highlight: false,
+              features: [
+                p("1 brand audit", "1 次品牌诊断"),
+                p("GEO Score report", "GEO 评分报告"),
+                p("Top 3 competitors", "前 3 名竞品对比"),
+                p("Basic recommendations", "基础优化建议"),
+              ],
+              cta: p("Start Free →", "免费开始 →"),
+              href: auditPath,
+              external: false,
+            },
+            {
+              name: p("Starter", "入门版"),
+              price: "$49",
+              per: p("/mo", "/月"),
+              desc: p("Monthly monitoring", "每月监控"),
+              highlight: false,
+              features: [
+                p("Weekly GEO scans", "每周 GEO 扫描"),
+                p("4 AI engines tracked", "4 大 AI 引擎追踪"),
+                p("Competitor benchmarking", "竞品基准对比"),
+                p("Reddit + KOL signals", "Reddit + KOL 信号"),
+                p("Email alerts", "邮件预警"),
+              ],
+              cta: p("Get Started →", "立即开始 →"),
+              href: auditPath,
+              external: false,
+            },
+            {
+              name: p("Growth", "成长版"),
+              price: "$149",
+              per: p("/mo", "/月"),
+              desc: p("Monitor + Execute", "监控 + 执行"),
+              highlight: true,
+              features: [
+                p("Everything in Starter", "入门版全部功能"),
+                p("Content Studio (50 posts/mo)", "Content Studio（50 篇/月）"),
+                p("Auto-publish to social", "自动发布到社交平台"),
+                p("GEO-scored Amazon listings", "Amazon Listing GEO 评分"),
+                p("Priority support", "优先支持"),
+              ],
+              cta: p("Start Growth →", "开始成长版 →"),
+              href: auditPath,
+              external: false,
+            },
+            {
+              name: p("Agency", "代理版"),
+              price: "$799",
+              per: p("/mo", "/月"),
+              desc: p("Unlimited brands", "不限品牌数"),
+              highlight: false,
+              features: [
+                p("Everything in Growth", "成长版全部功能"),
+                p("Up to 20 brands", "最多 20 个品牌"),
+                p("White-label reports", "白标报告"),
+                p("API access", "API 接入"),
+                p("Dedicated account manager", "专属客户经理"),
+              ],
+              cta: p("Book Demo →", "预约演示 →"),
+              href: CALENDLY,
+              external: true,
+            },
+          ].map((plan) => (
             <div
-              key={plan.nameKey}
-              className="rounded-2xl p-6 flex flex-col transition-all duration-300 hover:scale-[1.02] hover:[box-shadow:0_0_20px_rgba(255,107,53,0.12)]"
+              key={plan.name}
+              className="rounded-2xl p-6 flex flex-col transition-all duration-300 hover:scale-[1.02]"
               style={{
-                background: plan.highlight ? "linear-gradient(135deg, #1a1025 0%, #0f0f17 100%)" : "#0f0f17",
-                border: plan.highlight ? "1px solid rgba(255,107,53,0.4)" : "1px solid #25253f",
+                background: plan.highlight ? "linear-gradient(135deg, #140e08 0%, #0b0b14 100%)" : "#0b0b14",
+                border: plan.highlight ? "1px solid rgba(255,107,53,0.45)" : "1px solid #25253f",
+                boxShadow: plan.highlight ? "0 0 40px rgba(255,107,53,0.08)" : "none",
               }}
             >
               {plan.highlight && (
                 <div
-                  className="text-xs font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full self-start mb-4"
+                  className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full self-start mb-4"
                   style={{ background: "rgba(255,107,53,0.15)", color: "#ff6b35" }}
                 >
-                  {lang === "zh" ? "推荐" : "Popular"}
+                  {p("Most Popular", "最受欢迎")}
                 </div>
               )}
-              <div className="mb-1 font-bold">{tx("landing", plan.nameKey, lang)}</div>
-              <div className="flex items-baseline gap-0.5 mb-1">
+              <div className="font-bold text-sm mb-1" style={{ color: "#a0a0c8" }}>{plan.name}</div>
+              <div className="flex items-baseline gap-0.5 mb-0.5">
                 <span className="text-3xl font-black" style={{ color: plan.highlight ? "#ff6b35" : "#f0f0f8" }}>
-                  {tx("landing", plan.priceKey, lang)}
+                  {plan.price}
                 </span>
-                {plan.perKey && (
-                  <span className="text-sm" style={{ color: "#7070a0" }}>{tx("landing", plan.perKey, lang)}</span>
-                )}
+                {plan.per && <span className="text-sm" style={{ color: "#555580" }}>{plan.per}</span>}
               </div>
-              <div className="text-xs mb-5" style={{ color: "#7070a0" }}>{tx("landing", plan.descKey, lang)}</div>
+              <div className="text-xs mb-5" style={{ color: "#555580" }}>{plan.desc}</div>
               <ul className="space-y-2 flex-1 mb-6">
-                {plan.featureKeys.map((fk) => (
-                  <li key={fk} className="flex items-start gap-2 text-xs" style={{ color: "#7070a0" }}>
-                    <span style={{ color: "#22c55e", flexShrink: 0 }}>&#10003;</span>
-                    {tx("landing", fk, lang)}
+                {plan.features.map((f, i) => (
+                  <li key={i} className="flex items-start gap-2 text-xs" style={{ color: "#7070a0" }}>
+                    <span style={{ color: "#22c55e", flexShrink: 0 }}>✓</span>
+                    {f}
                   </li>
                 ))}
               </ul>
               {plan.external ? (
                 <a
-                  href={plan.ctaHref}
+                  href={plan.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-semibold text-center py-2 rounded-xl transition-opacity hover:opacity-80"
-                  style={{ background: "#25253f", color: "#f0f0f8" }}
+                  className="text-sm font-semibold text-center py-2.5 rounded-xl transition-opacity hover:opacity-80"
+                  style={{ background: "#1e1e30", color: "#f0f0f8" }}
                 >
-                  {tx("landing", plan.ctaKey, lang)}
+                  {plan.cta}
                 </a>
               ) : (
                 <Link
-                  href={plan.ctaHref}
-                  className="text-sm font-semibold text-center py-2 rounded-xl transition-opacity hover:opacity-80"
+                  href={plan.href}
+                  className="text-sm font-semibold text-center py-2.5 rounded-xl transition-opacity hover:opacity-80"
                   style={
                     plan.highlight
                       ? { background: "#ff6b35", color: "#fff" }
                       : { background: "#161625", color: "#f0f0f8", border: "1px solid #25253f" }
                   }
                 >
-                  {tx("landing", plan.ctaKey, lang)}
+                  {plan.cta}
                 </Link>
               )}
             </div>
@@ -924,101 +620,72 @@ export default function LandingView({ lang }: Props) {
         </div>
       </motion.section>
 
-      {/* Brand story */}
-      <motion.section {...reveal} className="grid md:grid-cols-2 gap-12 items-center">
-        <div>
-          <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#ff6b35" }}>
-            {tx("landing", "ourNameLabel", lang)}
-          </div>
-          <h2 className="text-3xl font-black mb-4 leading-tight">
-            {tx("landing", "storyHeadline1", lang)}<br />
-            <span style={{ color: "#f5a623" }}>{tx("landing", "storyAccent", lang)}</span>
-          </h2>
-          <p className="text-sm leading-relaxed mb-4" style={{ color: "#7070a0" }}>{tx("landing", "storyP1", lang)}</p>
-          <p className="text-sm leading-relaxed mb-6" style={{ color: "#7070a0" }}>{tx("landing", "storyP2", lang)}</p>
-          <a
-            href={CALENDLY}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-semibold transition-opacity hover:opacity-75"
-            style={{ color: "#ff6b35" }}
-          >
-            {tx("landing", "bookCall", lang)}
-          </a>
-        </div>
-        <div className="rounded-2xl p-8 text-center" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
-          <div className="text-7xl font-black mb-2" style={{ color: "#ff6b35" }}>前进</div>
-          <div className="text-sm font-medium mb-6" style={{ color: "#7070a0" }}>{tx("landing", "storyCharLabel", lang)}</div>
-          <p className="italic text-sm leading-relaxed" style={{ color: "#7070a0" }}>{tx("landing", "storyQuote", lang)}</p>
-          <p className="text-xs mt-3" style={{ color: "#25253f" }}>{tx("landing", "storyQuoteAttr", lang)}</p>
-        </div>
-      </motion.section>
-
-      {/* CTA banner */}
-      <motion.section
-        {...reveal}
-        className="rounded-2xl p-10 text-center"
-        style={{ background: "linear-gradient(135deg, #0f0f17 0%, #161625 100%)", border: "1px solid rgba(255,107,53,0.25)" }}
-      >
-        <h2 className="text-2xl font-black mb-2">{tx("landing", "ctaBannerH2", lang)}</h2>
-        <p className="text-sm mb-3" style={{ color: "#7070a0" }}>{tx("landing", "ctaBannerSub", lang)}</p>
-        <p className="text-xs mb-8" style={{ color: "#555580" }}>
-          {lang === "zh"
-            ? "5 分钟免费诊断 · 无需信用卡 · 即刻查看你的品牌 AI 可见度"
-            : "5-min free diagnosis · No credit card · See your brand\u2019s AI visibility instantly"}
-        </p>
-        <div className="flex items-center justify-center gap-4 flex-wrap">
-          <Link
-            href={auditPath}
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-all duration-500 hover:opacity-85 hover:[box-shadow:0_0_40px_rgba(255,107,53,0.5)]"
-            style={{ background: "#ff6b35", color: "#fff", boxShadow: "0 0 24px rgba(255,107,53,0.35)" }}
-          >
-            {lang === "zh" ? "免费诊断我的品牌 →" : "Free Brand Diagnosis →"}
-          </Link>
-          <a
-            href={CALENDLY}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium transition-colors hover:text-white"
-            style={{ color: "#7070a0" }}
-          >
-            {lang === "zh" ? "或预约策略通话 →" : "or book strategy call →"}
-          </a>
-        </div>
-      </motion.section>
-
-      {/* Affiliate — recommended tools for cross-border sellers */}
-      <motion.section {...reveal} className="pb-4">
-        <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#7070a0" }}>
-          {lang === "zh" ? "跨境卖家推荐工具" : "Tools We Recommend"}
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { icon: "💡", name: lang === "zh" ? "环形补光灯" : "Ring Light", sub: lang === "zh" ? "产品摄影必备" : "Product photography", href: "https://www.amazon.com/s?k=ring+light+photography&tag=avanti20-20" },
-            { icon: "🖨️", name: lang === "zh" ? "标签打印机" : "Label Printer", sub: lang === "zh" ? "发货出单神器" : "Shipping labels", href: "https://www.amazon.com/s?k=brother+label+printer+shipping&tag=avanti20-20" },
-            { icon: "🔌", name: lang === "zh" ? "USB-C 充电器" : "USB-C Charger", sub: lang === "zh" ? "多口同时快充" : "Multi-device charging", href: "https://www.amazon.com/s?k=usb+c+multiport+charger&tag=avanti20-20" },
-            { icon: "🎧", name: lang === "zh" ? "降噪耳机" : "Noise-Canceling Headphones", sub: lang === "zh" ? "居家办公专注" : "Focus & video calls", href: "https://www.amazon.com/s?k=wireless+noise+canceling+headphones&tag=avanti20-20" },
-          ].map((tool) => (
-            <a
-              key={tool.href}
-              href={tool.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-xl p-3 transition-colors hover:border-orange-500/40"
-              style={{ background: "#0f0f17", border: "1px solid #25253f" }}
+      {/* ═══════════════════════════════════
+          FINAL CTA BANNER
+      ═══════════════════════════════════ */}
+      <motion.section {...reveal}>
+        <div
+          className="rounded-2xl p-12 text-center relative overflow-hidden"
+          style={{
+            background: "linear-gradient(135deg, #0f0a06 0%, #0b0b14 60%, #060e0f 100%)",
+            border: "1px solid rgba(255,107,53,0.25)",
+          }}
+        >
+          {/* Glow */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,107,53,0.12) 0%, transparent 60%)" }}
+          />
+          <div className="relative z-10">
+            <div
+              className="inline-block text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full mb-6"
+              style={{ background: "rgba(255,107,53,0.1)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.3)" }}
             >
-              <span className="text-2xl">{tool.icon}</span>
-              <div>
-                <div className="text-sm font-semibold">{tool.name}</div>
-                <div className="text-xs" style={{ color: "#7070a0" }}>{tool.sub}</div>
-              </div>
-            </a>
-          ))}
+              {p("Free — No Credit Card Required", "免费 · 无需信用卡")}
+            </div>
+            <h2
+              className="font-black mb-3 tracking-tight"
+              style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", color: "#f0f0f8" }}
+            >
+              {lang === "zh" ? (
+                <>现在就知道你的位置<br /><span style={{ color: "#ff6b35" }}>在竞争对手之前。</span></>
+              ) : (
+                <>Find out where you stand<br /><span style={{ color: "#ff6b35" }}>before your competitors do.</span></>
+              )}
+            </h2>
+            <p className="text-sm mb-8 max-w-md mx-auto" style={{ color: "#555580" }}>
+              {p(
+                "5-minute free GEO diagnosis. See your score across 4 AI engines instantly.",
+                "5 分钟免费 GEO 诊断。立刻查看你在 4 大 AI 引擎中的评分。"
+              )}
+            </p>
+            <div className="flex items-center justify-center gap-4 flex-wrap">
+              <Link
+                href={auditPath}
+                className="inline-flex items-center gap-2 px-10 py-4 rounded-xl text-sm font-black transition-all duration-300 hover:opacity-90 hover:translate-y-[-2px]"
+                style={{
+                  background: "#ff6b35",
+                  color: "#fff",
+                  boxShadow: "0 0 40px rgba(255,107,53,0.45)",
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {p("Get Free GEO Diagnosis →", "免费诊断我的品牌 →")}
+              </Link>
+              <a
+                href={CALENDLY}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm transition-colors hover:text-white"
+                style={{ color: "#555580" }}
+              >
+                {p("or book strategy call →", "或预约策略通话 →")}
+              </a>
+            </div>
+          </div>
         </div>
-        <p className="text-xs mt-3" style={{ color: "#4a4a6a" }}>
-          {lang === "zh" ? "* 包含 Amazon 推广链接，点击不额外收费" : "* Amazon affiliate links — no extra cost to you."}
-        </p>
       </motion.section>
+
     </div>
   );
 }

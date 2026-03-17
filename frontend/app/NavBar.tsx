@@ -87,66 +87,59 @@ export default function NavBar() {
   const switchHref = isZh ? pathname.replace(/^\/zh/, "") || "/" : `/zh${pathname === "/" ? "" : pathname}`;
   const homeHref = h("");
 
-  /* ── LOGGED-OUT: marketing pill links ── */
+  /* ── LOGGED-OUT: minimal marketing nav ── */
   const productDropdown: DropdownItem[] = [
-    { href: h("/brand-safety"),        label: p("Brand Safety",       "品牌安全"),          desc: p("AI brand safety audit — 315 response",     "AI 品牌安全审计 — 315 专项"),  badge: "New" },
-    { href: h("/audit"),               label: p("AI Audit",           "AI 品牌诊断"),        desc: p("See what AI says about your brand",         "查询 AI 对你品牌的真实评价") },
-    { href: h("/trends"),              label: p("Trend Monitor",      "行业趋势"),           desc: p("Monthly AI recommendation shifts",          "月度 AI 推荐热榜") },
-    { href: h("/geo-action"),          label: p("AI Visibility Plan", "AI 可见度行动计划"),   desc: p("Step-by-step visibility playbook",          "分步提升 AI 可见度") },
-    { href: h("/b2a-analytics"),       label: p("B2A Analytics",      "B2A Analytics"),     desc: p("Agent traffic you can't see in GA",         "GA 看不到的 AI 来源流量"), badge: "Beta" },
+    { href: h("/audit"),        label: p("AI Brand Diagnosis",  "AI 品牌诊断"),    desc: p("Free — see your GEO Score in 5 min",         "免费 · 5 分钟获得 GEO 评分") },
+    { href: h("/brand-safety"), label: p("Brand Safety",        "品牌安全"),        desc: p("AI brand safety audit",                      "AI 品牌安全审计"), badge: "New" },
+    { href: h("/b2a-analytics"), label: p("B2A Analytics",      "B2A Analytics"), desc: p("AI agent traffic invisible to GA",            "GA 看不到的 AI 来源流量"), badge: "Beta" },
   ];
 
-  /* ── LOGGED-OUT: GEO tools dropdown ── */
-  const geoToolsDropdown: DropdownItem[] = [
-    { href: h("/semantic-analyzer"), label: p("Semantic Analyzer", "语义分析器"), desc: p("Score content for AI friendliness",       "检测内容的AI友好度评分"), badge: "New" },
-    { href: h("/eeat-checker"),      label: p("E-E-A-T Checker",  "E-E-A-T 检测"), desc: p("Audit expertise, authority & trust",      "评估专业性、权威性与可信度"), badge: "New" },
-    { href: h("/schema-tester"),     label: p("Schema Tester",    "Schema 测试"),  desc: p("Validate structured data markup",        "验证结构化数据标记") },
-    { href: h("/faq-generator"),     label: p("FAQ Generator",    "FAQ 生成器"),   desc: p("Generate AI-ready FAQ + JSON-LD schema", "生成AI友好FAQ及JSON-LD Schema"), badge: "New" },
+  /* ── LOGGED-IN: Measure layer ── */
+  const measureItems: DropdownItem[] = [
+    { href: h("/dashboard"),     label: p("Dashboard",     "数据看板"),    desc: p("GEO Score overview",          "GEO 评分总览") },
+    { href: h("/runs/new"),      label: p("New Scan",      "新建扫描"),    desc: p("Run a new AI visibility scan", "运行新的 AI 可见度扫描") },
+    { href: h("/trends"),        label: p("Trends",        "行业趋势"),    desc: p("AI recommendation shifts",    "AI 推荐热榜变化") },
+    { href: h("/b2a-analytics"), label: p("B2A Analytics", "B2A Analytics"), desc: p("AI agent traffic",         "AI 来源流量"), badge: "Beta" },
   ];
 
-  /* ── LOGGED-IN: app nav dropdowns ── */
+  /* ── LOGGED-IN: Diagnose layer ── */
   const diagnoseItems: DropdownItem[] = [
-    { href: h("/runs/new"),           label: p("New Analysis",      "新建分析") },
-    { href: h("/semantic-analyzer"),  label: p("Semantic Analyzer", "语义分析器"), badge: "New" },
-    { href: h("/eeat-checker"),       label: p("E-E-A-T Checker",   "E-E-A-T 检测"), badge: "New" },
-    { href: h("/schema-tester"),      label: p("Schema Tester",     "Schema 测试") },
-    { href: h("/faq-generator"),      label: p("FAQ Generator",     "FAQ 生成器"), badge: "New" },
+    { href: h("/audit"),          label: p("AI Audit",          "AI 品牌诊断"),  desc: p("What AI says about your brand",    "AI 对你品牌的真实评价") },
+    { href: h("/reddit"),         label: p("Reddit Signals",    "Reddit 引用"),  desc: p("Citation quality & community",    "引用质量与社区舆情") },
+    { href: h("/kol"),            label: p("KOL Coverage",      "KOL 追踪"),     desc: p("YouTube & influencer presence",   "YouTube & 达人覆盖") },
+    { href: h("/hallucination"),  label: p("Hallucination",     "幻觉检测"),     desc: p("AI accuracy for your brand",      "AI 对你品牌的准确性") },
+    { href: h("/semantic-analyzer"), label: p("Content Score",  "内容评分"),     desc: p("GEO score your existing content", "为现有内容打 GEO 分"), badge: "New" },
+    { href: h("/eeat-checker"),   label: p("E-E-A-T Check",     "E-E-A-T 检测"), desc: p("Expertise & authority audit",     "专业性与权威性审计") },
   ];
-  const monitorItems: DropdownItem[] = [
-    { href: h("/trends"),        label: p("Trends",        "行业趋势") },
-    { href: h("/hallucination"), label: p("Accuracy",      "幻觉检测") },
-    { href: h("/reddit"),        label: p("Reddit",        "Reddit 引用") },
-    { href: h("/kol"),           label: p("KOL",           "KOL 追踪") },
-    { href: h("/b2a-analytics"), label: p("B2A Analytics", "B2A Analytics"), badge: "Beta" },
+
+  /* ── LOGGED-IN: Execute layer ── */
+  const executeItems: DropdownItem[] = [
+    { href: h("/content-studio"), label: p("Content Studio",     "内容工作室"),    desc: p("Generate & publish GEO content", "生成并发布 GEO 内容"), badge: "New" },
+    { href: h("/geo-action"),     label: p("AI Visibility Plan", "AI 行动计划"),   desc: p("90-day visibility playbook",     "90 天可见度行动计划") },
+    { href: h("/agents"),         label: p("Growth Agent",       "增长引擎"),      desc: p("Automated GEO execution",        "自动化 GEO 执行") },
+    { href: h("/schema-tester"),  label: p("Schema Tester",      "Schema 测试"),   desc: p("Validate structured data",       "验证结构化数据") },
+    { href: h("/faq-generator"),  label: p("FAQ Generator",      "FAQ 生成器"),    desc: p("AI-ready FAQ + JSON-LD",         "AI 友好 FAQ 及 JSON-LD"), badge: "New" },
   ];
-  const optimizeItems: DropdownItem[] = [
-    { href: h("/geo-action"),       label: p("AI Visibility Plan", "AI 行动") },
-    { href: h("/agents"),           label: p("Growth Agent",       "增长引擎") },
-    { href: h("/content-studio"),   label: p("Content Studio",     "内容工作室"), badge: "New" },
-    { href: h("/selection"),        label: p("Selection",          "选品情报") },
-  ];
+
   const workspaceItems: DropdownItem[] = [
-    { href: h("/dashboard"),  label: p("Dashboard",    "数据看板") },
-    { href: h("/schedules"),  label: p("Auto Monitor", "自动监控") },
-    { href: h("/account"),    label: p("Account",      "账户设置") },
+    { href: h("/schedules"), label: p("Auto Monitor", "自动监控") },
+    { href: h("/account"),   label: p("Account",      "账户设置") },
+    { href: h("/selection"), label: p("Selection",    "选品情报") },
   ];
 
   /* ── mobile: flatten all links ── */
   const allMobileLinks = loggedIn
     ? [
+        ...measureItems,
         ...diagnoseItems,
-        ...monitorItems,
-        ...optimizeItems,
+        ...executeItems,
         ...workspaceItems,
       ]
     : [
-        { href: h("/brand-safety"),  label: p("Brand Safety",   "品牌安全") },
-        { href: h("/product"),       label: p("Product",        "产品") },
-        { href: h("/categories"),    label: p("Index",          "行业指数") },
-        { href: h("/selection"),     label: p("Selection",      "选品情报") },
-        { href: h("/optimizer"),     label: p("Optimizer",      "成本优化") },
-        { href: h("/blog"),          label: p("Research",       "研究报告") },
-        { href: h("/b2a-analytics"), label: p("B2A Analytics",  "B2A Analytics") },
+        { href: h("/audit"),         label: p("AI Brand Diagnosis", "AI 品牌诊断") },
+        { href: h("/brand-safety"),  label: p("Brand Safety",       "品牌安全") },
+        { href: h("/b2a-analytics"), label: p("B2A Analytics",      "B2A Analytics") },
+        { href: h("/blog"),          label: p("Research",           "研究报告") },
       ];
 
   return (
@@ -162,12 +155,8 @@ export default function NavBar() {
         {!loggedIn && (
           <div className="hidden md:flex items-center gap-0.5 rounded-full px-1 py-0.5" style={{ background: "rgba(15,15,23,0.6)", border: "1px solid #25253f" }}>
             <NavDropdown label={p("Product", "产品")} items={productDropdown} isActive={isActive} />
-            <NavDropdown label={p("GEO Tools", "GEO 工具")} items={geoToolsDropdown} isActive={isActive} />
             {[
-              { href: h("/categories"), label: p("Index",     "行业指数") },
-              { href: h("/selection"),  label: p("Selection", "选品情报") },
-              { href: h("/optimizer"),  label: p("Optimizer", "成本优化") },
-              { href: h("/blog"),       label: p("Research",  "研究报告") },
+              { href: h("/blog"),    label: p("Research", "研究报告") },
             ].map((l) => (
               <Link key={l.href} href={l.href}
                 className="text-sm px-3 py-1.5 rounded-full transition-colors hover:text-white"
@@ -181,10 +170,10 @@ export default function NavBar() {
         {/* ── LOGGED-IN: app nav ── */}
         {loggedIn && (
           <div className="hidden md:flex items-center gap-1">
-            <NavDropdown label={p("Diagnose",  "诊断")}  items={diagnoseItems}   isActive={isActive} />
-            <NavDropdown label={p("Monitor",   "监测")}  items={monitorItems}    isActive={isActive} />
-            <NavDropdown label={p("Optimize",  "优化")}  items={optimizeItems}   isActive={isActive} />
-            <NavDropdown label={p("Workspace", "工作台")} items={workspaceItems}  isActive={isActive} />
+            <NavDropdown label={p("Measure",   "量化")}   items={measureItems}   isActive={isActive} />
+            <NavDropdown label={p("Diagnose",  "诊断")}   items={diagnoseItems}  isActive={isActive} />
+            <NavDropdown label={p("Execute",   "执行")}   items={executeItems}   isActive={isActive} />
+            <NavDropdown label={p("Workspace", "工作台")} items={workspaceItems} isActive={isActive} />
           </div>
         )}
 
