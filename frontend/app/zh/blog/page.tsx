@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-03-17-ai-recommendation-trends",
+    tag: "AI趋势",
+    title: "跨境电商中的AI推荐趋势",
+    excerpt:
+      "本周顶级AI推荐产品类别与品牌见解。",
+    date: "2026年3月17日",
+    readTime: "6 分钟阅读",
+  },
+  {
     slug: "ai-poisoning-vs-visibility",
     tag: "行业立场",
     title: "AI 投毒 vs AI 可见度管理：阿凡提的立场",

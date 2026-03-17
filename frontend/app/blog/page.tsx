@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-03-17-ai-recommendation-trends",
+    tag: "AI Trends",
+    title: "AI Recommendation Trends in Cross-Border Ecommerce",
+    excerpt:
+      "This week&apos;s top AI-recommended product categories with brand insights.",
+    date: "March 17, 2026",
+    readTime: "6 min read",
+  },
+  {
     slug: "ai-poisoning-vs-visibility",
     tag: "Industry Position",
     title: "AI Poisoning vs. AI Visibility Management: Our Position",
