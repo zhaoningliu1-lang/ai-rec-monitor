@@ -89,16 +89,28 @@ export default function NavBar() {
 
   /* ── LOGGED-OUT: marketing pill links ── */
   const productDropdown: DropdownItem[] = [
-    { href: h("/brand-safety"),  label: p("Brand Safety",    "品牌安全"),       desc: p("AI brand safety audit — 315 response", "AI 品牌安全审计 — 315 专项"),  badge: "New" },
-    { href: h("/audit"),         label: p("AI Audit",        "AI 品牌诊断"),    desc: p("See what AI says about your brand", "查询 AI 对你品牌的真实评价") },
-    { href: h("/trends"),        label: p("Trend Monitor",   "行业趋势"),       desc: p("Monthly AI recommendation shifts",  "月度 AI 推荐热榜") },
-    { href: h("/geo-action"),    label: p("AI Visibility Plan", "AI 可见度行动计划"),   desc: p("Step-by-step visibility playbook",  "分步提升 AI 可见度") },
-    { href: h("/b2a-analytics"), label: p("B2A Analytics",   "B2A Analytics"), desc: p("Agent traffic you can't see in GA", "GA 看不到的 AI 来源流量"), badge: "Beta" },
+    { href: h("/brand-safety"),        label: p("Brand Safety",       "品牌安全"),          desc: p("AI brand safety audit — 315 response",     "AI 品牌安全审计 — 315 专项"),  badge: "New" },
+    { href: h("/audit"),               label: p("AI Audit",           "AI 品牌诊断"),        desc: p("See what AI says about your brand",         "查询 AI 对你品牌的真实评价") },
+    { href: h("/trends"),              label: p("Trend Monitor",      "行业趋势"),           desc: p("Monthly AI recommendation shifts",          "月度 AI 推荐热榜") },
+    { href: h("/geo-action"),          label: p("AI Visibility Plan", "AI 可见度行动计划"),   desc: p("Step-by-step visibility playbook",          "分步提升 AI 可见度") },
+    { href: h("/b2a-analytics"),       label: p("B2A Analytics",      "B2A Analytics"),     desc: p("Agent traffic you can't see in GA",         "GA 看不到的 AI 来源流量"), badge: "Beta" },
+  ];
+
+  /* ── LOGGED-OUT: GEO tools dropdown ── */
+  const geoToolsDropdown: DropdownItem[] = [
+    { href: h("/semantic-analyzer"), label: p("Semantic Analyzer", "语义分析器"), desc: p("Score content for AI friendliness",       "检测内容的AI友好度评分"), badge: "New" },
+    { href: h("/eeat-checker"),      label: p("E-E-A-T Checker",  "E-E-A-T 检测"), desc: p("Audit expertise, authority & trust",      "评估专业性、权威性与可信度"), badge: "New" },
+    { href: h("/schema-tester"),     label: p("Schema Tester",    "Schema 测试"),  desc: p("Validate structured data markup",        "验证结构化数据标记") },
+    { href: h("/faq-generator"),     label: p("FAQ Generator",    "FAQ 生成器"),   desc: p("Generate AI-ready FAQ + JSON-LD schema", "生成AI友好FAQ及JSON-LD Schema"), badge: "New" },
   ];
 
   /* ── LOGGED-IN: app nav dropdowns ── */
   const diagnoseItems: DropdownItem[] = [
-    { href: h("/runs/new"), label: p("New Analysis", "新建分析") },
+    { href: h("/runs/new"),           label: p("New Analysis",      "新建分析") },
+    { href: h("/semantic-analyzer"),  label: p("Semantic Analyzer", "语义分析器"), badge: "New" },
+    { href: h("/eeat-checker"),       label: p("E-E-A-T Checker",   "E-E-A-T 检测"), badge: "New" },
+    { href: h("/schema-tester"),      label: p("Schema Tester",     "Schema 测试") },
+    { href: h("/faq-generator"),      label: p("FAQ Generator",     "FAQ 生成器"), badge: "New" },
   ];
   const monitorItems: DropdownItem[] = [
     { href: h("/trends"),        label: p("Trends",        "行业趋势") },
@@ -149,6 +161,7 @@ export default function NavBar() {
         {!loggedIn && (
           <div className="hidden md:flex items-center gap-0.5 rounded-full px-1 py-0.5" style={{ background: "rgba(15,15,23,0.6)", border: "1px solid #25253f" }}>
             <NavDropdown label={p("Product", "产品")} items={productDropdown} isActive={isActive} />
+            <NavDropdown label={p("GEO Tools", "GEO 工具")} items={geoToolsDropdown} isActive={isActive} />
             {[
               { href: h("/categories"), label: p("Index",     "行业指数") },
               { href: h("/selection"),  label: p("Selection", "选品情报") },
