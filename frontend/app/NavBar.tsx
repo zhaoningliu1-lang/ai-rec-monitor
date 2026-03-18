@@ -123,10 +123,10 @@ export default function NavBar() {
   ];
 
   const workspaceItems: DropdownItem[] = [
+    { href: h("/developers"), label: p("Developers",   "开发者"),    desc: p("API keys & agent integration", "API Key 与 Agent 集成"), badge: "New" },
+    { href: h("/selection"),  label: p("Selection",    "选品情报"),  desc: p("AI product selection signals", "AI 选品信号") },
     { href: h("/schedules"),  label: p("Auto Monitor", "自动监控") },
     { href: h("/account"),    label: p("Account",      "账户设置") },
-    { href: h("/selection"),  label: p("Selection",    "选品情报") },
-    { href: h("/developers"), label: p("Developers",   "开发者"),  desc: p("API keys & agent integration", "API Key 与 Agent 集成"), badge: "New" },
   ];
 
   /* ── mobile: flatten all links ── */
@@ -172,10 +172,10 @@ export default function NavBar() {
         {/* ── LOGGED-IN: app nav ── */}
         {loggedIn && (
           <div className="hidden md:flex items-center gap-1">
-            <NavDropdown label={p("Measure",   "量化")}   items={measureItems}   isActive={isActive} />
+            <NavDropdown label={p("Monitor",   "监控")}   items={measureItems}   isActive={isActive} />
             <NavDropdown label={p("Diagnose",  "诊断")}   items={diagnoseItems}  isActive={isActive} />
-            <NavDropdown label={p("Execute",   "执行")}   items={executeItems}   isActive={isActive} />
-            <NavDropdown label={p("Workspace", "工作台")} items={workspaceItems} isActive={isActive} />
+            <NavDropdown label={p("Studio",    "工作室")} items={executeItems}   isActive={isActive} />
+            <NavDropdown label={p("Platform",  "平台")}   items={workspaceItems} isActive={isActive} />
           </div>
         )}
 
