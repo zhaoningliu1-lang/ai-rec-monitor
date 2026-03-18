@@ -61,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <li><a href="/geo-action" className="hover:text-white transition-colors">AI Visibility Plan</a></li>
                   <li><a href="/selection" className="hover:text-white transition-colors">Selection Intelligence</a></li>
                   <li><a href="/pricing" className="hover:text-white transition-colors">Pricing</a></li>
+                  <li><a href="/developers" className="hover:text-white transition-colors">Developers / API</a></li>
                 </ul>
               </div>
 

@@ -123,9 +123,10 @@ export default function NavBar() {
   ];
 
   const workspaceItems: DropdownItem[] = [
-    { href: h("/schedules"), label: p("Auto Monitor", "自动监控") },
-    { href: h("/account"),   label: p("Account",      "账户设置") },
-    { href: h("/selection"), label: p("Selection",    "选品情报") },
+    { href: h("/schedules"),  label: p("Auto Monitor", "自动监控") },
+    { href: h("/account"),    label: p("Account",      "账户设置") },
+    { href: h("/selection"),  label: p("Selection",    "选品情报") },
+    { href: h("/developers"), label: p("Developers",   "开发者"),  desc: p("API keys & agent integration", "API Key 与 Agent 集成"), badge: "New" },
   ];
 
   /* ── mobile: flatten all links ── */

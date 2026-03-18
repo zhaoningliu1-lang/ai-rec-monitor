@@ -141,3 +141,33 @@ export function logout() {
   clearToken();
   window.location.href = "/";
 }
+
+// ── API Key Management ──────────────────────────────────────────────────────
+
+export interface APIKeyInfo {
+  id: string;
+  name: string;
+  key_prefix: string;
+  is_active: boolean;
+  last_used_at: string | null;
+  created_at: string;
+}
+
+export interface APIKeyCreated extends APIKeyInfo {
+  raw_key: string;
+}
+
+export async function createApiKey(name: string): Promise<APIKeyCreated> {
+  return apiFetch("/auth/api-keys", {
+    method: "POST",
+    body: JSON.stringify({ name }),
+  });
+}
+
+export async function listApiKeys(): Promise<APIKeyInfo[]> {
+  return apiFetch("/auth/api-keys");
+}
+
+export async function revokeApiKey(keyId: string): Promise<void> {
+  await apiFetch(`/auth/api-keys/${keyId}`, { method: "DELETE" });
+}

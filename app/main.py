@@ -24,6 +24,7 @@ from app.routers import selection as selection_router
 from app.routers import geo_tools as geo_tools_router
 from app.routers import content_studio as content_studio_router
 from app.routers import dashboard as dashboard_router
+from app.routers import api_v1 as api_v1_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -238,6 +239,25 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "CREATE INDEX IF NOT EXISTS ix_content_drafts_user_id ON content_drafts (user_id)"
         ))
+        # ── API Keys table ──
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS api_keys (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                name VARCHAR(100) NOT NULL,
+                key_prefix VARCHAR(12) NOT NULL,
+                key_hash VARCHAR(255) NOT NULL UNIQUE,
+                is_active BOOLEAN NOT NULL DEFAULT TRUE,
+                last_used_at TIMESTAMPTZ,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        """))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_api_keys_user_id ON api_keys (user_id)"
+        ))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_api_keys_key_hash ON api_keys (key_hash)"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 
@@ -295,6 +315,7 @@ app.include_router(selection_router.router)
 app.include_router(geo_tools_router.router)
 app.include_router(content_studio_router.router)
 app.include_router(dashboard_router.router)
+app.include_router(api_v1_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s
