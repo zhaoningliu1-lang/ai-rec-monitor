@@ -92,6 +92,7 @@ export default function NavBar() {
     { href: h("/audit"),        label: p("AI Brand Diagnosis",  "AI 品牌诊断"),    desc: p("Free — see your GEO Score in 5 min",         "免费 · 5 分钟获得 GEO 评分") },
     { href: h("/brand-safety"), label: p("Brand Safety",        "品牌安全"),        desc: p("AI brand safety audit",                      "AI 品牌安全审计"), badge: "New" },
     { href: h("/b2a-analytics"), label: p("B2A Analytics",      "B2A Analytics"), desc: p("AI agent traffic invisible to GA",            "GA 看不到的 AI 来源流量"), badge: "Beta" },
+    { href: h("/developers"),   label: p("Developers",          "开发者"),          desc: p("API docs, MCP server & agent integration",   "API 文档、MCP 服务与 Agent 集成") },
   ];
 
   /* ── LOGGED-IN: Measure layer ── */
