@@ -29,7 +29,7 @@ const PUBLIC_PREFIX = [
   "/api/",
 ];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public exact paths
