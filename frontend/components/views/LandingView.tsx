@@ -1,725 +1,1022 @@
 "use client";
 
 import Link from "next/link";
-import { Lang, tx } from "@/lib/i18n";
+import { useRouter } from "next/navigation";
+import { Lang } from "@/lib/i18n";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const CALENDLY = "https://calendly.com/brivesubscription/30min";
+const MONO = `'JetBrains Mono','Fira Code','Cascadia Code','Courier New',monospace`;
 
-const reveal = {
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6 },
-};
+interface Props { lang: Lang; }
 
-interface Props {
-  lang: Lang;
-}
-
-/* ─── Animated counter ─── */
-function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
-  const [val, setVal] = useState(0);
+/* ─── Typewriter hook ─── */
+function useTypewriter(text: string, speed = 32, startDelay = 0) {
+  const [n, setN] = useState(0);
   useEffect(() => {
-    let start = 0;
-    const step = to / 60;
-    const id = setInterval(() => {
-      start += step;
-      if (start >= to) { setVal(to); clearInterval(id); }
-      else setVal(Math.floor(start));
-    }, 16);
-    return () => clearInterval(id);
-  }, [to]);
-  return <>{val}{suffix}</>;
+    setN(0);
+    if (!text) return;
+    const t0 = setTimeout(() => {
+      let i = 0;
+      const iv = setInterval(() => {
+        i++;
+        setN(i);
+        if (i >= text.length) clearInterval(iv);
+      }, speed);
+      return () => clearInterval(iv);
+    }, startDelay);
+    return () => clearTimeout(t0);
+  }, [text, speed, startDelay]);
+  return { out: text.slice(0, n), done: n >= text.length && text.length > 0 };
 }
 
-/* ─── GEO Score ring ─── */
-function ScoreRing({ score, color = "#ff6b35" }: { score: number; color?: string }) {
-  const r = 32;
-  const circ = 2 * Math.PI * r;
-  const dash = (score / 100) * circ;
+/* ─── Terminal chrome ─── */
+function Term({
+  title,
+  children,
+  className = "",
+  style: extraStyle,
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
-    <svg width="80" height="80" viewBox="0 0 80 80">
-      <circle cx="40" cy="40" r={r} fill="none" stroke="#1e1e30" strokeWidth="5" />
-      <circle
-        cx="40" cy="40" r={r} fill="none"
-        stroke={color} strokeWidth="5"
-        strokeDasharray={`${dash} ${circ}`}
-        strokeLinecap="round"
-        transform="rotate(-90 40 40)"
-        style={{ filter: `drop-shadow(0 0 6px ${color}60)` }}
-      />
-      <text x="40" y="45" textAnchor="middle" fontSize="14" fontWeight="900" fill="#f0f0f8">{score}</text>
-    </svg>
-  );
-}
-
-/* ─── Bracket decoration (nexspark-inspired) ─── */
-function SectionBracket({ num, label }: { num: string; label: string }) {
-  return (
-    <div className="flex items-center gap-3 mb-6">
+    <div
+      className={className}
+      style={{
+        background: "#050508",
+        border: "1px solid #1a1a2e",
+        borderRadius: "12px",
+        overflow: "hidden",
+        boxShadow: "0 24px 64px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02)",
+        ...extraStyle,
+      }}
+    >
+      {/* Title bar */}
       <div
-        className="text-xs font-black tracking-[0.2em] px-2 py-1 rounded"
         style={{
-          color: "#ff6b35",
-          border: "1px solid rgba(255,107,53,0.4)",
-          background: "rgba(255,107,53,0.06)",
-          fontFamily: "monospace",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          padding: "10px 16px",
+          borderBottom: "1px solid #111120",
+          background: "#080810",
         }}
       >
-        {num}
+        {["#ff5f57", "#febc2e", "#28c840"].map((c) => (
+          <div
+            key={c}
+            style={{ width: 11, height: 11, borderRadius: "50%", background: c, opacity: 0.85 }}
+          />
+        ))}
+        <span style={{ fontFamily: MONO, fontSize: "12px", color: "#252540", marginLeft: "8px" }}>
+          {title}
+        </span>
       </div>
-      <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#555580" }}>
-        {label}
+      {/* Body */}
+      <div style={{ fontFamily: MONO, fontSize: "13px", lineHeight: "1.8", padding: "18px 20px" }}>
+        {children}
       </div>
-      <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, #25253f, transparent)" }} />
     </div>
   );
 }
 
+/* ─── CLI primitives ─── */
+function Prompt({ cmd, cursor }: { cmd: string; cursor?: boolean }) {
+  return (
+    <div style={{ display: "flex", gap: "10px", alignItems: "baseline" }}>
+      <span style={{ color: "#ff6b35", userSelect: "none", flexShrink: 0 }}>$</span>
+      <span style={{ color: "#e0e0f5" }}>
+        {cmd}
+        {cursor && (
+          <span
+            style={{ color: "#ff6b35", marginLeft: "1px", animation: "blink 1s step-end infinite" }}
+          >
+            ▋
+          </span>
+        )}
+      </span>
+    </div>
+  );
+}
+
+function Out({
+  children,
+  color = "#555580",
+  indent = true,
+}: {
+  children: React.ReactNode;
+  color?: string;
+  indent?: boolean;
+}) {
+  return (
+    <div style={{ color, paddingLeft: indent ? "22px" : 0 }}>{children}</div>
+  );
+}
+
+function Sep({ len = 46 }: { len?: number }) {
+  return (
+    <div style={{ color: "#181828", paddingLeft: "22px", userSelect: "none" }}>
+      {"─".repeat(len)}
+    </div>
+  );
+}
+
+/* ─── Hero terminal (interactive scan) ─── */
+function HeroTerminal({ lang }: { lang: Lang }) {
+  const router = useRouter();
+  const [brand, setBrand] = useState("");
+  const [phase, setPhase] = useState<0 | 1 | 2>(0); // 0=wait 1=typing 2=result
+  const inputRef = useRef<HTMLInputElement>(null);
+  const p = (en: string, zh: string) => (lang === "zh" ? zh : en);
+
+  const CMD = `avanti scan --brand "YourBrand" --engines all`;
+  const { out: typedCmd, done: cmdDone } = useTypewriter(
+    phase >= 1 ? CMD : "",
+    28,
+    0
+  );
+
+  // Start animation shortly after mount
+  useEffect(() => {
+    const t = setTimeout(() => setPhase(1), 700);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Show result after typing finishes
+  useEffect(() => {
+    if (!cmdDone) return;
+    const t = setTimeout(() => setPhase(2), 300);
+    return () => clearTimeout(t);
+  }, [cmdDone]);
+
+  const handleScan = (e: React.FormEvent) => {
+    e.preventDefault();
+    const path = lang === "zh" ? "/zh/audit" : "/audit";
+    router.push(brand.trim() ? `${path}?brand=${encodeURIComponent(brand.trim())}` : path);
+  };
+
+  const engines = [
+    { e: "ChatGPT",    q: "0/10", sov: " 0%", c: "#ff4d6d" },
+    { e: "Perplexity", q: "0/8",  sov: " 0%", c: "#ff4d6d" },
+    { e: "Gemini",     q: "1/10", sov: " 2%", c: "#f5a623" },
+    { e: "Claude",     q: "0/8",  sov: " 0%", c: "#ff4d6d" },
+  ];
+
+  return (
+    <Term title="avanti — ai-visibility v2.1">
+      <Prompt cmd={typedCmd} cursor={phase === 1 && !cmdDone} />
+
+      {cmdDone && phase < 2 && (
+        <Out color="#2a2a45">Connecting to AI engines...</Out>
+      )}
+
+      {phase === 2 && (
+        <>
+          <Out color="#2a2a45">Scanning 4 AI engines...</Out>
+          <Sep />
+          {engines.map((r) => (
+            <Out key={r.e}>
+              <span style={{ color: "#22c55e" }}>✓</span>{" "}
+              <span style={{ color: "#888898", display: "inline-block", width: "92px" }}>{r.e}</span>
+              <span style={{ color: "#2a2a45" }}>{r.q} queries   SOV: </span>
+              <span style={{ color: r.c, fontWeight: "bold" }}>{r.sov}</span>
+            </Out>
+          ))}
+          <Sep />
+          <Out>
+            <span style={{ color: "#3a3a5c" }}>GEO_SCORE  </span>
+            <span style={{ color: "#ff4d6d", fontWeight: "bold" }}>34/100</span>
+            <span style={{ color: "#ff4d6d" }}>  [CRITICAL]</span>
+          </Out>
+          <Out>
+            <span style={{ color: "#3a3a5c" }}>TOP_RIVAL  </span>
+            <span style={{ color: "#22c55e" }}>Anker 78/100</span>
+            <span style={{ color: "#2a2a45" }}>  // gap: -44pts</span>
+          </Out>
+          <Out>
+            <span style={{ color: "#3a3a5c" }}>NEXT_STEP  </span>
+            <span style={{ color: "#f5a623" }}>$ avanti diagnose --find-root-causes</span>
+          </Out>
+          <Sep />
+        </>
+      )}
+
+      {/* Live brand input */}
+      <form onSubmit={handleScan} style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "6px" }}>
+        <span style={{ color: "#ff6b35", userSelect: "none", flexShrink: 0 }}>$</span>
+        <span style={{ color: "#2a2a45", flexShrink: 0 }}>brand:</span>
+        <input
+          ref={inputRef}
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+          placeholder={p("enter your brand name...", "输入品牌名...")}
+          style={{
+            flex: 1,
+            background: "transparent",
+            border: "none",
+            outline: "none",
+            color: "#f0f0f8",
+            caretColor: "#ff6b35",
+            fontFamily: MONO,
+            fontSize: "13px",
+            minWidth: 0,
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            background: "#ff6b35",
+            color: "#fff",
+            border: "none",
+            padding: "5px 14px",
+            borderRadius: "6px",
+            fontSize: "12px",
+            fontWeight: "bold",
+            cursor: "pointer",
+            fontFamily: MONO,
+            flexShrink: 0,
+            boxShadow: "0 0 16px rgba(255,107,53,0.4)",
+          }}
+        >
+          → {p("Scan", "扫描")}
+        </button>
+      </form>
+    </Term>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   MAIN EXPORT
+═══════════════════════════════════════════════════ */
 export default function LandingView({ lang: _lang }: Props) {
   const lang = _lang;
   const auditPath = lang === "zh" ? "/zh/audit" : "/audit";
   const p = (en: string, zh: string) => (lang === "zh" ? zh : en);
 
-  const [heroTab, setHeroTab] = useState<"score" | "traffic">("score");
-
-  const mockBrands = [
-    { name: "Anker",                    score: 78, color: "#22c55e" },
-    { name: p("Your Brand", "你的品牌"), score: 34, color: "#ff4d6d" },
-    { name: "NOCO",                     score: 61, color: "#f5a623" },
-  ];
-
   return (
-    <div className="pb-32 space-y-28 max-w-5xl mx-auto">
+    <>
+      {/* Blink animation */}
+      <style>{`
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+      `}</style>
 
-      {/* ═══════════════════════════════════
-          HERO
-      ═══════════════════════════════════ */}
-      <section className="pt-20 relative overflow-hidden">
-        {/* Ambient glow */}
-        <div
-          className="absolute -top-20 left-1/3 w-[700px] h-[500px] pointer-events-none"
-          style={{
-            background: "radial-gradient(ellipse at center, rgba(255,107,53,0.14) 0%, transparent 70%)",
-            filter: "blur(80px)",
-          }}
-        />
+      <div
+        className="pb-32 max-w-5xl mx-auto"
+        style={{ fontFamily: MONO }}
+      >
 
-        <div className="relative z-10 grid md:grid-cols-[58fr_42fr] gap-12 items-center">
-          {/* Left — copy */}
-          <motion.div {...reveal}>
-            {/* Pill */}
-            <div
-              className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full mb-8"
-              style={{ background: "rgba(255,107,53,0.1)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.25)" }}
+        {/* ══════════════════════════════
+            HERO
+        ══════════════════════════════ */}
+        <section className="pt-20 relative overflow-hidden">
+          {/* Ambient glow */}
+          <div
+            style={{
+              position: "absolute",
+              top: "-60px",
+              left: "25%",
+              width: "650px",
+              height: "420px",
+              background: "radial-gradient(ellipse, rgba(255,107,53,0.11) 0%, transparent 70%)",
+              filter: "blur(80px)",
+              pointerEvents: "none",
+            }}
+          />
+
+          <div className="relative z-10 grid md:grid-cols-[52fr_48fr] gap-12 items-start">
+
+            {/* ── Left: copy ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-              {p("AI Recommendation Visibility Platform", "AI 推荐可见度监控平台")}
-            </div>
-
-            {/* Headline */}
-            <h1
-              className="font-black tracking-tight leading-[1.02] mb-5"
-              style={{ fontSize: "clamp(2.4rem, 5vw, 3.6rem)", color: "#f0f0f8" }}
-            >
-              {lang === "zh" ? (
-                <><span style={{ color: "#ff6b35" }}>AI 在推荐</span><br />你的品牌吗？</>
-              ) : (
-                <>Is your brand<br /><span style={{ color: "#ff6b35" }}>visible to AI?</span></>
-              )}
-            </h1>
-
-            <p className="text-lg leading-relaxed mb-3 max-w-lg" style={{ color: "#7070a0" }}>
-              {p(
-                "When buyers ask ChatGPT, Claude, or Gemini for product recommendations — is your brand in the answer?",
-                "当消费者向 ChatGPT、Claude、Gemini 询问产品推荐时——你的品牌出现在答案里了吗？"
-              )}
-            </p>
-            <p className="text-sm font-semibold mb-8 max-w-lg" style={{ color: "#555580" }}>
-              {p(
-                "Avanti measures, diagnoses, and helps you fix your AI visibility — before your competitors do.",
-                "Avanti 帮你量化、诊断并提升 AI 可见度——在竞争对手之前。"
-              )}
-            </p>
-
-            {/* CTA */}
-            <div className="flex items-center gap-4 flex-wrap">
-              <Link
-                href={auditPath}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-sm font-black transition-all duration-300 hover:opacity-90 hover:translate-y-[-1px]"
+              {/* Comment line */}
+              <div
                 style={{
-                  background: "#ff6b35",
-                  color: "#fff",
-                  boxShadow: "0 0 28px rgba(255,107,53,0.4), 0 4px 16px rgba(255,107,53,0.25)",
-                  letterSpacing: "0.02em",
+                  color: "#252540",
+                  fontSize: "12px",
+                  marginBottom: "18px",
+                  letterSpacing: "0.05em",
                 }}
               >
-                {p("Get Free GEO Diagnosis →", "免费诊断我的品牌 →")}
-              </Link>
-              <a
-                href={CALENDLY}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm transition-colors hover:text-white"
-                style={{ color: "#555580" }}
-              >
-                {p("or book a strategy call", "或预约策略通话")}
-              </a>
-            </div>
-
-            {/* Trust micro-stat */}
-            <div className="flex items-center gap-6 mt-8 flex-wrap">
-              {[
-                { val: "4", label: p("AI engines tracked", "AI 引擎实时追踪") },
-                { val: "+693%", label: p("AI-driven retail traffic YoY", "AI 零售流量年增") },
-                { val: "5 min", label: p("to your first GEO Score", "获得首份 GEO 评分") },
-              ].map((s) => (
-                <div key={s.val}>
-                  <div className="text-base font-black" style={{ color: "#ff6b35" }}>{s.val}</div>
-                  <div className="text-xs" style={{ color: "#555580" }}>{s.label}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Right — product preview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="hidden md:block"
-          >
-            <div
-              className="rounded-2xl overflow-hidden"
-              style={{ background: "#0b0b14", border: "1px solid #25253f", boxShadow: "0 24px 80px rgba(0,0,0,0.6)" }}
-            >
-              {/* Window bar */}
-              <div className="flex items-center gap-1.5 px-4 py-3" style={{ borderBottom: "1px solid #1e1e30" }}>
-                {["#ff4d6d", "#f5a623", "#22c55e"].map((c) => (
-                  <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ background: c, opacity: 0.7 }} />
-                ))}
-                <div className="ml-3 text-xs font-mono" style={{ color: "#555580" }}>avantia2a.com — AI Visibility</div>
+                {"// "}{p("the question every brand should be asking", "每个品牌都应该问的问题")}
               </div>
 
-              <div className="p-5 space-y-4">
-                {/* Tab bar */}
-                <div className="flex gap-1 p-0.5 rounded-lg" style={{ background: "#161625" }}>
-                  {[
-                    { key: "score" as const, label: p("GEO Score", "GEO 评分") },
-                    { key: "traffic" as const, label: p("AI Traffic +693%", "AI 流量 +693%"), badge: true },
-                  ].map((t) => (
-                    <button
-                      key={t.key}
-                      onClick={() => setHeroTab(t.key)}
-                      className="flex-1 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors flex items-center justify-center gap-1.5"
-                      style={{
-                        background: heroTab === t.key ? "#25253f" : "transparent",
-                        color: heroTab === t.key ? "#f0f0f8" : "#555580",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {t.label}
-                      {t.badge && heroTab === t.key && (
-                        <span className="text-[9px] px-1 py-0.5 rounded-full font-bold"
-                          style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}>LIVE</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                {heroTab === "score" ? (
-                  <div className="space-y-2.5">
-                    {mockBrands.map((b) => (
-                      <div
-                        key={b.name}
-                        className="flex items-center gap-3 rounded-xl px-4 py-3"
-                        style={{ background: "#161625", border: "1px solid #1e1e30" }}
-                      >
-                        <ScoreRing score={b.score} color={b.color} />
-                        <div className="flex-1">
-                          <div className="text-sm font-bold mb-0.5" style={{ color: "#f0f0f8" }}>{b.name}</div>
-                          <div className="text-xs" style={{ color: "#555580" }}>
-                            {p("AI Visibility Score", "AI 可见度评分")}
-                          </div>
-                        </div>
-                        <div className="text-2xl font-black" style={{ color: b.color }}>{b.score}</div>
-                      </div>
-                    ))}
-                    <div className="text-[11px] text-center pt-1" style={{ color: "#333355" }}>
-                      {p("Simulated · For illustration only", "模拟数据 · 仅供展示")}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-2.5">
-                    {[
-                      { engine: "ChatGPT",    sessions: 412, color: "#22c55e", pct: 100 },
-                      { engine: "Perplexity", sessions: 187, color: "#3b82f6", pct: 45 },
-                      { engine: "Gemini",     sessions:  94, color: "#f5a623", pct: 23 },
-                      { engine: "Claude",     sessions:  31, color: "#a78bfa", pct:  8 },
-                    ].map((row) => (
-                      <div
-                        key={row.engine}
-                        className="flex items-center gap-3 rounded-xl px-4 py-3"
-                        style={{ background: "#161625", border: "1px solid #1e1e30" }}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-semibold mb-1" style={{ color: "#f0f0f8" }}>{row.engine}</div>
-                          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
-                            <div className="h-full rounded-full transition-all duration-700"
-                              style={{ width: `${row.pct}%`, background: row.color }} />
-                          </div>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <div className="text-lg font-black" style={{ color: row.color }}>{row.sessions}</div>
-                          <div className="text-[11px]" style={{ color: "#555580" }}>{p("sessions/wk", "会话/周")}</div>
-                        </div>
-                      </div>
-                    ))}
-                    <div className="text-[11px] text-center pt-1" style={{ color: "#333355" }}>
-                      {p("Simulated · For illustration only", "模拟数据 · 仅供展示")}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════
-          THE SHIFT
-      ═══════════════════════════════════ */}
-      <motion.section {...reveal}>
-        <SectionBracket num="00" label={p("The AI Shift", "AI 搜索变局")} />
-        <div className="grid md:grid-cols-4 gap-px rounded-2xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
-          {[
-            { val: "47%",   color: "#ff4d6d", label: p("of online shoppers now use AI for purchase decisions",        "的线上购物者已用 AI 辅助购买决策") },
-            { val: "+693%", color: "#f5a623", label: p("AI-driven retail traffic growth in 2025 (Adobe Analytics)",  "AI 驱动零售流量 2025 年同比增长（Adobe）") },
-            { val: "0",     color: "#ff4d6d", label: p("brands out of 50 we tested score above 60 on first audit",   "首次诊断品牌中超过 60 分的比例极低") },
-            { val: "3×",    color: "#22c55e", label: p("higher conversion when AI recommends your brand by name",     "AI 点名推荐时，转化率提升幅度") },
-          ].map((s, i) => (
-            <div
-              key={i}
-              className="px-8 py-8"
-              style={{ background: "#0b0b14" }}
-            >
-              <div className="text-4xl font-black mb-2" style={{ color: s.color }}>{s.val}</div>
-              <div className="text-xs leading-relaxed" style={{ color: "#555580" }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-        <p className="text-[11px] mt-2.5" style={{ color: "#2a2a45" }}>
-          * {p("Adobe Analytics Holiday Report 2025", "Adobe Analytics 2025 假日季报告")}
-        </p>
-      </motion.section>
-
-      {/* ═══════════════════════════════════
-          3-LAYER FRAMEWORK
-      ═══════════════════════════════════ */}
-      <motion.section {...reveal}>
-        <SectionBracket num="01" label={p("How Avanti Works", "Avanti 如何工作")} />
-        <h2
-          className="font-black tracking-tight mb-3 leading-tight"
-          style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.4rem)", color: "#f0f0f8" }}
-        >
-          {lang === "zh" ? (
-            <>量化。诊断。<span style={{ color: "#ff6b35" }}>执行。</span></>
-          ) : (
-            <>Measure. Diagnose. <span style={{ color: "#ff6b35" }}>Execute.</span></>
-          )}
-        </h2>
-        <p className="text-sm mb-12 max-w-xl" style={{ color: "#7070a0" }}>
-          {p(
-            "Most brands don't know they're invisible to AI. We built a three-layer system to fix that.",
-            "大多数品牌不知道自己在 AI 里是隐形的。我们构建了三层系统来解决这个问题。"
-          )}
-        </p>
-
-        <div className="space-y-4">
-          {[
-            {
-              num: "01",
-              phase: p("Measure", "量化"),
-              title: p("Know Your GEO Score", "了解你的 GEO 评分"),
-              desc: p(
-                "Run queries across ChatGPT, Claude, Gemini, and Perplexity. Get your brand's mention rate, Share of Voice, and ARRS benchmark — your baseline for everything.",
-                "跨 ChatGPT、Claude、Gemini、Perplexity 执行查询。获得品牌提及率、声量份额和 ARRS 基准——你所有优化的起点。"
-              ),
-              color: "#ff6b35",
-              cta: null,
-            },
-            {
-              num: "02",
-              phase: p("Diagnose", "诊断"),
-              title: p("Understand Why You're Invisible", "诊断你隐形的原因"),
-              desc: p(
-                "Reddit citation audit, YouTube KOL coverage, Amazon listing GEO score, E-E-A-T check, hallucination detection. We surface every root cause, not just symptoms.",
-                "Reddit 引用审计、YouTube KOL 覆盖、Amazon Listing GEO 评分、E-E-A-T 检测、幻觉检测。我们找出每一个根本原因，而不仅仅是症状。"
-              ),
-              color: "#f5a623",
-              cta: null,
-            },
-            {
-              num: "03",
-              phase: p("Execute", "执行"),
-              title: p("Generate Content That Gets Cited", "生成能被 AI 引用的内容"),
-              desc: p(
-                "Content Studio turns your diagnosis into action: AI-powered blog posts, Amazon listings, and social copy optimized for GEO. Auto-publish on schedule. Track results.",
-                "Content Studio 将诊断转化为行动：AI 驱动的博客文章、Amazon Listing 和社交文案，全部针对 GEO 优化。按计划自动发布，追踪效果。"
-              ),
-              color: "#22c55e",
-              cta: { href: auditPath, label: p("Start with a free diagnosis →", "从免费诊断开始 →") },
-            },
-          ].map((step, i) => (
-            <motion.div
-              key={step.num}
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="flex gap-6 rounded-2xl p-7 transition-all duration-300 hover:[box-shadow:0_0_24px_rgba(0,0,0,0.4)]"
-              style={{ background: "#0b0b14", border: `1px solid ${step.color}22` }}
-            >
-              {/* Number */}
+              {/* Pill badge */}
               <div
-                className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-black text-sm"
-                style={{ background: `${step.color}12`, color: step.color, border: `1px solid ${step.color}30`, fontFamily: "monospace" }}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  padding: "4px 12px",
+                  borderRadius: "999px",
+                  marginBottom: "22px",
+                  background: "rgba(255,107,53,0.07)",
+                  color: "#ff6b35",
+                  border: "1px solid rgba(255,107,53,0.18)",
+                  letterSpacing: "0.12em",
+                }}
               >
-                {step.num}
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: "currentColor",
+                    animation: "blink 2s step-end infinite",
+                  }}
+                />
+                {p("AI VISIBILITY PLATFORM", "AI 可见度监控平台")}
               </div>
-              <div className="flex-1">
-                <div className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: step.color }}>
-                  {step.phase}
-                </div>
-                <h3 className="text-base font-bold mb-2" style={{ color: "#f0f0f8" }}>{step.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>{step.desc}</p>
-                {step.cta && (
-                  <Link
-                    href={step.cta.href}
-                    className="inline-block mt-4 text-sm font-semibold transition-opacity hover:opacity-75"
-                    style={{ color: step.color }}
-                  >
-                    {step.cta.label}
-                  </Link>
+
+              {/* Headline */}
+              <h1
+                style={{
+                  fontSize: "clamp(2.2rem, 4.5vw, 3.3rem)",
+                  fontWeight: 900,
+                  color: "#f0f0f8",
+                  lineHeight: 1.08,
+                  letterSpacing: "-0.025em",
+                  marginBottom: "20px",
+                }}
+              >
+                {p("Is your brand", "AI 在推荐")}
+                <br />
+                <span style={{ color: "#ff6b35" }}>
+                  {p("visible to AI?", "你的品牌吗？")}
+                </span>
+              </h1>
+
+              {/* Subtext */}
+              <p
+                style={{
+                  color: "#6060a0",
+                  fontSize: "15px",
+                  lineHeight: 1.65,
+                  marginBottom: "6px",
+                  maxWidth: "440px",
+                  fontFamily: "system-ui, -apple-system, sans-serif",
+                }}
+              >
+                {p(
+                  "When buyers ask ChatGPT, Claude, or Gemini for product recommendations — is your brand in the answer?",
+                  "当消费者向 ChatGPT、Claude、Gemini 询问产品推荐时——你的品牌出现在答案里了吗？"
                 )}
+              </p>
+              <p style={{ color: "#252540", fontSize: "12px", marginBottom: "28px" }}>
+                {"// "}{p(
+                  "Avanti: measure → diagnose → fix AI visibility",
+                  "Avanti: 量化 → 诊断 → 修复 AI 可见度"
+                )}
+              </p>
+
+              {/* CLI CTA box */}
+              <div
+                style={{
+                  background: "#080810",
+                  border: "1px solid rgba(255,107,53,0.25)",
+                  borderRadius: "10px",
+                  padding: "14px 16px",
+                  marginBottom: "24px",
+                  boxShadow: "0 0 28px rgba(255,107,53,0.06)",
+                }}
+              >
+                <div style={{ color: "#1e1e35", fontSize: "11px", marginBottom: "10px" }}>
+                  {"# "}{p("free GEO scan — no credit card required", "免费 GEO 扫描 · 无需信用卡")}
+                </div>
+                <Link
+                  href={auditPath}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    textDecoration: "none",
+                    fontSize: "14px",
+                  }}
+                >
+                  <span style={{ color: "#ff6b35" }}>$</span>
+                  <span style={{ color: "#3a3a5c" }}>avanti diagnose</span>
+                  <span style={{ color: "#f5a623" }}>--brand</span>
+                  <span
+                    style={{
+                      flex: 1,
+                      borderBottom: "1px solid #1e1e30",
+                      paddingBottom: "1px",
+                      color: "#ff6b35",
+                      animation: "blink 1s step-end infinite",
+                    }}
+                  >
+                    ▋
+                  </span>
+                  <span
+                    style={{
+                      background: "#ff6b35",
+                      color: "#fff",
+                      padding: "6px 16px",
+                      borderRadius: "7px",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      boxShadow: "0 0 18px rgba(255,107,53,0.45)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {p("→ Start Free", "→ 免费开始")}
+                  </span>
+                </Link>
+              </div>
+
+              {/* Trust stats */}
+              <div style={{ display: "flex", gap: "28px", flexWrap: "wrap" }}>
+                {[
+                  { k: "ai_engines",    v: "4" },
+                  { k: "traffic_yoy",   v: "+693%" },
+                  { k: "setup",         v: "5min" },
+                ].map((s) => (
+                  <div key={s.k}>
+                    <div style={{ color: "#ff6b35", fontSize: "16px", fontWeight: 900 }}>{s.v}</div>
+                    <div style={{ color: "#1e1e35", fontSize: "11px" }}>{s.k}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Calendly link */}
+              <div style={{ marginTop: "16px" }}>
+                <a
+                  href={CALENDLY}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#2a2a45", fontSize: "12px", textDecoration: "none" }}
+                >
+                  {"// "}{p("or book a strategy call →", "或预约策略通话 →")}
+                </a>
               </div>
             </motion.div>
-          ))}
-        </div>
-      </motion.section>
 
-      {/* ═══════════════════════════════════
-          CASE STUDY
-      ═══════════════════════════════════ */}
-      <motion.section {...reveal}>
-        <SectionBracket num="02" label={p("Case Study", "客户案例")} />
-        <div
-          className="rounded-2xl overflow-hidden"
-          style={{ background: "#0b0b14", border: "1px solid rgba(255,107,53,0.2)" }}
+            {/* ── Right: interactive terminal ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="hidden md:block"
+            >
+              <HeroTerminal lang={lang} />
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════
+            MARKET INTELLIGENCE (stats)
+        ══════════════════════════════ */}
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: "80px" }}
         >
-          <div className="px-8 py-7">
-            <h2 className="text-xl font-black mb-1" style={{ color: "#f0f0f8" }}>
-              {p("DriveX: From AI Invisible to #2 Recommended", "DriveX：从 AI 隐形到第 2 位推荐")}
-            </h2>
-            <p className="text-sm" style={{ color: "#555580" }}>
-              {p("Automotive accessories · Shopee SEA / Amazon US · 90-day program", "汽车配件 · Shopee 东南亚 / Amazon 美国 · 90 天计划")}
-            </p>
+          <Term title="avanti market-intelligence --region global">
+            <Prompt cmd="avanti market-intelligence --region global --year 2025" />
+            <Out color="#252540"> </Out>
+            <Out color="#252540">
+              {"SIGNAL                           VALUE      NOTE"}
+            </Out>
+            <Sep len={60} />
+            {[
+              {
+                k: "ai_shoppers_pct",
+                v: "47%   ",
+                c: "#ff4d6d",
+                note: p("use AI for purchase decisions", "消费者已用 AI 辅助决策"),
+              },
+              {
+                k: "ai_retail_traffic_yoy",
+                v: "+693%",
+                c: "#f5a623",
+                note: p("Adobe Analytics Holiday Report 2025", "Adobe Analytics 2025 假日报告"),
+              },
+              {
+                k: "brands_scoring_60_plus",
+                v: "0/50 ",
+                c: "#ff4d6d",
+                note: p("on first audit (out of 50 tested)", "首次诊断中超 60 分的品牌数"),
+              },
+              {
+                k: "conversion_lift_ai_rec",
+                v: "3×    ",
+                c: "#22c55e",
+                note: p("higher conversion when AI names you", "AI 点名推荐时转化率提升"),
+              },
+            ].map((row) => (
+              <Out key={row.k}>
+                <span style={{ color: "#3a3a5c", display: "inline-block", width: "210px" }}>
+                  {row.k}
+                </span>
+                <span style={{ color: row.c, fontWeight: "bold", display: "inline-block", width: "65px" }}>
+                  {row.v}
+                </span>
+                <span style={{ color: "#1e1e35" }}>{"// "}{row.note}</span>
+              </Out>
+            ))}
+            <Sep len={60} />
+            <Out color="#1a1a2e">
+              {"// "}{p("Source: Adobe Analytics, Avanti internal data", "数据来源：Adobe Analytics + Avanti 内部数据")}
+            </Out>
+          </Term>
+        </motion.section>
+
+        {/* ══════════════════════════════
+            HOW IT WORKS
+        ══════════════════════════════ */}
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: "80px" }}
+        >
+          <div style={{ color: "#252540", fontSize: "12px", marginBottom: "20px" }}>
+            {"// "}{p("section_01 — how avanti works", "第 01 节 — Avanti 如何工作")}
+          </div>
+          <h2
+            style={{
+              fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)",
+              fontWeight: 900,
+              color: "#f0f0f8",
+              letterSpacing: "-0.02em",
+              marginBottom: "32px",
+              lineHeight: 1.1,
+            }}
+          >
+            <span style={{ color: "#ff6b35" }}>{p("Measure.", "量化。")}</span>
+            {" "}{p("Diagnose.", "诊断。")}
+            {" "}<span style={{ color: "#22c55e" }}>{p("Execute.", "执行。")}</span>
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              {
+                num: "01",
+                cmd: "avanti measure",
+                color: "#ff6b35",
+                outputs: [
+                  { k: "GEO_SCORE",    v: "0–100 scale",    c: "#ff6b35" },
+                  { k: "SHARE_OF_VOICE", v: "vs competitors", c: "#f5a623" },
+                  { k: "ENGINES",      v: "ChatGPT/Claude/Gemini/Perplexity", c: "#555580" },
+                  { k: "ARRS",         v: "avg recommendation rank", c: "#555580" },
+                ],
+                cta: { href: auditPath, label: p("→ Run free scan", "→ 免费扫描") },
+              },
+              {
+                num: "02",
+                cmd: "avanti diagnose",
+                color: "#f5a623",
+                outputs: [
+                  { k: "REDDIT",   v: "citation audit",         c: "#f5a623" },
+                  { k: "KOL",      v: "YouTube/TikTok coverage", c: "#555580" },
+                  { k: "LISTING",  v: "Amazon GEO score",        c: "#555580" },
+                  { k: "EEAT",     v: "authority check",         c: "#555580" },
+                  { k: "HALLUC",   v: "hallucination detection",  c: "#ff4d6d" },
+                ],
+                cta: null,
+              },
+              {
+                num: "03",
+                cmd: "avanti execute",
+                color: "#22c55e",
+                outputs: [
+                  { k: "BLOG",     v: "AI-optimized articles",   c: "#22c55e" },
+                  { k: "LISTING",  v: "Amazon rewrite",          c: "#555580" },
+                  { k: "SOCIAL",   v: "GEO-ready copy",          c: "#555580" },
+                  { k: "FAQ",      v: "schema page generator",   c: "#555580" },
+                ],
+                cta: { href: auditPath, label: p("→ Start Content Studio", "→ 打开内容工作室") },
+              },
+            ].map((step) => (
+              <Term key={step.num} title={`[${step.num}]`}>
+                <Prompt cmd={step.cmd} />
+                <Sep len={34} />
+                {step.outputs.map((o) => (
+                  <Out key={o.k}>
+                    <span style={{ color: "#252540", display: "inline-block", width: "64px" }}>
+                      {o.k}
+                    </span>
+                    <span style={{ color: o.c }}> {o.v}</span>
+                  </Out>
+                ))}
+                {step.cta && (
+                  <>
+                    <Sep len={34} />
+                    <Out>
+                      <Link
+                        href={step.cta.href}
+                        style={{ color: step.color, textDecoration: "none", fontWeight: "bold" }}
+                      >
+                        {step.cta.label}
+                      </Link>
+                    </Out>
+                  </>
+                )}
+              </Term>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* ══════════════════════════════
+            CASE STUDY
+        ══════════════════════════════ */}
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: "80px" }}
+        >
+          <div style={{ color: "#252540", fontSize: "12px", marginBottom: "20px" }}>
+            {"// "}{p("section_02 — case study", "第 02 节 — 客户案例")}
           </div>
 
-          <div className="grid md:grid-cols-3 gap-px" style={{ background: "#25253f" }}>
+          <Term title="avanti case-study --client DriveX --period 90d">
+            <Prompt cmd="avanti case-study --client DriveX --category automotive --period 90d" />
+            <Out color="#252540"> </Out>
+            <Out color="#252540">
+              {"BRAND           CATEGORY        METRIC        BEFORE    AFTER"}
+            </Out>
+            <Sep len={72} />
             {[
               {
                 brand: "JumpStart Pro",
                 cat: p("Jump Starters", "汽车启动电源"),
                 metric: p("High-Intent SOV", "高意图 SOV"),
-                before: "0%", after: "23.7%",
-                color: "#22c55e",
-                note: p("AI rank: Not listed → #2", "AI 排名：未上榜 → 第 2 位"),
+                before: "0%",
+                after: "23.7%",
+                c: "#22c55e",
+                note: p("AI rank: unlisted → #2", "AI 排名：未上榜 → 第 2 位"),
               },
               {
                 brand: "MagDrive Pro",
-                cat: p("Car Phone Mounts", "车载手机支架"),
+                cat: p("Phone Mounts", "车载手机支架"),
                 metric: p("Weighted SOV", "加权 SOV"),
-                before: "0%", after: "7.8%",
-                color: "#f5a623",
+                before: "0%",
+                after: "7.8%",
+                c: "#f5a623",
                 note: p("Won PCMag Editor's Choice", "获 PCMag 编辑推荐"),
               },
               {
                 brand: "DriveSafe Pro",
                 cat: p("Dash Cameras", "行车记录仪"),
                 metric: p("Weighted SOV", "加权 SOV"),
-                before: "0%", after: "5.2%",
-                color: "#ff4d6d",
-                note: p("Root cause: Zero English reviews", "根因：零英文评测"),
+                before: "0%",
+                after: "5.2%",
+                c: "#ff4d6d",
+                note: p("Root cause: zero English reviews", "根因：零英文评测"),
               },
-            ].map((item) => (
-              <div key={item.brand} className="p-6" style={{ background: "#0b0b14" }}>
-                <div className="text-sm font-bold mb-0.5" style={{ color: "#f0f0f8" }}>{item.brand}</div>
-                <div className="text-xs mb-4" style={{ color: "#555580" }}>{item.cat}</div>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-xs line-through" style={{ color: "#333355" }}>{item.before}</span>
-                  <span className="text-2xl font-black" style={{ color: item.color }}>{item.after}</span>
-                  <span className="text-xs" style={{ color: "#555580" }}>{item.metric}</span>
-                </div>
-                <div
-                  className="text-xs px-2.5 py-1 rounded-lg inline-block"
-                  style={{ background: `${item.color}10`, color: item.color, border: `1px solid ${item.color}20` }}
-                >
-                  {item.note}
-                </div>
-              </div>
+            ].map((row) => (
+              <Out key={row.brand}>
+                <span style={{ color: "#888898", display: "inline-block", width: "136px" }}>{row.brand}</span>
+                <span style={{ color: "#3a3a5c", display: "inline-block", width: "120px" }}>{row.cat}</span>
+                <span style={{ color: "#3a3a5c", display: "inline-block", width: "112px" }}>{row.metric}</span>
+                <span style={{ color: "#2a2a45", display: "inline-block", width: "56px" }}>{row.before}</span>
+                <span style={{ color: row.c, fontWeight: "bold", display: "inline-block", width: "64px" }}>{row.after}</span>
+                <span style={{ color: "#1a1a2e" }}>{"// "}{row.note}</span>
+              </Out>
             ))}
-          </div>
-        </div>
-      </motion.section>
+            <Sep len={72} />
+            <Out color="#1a1a2e">
+              exit_code {"0"} {"  // "}{p("program completed successfully in 90 days", "计划 90 天内成功完成")}
+            </Out>
+          </Term>
+        </motion.section>
 
-      {/* ═══════════════════════════════════
-          PRICING
-      ═══════════════════════════════════ */}
-      <motion.section {...reveal} id="pricing">
-        <SectionBracket num="03" label={p("Pricing", "定价")} />
-        <h2
-          className="font-black mb-2 tracking-tight"
-          style={{ fontSize: "clamp(1.8rem, 3vw, 2.2rem)", color: "#f0f0f8" }}
+        {/* ══════════════════════════════
+            PRICING
+        ══════════════════════════════ */}
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: "80px" }}
+          id="pricing"
         >
-          {p("Simple, transparent pricing", "简单透明的定价")}
-        </h2>
-        <p className="text-sm mb-10" style={{ color: "#7070a0" }}>
-          {p("Start free. Scale when you see results.", "免费开始，见效后升级。")}
-        </p>
-
-        <div className="grid md:grid-cols-4 gap-4">
-          {[
-            {
-              name: p("Free", "免费版"),
-              price: "$0",
-              per: null,
-              badge: null,
-              desc: p("2 scans/mo · 50 exec credits", "2 次扫描/月 · 50 执行 credits"),
-              highlight: false,
-              features: [
-                p("2 GEO scans/month", "每月 2 次 GEO 扫描"),
-                p("GEO Score + SOV report", "GEO 评分 + 声量报告"),
-                p("Competitor comparison", "竞品对比"),
-                p("50 exec credits (one-time)", "50 执行 credits（一次性赠送）"),
-                p("Diagnose tools (1 credit each)", "诊断工具（1 credit/次）"),
-              ],
-              cta: p("Start Free →", "免费开始 →"),
-              href: auditPath,
-              external: false,
-            },
-            {
-              name: p("Starter", "入门版"),
-              price: "$49",
-              per: p("/mo", "/月"),
-              badge: null,
-              desc: p("Unlimited scans · 300 exec credits/mo", "无限扫描 · 300 执行 credits/月"),
-              highlight: false,
-              features: [
-                p("Unlimited GEO scans", "无限 GEO 扫描"),
-                p("4 AI engines tracked", "4 大 AI 引擎追踪"),
-                p("Reddit + KOL signals", "Reddit + KOL 信号"),
-                p("Hallucination monitoring", "幻觉检测监控"),
-                p("300 exec credits/mo", "300 执行 credits/月"),
-              ],
-              cta: p("Get Starter →", "立即开始 →"),
-              href: auditPath,
-              external: false,
-            },
-            {
-              name: p("Growth", "成长版"),
-              price: "$149",
-              per: p("/mo", "/月"),
-              badge: p("Most Popular", "最受欢迎"),
-              desc: p("Unlimited scans · 1500 exec credits/mo", "无限扫描 · 1500 执行 credits/月"),
-              highlight: true,
-              features: [
-                p("Everything in Starter", "入门版全部功能"),
-                p("1500 exec credits/mo + rollover", "1500 执行 credits/月 + 滚存"),
-                p("Content Studio (Generate + Publish)", "Content Studio（生成 + 发布）"),
-                p("Amazon Listing GEO rewrite", "Amazon Listing GEO 改写"),
-                p("Priority support", "优先支持"),
-              ],
-              cta: p("Start Growth →", "开始成长版 →"),
-              href: auditPath,
-              external: false,
-            },
-            {
-              name: p("Agency", "代理版"),
-              price: "$799",
-              per: p("/mo", "/月"),
-              badge: null,
-              desc: p("Unlimited everything · 20 brands", "无限一切 · 20 个品牌"),
-              highlight: false,
-              features: [
-                p("Everything in Growth", "成长版全部功能"),
-                p("Unlimited exec credits", "无限执行 credits"),
-                p("Up to 20 brands", "最多 20 个品牌"),
-                p("White-label reports", "白标报告"),
-                p("API access + account manager", "API 接入 + 专属客户经理"),
-              ],
-              cta: p("Book Demo →", "预约演示 →"),
-              href: CALENDLY,
-              external: true,
-            },
-          ].map((plan) => (
-            <div
-              key={plan.name}
-              className="rounded-2xl p-6 flex flex-col transition-all duration-300 hover:scale-[1.02]"
-              style={{
-                background: plan.highlight ? "linear-gradient(135deg, #140e08 0%, #0b0b14 100%)" : "#0b0b14",
-                border: plan.highlight ? "1px solid rgba(255,107,53,0.45)" : "1px solid #25253f",
-                boxShadow: plan.highlight ? "0 0 40px rgba(255,107,53,0.08)" : "none",
-              }}
-            >
-              {plan.badge && (
-                <div
-                  className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full self-start mb-4"
-                  style={{ background: "rgba(255,107,53,0.15)", color: "#ff6b35" }}
-                >
-                  {plan.badge}
-                </div>
-              )}
-              <div className="font-bold text-sm mb-1" style={{ color: "#a0a0c8" }}>{plan.name}</div>
-              <div className="flex items-baseline gap-0.5 mb-0.5">
-                <span className="text-3xl font-black" style={{ color: plan.highlight ? "#ff6b35" : "#f0f0f8" }}>
-                  {plan.price}
-                </span>
-                {plan.per && <span className="text-sm" style={{ color: "#555580" }}>{plan.per}</span>}
-              </div>
-              <div className="text-xs mb-5" style={{ color: "#555580" }}>{plan.desc}</div>
-              <ul className="space-y-2 flex-1 mb-6">
-                {plan.features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs" style={{ color: "#7070a0" }}>
-                    <span style={{ color: "#22c55e", flexShrink: 0 }}>✓</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              {plan.external ? (
-                <a
-                  href={plan.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-semibold text-center py-2.5 rounded-xl transition-opacity hover:opacity-80"
-                  style={{ background: "#1e1e30", color: "#f0f0f8" }}
-                >
-                  {plan.cta}
-                </a>
-              ) : (
-                <Link
-                  href={plan.href}
-                  className="text-sm font-semibold text-center py-2.5 rounded-xl transition-opacity hover:opacity-80"
-                  style={
-                    plan.highlight
-                      ? { background: "#ff6b35", color: "#fff" }
-                      : { background: "#161625", color: "#f0f0f8", border: "1px solid #25253f" }
-                  }
-                >
-                  {plan.cta}
-                </Link>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Credit explainer */}
-        <div
-          className="mt-6 rounded-xl px-6 py-4 flex flex-col md:flex-row items-start md:items-center gap-4"
-          style={{ background: "#0b0b14", border: "1px solid #1e1e30" }}
-        >
-          <div className="text-xs font-black uppercase tracking-widest shrink-0" style={{ color: "#ff6b35", fontFamily: "monospace" }}>
-            {p("EXEC CREDITS", "执行 CREDITS")}
+          <div style={{ color: "#252540", fontSize: "12px", marginBottom: "20px" }}>
+            {"// "}{p("section_03 — pricing", "第 03 节 — 定价")}
           </div>
-          <div className="flex-1 text-xs leading-relaxed" style={{ color: "#555580" }}>
-            {p(
-              "Scans (Measure) and diagnostics (Diagnose) are always free — credits are only consumed when you generate content (Execute). 1 piece = 10 credits.",
-              "扫描（量化）和诊断工具永远免费——只有生成内容时（执行层）才消耗 credits。1 篇内容 = 10 credits。"
-            )}
-          </div>
-          <div className="flex items-center gap-4 shrink-0 flex-wrap">
+          <h2
+            style={{
+              fontSize: "clamp(1.8rem, 3vw, 2.2rem)",
+              fontWeight: 900,
+              color: "#f0f0f8",
+              letterSpacing: "-0.02em",
+              marginBottom: "6px",
+            }}
+          >
+            {p("Simple, transparent pricing", "简单透明的定价")}
+          </h2>
+          <p style={{ color: "#3a3a5c", fontSize: "13px", marginBottom: "28px" }}>
+            {"// "}{p("start free. scale when you see results.", "免费开始，见效后升级。")}
+          </p>
+
+          <div className="grid md:grid-cols-4 gap-4">
             {[
-              { action: p("Blog post", "博客文章"),  cost: "10" },
-              { action: p("Amazon listing", "Amazon Listing"), cost: "10" },
-              { action: p("Reddit reply", "Reddit 回复"), cost: "3" },
-              { action: p("FAQ page", "FAQ 页面"),  cost: "5" },
-            ].map((item) => (
-              <div key={item.action} className="text-center">
-                <div className="text-sm font-black" style={{ color: "#f0f0f8" }}>{item.cost}</div>
-                <div className="text-[10px]" style={{ color: "#333355" }}>{item.action}</div>
+              {
+                name: p("free", "free"),
+                price: "$0",
+                per: null,
+                badge: null,
+                highlight: false,
+                flags: [
+                  "--scans 2/month",
+                  "--exec-credits 50",
+                  "--geo-score",
+                  "--competitor-compare",
+                ],
+                cta: p("→ Start Free", "→ 免费开始"),
+                href: auditPath,
+                external: false,
+              },
+              {
+                name: p("starter", "starter"),
+                price: "$49",
+                per: p("/mo", "/月"),
+                badge: null,
+                highlight: false,
+                flags: [
+                  "--scans unlimited",
+                  "--exec-credits 300/mo",
+                  "--engines 4",
+                  "--reddit --kol",
+                  "--hallucination-check",
+                ],
+                cta: p("→ Get Starter", "→ 立即开始"),
+                href: auditPath,
+                external: false,
+              },
+              {
+                name: p("growth", "growth"),
+                price: "$149",
+                per: p("/mo", "/月"),
+                badge: p("most popular", "最受欢迎"),
+                highlight: true,
+                flags: [
+                  "--scans unlimited",
+                  "--exec-credits 1500/mo",
+                  "--content-studio",
+                  "--amazon-listing-geo",
+                  "--credits-rollover",
+                ],
+                cta: p("→ Start Growth", "→ 开始成长版"),
+                href: auditPath,
+                external: false,
+              },
+              {
+                name: p("agency", "agency"),
+                price: "$799",
+                per: p("/mo", "/月"),
+                badge: null,
+                highlight: false,
+                flags: [
+                  "--brands 20",
+                  "--exec-credits unlimited",
+                  "--white-label",
+                  "--api-access",
+                  "--account-manager",
+                ],
+                cta: p("→ Book Demo", "→ 预约演示"),
+                href: CALENDLY,
+                external: true,
+              },
+            ].map((plan) => (
+              <div
+                key={plan.name}
+                style={{
+                  background: plan.highlight
+                    ? "linear-gradient(135deg, #0e0a06 0%, #080810 100%)"
+                    : "#050508",
+                  border: plan.highlight
+                    ? "1px solid rgba(255,107,53,0.4)"
+                    : "1px solid #1a1a2e",
+                  borderRadius: "12px",
+                  padding: "20px",
+                  display: "flex",
+                  flexDirection: "column",
+                  fontFamily: MONO,
+                  fontSize: "12px",
+                  boxShadow: plan.highlight ? "0 0 40px rgba(255,107,53,0.07)" : "none",
+                  transition: "transform 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+              >
+                {plan.badge && (
+                  <div
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      letterSpacing: "0.12em",
+                      color: "#ff6b35",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {"# "}{plan.badge}
+                  </div>
+                )}
+                <div style={{ color: "#555580", marginBottom: "4px" }}>
+                  avanti {plan.name}
+                </div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "3px", marginBottom: "18px" }}>
+                  <span
+                    style={{
+                      fontSize: "28px",
+                      fontWeight: 900,
+                      color: plan.highlight ? "#ff6b35" : "#f0f0f8",
+                    }}
+                  >
+                    {plan.price}
+                  </span>
+                  {plan.per && (
+                    <span style={{ color: "#3a3a5c", fontSize: "12px" }}>{plan.per}</span>
+                  )}
+                </div>
+
+                <div style={{ flex: 1, marginBottom: "16px" }}>
+                  {plan.flags.map((f, i) => (
+                    <div key={i} style={{ display: "flex", gap: "6px", marginBottom: "5px" }}>
+                      <span style={{ color: "#22c55e", flexShrink: 0 }}>✓</span>
+                      <span style={{ color: "#3a3a5c" }}>{f}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {plan.external ? (
+                  <a
+                    href={plan.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "block",
+                      textAlign: "center",
+                      padding: "9px",
+                      borderRadius: "7px",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      fontFamily: MONO,
+                      textDecoration: "none",
+                      background: "#1a1a2e",
+                      color: "#f0f0f8",
+                    }}
+                  >
+                    {plan.cta}
+                  </a>
+                ) : (
+                  <Link
+                    href={plan.href}
+                    style={{
+                      display: "block",
+                      textAlign: "center",
+                      padding: "9px",
+                      borderRadius: "7px",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      fontFamily: MONO,
+                      textDecoration: "none",
+                      ...(plan.highlight
+                        ? { background: "#ff6b35", color: "#fff", boxShadow: "0 0 20px rgba(255,107,53,0.35)" }
+                        : { background: "#111120", color: "#f0f0f8", border: "1px solid #1a1a2e" }),
+                    }}
+                  >
+                    {plan.cta}
+                  </Link>
+                )}
               </div>
             ))}
           </div>
-        </div>
-      </motion.section>
 
-      {/* ═══════════════════════════════════
-          FINAL CTA BANNER
-      ═══════════════════════════════════ */}
-      <motion.section {...reveal}>
-        <div
-          className="rounded-2xl p-12 text-center relative overflow-hidden"
-          style={{
-            background: "linear-gradient(135deg, #0f0a06 0%, #0b0b14 60%, #060e0f 100%)",
-            border: "1px solid rgba(255,107,53,0.25)",
-          }}
-        >
-          {/* Glow */}
+          {/* Credits explainer */}
           <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,107,53,0.12) 0%, transparent 60%)" }}
-          />
-          <div className="relative z-10">
-            <div
-              className="inline-block text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full mb-6"
-              style={{ background: "rgba(255,107,53,0.1)", color: "#ff6b35", border: "1px solid rgba(255,107,53,0.3)" }}
-            >
-              {p("Free — No Credit Card Required", "免费 · 无需信用卡")}
+            style={{
+              marginTop: "16px",
+              background: "#050508",
+              border: "1px solid #1a1a2e",
+              borderRadius: "10px",
+              padding: "14px 18px",
+              display: "flex",
+              gap: "16px",
+              alignItems: "flex-start",
+              flexWrap: "wrap",
+            }}
+          >
+            <span style={{ color: "#ff6b35", fontWeight: 700, flexShrink: 0, fontSize: "11px", letterSpacing: "0.1em" }}>
+              EXEC_CREDITS
+            </span>
+            <span style={{ color: "#2a2a45", fontSize: "12px", flex: 1, lineHeight: 1.6 }}>
+              {"// "}{p(
+                "scans and diagnostics are always free — credits only consumed when generating content. 1 piece = 10 credits.",
+                "扫描和诊断工具永远免费——只有生成内容时才消耗 credits。1 篇 = 10 credits。"
+              )}
+            </span>
+            <div style={{ display: "flex", gap: "20px", flexShrink: 0, flexWrap: "wrap" }}>
+              {[
+                { a: p("blog", "博客"), c: "10" },
+                { a: p("amazon", "listing"), c: "10" },
+                { a: p("reddit", "reddit"), c: "3" },
+                { a: "faq", c: "5" },
+              ].map((item) => (
+                <div key={item.a} style={{ textAlign: "center" }}>
+                  <div style={{ color: "#f0f0f8", fontSize: "13px", fontWeight: 900 }}>{item.c}</div>
+                  <div style={{ color: "#1e1e35", fontSize: "10px" }}>{item.a}</div>
+                </div>
+              ))}
             </div>
-            <h2
-              className="font-black mb-3 tracking-tight"
-              style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", color: "#f0f0f8" }}
-            >
-              {lang === "zh" ? (
-                <>现在就知道你的位置<br /><span style={{ color: "#ff6b35" }}>在竞争对手之前。</span></>
-              ) : (
-                <>Find out where you stand<br /><span style={{ color: "#ff6b35" }}>before your competitors do.</span></>
-              )}
-            </h2>
-            <p className="text-sm mb-8 max-w-md mx-auto" style={{ color: "#555580" }}>
-              {p(
-                "5-minute free GEO diagnosis. See your score across 4 AI engines instantly.",
-                "5 分钟免费 GEO 诊断。立刻查看你在 4 大 AI 引擎中的评分。"
-              )}
-            </p>
-            <div className="flex items-center justify-center gap-4 flex-wrap">
+          </div>
+        </motion.section>
+
+        {/* ══════════════════════════════
+            FINAL CTA
+        ══════════════════════════════ */}
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: "80px" }}
+        >
+          <Term
+            title="avanti — ready to start"
+            style={{ border: "1px solid rgba(255,107,53,0.2)", boxShadow: "0 0 60px rgba(255,107,53,0.06), 0 24px 64px rgba(0,0,0,0.7)" }}
+          >
+            {/* Comment header */}
+            <Out color="#1a1a2e">
+              {"/*"}
+            </Out>
+            <Out color="#1e1e35">
+              {"  "}{p("Find out where you stand before your competitors do.", "在竞争对手之前了解你的位置。")}
+            </Out>
+            <Out color="#1e1e35">
+              {"  "}{p("5-minute free GEO scan — no credit card required.", "5 分钟免费 GEO 扫描 · 无需信用卡。")}
+            </Out>
+            <Out color="#1a1a2e">{"  */"}</Out>
+            <Out color="#252540"> </Out>
+
+            <Prompt cmd="avanti diagnose --free --no-credit-card-required" />
+            <Out color="#252540"> </Out>
+
+            {/* Input row */}
+            <div style={{ paddingLeft: "22px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+              <span style={{ color: "#3a3a5c" }}>--brand</span>
               <Link
                 href={auditPath}
-                className="inline-flex items-center gap-2 px-10 py-4 rounded-xl text-sm font-black transition-all duration-300 hover:opacity-90 hover:translate-y-[-2px]"
                 style={{
-                  background: "#ff6b35",
-                  color: "#fff",
-                  boxShadow: "0 0 40px rgba(255,107,53,0.45)",
-                  letterSpacing: "0.02em",
+                  flex: 1,
+                  minWidth: "180px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  textDecoration: "none",
+                  background: "#080812",
+                  border: "1px solid rgba(255,107,53,0.2)",
+                  borderRadius: "8px",
+                  padding: "10px 16px",
                 }}
               >
-                {p("Get Free GEO Diagnosis →", "免费诊断我的品牌 →")}
+                <span style={{ color: "#1e1e35", flex: 1 }}>
+                  {p("\"YourBrand\"", "\"品牌名\"")}
+                </span>
+                <span
+                  style={{
+                    background: "#ff6b35",
+                    color: "#fff",
+                    padding: "7px 20px",
+                    borderRadius: "6px",
+                    fontSize: "13px",
+                    fontWeight: "bold",
+                    flexShrink: 0,
+                    boxShadow: "0 0 24px rgba(255,107,53,0.5)",
+                  }}
+                >
+                  {p("→ Get Free GEO Score", "→ 免费获取 GEO 评分")}
+                </span>
               </Link>
+            </div>
+
+            <Out color="#252540"> </Out>
+            <Out color="#1a1a2e">
+              {"// "}{p("or book a strategy call: ", "或预约策略通话：")}
               <a
                 href={CALENDLY}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm transition-colors hover:text-white"
-                style={{ color: "#555580" }}
+                style={{ color: "#252545", textDecoration: "none" }}
               >
-                {p("or book strategy call →", "或预约策略通话 →")}
+                {CALENDLY.replace("https://", "")}
               </a>
-            </div>
-          </div>
-        </div>
-      </motion.section>
+            </Out>
+          </Term>
+        </motion.section>
 
-    </div>
+      </div>
+    </>
   );
 }
