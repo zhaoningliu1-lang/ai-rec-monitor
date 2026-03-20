@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-03-20-ai-recommendations-beauty-tech",
+    tag: "美容科技",
+    title: "AI在美容科技市场的影响",
+    excerpt:
+      "探索AI对美容科技品牌和推荐的影响。",
+    date: "2026年3月20日",
+    readTime: "6 分钟阅读",
+  },
+  {
     slug: "2026-03-19-cross-border-ecommerce-ai-intelligence",
     tag: "AI电子商务",
     title: "使用AI数据发掘亚马逊选品良机",
