@@ -8,6 +8,8 @@ export function getToken(): string | null {
 
 export function setToken(token: string): void {
   localStorage.setItem(TOKEN_KEY, token);
+  // Set cookie for middleware auth check (30 days)
+  document.cookie = `avanti_auth=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
   // Notify NavBar in the same tab (storage event only fires cross-tab by default)
   window.dispatchEvent(new StorageEvent("storage", { key: TOKEN_KEY, newValue: token }));
 }
@@ -15,6 +17,8 @@ export function setToken(token: string): void {
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(TIER_KEY);
+  // Clear auth cookie
+  document.cookie = `avanti_auth=; path=/; max-age=0`;
   window.dispatchEvent(new StorageEvent("storage", { key: TOKEN_KEY, newValue: null }));
 }
 
