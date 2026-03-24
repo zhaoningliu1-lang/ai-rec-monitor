@@ -5,6 +5,7 @@ import logging
 import random
 import uuid
 from datetime import datetime, timezone
+from typing import Optional
 from urllib.parse import urlparse
 
 from sqlalchemy import select
@@ -59,7 +60,51 @@ Rules:
    - Google: cite search demand direction
 10. "tiktok" and "market_signals" are valid action categories. Use them when market data warrants.
 11. Cross-reference AI visibility with market signals — if Reddit sentiment is high but SOV is low, that's a gap to exploit.
+12. If generational_breakdown data is provided, reference it — if brand is invisible to Gen Z but strong with Gen X, recommend TikTok/social strategies.
+13. If seasonal_context is provided, factor upcoming promotional events into timing recommendations.
+14. If trust_evidence data is provided, address low trust scores — brands that are only "name-dropped" without reasons need content that gives AI models concrete facts to cite.
 """
+
+# ── US Promotional Calendar ──────────────────────────────────────────────────
+_US_PROMO_CALENDAR = [
+    {"month": 1,  "events": ["New Year Sales", "Winter Clearance"], "prep_weeks": 4},
+    {"month": 2,  "events": ["Valentine's Day"], "prep_weeks": 4},
+    {"month": 3,  "events": ["Spring Launch"], "prep_weeks": 4},
+    {"month": 4,  "events": ["Easter"], "prep_weeks": 3},
+    {"month": 5,  "events": ["Mother's Day", "Memorial Day"], "prep_weeks": 5},
+    {"month": 6,  "events": ["Father's Day", "Pride Month"], "prep_weeks": 4},
+    {"month": 7,  "events": ["Prime Day", "4th of July"], "prep_weeks": 6},
+    {"month": 8,  "events": ["Back to School"], "prep_weeks": 5},
+    {"month": 9,  "events": ["Labor Day"], "prep_weeks": 4},
+    {"month": 10, "events": ["Halloween", "Pre-Holiday Prep"], "prep_weeks": 6},
+    {"month": 11, "events": ["Black Friday", "Cyber Monday"], "prep_weeks": 8},
+    {"month": 12, "events": ["Christmas", "Year-End Sales"], "prep_weeks": 8},
+]
+
+
+def _get_seasonal_context() -> dict:
+    """Return upcoming promotional events and recommended prep actions."""
+    now = datetime.now(timezone.utc)
+    current_month = now.month
+    upcoming: list[dict] = []
+
+    for entry in _US_PROMO_CALENDAR:
+        months_away = (entry["month"] - current_month) % 12
+        if months_away == 0:
+            months_away = 0  # this month
+        if months_away <= 3:  # next 3 months
+            upcoming.append({
+                "month": entry["month"],
+                "events": entry["events"],
+                "months_away": months_away,
+                "prep_weeks": entry["prep_weeks"],
+                "urgency": "now" if months_away == 0 else ("soon" if months_away == 1 else "upcoming"),
+            })
+
+    return {
+        "current_month": current_month,
+        "upcoming_events": upcoming[:4],
+    }
 
 
 def _classify_domain(domain: str) -> str:
@@ -215,6 +260,35 @@ async def generate_geo_plan(
         data_context["market_signals"] = signals.to_dict()
     except Exception as e:
         logger.debug("Market signals fetch failed for GEO plan: %s", e)
+
+    # ── 4c. Add generational breakdown ────────────────────────────────────
+    gen_groups: dict[str, list] = {}
+    for r in results:
+        g = getattr(r, "generation", None) or "general"
+        gen_groups.setdefault(g, []).append(r)
+
+    gen_breakdown: dict[str, dict] = {}
+    for gen, gen_results in gen_groups.items():
+        if gen == "general":
+            continue
+        gen_mentioned = sum(1 for r in gen_results if r.brand_mentioned)
+        gen_total = len(gen_results)
+        gen_breakdown[gen] = {
+            "queries": gen_total,
+            "brand_mentioned": gen_mentioned,
+            "mention_rate": round(gen_mentioned / gen_total * 100, 1) if gen_total else 0,
+        }
+    if gen_breakdown:
+        data_context["generational_breakdown"] = gen_breakdown
+
+    # ── 4d. Add trust evidence ────────────────────────────────────────────
+    from app.routers.reports import _compute_trust_evidence
+    trust = _compute_trust_evidence(results, brand_name)
+    if trust.get("score", 0) > 0:
+        data_context["trust_evidence"] = trust
+
+    # ── 4e. Add seasonal context ──────────────────────────────────────────
+    data_context["seasonal_context"] = _get_seasonal_context()
 
     prompt = (
         f"{_GEO_PLAN_SYSTEM}\n\n"

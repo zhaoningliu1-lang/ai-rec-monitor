@@ -223,6 +223,120 @@ _DE_INFORMATIONAL_INTENT = [
     "Welche {category} Marke hat den besten Kundendienst in Deutschland?",
 ]
 
+# ── Generational Templates (US only, others default to "general") ─────────────
+
+_GEN_Z_HIGH = [
+    "What {category} is going viral on TikTok right now {price_band}?",
+    "Which {category} brand is trending for {price_band} — I keep seeing it everywhere?",
+    "Best {category} for {price_band} that looks aesthetic and actually works?",
+    "Which {category} brand do TikTokers recommend {price_band}?",
+    "I want a {category} that's actually worth the hype — {price_band}?",
+    "What {category} is everyone getting on Amazon for {price_band}?",
+    "Most recommended {category} for Gen Z buyers — {price_band}?",
+    "Which {category} brand has the best unboxing vibes for {price_band}?",
+]
+
+_GEN_Z_COMPARISON = [
+    "TikTok vs YouTube — which platform recommends the best {category}?",
+    "Which {category} brand has the best social media presence and actual quality?",
+    "Compare {category} brands that are trending on social media right now.",
+    "Which {category} brand do influencers actually use vs just promote?",
+]
+
+_GEN_Z_INFO = [
+    "What {category} brands are blowing up on TikTok right now?",
+    "Is it worth buying a {category} brand I saw on social media?",
+    "What should a first-time {category} buyer know in 2026?",
+    "Which {category} brands are actually sustainable and not just greenwashing?",
+]
+
+_MILLENNIAL_HIGH = [
+    "Best sustainable {category} brand for {price_band} that ships to the US?",
+    "Which {category} brand has the best story and quality for {price_band}?",
+    "I want a premium {category} with good values — best pick for {price_band}?",
+    "Which {category} brand is eco-friendly and actually well-made for {price_band}?",
+    "Best {category} for a conscious consumer — {price_band}?",
+    "Which {category} brand supports fair trade or sustainability for {price_band}?",
+    "Looking for a {category} that's worth paying more for — {price_band}?",
+    "Which {category} brand do millennial parents recommend for {price_band}?",
+]
+
+_MILLENNIAL_COMPARISON = [
+    "Compare {category} brands by sustainability and quality, not just price.",
+    "Which {category} brand has better customer values — support, warranty, ethics?",
+    "DTC vs Amazon: which is better for buying a {category}?",
+    "Which {category} brand has the best community and customer loyalty?",
+]
+
+_MILLENNIAL_INFO = [
+    "What {category} brands align with sustainable living?",
+    "How do I choose a {category} brand that's actually ethical?",
+    "Which {category} brands have won design or sustainability awards?",
+    "What's the real difference between premium and budget {category} brands?",
+]
+
+_GEN_X_HIGH = [
+    "Most reliable {category} based on expert reviews — {price_band}?",
+    "Which {category} brand do professional reviewers recommend for {price_band}?",
+    "Best value-for-money {category} with proven track record — {price_band}?",
+    "I need a practical {category} that just works — best for {price_band}?",
+    "Which {category} brand has the best specs and performance for {price_band}?",
+    "Best {category} for a family — reliable, practical, {price_band}?",
+    "Which {category} scores highest in independent testing for {price_band}?",
+    "Best {category} based on Wirecutter or CNET reviews for {price_band}?",
+]
+
+_GEN_X_COMPARISON = [
+    "Compare {category} brands based on durability and real-world performance.",
+    "Which {category} brand has the best long-term value — 5-year cost of ownership?",
+    "Independent expert comparison of top {category} brands.",
+    "Which {category} brand wins in head-to-head professional testing?",
+]
+
+_GEN_X_INFO = [
+    "What do professional reviewers say about {category} brands in 2026?",
+    "Which {category} brands have the best track record for reliability?",
+    "What specs actually matter when choosing a {category}?",
+    "Which {category} brands offer the best after-sales service in the US?",
+]
+
+_BOOMER_HIGH = [
+    "Most trusted {category} brand in America — {price_band}?",
+    "Which {category} brand has the best reputation for quality for {price_band}?",
+    "I want a {category} from a brand I can trust — {price_band}?",
+    "Which {category} brand has been around longest and is still top-rated for {price_band}?",
+    "Best {category} that's easy to use and dependable — {price_band}?",
+    "Which {category} brand has the best customer service for {price_band}?",
+]
+
+_BOOMER_COMPARISON = [
+    "Which {category} brand has the strongest heritage and quality reputation?",
+    "Compare {category} brands by reliability and customer service quality.",
+    "Which established {category} brand is still the best in the market?",
+]
+
+_BOOMER_INFO = [
+    "Which {category} brands have the best reputation among American consumers?",
+    "What makes a {category} brand trustworthy and dependable?",
+    "Which {category} brands have been recommended by Consumer Reports?",
+]
+
+_GENERATIONAL_TEMPLATES: dict[str, dict[str, list[str]]] = {
+    "gen_z": {"high": _GEN_Z_HIGH, "comparison": _GEN_Z_COMPARISON, "info": _GEN_Z_INFO},
+    "millennial": {"high": _MILLENNIAL_HIGH, "comparison": _MILLENNIAL_COMPARISON, "info": _MILLENNIAL_INFO},
+    "gen_x": {"high": _GEN_X_HIGH, "comparison": _GEN_X_COMPARISON, "info": _GEN_X_INFO},
+    "boomer": {"high": _BOOMER_HIGH, "comparison": _BOOMER_COMPARISON, "info": _BOOMER_INFO},
+}
+
+# Distribution: how many of each generation's prompts to include (% of total)
+_GENERATION_DISTRIBUTION = {
+    "gen_z": 0.15,
+    "millennial": 0.15,
+    "gen_x": 0.10,
+    "boomer": 0.08,
+    # remaining ~52% → "general" (existing templates)
+}
+
 # ── Registry ──────────────────────────────────────────────────────────────────
 
 _INTENT_WEIGHTS: dict[str, float] = {
@@ -274,9 +388,10 @@ def generate_prompts(
       - 'prompt': the rendered prompt string
       - 'intent_type': one of 'high', 'comparison', 'info'
       - 'weight': float (1.5 / 1.2 / 1.0)
+      - 'generation': one of 'gen_z', 'millennial', 'gen_x', 'boomer', 'general'
 
     Distribution: 50% high, 25% comparison, 25% info.
-    For the default of 60: 30 / 15 / 15.
+    Within each intent: ~48% general + generational variants.
     """
     band = price_band or _DEFAULT_PRICE_BANDS.get(region, "under $100")
     intent_map = _REGION_INTENT_TEMPLATES.get(region, _REGION_INTENT_TEMPLATES["US"])
@@ -286,17 +401,37 @@ def generate_prompts(
     n_info = num_prompts - n_high - n_comp  # absorbs any odd remainder
 
     results: list[dict] = []
+
     for intent_type, n in [
         ("high", n_high),
         ("comparison", n_comp),
         ("info", n_info),
     ]:
+        # Allocate generational slots (US region only)
+        gen_allocated = 0
+        if region == "US":
+            for gen, pct in _GENERATION_DISTRIBUTION.items():
+                gen_n = max(1, round(n * pct))
+                gen_templates = _GENERATIONAL_TEMPLATES.get(gen, {}).get(intent_type, [])
+                if gen_templates:
+                    for tmpl in _sample_cyclic(gen_templates, gen_n):
+                        results.append({
+                            "prompt": tmpl.format(category=category, price_band=band),
+                            "intent_type": intent_type,
+                            "weight": _INTENT_WEIGHTS[intent_type],
+                            "generation": gen,
+                        })
+                    gen_allocated += gen_n
+
+        # Remaining slots → general (existing templates)
+        general_n = max(0, n - gen_allocated)
         templates = intent_map[intent_type]
-        for tmpl in _sample_cyclic(templates, n):
+        for tmpl in _sample_cyclic(templates, general_n):
             results.append({
                 "prompt": tmpl.format(category=category, price_band=band),
                 "intent_type": intent_type,
                 "weight": _INTENT_WEIGHTS[intent_type],
+                "generation": "general",
             })
 
     random.shuffle(results)

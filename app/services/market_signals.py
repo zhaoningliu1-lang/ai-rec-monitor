@@ -74,6 +74,16 @@ class MarketSignals:
     market_alignment_score: int = 0
     alignment_label: str = "unknown"  # strong/moderate/weak/divergent
 
+    # Paid / Owned / Earned sub-scores (Elaine framework)
+    earned_score: int = 0    # Reddit + KOL + organic signals
+    owned_score: int = 0     # TikTok Shop presence + Google brand demand
+    paid_score: int = 0      # Placeholder — no paid data currently
+
+    # Cross-platform narrative consistency
+    consistency_score: int = 0         # 0-100
+    consistency_label: str = "unknown"  # aligned / partial / fragmented
+    consistency_signals: list = field(default_factory=list)
+
     def to_dict(self) -> dict:
         return asdict(self)
 
@@ -203,7 +213,7 @@ async def _fetch_google(category: str) -> dict:
 
 def _compute_alignment(signals: MarketSignals) -> tuple[int, str]:
     """
-    Compute Market-AI Alignment Score (0-100).
+    Compute Market-AI Alignment Score (0-100) with Paid/Owned/Earned sub-scores.
 
     Scoring:
     - Reddit positive sentiment (0-25): reddit_score * 0.25
@@ -214,45 +224,108 @@ def _compute_alignment(signals: MarketSignals) -> tuple[int, str]:
     """
     score = 0
 
-    # Reddit (0-25)
-    score += round(signals.reddit_score * 0.25)
-
-    # KOL (0-25)
+    # ── Earned Media Score (Reddit + KOL = organic third-party signals) ────
+    earned = 0
+    reddit_pts = round(signals.reddit_score * 0.25)
+    earned += reddit_pts
     kol_factor = min(signals.kol_count / 5.0, 1.0)
-    score += round(kol_factor * 25)
+    kol_pts = round(kol_factor * 25)
+    earned += kol_pts
+    signals.earned_score = min(100, round(earned * 2))  # scale 0-50 → 0-100
+    score += reddit_pts + kol_pts
 
-    # TikTok (0-15)
+    # ── Owned Media Score (TikTok Shop + Google brand demand) ─────────────
+    owned = 0
+    tiktok_pts = 0
     if signals.tiktok_present:
-        score += 10
+        tiktok_pts = 10
         if signals.tiktok_trending:
-            score += 5
+            tiktok_pts = 15
+    owned += tiktok_pts
 
-    # Google (0-15)
     google_map = {"up": 15, "slightly_up": 12, "stable": 10, "slightly_down": 7, "down": 5, "unknown": 8}
-    score += google_map.get(signals.google_trend_direction, 8)
+    google_pts = google_map.get(signals.google_trend_direction, 8)
+    owned += google_pts
+    signals.owned_score = min(100, round(owned * 100 / 30))  # scale 0-30 → 0-100
+    score += tiktok_pts + google_pts
 
-    # Consistency bonus (0-20)
+    # ── Paid Media Score (placeholder — no paid data yet) ─────────────────
+    signals.paid_score = 0
+
+    # ── Cross-platform Consistency ────────────────────────────────────────
     positive_signals = 0
     total_signals = 0
+    sentiment_directions: list[str] = []  # "positive" / "negative" / "neutral"
+    consistency_details: list[dict] = []
+
     if signals.reddit_post_count > 0:
         total_signals += 1
+        reddit_dir = "positive" if signals.reddit_score >= 50 else ("negative" if signals.reddit_score <= 30 else "neutral")
+        sentiment_directions.append(reddit_dir)
         if signals.reddit_score >= 50:
             positive_signals += 1
+        consistency_details.append({
+            "source": "Reddit",
+            "sentiment": reddit_dir,
+            "score": signals.reddit_score,
+        })
     if signals.kol_count > 0:
         total_signals += 1
+        kol_dir = "positive" if signals.kol_positive_pct >= 50 else ("negative" if signals.kol_positive_pct <= 30 else "neutral")
+        sentiment_directions.append(kol_dir)
         if signals.kol_positive_pct >= 50:
             positive_signals += 1
+        consistency_details.append({
+            "source": "YouTube KOL",
+            "sentiment": kol_dir,
+            "score": signals.kol_positive_pct,
+        })
     if signals.tiktok_present:
         total_signals += 1
+        tiktok_dir = "positive" if signals.tiktok_trending else "neutral"
+        sentiment_directions.append(tiktok_dir)
         positive_signals += 1
+        consistency_details.append({
+            "source": "TikTok Shop",
+            "sentiment": tiktok_dir,
+            "score": 80 if signals.tiktok_trending else 50,
+        })
     if signals.google_delta is not None:
         total_signals += 1
+        google_dir = "positive" if signals.google_delta >= 0 else "negative"
+        sentiment_directions.append(google_dir)
         if signals.google_delta >= 0:
             positive_signals += 1
+        consistency_details.append({
+            "source": "Google Trends",
+            "sentiment": google_dir,
+            "score": min(100, max(0, 50 + round(signals.google_delta))),
+        })
 
+    # Consistency scoring
     if total_signals >= 2:
         consistency = positive_signals / total_signals
         score += round(consistency * 20)
+
+        # Cross-platform consistency score (are all sources saying the same thing?)
+        unique_sentiments = set(sentiment_directions)
+        if len(unique_sentiments) == 1:
+            signals.consistency_score = 100
+            signals.consistency_label = "aligned"
+        elif len(unique_sentiments) == 2 and "neutral" in unique_sentiments:
+            signals.consistency_score = 70
+            signals.consistency_label = "mostly aligned"
+        elif "positive" in unique_sentiments and "negative" in unique_sentiments:
+            signals.consistency_score = 30
+            signals.consistency_label = "fragmented"
+        else:
+            signals.consistency_score = 50
+            signals.consistency_label = "partial"
+    else:
+        signals.consistency_score = 0
+        signals.consistency_label = "insufficient data"
+
+    signals.consistency_signals = consistency_details
 
     score = min(100, max(0, score))
 

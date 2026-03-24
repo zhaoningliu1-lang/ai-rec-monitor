@@ -104,6 +104,8 @@ class PromptResult(Base):
     cited_urls: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
     provider: Mapped[str] = mapped_column(String(50), nullable=False, default="openai")
     intent_type: Mapped[str] = mapped_column(String(50), nullable=False, default="high_intent")
+    # Consumer generation cohort (gen_z / millennial / gen_x / boomer / general)
+    generation: Mapped[str | None] = mapped_column(String(20), nullable=True)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
     processed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()

@@ -406,6 +406,14 @@ export interface MarketSignals {
   google_trend_direction: string;
   market_alignment_score: number;
   alignment_label: string;
+  // Paid / Owned / Earned sub-scores (Elaine framework)
+  earned_score: number;
+  owned_score: number;
+  paid_score: number;
+  // Cross-platform consistency
+  consistency_score: number;
+  consistency_label: string;
+  consistency_signals: { source: string; sentiment: string; score: number }[];
   credits_remaining: number | null;
   credit_cost: number;
 }

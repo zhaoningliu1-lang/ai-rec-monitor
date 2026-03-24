@@ -40,6 +40,24 @@ interface ProviderSection {
   arrs_explain: string;
 }
 
+interface GenerationSection {
+  generation: string;
+  label: string;
+  count: number;
+  brand_table: BrandRow[];
+  weighted_sov: number;
+  mention_rate: number;
+}
+
+interface TrustEvidence {
+  score: number;
+  reason_mentions: number;
+  name_drop_only: number;
+  avg_context_depth: number;
+  top_reasons: string[];
+  label: string;
+}
+
 interface Metrics {
   total: number;
   arrs: number;
@@ -50,6 +68,8 @@ interface Metrics {
   failed_count: number;
   intent_sections?: IntentSection[];
   provider_sections?: ProviderSection[];
+  generation_sections?: GenerationSection[];
+  trust_evidence?: TrustEvidence;
 }
 
 interface SourceDomain {
@@ -698,6 +718,105 @@ export default function RunDetailClient({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Generational breakdown (P0: Elaine framework) */}
+      {metrics?.generation_sections && metrics.generation_sections.filter(s => s.generation !== "general").length > 0 && (
+        <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+          <div className="px-4 py-3 font-semibold text-sm" style={{ background: "#161625", borderBottom: "1px solid #25253f" }}>
+            {tx("runs", "generationalBreakdown", lang)}
+            <span className="text-xs ml-2 font-normal" style={{ color: "#7070a0" }}>
+              {tx("runs", "generationalNote", lang)}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x" style={{ background: "#0f0f17", borderColor: "#25253f" }}>
+            {metrics.generation_sections.filter(s => s.generation !== "general").map((gs) => {
+              const genColors: Record<string, string> = {
+                gen_z: "#a78bfa", millennial: "#60a5fa", gen_x: "#f5a623", boomer: "#22c55e",
+              };
+              const color = genColors[gs.generation] || "#ff6b35";
+              return (
+                <div key={gs.generation} className="p-4" style={{ borderRight: "1px solid #25253f" }}>
+                  <div className="text-[10px] font-semibold uppercase tracking-widest mb-2" style={{ color }}>
+                    {gs.label}
+                    <span className="ml-1 font-normal normal-case text-[10px]" style={{ color: "#7070a0" }}>({gs.count})</span>
+                  </div>
+                  <div className="text-xl font-black mb-0.5" style={{ color }}>
+                    {gs.weighted_sov.toFixed(1)}%
+                  </div>
+                  <div className="text-[10px]" style={{ color: "#7070a0" }}>SOV</div>
+                  <div className="mt-2 text-xs" style={{ color: "#9090b0" }}>
+                    {gs.mention_rate.toFixed(0)}% mention rate
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Trust Evidence Score (P1: Elaine framework) */}
+      {metrics?.trust_evidence && metrics.trust_evidence.score > 0 && (
+        <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #25253f" }}>
+          <div className="px-4 py-3 font-semibold text-sm" style={{ background: "#161625", borderBottom: "1px solid #25253f" }}>
+            {tx("runs", "trustEvidence", lang)}
+          </div>
+          <div className="p-5" style={{ background: "#0f0f17" }}>
+            <div className="flex items-start gap-6">
+              <div className="text-center shrink-0">
+                <div
+                  className="text-3xl font-black"
+                  style={{
+                    color: metrics.trust_evidence.score >= 65 ? "#22c55e"
+                      : metrics.trust_evidence.score >= 35 ? "#f5a623" : "#ff4d6d",
+                  }}
+                >
+                  {metrics.trust_evidence.score}
+                </div>
+                <div className="text-[10px] uppercase tracking-wider mt-1" style={{ color: "#7070a0" }}>Trust Score</div>
+                <div
+                  className="text-[10px] mt-1 px-2 py-0.5 rounded-full"
+                  style={{
+                    background: metrics.trust_evidence.label === "strong" ? "rgba(34,197,94,0.12)"
+                      : metrics.trust_evidence.label === "moderate" ? "rgba(245,166,35,0.12)" : "rgba(255,77,109,0.12)",
+                    color: metrics.trust_evidence.label === "strong" ? "#22c55e"
+                      : metrics.trust_evidence.label === "moderate" ? "#f5a623" : "#ff4d6d",
+                  }}
+                >
+                  {metrics.trust_evidence.label}
+                </div>
+              </div>
+              <div className="flex-1 space-y-3">
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center p-2 rounded-lg" style={{ background: "#161625" }}>
+                    <div className="text-lg font-bold" style={{ color: "#22c55e" }}>{metrics.trust_evidence.reason_mentions}</div>
+                    <div className="text-[10px]" style={{ color: "#7070a0" }}>{tx("runs", "withReasons", lang)}</div>
+                  </div>
+                  <div className="text-center p-2 rounded-lg" style={{ background: "#161625" }}>
+                    <div className="text-lg font-bold" style={{ color: "#f5a623" }}>{metrics.trust_evidence.name_drop_only}</div>
+                    <div className="text-[10px]" style={{ color: "#7070a0" }}>{tx("runs", "nameDropOnly", lang)}</div>
+                  </div>
+                  <div className="text-center p-2 rounded-lg" style={{ background: "#161625" }}>
+                    <div className="text-lg font-bold" style={{ color: "#60a5fa" }}>{metrics.trust_evidence.avg_context_depth.toFixed(1)}</div>
+                    <div className="text-[10px]" style={{ color: "#7070a0" }}>{tx("runs", "contextDepth", lang)}</div>
+                  </div>
+                </div>
+                {metrics.trust_evidence.top_reasons.length > 0 && (
+                  <div>
+                    <div className="text-[10px] font-semibold mb-1" style={{ color: "#7070a0" }}>{tx("runs", "topReasons", lang)}</div>
+                    <div className="space-y-1">
+                      {metrics.trust_evidence.top_reasons.slice(0, 3).map((r, i) => (
+                        <div key={i} className="text-xs px-2 py-1 rounded" style={{ background: "#161625", color: "#c0c0d8" }}>
+                          &ldquo;...{r}...&rdquo;
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}

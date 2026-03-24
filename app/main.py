@@ -239,6 +239,10 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "CREATE INDEX IF NOT EXISTS ix_content_drafts_user_id ON content_drafts (user_id)"
         ))
+        # Generational query segmentation column
+        await conn.execute(text(
+            "ALTER TABLE prompt_results ADD COLUMN IF NOT EXISTS generation VARCHAR(20)"
+        ))
         # ── API Keys table ──
         await conn.execute(text("""
             CREATE TABLE IF NOT EXISTS api_keys (

@@ -473,6 +473,122 @@ function MarketSignalsPanel({ signals, loading }: { signals: MarketSignals | nul
           </div>
         </div>
       </div>
+
+      {/* Paid / Owned / Earned Media Triangle */}
+      <div className="rounded-2xl p-6 space-y-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+        <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#ff6b35" }}>
+          Media Triangle: Earned vs Owned
+        </div>
+        <p className="text-xs" style={{ color: "#555580" }}>
+          How your brand presence breaks down across media types (Paid data not yet available).
+        </p>
+        <div className="grid grid-cols-3 gap-4">
+          {[
+            { label: "Earned", score: signals.earned_score ?? 0, color: "#22c55e", sub: "Reddit + KOL + UGC" },
+            { label: "Owned", score: signals.owned_score ?? 0, color: "#60a5fa", sub: "TikTok Shop + Brand Demand" },
+            { label: "Paid", score: signals.paid_score ?? 0, color: "#7070a0", sub: "Coming soon" },
+          ].map(m => (
+            <div key={m.label} className="text-center p-4 rounded-xl" style={{ background: "#161625" }}>
+              <div className="text-2xl font-black" style={{ color: m.color }}>{m.score}</div>
+              <div className="text-xs font-semibold mt-1" style={{ color: m.color }}>{m.label}</div>
+              <div className="text-[10px] mt-1" style={{ color: "#555580" }}>{m.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Cross-Platform Consistency Audit */}
+      {signals.consistency_signals && signals.consistency_signals.length > 0 && (
+        <div className="rounded-2xl p-6 space-y-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#f5a623" }}>
+                Omnichannel Consistency Audit
+              </div>
+              <p className="text-xs mt-1" style={{ color: "#555580" }}>
+                Are all platforms telling the same story about your brand?
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-black" style={{
+                color: signals.consistency_score >= 70 ? "#22c55e"
+                  : signals.consistency_score >= 40 ? "#f5a623" : "#ff4d6d"
+              }}>
+                {signals.consistency_score}
+              </div>
+              <div className="text-[10px] uppercase" style={{ color: "#7070a0" }}>{signals.consistency_label}</div>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {signals.consistency_signals.map((sig, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 rounded-lg" style={{ background: "#161625" }}>
+                <div className="text-xs font-semibold w-24" style={{ color: "#c0c0d8" }}>{sig.source}</div>
+                <div className="flex-1">
+                  <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "#25253f" }}>
+                    <div className="h-full rounded-full" style={{
+                      width: `${sig.score}%`,
+                      background: sig.sentiment === "positive" ? "#22c55e"
+                        : sig.sentiment === "negative" ? "#ff4d6d" : "#f5a623",
+                    }} />
+                  </div>
+                </div>
+                <div className="text-xs w-16 text-right" style={{
+                  color: sig.sentiment === "positive" ? "#22c55e"
+                    : sig.sentiment === "negative" ? "#ff4d6d" : "#f5a623",
+                }}>
+                  {sig.sentiment}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Seasonal GEO Calendar */}
+      <div className="rounded-2xl p-6 space-y-4" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
+        <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#60a5fa" }}>
+          US Promotional Calendar
+        </div>
+        <p className="text-xs" style={{ color: "#555580" }}>
+          Key US shopping events — plan your GEO optimization 4-8 weeks ahead.
+        </p>
+        <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+          {[
+            { m: "Jan", e: "New Year", hot: false },
+            { m: "Feb", e: "Valentine's", hot: false },
+            { m: "Mar", e: "Spring", hot: false },
+            { m: "Apr", e: "Easter", hot: false },
+            { m: "May", e: "Mother's Day", hot: false },
+            { m: "Jun", e: "Father's Day", hot: false },
+            { m: "Jul", e: "Prime Day", hot: true },
+            { m: "Aug", e: "Back to School", hot: false },
+            { m: "Sep", e: "Labor Day", hot: false },
+            { m: "Oct", e: "Halloween", hot: false },
+            { m: "Nov", e: "Black Friday", hot: true },
+            { m: "Dec", e: "Christmas", hot: true },
+          ].map((month) => {
+            const now = new Date();
+            const monthIdx = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(month.m);
+            const isCurrent = now.getMonth() === monthIdx;
+            const isNext = now.getMonth() === (monthIdx - 1 + 12) % 12;
+            return (
+              <div key={month.m} className="text-center p-2 rounded-lg" style={{
+                background: isCurrent ? "#ff6b3520" : isNext ? "#60a5fa15" : "#161625",
+                border: isCurrent ? "1px solid #ff6b3550" : "1px solid transparent",
+              }}>
+                <div className="text-xs font-bold" style={{ color: isCurrent ? "#ff6b35" : isNext ? "#60a5fa" : "#9090b0" }}>
+                  {month.m}
+                </div>
+                <div className="text-[9px] mt-0.5" style={{ color: "#555580" }}>
+                  {month.e} {month.hot && "🔥"}
+                </div>
+                {isCurrent && <div className="text-[8px] mt-0.5" style={{ color: "#ff6b35" }}>NOW</div>}
+                {isNext && <div className="text-[8px] mt-0.5" style={{ color: "#60a5fa" }}>PREP</div>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

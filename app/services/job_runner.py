@@ -26,6 +26,7 @@ async def _process_single_prompt(
     provider: BaseProvider,
     session_factory: async_sessionmaker[AsyncSession],
     name_aliases: dict[str, list[str]] | None = None,
+    generation: str | None = None,
 ) -> bool:
     """
     Query one provider for one prompt, parse, persist, increment progress_done.
@@ -60,6 +61,7 @@ async def _process_single_prompt(
         cited_urls=parsed["cited_urls"],
         provider=provider.name,
         intent_type=intent_type,
+        generation=generation,
         error=error_msg,
     )
 
@@ -185,6 +187,7 @@ async def run_job(run_id: uuid.UUID, session_factory: async_sessionmaker[AsyncSe
                     run_id, brand_name, competitor_names,
                     p["prompt"], p["intent_type"], provider, session_factory,
                     name_aliases=name_aliases,
+                    generation=p.get("generation"),
                 )
                 for p in prompt_dicts
                 for provider in providers

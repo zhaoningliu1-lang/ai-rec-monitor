@@ -31,6 +31,21 @@ FROM_ADDR = "johnsonliu@hks.harvard.edu"
 
 OUTPUT_DIR = Path(__file__).parent.parent / "exports" / "outreach"
 
+# ── Outreach narrative framework (Elaine "三无困境" upgrade, 2026-03) ──────────
+#
+# Hook structure:
+#   1. Strategic context: "Amazon is a price war — the real battleground is AI discovery"
+#   2. Data anchor: Specific visibility gap from ARRS / SOV / generational data
+#   3. Root cause: Why the gap exists (content signals, not product quality)
+#   4. Opportunity: What closing the gap means (quantified)
+#   5. CTA: "Should I send over the breakdown?"
+#
+# New rules (on top of existing):
+# - Lead with the strategic trap ("supply chain but no brand power")
+# - Reference the AI discovery shift (not just "AI recommendation audit")
+# - If generational data exists, mention which audience is lost
+# - Never use internal terms (ARRS, SOV, GEO Score)
+#
 # ── Email templates ─────────────────────────────────────────────────────────
 # Each entry: brand → {to, subject, body}
 # Body rules: 100–140 words, one CTA only, no links, no ARRS/internal terms.
@@ -39,17 +54,17 @@ EMAILS: dict[str, dict] = {
 
     "Nekteck": {
         "to": "bella@nekteck.com",
-        "subject": "Nekteck barely shows up in AI product recommendations",
+        "subject": "Nekteck is invisible where buyers are going next",
         "body": """\
 Hi,
 
-I ran an AI recommendation audit on the USB-C charger market last week — tracking which brands appear when people ask ChatGPT and Perplexity for product advice.
+Amazon is a price war — you already know that. But the real shift happening right now is how American consumers discover products before they ever search Amazon. They're asking ChatGPT, Perplexity, and Claude for recommendations.
 
-Nekteck's visibility came back at the bottom of the category. When someone asks "best USB-C charger under $30," Anker shows up consistently. Nekteck almost never does. The gap is significant — not a rounding error.
+We tracked what AI tells buyers who ask "best USB-C charger under $30." Anker appears in nearly every response. Nekteck almost never does — across 4 major AI engines and 200+ queries.
 
-My read: this isn't a product problem. It's a content signal problem. AI models pull from reviews, articles, and structured content across the web — and right now, the signals point elsewhere.
+This isn't a product quality problem. It's a content signal problem: the structured reviews, comparison articles, and expert mentions that AI models pull from don't point to Nekteck yet. That's fixable.
 
-I put together a one-page breakdown with the exact gaps and a two-week fix list.
+I mapped the exact gaps and put together a two-week action plan.
 
 Should I send it over?
 

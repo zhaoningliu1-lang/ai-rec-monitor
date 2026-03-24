@@ -43,6 +43,14 @@ _INTENT_LABELS: dict[str, str] = {
     "info": "Informational",
 }
 
+_GENERATION_LABELS: dict[str, str] = {
+    "gen_z": "Gen Z",
+    "millennial": "Millennials",
+    "gen_x": "Gen X",
+    "boomer": "Boomers",
+    "general": "General",
+}
+
 
 # ── Low-level helpers ─────────────────────────────────────────────────────────
 
@@ -266,6 +274,96 @@ def _list_meta(results: list[PromptResult]) -> tuple[list[dict], float, str, str
     return meta, list_pct, dominant_method, dominant_confidence
 
 
+# ── Trust Evidence Score ─────────────────────────────────────────────────────
+
+# Reason/recommendation signal words that indicate substantive mentions
+_TRUST_POSITIVE = {
+    "because", "due to", "thanks to", "known for", "praised for", "ideal for",
+    "recommended for", "excels at", "stands out", "leading", "industry-leading",
+    "award", "certified", "tested", "proven", "reliable", "innovative",
+    "well-reviewed", "top-rated", "editor's choice", "best overall",
+}
+
+_TRUST_NEGATIVE = {
+    "however", "drawback", "downside", "issue", "complaint", "lacking",
+    "concern", "avoid", "cheap", "unreliable", "questionable",
+}
+
+
+def _compute_trust_evidence(results: list[PromptResult], brand_name: str) -> dict:
+    """
+    Analyze HOW the brand is mentioned — with substantive reasons or just name-dropped.
+
+    Returns:
+      score (0-100), reason_mentions (int), name_drop_only (int),
+      avg_context_depth (float), top_reasons (list[str])
+    """
+    mentioned_results = [r for r in results if r.brand_mentioned and not r.error]
+    if not mentioned_results:
+        return {
+            "score": 0, "reason_mentions": 0, "name_drop_only": 0,
+            "avg_context_depth": 0, "top_reasons": [], "label": "no data",
+        }
+
+    reason_mentions = 0
+    context_depths: list[int] = []
+    reason_snippets: list[str] = []
+    brand_lower = brand_name.lower()
+
+    for r in mentioned_results:
+        text = r.raw_response.lower()
+        # Find brand mention and extract surrounding context
+        idx = text.find(brand_lower)
+        if idx < 0:
+            continue
+
+        # Extract 200-char window around mention
+        start = max(0, idx - 100)
+        end = min(len(text), idx + len(brand_lower) + 200)
+        window = text[start:end]
+
+        # Count trust signal words in the window
+        pos_hits = sum(1 for w in _TRUST_POSITIVE if w in window)
+        neg_hits = sum(1 for w in _TRUST_NEGATIVE if w in window)
+        depth = pos_hits + neg_hits  # any reasoning = depth
+        context_depths.append(depth)
+
+        if pos_hits > 0:
+            reason_mentions += 1
+            # Extract a reason snippet
+            for w in _TRUST_POSITIVE:
+                if w in window:
+                    # Get sentence containing the keyword
+                    wi = window.find(w)
+                    snippet_start = window.rfind(".", 0, wi) + 1
+                    snippet_end = window.find(".", wi)
+                    if snippet_end == -1:
+                        snippet_end = len(window)
+                    snippet = window[snippet_start:snippet_end].strip()
+                    if len(snippet) > 20:
+                        reason_snippets.append(snippet[:150])
+                    break
+
+    total_mentioned = len(mentioned_results)
+    name_drop_only = total_mentioned - reason_mentions
+    avg_depth = sum(context_depths) / len(context_depths) if context_depths else 0
+
+    # Score: weighted mix of reason ratio + depth
+    reason_ratio = reason_mentions / total_mentioned if total_mentioned else 0
+    score = round(min(100, reason_ratio * 70 + min(avg_depth / 3, 1) * 30))
+
+    label = "strong" if score >= 65 else ("moderate" if score >= 35 else "weak")
+
+    return {
+        "score": score,
+        "reason_mentions": reason_mentions,
+        "name_drop_only": name_drop_only,
+        "avg_context_depth": round(avg_depth, 1),
+        "top_reasons": reason_snippets[:5],
+        "label": label,
+    }
+
+
 # ── Main metrics aggregator ───────────────────────────────────────────────────
 
 def _compute_metrics(
@@ -350,6 +448,32 @@ def _compute_metrics(
 
     failed_count = sum(1 for r in results if r.error is not None)
 
+    # ── Generational breakdown ────────────────────────────────────────────────
+    generation_sections: list[dict] = []
+    gen_groups: dict[str, list] = {}
+    for r in results:
+        g = getattr(r, "generation", None) or "general"
+        gen_groups.setdefault(g, []).append(r)
+
+    for gen_key in ["gen_z", "millennial", "gen_x", "boomer", "general"]:
+        gen_results = gen_groups.get(gen_key, [])
+        if not gen_results:
+            continue
+        gen_bt = _build_brand_table(gen_results, brand_name, competitor_names, with_intent=True)
+        gen_primary = next((r for r in gen_bt if r.get("is_primary")), None)
+        generation_sections.append({
+            "generation": gen_key,
+            "label": _GENERATION_LABELS.get(gen_key, gen_key),
+            "count": len(gen_results),
+            "brand_table": gen_bt,
+            "weighted_sov": gen_primary.get("weighted_sov", 0) if gen_primary else 0,
+            "mention_rate": gen_primary.get("mention_rate", 0) if gen_primary else 0,
+        })
+
+    # ── Trust Evidence Score ──────────────────────────────────────────────────
+    # Analyzes HOW brands are mentioned: with reasons, in context, or just name-dropped
+    trust_evidence = _compute_trust_evidence(results, brand_name)
+
     return {
         "total": total,
         "brand_table": brand_table,
@@ -365,6 +489,8 @@ def _compute_metrics(
         "arrs": arrs,
         "arrs_band": arrs_band,
         "arrs_explain": arrs_explain,
+        "generation_sections": generation_sections,
+        "trust_evidence": trust_evidence,
     }
 
 
