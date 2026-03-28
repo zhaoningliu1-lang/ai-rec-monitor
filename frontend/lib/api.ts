@@ -962,3 +962,82 @@ export const reportsApi = {
   remove: (reportId: string) =>
     delAuth(`/reports/${reportId}`),
 };
+
+// ── Opportunity Engine ─────────────────────────────────────────────────────
+
+export interface OETrendingProduct {
+  product_name: string;
+  why_trending: string;
+  ai_recommendation_score: number;
+  search_volume_trend: "rising" | "stable";
+  competitor_gap: string;
+  suggested_hs_code: string;
+  suggested_category_keyword: string;
+}
+
+export interface OEScanResponse {
+  brand: string;
+  category: string;
+  market: string;
+  market_signals: Record<string, unknown>;
+  ai_trending_products: OETrendingProduct[];
+  scan_timestamp: string;
+}
+
+export interface OESupplier {
+  id: string;
+  name: string;
+  name_en: string;
+  location: string;
+  min_order: number;
+  unit_price_usd: number;
+  lead_time_days: number;
+  rating: number;
+  transactions: number;
+  image_url: string;
+  categories: string[];
+  certifications: string[];
+}
+
+export interface OESupplierResponse {
+  keyword: string;
+  suppliers: OESupplier[];
+  tariff_preview: { hs_code: string; description: string; duty_rate_pct: number; section_301_pct: number; notes: string } | null;
+}
+
+export interface OELandedCost {
+  supplier_unit_cost: number;
+  quantity: number;
+  shipping_per_unit: number;
+  duty_amount: number;
+  section_301_amount: number;
+  fba_fee: number;
+  total_landed_per_unit: number;
+  total_cost: number;
+  suggested_retail: number;
+  estimated_margin_pct: number;
+  duty_pct: number;
+  section_301_pct: number;
+}
+
+export interface OEListingResult {
+  title: string;
+  bullet_points: string[];
+  description: string;
+  backend_keywords: string[];
+  faq_schema: { question: string; answer: string }[];
+  ai_optimization_notes: string[];
+}
+
+export const opportunityEngineApi = {
+  scan: (body: { brand: string; category: string; market?: string }, demo = false) =>
+    postAuth<OEScanResponse>(`/opportunity-engine/scan${demo ? "?demo=true" : ""}`, body),
+  getSuppliers: (keyword: string, hsCode?: string) =>
+    getAuth<OESupplierResponse>(
+      `/opportunity-engine/suppliers?keyword=${encodeURIComponent(keyword)}${hsCode ? `&hs_code=${encodeURIComponent(hsCode)}` : ""}`
+    ),
+  calculateCost: (body: { supplier_unit_cost: number; quantity: number; hs_code: string; weight_kg: number }) =>
+    postAuth<OELandedCost>("/opportunity-engine/cost-calculate", body),
+  generateListing: (body: { brand: string; product_name: string; product_description?: string; ai_signals?: Record<string, unknown> }, demo = false) =>
+    postAuth<OEListingResult>(`/opportunity-engine/generate-listing${demo ? "?demo=true" : ""}`, body),
+};

@@ -27,6 +27,8 @@ const PUBLIC_PREFIX = [
   "/robots",
   "/sitemap",
   "/api/",
+  "/a2a-demo",
+  "/opportunity-engine",
 ];
 
 export function proxy(request: NextRequest) {

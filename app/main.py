@@ -26,6 +26,7 @@ from app.routers import content_studio as content_studio_router
 from app.routers import dashboard as dashboard_router
 from app.routers import api_v1 as api_v1_router
 from app.routers import shared_reports as shared_reports_router
+from app.routers import opportunity_engine as opportunity_engine_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -354,6 +355,7 @@ app.include_router(content_studio_router.router)
 app.include_router(dashboard_router.router)
 app.include_router(api_v1_router.router)
 app.include_router(shared_reports_router.router)
+app.include_router(opportunity_engine_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s

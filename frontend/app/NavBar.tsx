@@ -101,6 +101,8 @@ export default function NavBar() {
 
   /* ── LOGGED-IN: Measure layer ── */
   const measureItems: DropdownItem[] = [
+    { href: h("/a2a-demo"),           label: p("A2A Demo",            "A2A 演示"),  desc: p("Live agent-to-agent commerce demo",      "实时代理对代理商业演示"),     badge: "A2A" },
+    { href: h("/opportunity-engine"), label: p("Opportunity Engine", "商机引擎"), desc: p("AI signal → supplier → listing", "AI 信号 → 供应商 → 上架"), badge: "A2A" },
     { href: h("/geo-cmo"),       label: p("GEO Command",   "GEO 指挥台"),  desc: p("AI CMO dashboard · opportunities + fix", "AI CMO 仪表盘 · 机会 + 一键执行"), badge: "New" },
     { href: h("/dashboard"),     label: p("Dashboard",     "数据看板"),    desc: p("GEO Score overview",          "GEO 评分总览") },
     { href: h("/runs/new"),      label: p("New Scan",      "新建扫描"),    desc: p("Run a new AI visibility scan", "运行新的 AI 可见度扫描") },
