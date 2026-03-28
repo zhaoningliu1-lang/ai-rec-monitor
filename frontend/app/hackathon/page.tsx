@@ -9,7 +9,7 @@ export const metadata = {
 export default function HackathonPage() {
   return (
     <Suspense>
-      <HackathonDemoView />
+      <HackathonDemoView lang="en" />
     </Suspense>
   );
 }
