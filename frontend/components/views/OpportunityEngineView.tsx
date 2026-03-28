@@ -10,6 +10,8 @@ import {
   OESupplierResponse,
   OELandedCost,
   OEListingResult,
+  OERedditPost,
+  OEYouTubeKol,
 } from "@/lib/api";
 
 type Lang = "en" | "zh";
@@ -188,9 +190,26 @@ function OpportunitiesStep({ scan, lang, onSelect }: {
 }) {
   const ms = scan.market_signals;
   const alignment = (ms.market_alignment_score as number) ?? 0;
+  const amazon = scan.amazon_data;
+  const reddit = scan.reddit_posts;
+  const kols = scan.youtube_kols;
+  const tiktok = scan.tiktok_data;
+  const sources = scan.data_sources || [];
 
   return (
     <div className="space-y-6">
+      {/* Data sources badge bar */}
+      {sources.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[10px] text-slate-500 uppercase">{t("Live data from", "实时数据来源", lang)}:</span>
+          {sources.map(s => (
+            <span key={s} className="text-[10px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20 font-medium">
+              ✓ {s.replace(/_/g, " ")}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Signal summary bar */}
       <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6">
         <div className="flex items-center justify-between mb-4">
@@ -219,6 +238,76 @@ function OpportunitiesStep({ scan, lang, onSelect }: {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Real data panels — Amazon + Reddit + YouTube + TikTok */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Amazon Competition */}
+        {amazon?.keyword_ranking && (
+          <div className="rounded-xl border border-slate-700 bg-slate-900/60 p-4">
+            <p className="text-[10px] text-[#ff6b35] uppercase font-semibold mb-2">Amazon Competition (Live)</p>
+            {amazon.keyword_ranking.brand_rank && (
+              <p className="text-sm text-white mb-2">
+                {scan.brand} rank: <span className="font-bold text-[#ff6b35]">#{amazon.keyword_ranking.brand_rank}</span>
+                <span className="text-slate-500"> / {amazon.keyword_ranking.total_results} results</span>
+              </p>
+            )}
+            {amazon.keyword_ranking.top_competitors?.slice(0, 3).map((c, i) => (
+              <div key={i} className="flex items-center justify-between py-1.5 border-t border-slate-800 text-xs">
+                <span className="text-slate-300 truncate flex-1">#{c.rank} {c.title?.slice(0, 50)}</span>
+                <span className="text-slate-400 ml-2">⭐{c.rating} ({c.reviews?.toLocaleString()})</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Reddit Discussions */}
+        {reddit && reddit.length > 0 && (
+          <div className="rounded-xl border border-slate-700 bg-slate-900/60 p-4">
+            <p className="text-[10px] text-orange-400 uppercase font-semibold mb-2">Reddit Discussions (Live)</p>
+            {reddit.slice(0, 3).map((p, i) => (
+              <div key={i} className="py-1.5 border-t border-slate-800 first:border-0">
+                <p className="text-xs text-white truncate">{p.title}</p>
+                <p className="text-[10px] text-slate-500">r/{p.subreddit} · ↑{p.score} · {p.num_comments} comments</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* YouTube KOLs */}
+        {kols && kols.length > 0 && (
+          <div className="rounded-xl border border-slate-700 bg-slate-900/60 p-4">
+            <p className="text-[10px] text-red-400 uppercase font-semibold mb-2">YouTube KOLs (Live)</p>
+            {kols.slice(0, 3).map((k, i) => (
+              <div key={i} className="py-1.5 border-t border-slate-800 first:border-0">
+                <p className="text-xs text-white truncate">{k.channel_name}</p>
+                <p className="text-[10px] text-slate-500">
+                  {k.views?.toLocaleString()} views ·
+                  <span className={`ml-1 ${k.tier === "mega" ? "text-yellow-400" : k.tier === "macro" ? "text-blue-400" : "text-slate-400"}`}>
+                    {k.tier}
+                  </span>
+                  {k.sentiment === "positive" && " · 👍"}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* TikTok Shop */}
+        {tiktok?.present && (
+          <div className="rounded-xl border border-slate-700 bg-slate-900/60 p-4">
+            <p className="text-[10px] text-cyan-400 uppercase font-semibold mb-2">TikTok Shop (Live)</p>
+            <p className="text-sm text-white mb-2">
+              {tiktok.product_count} products · ⭐{tiktok.avg_rating?.toFixed(1)}
+            </p>
+            {tiktok.top_products?.slice(0, 3).map((p, i) => (
+              <div key={i} className="py-1.5 border-t border-slate-800 first:border-0">
+                <p className="text-xs text-white truncate">{p.title}</p>
+                <p className="text-[10px] text-slate-500">{p.price} · {p.sales?.toLocaleString()} sold</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Trending products */}

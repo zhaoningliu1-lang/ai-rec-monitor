@@ -1,5 +1,13 @@
-"""A2A Opportunity Engine — AI trend signal → supplier match → cost → listing."""
+"""A2A Opportunity Engine — AI trend signal → supplier match → cost → listing.
 
+Integrates ALL available data sources:
+- Market Signals Engine (Reddit, YouTube KOL, TikTok Shop, Google Trends)
+- Rainforest API (Amazon product data, BSR, reviews, pricing)
+- Historical PromptResult DB (AI engine recommendation trends)
+- Claude AI (trend analysis synthesis)
+"""
+
+import asyncio
 import json
 import logging
 from dataclasses import asdict
@@ -7,12 +15,13 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import get_db
 from app.routers.auth import get_current_user_optional
-from app.models import User
+from app.models import PromptResult, Run, RunStatus, User
 from app.services.supplier_data import (
     calculate_landed_cost,
     get_tariff,
@@ -46,6 +55,162 @@ class GenerateListingRequest(BaseModel):
     ai_signals: dict = {}
     target_platform: str = "amazon"
     language: str = "en"
+
+
+# ── Helper: fetch Amazon competition data ──────────────────────────────────
+
+async def _fetch_amazon_data(brand: str, category: str) -> dict:
+    """Fetch real Amazon competition data via Rainforest API."""
+    try:
+        from app.services.amazon_service import search_brand, search_keyword_ranking
+        brand_data, keyword_data = await asyncio.gather(
+            search_brand(brand),
+            search_keyword_ranking(category.lower(), brand),
+            return_exceptions=True,
+        )
+        result = {}
+        if isinstance(brand_data, dict):
+            result["brand_presence"] = {
+                "product_count": brand_data.get("product_count", 0),
+                "avg_rating": brand_data.get("avg_rating", 0),
+                "avg_reviews": brand_data.get("avg_reviews", 0),
+                "top_products": brand_data.get("top_products", [])[:5],
+            }
+        if isinstance(keyword_data, dict):
+            result["keyword_ranking"] = {
+                "brand_rank": keyword_data.get("brand_rank"),
+                "total_results": keyword_data.get("total_results", 0),
+                "top_competitors": keyword_data.get("top_competitors", [])[:5],
+            }
+        return result
+    except Exception as e:
+        logger.warning("Amazon data fetch failed: %s", e)
+        return {}
+
+
+# ── Helper: fetch Reddit raw posts ─────────────────────────────────────────
+
+async def _fetch_reddit_posts(brand: str, category: str) -> list:
+    """Fetch real Reddit posts mentioning brand/category."""
+    try:
+        from app.services.reddit_scraper import search_brand_across_subreddits
+        posts = await search_brand_across_subreddits(brand, category, limit_per_sub=5)
+        return [
+            {
+                "title": p.get("title", ""),
+                "subreddit": p.get("subreddit", ""),
+                "score": p.get("score", 0),
+                "num_comments": p.get("num_comments", 0),
+                "url": p.get("url", ""),
+                "snippet": (p.get("selftext_snippet", "") or "")[:200],
+            }
+            for p in (posts or [])[:8]
+        ]
+    except Exception as e:
+        logger.warning("Reddit fetch failed: %s", e)
+        return []
+
+
+# ── Helper: fetch YouTube KOLs ─────────────────────────────────────────────
+
+async def _fetch_youtube_kols(brand: str, category: str) -> list:
+    """Fetch real YouTube KOL data."""
+    try:
+        from app.services.youtube_scraper import search_kols
+        kols = await search_kols(brand, category, limit=8)
+        return [
+            {
+                "channel_name": k.get("channel_name", ""),
+                "video_title": k.get("video_title", ""),
+                "video_url": k.get("video_url", ""),
+                "views": k.get("views", 0),
+                "tier": k.get("tier", "micro"),
+                "sentiment": k.get("sentiment", "mixed"),
+            }
+            for k in (kols or [])[:8]
+        ]
+    except Exception as e:
+        logger.warning("YouTube KOL fetch failed: %s", e)
+        return []
+
+
+# ── Helper: fetch TikTok Shop data ─────────────────────────────────────────
+
+async def _fetch_tiktok_data(brand: str, category: str) -> dict:
+    """Fetch real TikTok Shop data."""
+    try:
+        from app.services.tiktok_shop import search_brand_on_tiktok
+        data = await search_brand_on_tiktok(brand, category)
+        if isinstance(data, dict):
+            return {
+                "present": data.get("present", False),
+                "product_count": data.get("product_count", 0),
+                "avg_rating": data.get("avg_rating", 0),
+                "top_products": [
+                    {"title": p.get("title", ""), "price": p.get("price", ""), "sales": p.get("sales", 0)}
+                    for p in (data.get("top_products") or [])[:5]
+                ],
+            }
+        return {}
+    except Exception as e:
+        logger.warning("TikTok data fetch failed: %s", e)
+        return {}
+
+
+# ── Helper: query historical PromptResult for trend detection ──────────────
+
+async def _fetch_ai_trend_data(category: str, db: AsyncSession) -> dict:
+    """Query historical PromptResult DB for AI recommendation trends."""
+    try:
+        # Get recent runs in this category
+        runs_q = await db.execute(
+            select(Run.id, Run.brand_name, Run.created_at)
+            .where(Run.category.ilike(f"%{category}%"), Run.status == RunStatus.done)
+            .order_by(Run.created_at.desc())
+            .limit(20)
+        )
+        recent_runs = runs_q.all()
+        if not recent_runs:
+            return {}
+
+        run_ids = [r.id for r in recent_runs]
+
+        # Get mention counts per brand across these runs
+        brand_mentions_q = await db.execute(
+            select(
+                Run.brand_name,
+                func.count(PromptResult.id).label("total_prompts"),
+                func.count(PromptResult.id).filter(PromptResult.brand_mentioned == True).label("mentions"),
+            )
+            .join(Run, PromptResult.run_id == Run.id)
+            .where(Run.id.in_(run_ids))
+            .group_by(Run.brand_name)
+        )
+        brand_data = brand_mentions_q.all()
+
+        # Compile trend data
+        brands_trending = []
+        for row in brand_data:
+            total = row.total_prompts or 1
+            mentions = row.mentions or 0
+            sov = round(mentions / total * 100, 1)
+            brands_trending.append({
+                "brand": row.brand_name,
+                "sov_pct": sov,
+                "total_prompts": total,
+                "mention_count": mentions,
+            })
+
+        brands_trending.sort(key=lambda x: x["sov_pct"], reverse=True)
+
+        return {
+            "category": category,
+            "recent_runs_count": len(recent_runs),
+            "top_brands_by_sov": brands_trending[:10],
+        }
+    except Exception as e:
+        logger.warning("AI trend DB query failed: %s", e)
+        return {}
 
 
 # ── Demo data for instant hackathon pitch ──────────────────────────────────
@@ -153,21 +318,49 @@ async def scan_opportunities(
     user: User | None = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db),
 ):
-    """Scan AI engines for trending product opportunities that a brand is missing."""
+    """Scan ALL data sources in parallel for trending product opportunities."""
     if demo:
         return _DEMO_SCAN_RESULT
 
-    # ── 1. Fetch market signals ────────────────────────────────────────────
+    # ── 1. Fetch ALL data sources in parallel ──────────────────────────────
     from app.services.market_signals import fetch_market_signals
 
-    try:
-        signals = await fetch_market_signals(req.brand, req.category)
-        signals_dict = asdict(signals)
-    except Exception as e:
-        logger.warning("Market signals fetch failed: %s", e)
-        signals_dict = {}
+    (
+        signals_result,
+        amazon_result,
+        reddit_result,
+        youtube_result,
+        tiktok_result,
+        ai_trend_result,
+    ) = await asyncio.gather(
+        fetch_market_signals(req.brand, req.category),
+        _fetch_amazon_data(req.brand, req.category),
+        _fetch_reddit_posts(req.brand, req.category),
+        _fetch_youtube_kols(req.brand, req.category),
+        _fetch_tiktok_data(req.brand, req.category),
+        _fetch_ai_trend_data(req.category, db),
+        return_exceptions=True,
+    )
 
-    # ── 2. Call Claude for AI trend analysis ────────────────────────────────
+    # Process results (graceful degradation)
+    signals_dict = asdict(signals_result) if not isinstance(signals_result, Exception) else {}
+    amazon_data = amazon_result if not isinstance(amazon_result, Exception) else {}
+    reddit_posts = reddit_result if not isinstance(reddit_result, Exception) else []
+    youtube_kols = youtube_result if not isinstance(youtube_result, Exception) else []
+    tiktok_data = tiktok_result if not isinstance(tiktok_result, Exception) else {}
+    ai_trend_data = ai_trend_result if not isinstance(ai_trend_result, Exception) else {}
+
+    # ── 2. Build enriched context for Claude ───────────────────────────────
+    enriched_context = {
+        "market_signals": signals_dict,
+        "amazon_competition": amazon_data,
+        "reddit_discussions": reddit_posts[:5],
+        "youtube_kols": youtube_kols[:5],
+        "tiktok_shop": tiktok_data,
+        "ai_historical_trends": ai_trend_data,
+    }
+
+    # ── 3. Call Claude with ALL real data ───────────────────────────────────
     import anthropic
 
     system_prompt = """\
@@ -175,18 +368,22 @@ You are an AI-powered cross-border e-commerce trend analyst for Avanti A2A.
 Your job: identify products that AI engines (ChatGPT, Claude, Perplexity, Gemini) are
 increasingly recommending, but that a given brand does NOT currently offer.
 
-You will receive:
-- A brand name and its current product category
-- Cross-platform market signals (Reddit, YouTube KOL, TikTok, Google Trends)
+You will receive REAL cross-platform data:
+- Market signals (Reddit sentiment, YouTube KOL coverage, TikTok Shop, Google Trends)
+- Amazon competition data (product counts, ratings, reviews, BSR rankings, top competitors)
+- Reddit discussions (actual community posts and engagement)
+- YouTube KOL videos (creator names, view counts, tiers)
+- TikTok Shop data (product presence, sales, ratings)
+- Historical AI recommendation trends (which brands AI engines are pushing in this category)
 
 Return ONLY a valid JSON array of 3-5 trending product opportunities:
 [
   {
     "product_name": "Specific product name",
-    "why_trending": "2-3 sentences explaining why AI engines are recommending this. Reference specific signals.",
-    "ai_recommendation_score": <int 0-100, how strongly AI engines are pushing this>,
+    "why_trending": "2-3 sentences referencing SPECIFIC real data points (e.g., actual Reddit post titles, YouTube creator names, Amazon competitor review counts, TikTok sales numbers)",
+    "ai_recommendation_score": <int 0-100>,
     "search_volume_trend": "rising" | "stable",
-    "competitor_gap": "Who currently dominates and what gap exists for this brand",
+    "competitor_gap": "Reference SPECIFIC competitors from Amazon data with their review counts and ratings",
     "suggested_hs_code": "XXXX.XX format",
     "suggested_category_keyword": "one of: cookware, baby, electronics, home, outdoor"
   }
@@ -194,18 +391,19 @@ Return ONLY a valid JSON array of 3-5 trending product opportunities:
 
 Rules:
 1. Products must be SPECIFIC (not generic categories).
-2. Each opportunity should have a clear reason why AI engines are recommending it.
+2. MUST reference actual data from the provided sources (real Reddit titles, real Amazon competitors, real YouTube creators).
 3. ai_recommendation_score: 90+ = AI engines actively recommending, 70-89 = emerging trend, 50-69 = early signal.
-4. Reference actual market signal data in your reasoning.
+4. competitor_gap MUST cite real competitor names and their Amazon stats if available.
 5. Return ONLY valid JSON, no markdown, no explanation."""
 
     user_prompt = (
         f"Brand: {req.brand}\n"
         f"Category: {req.category}\n"
         f"Market: {req.market}\n\n"
-        f"Market Signals:\n{json.dumps(signals_dict, indent=2, default=str)}\n\n"
+        f"=== REAL DATA (all fetched live) ===\n\n"
+        f"{json.dumps(enriched_context, indent=2, default=str)}\n\n"
         f"Identify 3-5 product opportunities that AI engines are trending toward "
-        f"but {req.brand} doesn't currently offer."
+        f"but {req.brand} doesn't currently offer. Reference the REAL data above."
     )
 
     try:
@@ -226,13 +424,30 @@ Rules:
         logger.error("Claude trend analysis failed: %s", e)
         trending_products = []
 
+    # ── 4. Return enriched response with all real data ─────────────────────
     return {
         "brand": req.brand,
         "category": req.category,
         "market": req.market,
         "market_signals": signals_dict,
+        "amazon_data": amazon_data,
+        "reddit_posts": reddit_posts,
+        "youtube_kols": youtube_kols,
+        "tiktok_data": tiktok_data,
+        "ai_trend_data": ai_trend_data,
         "ai_trending_products": trending_products,
         "scan_timestamp": datetime.now(timezone.utc).isoformat(),
+        "data_sources": [
+            s for s in [
+                "market_signals" if signals_dict else None,
+                "amazon_rainforest" if amazon_data else None,
+                "reddit_praw" if reddit_posts else None,
+                "youtube_kol" if youtube_kols else None,
+                "tiktok_shop" if tiktok_data else None,
+                "ai_historical_db" if ai_trend_data else None,
+                "claude_sonnet",
+            ] if s
+        ],
     }
 
 

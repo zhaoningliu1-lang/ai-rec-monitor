@@ -975,13 +975,58 @@ export interface OETrendingProduct {
   suggested_category_keyword: string;
 }
 
+export interface OEAmazonProduct {
+  asin?: string;
+  title: string;
+  rating: number;
+  reviews: number;
+  price?: number;
+  rank?: number;
+}
+
+export interface OEAmazonData {
+  brand_presence?: { product_count: number; avg_rating: number; avg_reviews: number; top_products: OEAmazonProduct[] };
+  keyword_ranking?: { brand_rank: number | null; total_results: number; top_competitors: OEAmazonProduct[] };
+}
+
+export interface OERedditPost {
+  title: string;
+  subreddit: string;
+  score: number;
+  num_comments: number;
+  url: string;
+  snippet: string;
+}
+
+export interface OEYouTubeKol {
+  channel_name: string;
+  video_title: string;
+  video_url: string;
+  views: number;
+  tier: "mega" | "macro" | "micro";
+  sentiment: string;
+}
+
+export interface OETikTokData {
+  present?: boolean;
+  product_count?: number;
+  avg_rating?: number;
+  top_products?: { title: string; price: string; sales: number }[];
+}
+
 export interface OEScanResponse {
   brand: string;
   category: string;
   market: string;
   market_signals: Record<string, unknown>;
+  amazon_data?: OEAmazonData;
+  reddit_posts?: OERedditPost[];
+  youtube_kols?: OEYouTubeKol[];
+  tiktok_data?: OETikTokData;
+  ai_trend_data?: Record<string, unknown>;
   ai_trending_products: OETrendingProduct[];
   scan_timestamp: string;
+  data_sources?: string[];
 }
 
 export interface OESupplier {
