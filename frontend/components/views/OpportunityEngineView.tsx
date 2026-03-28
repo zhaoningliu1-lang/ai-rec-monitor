@@ -195,6 +195,8 @@ function OpportunitiesStep({ scan, lang, onSelect }: {
   const kols = scan.youtube_kols;
   const tiktok = scan.tiktok_data;
   const sources = scan.data_sources || [];
+  const trends = scan.ai_trend_data;
+  const existingProducts = scan.brand_existing_products;
 
   return (
     <div className="space-y-6">
@@ -306,6 +308,48 @@ function OpportunitiesStep({ scan, lang, onSelect }: {
                 <p className="text-[10px] text-slate-500">{p.price} · {p.sales?.toLocaleString()} sold</p>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* Brand existing products (dedup) + AI Trend Gainers */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Brand's existing products (excluded from suggestions) */}
+        {existingProducts && existingProducts.length > 0 && (
+          <div className="rounded-xl border border-slate-700/50 bg-slate-900/40 p-4">
+            <p className="text-[10px] text-slate-500 uppercase font-semibold mb-2">
+              {t(`${scan.brand}'s Existing Products (excluded)`, `${scan.brand} 已有产品（已排除）`, lang)}
+            </p>
+            {existingProducts.slice(0, 5).map((title, i) => (
+              <p key={i} className="text-xs text-slate-500 truncate py-0.5 line-through decoration-slate-700">
+                {title}
+              </p>
+            ))}
+            {existingProducts.length > 5 && (
+              <p className="text-[10px] text-slate-600 mt-1">+{existingProducts.length - 5} more</p>
+            )}
+          </div>
+        )}
+
+        {/* AI Trend Gainers (brands rising in AI visibility) */}
+        {trends?.gainers && trends.gainers.length > 0 && (
+          <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-4">
+            <p className="text-[10px] text-green-400 uppercase font-semibold mb-2">
+              {t("AI Visibility Gainers (from historical data)", "AI 可见度上升品牌（历史数据）", lang)}
+            </p>
+            {trends.gainers.slice(0, 4).map((g, i) => (
+              <div key={i} className="flex items-center justify-between py-1 text-xs">
+                <span className="text-white">{g.brand}</span>
+                <span className="text-green-400 font-medium">
+                  SOV {g.current_sov}% <span className="text-green-500">↑{g.sov_delta > 0 ? "+" : ""}{g.sov_delta}pp</span>
+                </span>
+              </div>
+            ))}
+            {trends.total_snapshots && (
+              <p className="text-[10px] text-slate-600 mt-1">
+                Based on {trends.total_snapshots} scans across {trends.total_brands_tracked} brands
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -454,7 +498,14 @@ function SupplierCostStep({ product, lang, onGenerateListing }: {
         {/* Left: Suppliers */}
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-white uppercase tracking-wider">
-            {t("1688 Suppliers", "1688 供应商", lang)}
+            {t("Suppliers", "供应商", lang)}
+            {suppliers?.source_label && (
+              <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                suppliers.source === "alibaba.com" ? "bg-[#ff6b35]/15 text-[#ff6b35]" : "bg-slate-700 text-slate-400"
+              }`}>
+                {suppliers.source_label}
+              </span>
+            )}
           </h4>
           {suppliers?.suppliers.map(s => (
             <button

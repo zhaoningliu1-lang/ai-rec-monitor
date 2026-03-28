@@ -1014,6 +1014,26 @@ export interface OETikTokData {
   top_products?: { title: string; price: string; sales: number }[];
 }
 
+export interface OEBrandTrend {
+  brand: string;
+  current_sov: number;
+  prev_sov: number;
+  sov_delta: number;
+  trend: "rising" | "stable" | "falling";
+  arrs: number;
+  scan_count: number;
+  sparkline: number[];
+}
+
+export interface OEAiTrendData {
+  category?: string;
+  total_brands_tracked?: number;
+  total_snapshots?: number;
+  top_brands_by_sov?: OEBrandTrend[];
+  gainers?: OEBrandTrend[];
+  losers?: OEBrandTrend[];
+}
+
 export interface OEScanResponse {
   brand: string;
   category: string;
@@ -1023,7 +1043,8 @@ export interface OEScanResponse {
   reddit_posts?: OERedditPost[];
   youtube_kols?: OEYouTubeKol[];
   tiktok_data?: OETikTokData;
-  ai_trend_data?: Record<string, unknown>;
+  ai_trend_data?: OEAiTrendData;
+  brand_existing_products?: string[];
   ai_trending_products: OETrendingProduct[];
   scan_timestamp: string;
   data_sources?: string[];
@@ -1047,6 +1068,8 @@ export interface OESupplier {
 export interface OESupplierResponse {
   keyword: string;
   suppliers: OESupplier[];
+  source?: string;
+  source_label?: string;
   tariff_preview: { hs_code: string; description: string; duty_rate_pct: number; section_301_pct: number; notes: string } | null;
 }
 
@@ -1085,4 +1108,6 @@ export const opportunityEngineApi = {
     postAuth<OELandedCost>("/opportunity-engine/cost-calculate", body),
   generateListing: (body: { brand: string; product_name: string; product_description?: string; ai_signals?: Record<string, unknown> }, demo = false) =>
     postAuth<OEListingResult>(`/opportunity-engine/generate-listing${demo ? "?demo=true" : ""}`, body),
+  categoryTrends: (category: string) =>
+    getAuth<OEAiTrendData>(`/opportunity-engine/category-trends?category=${encodeURIComponent(category)}`),
 };

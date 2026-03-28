@@ -21,7 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.database import get_db
 from app.routers.auth import get_current_user_optional
-from app.models import PromptResult, Run, RunStatus, User
+from app.models import PromptResult, Run, RunSnapshot, RunStatus, User
 from app.services.supplier_data import (
     calculate_landed_cost,
     get_tariff,
@@ -157,60 +157,102 @@ async def _fetch_tiktok_data(brand: str, category: str) -> dict:
         return {}
 
 
-# ── Helper: query historical PromptResult for trend detection ──────────────
+# ── Helper: query RunSnapshot for real AI trend time-series ────────────────
 
 async def _fetch_ai_trend_data(category: str, db: AsyncSession) -> dict:
-    """Query historical PromptResult DB for AI recommendation trends."""
+    """Query RunSnapshot DB for real AI recommendation trends with time-series."""
     try:
-        # Get recent runs in this category
-        runs_q = await db.execute(
-            select(Run.id, Run.brand_name, Run.created_at)
+        # Get all snapshots for this category, ordered by time
+        snapshots_q = await db.execute(
+            select(
+                RunSnapshot.brand_name,
+                RunSnapshot.weighted_sov,
+                RunSnapshot.sov_overall,
+                RunSnapshot.sov_high,
+                RunSnapshot.arrs,
+                RunSnapshot.mention_count,
+                RunSnapshot.total_prompts,
+                RunSnapshot.snapshot_at,
+            )
+            .join(Run, RunSnapshot.run_id == Run.id)
             .where(Run.category.ilike(f"%{category}%"), Run.status == RunStatus.done)
-            .order_by(Run.created_at.desc())
-            .limit(20)
+            .order_by(RunSnapshot.snapshot_at.desc())
+            .limit(100)
         )
-        recent_runs = runs_q.all()
-        if not recent_runs:
+        rows = snapshots_q.all()
+        if not rows:
             return {}
 
-        run_ids = [r.id for r in recent_runs]
-
-        # Get mention counts per brand across these runs
-        brand_mentions_q = await db.execute(
-            select(
-                Run.brand_name,
-                func.count(PromptResult.id).label("total_prompts"),
-                func.count(PromptResult.id).filter(PromptResult.brand_mentioned == True).label("mentions"),
-            )
-            .join(Run, PromptResult.run_id == Run.id)
-            .where(Run.id.in_(run_ids))
-            .group_by(Run.brand_name)
-        )
-        brand_data = brand_mentions_q.all()
-
-        # Compile trend data
-        brands_trending = []
-        for row in brand_data:
-            total = row.total_prompts or 1
-            mentions = row.mentions or 0
-            sov = round(mentions / total * 100, 1)
-            brands_trending.append({
-                "brand": row.brand_name,
-                "sov_pct": sov,
-                "total_prompts": total,
-                "mention_count": mentions,
+        # Group by brand, compute trends
+        from collections import defaultdict
+        brand_history: dict[str, list] = defaultdict(list)
+        for r in rows:
+            brand_history[r.brand_name].append({
+                "weighted_sov": r.weighted_sov,
+                "sov_overall": r.sov_overall,
+                "sov_high": r.sov_high,
+                "arrs": r.arrs,
+                "mention_count": r.mention_count,
+                "total_prompts": r.total_prompts,
+                "snapshot_at": r.snapshot_at.isoformat() if r.snapshot_at else None,
             })
 
-        brands_trending.sort(key=lambda x: x["sov_pct"], reverse=True)
+        # Compute per-brand trend metrics
+        brands = []
+        for brand_name, history in brand_history.items():
+            # Sort by time ascending
+            history.sort(key=lambda x: x["snapshot_at"] or "")
+            latest = history[-1]
+            oldest = history[0]
+
+            current_sov = latest["weighted_sov"]
+            prev_sov = oldest["weighted_sov"] if len(history) > 1 else current_sov
+            delta = round(current_sov - prev_sov, 2)
+
+            trend = "rising" if delta > 0.03 else "falling" if delta < -0.03 else "stable"
+
+            brands.append({
+                "brand": brand_name,
+                "current_sov": round(current_sov * 100, 1),
+                "prev_sov": round(prev_sov * 100, 1),
+                "sov_delta": round(delta * 100, 1),
+                "trend": trend,
+                "arrs": round(latest["arrs"], 1),
+                "scan_count": len(history),
+                "sparkline": [round(h["weighted_sov"] * 100, 1) for h in history[-8:]],
+            })
+
+        brands.sort(key=lambda x: x["current_sov"], reverse=True)
+
+        gainers = sorted([b for b in brands if b["sov_delta"] > 0], key=lambda x: -x["sov_delta"])[:5]
+        losers = sorted([b for b in brands if b["sov_delta"] < 0], key=lambda x: x["sov_delta"])[:5]
 
         return {
             "category": category,
-            "recent_runs_count": len(recent_runs),
-            "top_brands_by_sov": brands_trending[:10],
+            "total_brands_tracked": len(brands),
+            "total_snapshots": len(rows),
+            "top_brands_by_sov": brands[:10],
+            "gainers": gainers,
+            "losers": losers,
         }
     except Exception as e:
         logger.warning("AI trend DB query failed: %s", e)
         return {}
+
+
+# ── Helper: fetch brand's existing Amazon products (for dedup) ─────────────
+
+async def _fetch_brand_products(brand: str) -> list[str]:
+    """Fetch brand's existing Amazon product titles for dedup."""
+    try:
+        from app.services.amazon_service import search_brand
+        data = await search_brand(brand)
+        if isinstance(data, dict) and data.get("top_products"):
+            return [p.get("title", "") for p in data["top_products"] if p.get("title")]
+        return []
+    except Exception as e:
+        logger.warning("Brand product fetch failed: %s", e)
+        return []
 
 
 # ── Demo data for instant hackathon pitch ──────────────────────────────────
@@ -332,6 +374,7 @@ async def scan_opportunities(
         youtube_result,
         tiktok_result,
         ai_trend_result,
+        brand_products_result,
     ) = await asyncio.gather(
         fetch_market_signals(req.brand, req.category),
         _fetch_amazon_data(req.brand, req.category),
@@ -339,6 +382,7 @@ async def scan_opportunities(
         _fetch_youtube_kols(req.brand, req.category),
         _fetch_tiktok_data(req.brand, req.category),
         _fetch_ai_trend_data(req.category, db),
+        _fetch_brand_products(req.brand),
         return_exceptions=True,
     )
 
@@ -349,6 +393,7 @@ async def scan_opportunities(
     youtube_kols = youtube_result if not isinstance(youtube_result, Exception) else []
     tiktok_data = tiktok_result if not isinstance(tiktok_result, Exception) else {}
     ai_trend_data = ai_trend_result if not isinstance(ai_trend_result, Exception) else {}
+    brand_existing_products = brand_products_result if not isinstance(brand_products_result, Exception) else []
 
     # ── 2. Build enriched context for Claude ───────────────────────────────
     enriched_context = {
@@ -358,6 +403,7 @@ async def scan_opportunities(
         "youtube_kols": youtube_kols[:5],
         "tiktok_shop": tiktok_data,
         "ai_historical_trends": ai_trend_data,
+        "brand_existing_products": brand_existing_products[:20],
     }
 
     # ── 3. Call Claude with ALL real data ───────────────────────────────────
@@ -394,7 +440,9 @@ Rules:
 2. MUST reference actual data from the provided sources (real Reddit titles, real Amazon competitors, real YouTube creators).
 3. ai_recommendation_score: 90+ = AI engines actively recommending, 70-89 = emerging trend, 50-69 = early signal.
 4. competitor_gap MUST cite real competitor names and their Amazon stats if available.
-5. Return ONLY valid JSON, no markdown, no explanation."""
+5. CRITICAL: The brand's EXISTING products are provided in brand_existing_products. Do NOT suggest any product the brand already sells. Only suggest NEW product opportunities they don't currently offer.
+6. If ai_historical_trends shows "gainers" (brands with rising SOV), reference them — these are brands whose AI visibility is growing, indicating market demand.
+7. Return ONLY valid JSON, no markdown, no explanation."""
 
     user_prompt = (
         f"Brand: {req.brand}\n"
@@ -435,6 +483,7 @@ Rules:
         "youtube_kols": youtube_kols,
         "tiktok_data": tiktok_data,
         "ai_trend_data": ai_trend_data,
+        "brand_existing_products": brand_existing_products[:20],
         "ai_trending_products": trending_products,
         "scan_timestamp": datetime.now(timezone.utc).isoformat(),
         "data_sources": [
@@ -445,10 +494,23 @@ Rules:
                 "youtube_kol" if youtube_kols else None,
                 "tiktok_shop" if tiktok_data else None,
                 "ai_historical_db" if ai_trend_data else None,
+                "brand_dedup" if brand_existing_products else None,
                 "claude_sonnet",
             ] if s
         ],
     }
+
+
+@router.get("/category-trends")
+async def get_category_trends(
+    category: str = Query(..., description="Product category to analyze"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get AI recommendation trend time-series for a category."""
+    data = await _fetch_ai_trend_data(category, db)
+    if not data:
+        return {"category": category, "message": "No historical scan data for this category yet.", "top_brands_by_sov": [], "gainers": [], "losers": []}
+    return data
 
 
 @router.get("/suppliers")
@@ -456,8 +518,10 @@ async def get_suppliers(
     keyword: str = Query(..., description="Product keyword to search"),
     hs_code: str | None = Query(None, description="HS code for tariff preview"),
 ):
-    """Search 1688 supplier database by product keyword."""
-    suppliers = search_suppliers(keyword)
+    """Search suppliers — tries Alibaba.com (live), falls back to database."""
+    from app.services.supplier_service import search_suppliers_real
+
+    result = await search_suppliers_real(keyword)
     tariff_preview = None
     if hs_code:
         t = get_tariff(hs_code)
@@ -465,7 +529,9 @@ async def get_suppliers(
 
     return {
         "keyword": keyword,
-        "suppliers": [s.to_dict() for s in suppliers],
+        "suppliers": result["suppliers"],
+        "source": result["source"],
+        "source_label": result["source_label"],
         "tariff_preview": tariff_preview,
     }
 
