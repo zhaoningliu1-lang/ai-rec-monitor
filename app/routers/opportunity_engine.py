@@ -705,3 +705,46 @@ async def sync_to_shadow_store(req: SyncRequest):
     if "error" in result and result.get("synced", 0) == 0:
         raise HTTPException(status_code=400, detail=result["error"])
     return result
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ROI DASHBOARD — GEO Score → Traffic → Revenue closed loop
+# ═══════════════════════════════════════════════════════════════════════════
+
+@router.get("/roi")
+async def get_roi_dashboard(
+    brand: str = Query(..., description="Brand name"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get the full GEO → Traffic → Revenue ROI dashboard for a brand.
+
+    Connects GEO Score changes to AI-referred traffic and estimated revenue.
+    """
+    from app.services.roi_engine import compute_roi_dashboard
+    return await compute_roi_dashboard(brand, db)
+
+
+@router.get("/competitor-alerts")
+async def get_competitor_alerts(
+    brand: str = Query(..., description="Brand name"),
+    competitors: str = Query("", description="Comma-separated competitor names"),
+):
+    """Detect competitor Amazon listing changes (price, reviews, new SKUs)."""
+    from app.services.roi_engine import check_competitor_changes
+    comp_list = [c.strip() for c in competitors.split(",") if c.strip()] if competitors else None
+    return await check_competitor_changes(brand, comp_list)
+
+
+@router.get("/auto-report")
+async def get_auto_report(
+    brand: str = Query(..., description="Brand name"),
+    category: str = Query("", description="Product category"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Generate a comprehensive monthly brand report automatically.
+
+    Combines GEO Score, AI traffic, market signals, competitor analysis,
+    and revenue estimation into a single report.
+    """
+    from app.services.roi_engine import generate_auto_report
+    return await generate_auto_report(brand, category, db)

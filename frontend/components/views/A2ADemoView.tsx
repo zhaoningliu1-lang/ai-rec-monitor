@@ -128,6 +128,20 @@ const TIMELINE: TimelineStep[] = [
     content: "Signal → Supplier → Listing → Costco PO — Total time: 4.2 minutes. Human touchpoints: 1 (final approval). Revenue potential: $189,000.",
     contentZh: "信号 → 供应商 → 上架 → Costco PO — 总耗时: 4.2 分钟。人工介入: 1 次（最终审批）。潜在收入: $189,000。",
   },
+  // ── ROI CLOSED LOOP ──
+  {
+    id: "p6", side: "protocol", delay: 1000, type: "data",
+    title: "ROI Attribution Loop", titleZh: "ROI 归因闭环",
+    content: "GEO Score 42→67 (+25pp) → AI traffic ↑340% → Est. revenue $189K → Cost of optimization: $2,400 → ROI: 78.7x",
+    contentZh: "GEO Score 42→67 (+25pp) → AI 流量 ↑340% → 预估收入 $189K → 优化成本: $2,400 → ROI: 78.7x",
+    highlight: true,
+  },
+  {
+    id: "s7", side: "seller", delay: 800, type: "confirmation",
+    title: "Continuous Optimization", titleZh: "持续优化",
+    content: "Seller Agent auto-monitors: ChatGPT feed score A (92%), competitor alerts active, next scan in 7 days. The flywheel keeps spinning.",
+    contentZh: "卖方代理持续监控: ChatGPT Feed 评分 A (92%)，竞品告警已激活，7 天后自动扫描。飞轮持续转动。",
+  },
 ];
 
 // ── Animated typing effect ──────────────────────────────────────────────────
@@ -479,8 +493,8 @@ export default function A2ADemoView({ lang }: { lang: Lang }) {
                   { label: t("Total Time", "总耗时", lang), value: "4.2 min", color: "#ff6b35" },
                   { label: t("Human Touchpoints", "人工介入", lang), value: "1", color: "#22c55e" },
                   { label: t("Supplier Matches", "供应商匹配", lang), value: "3", color: "#3b82f6" },
-                  { label: t("Listings Generated", "Listing 生成", lang), value: "1", color: "#a78bfa" },
                   { label: t("Revenue Potential", "潜在收入", lang), value: "$189,000", color: "#fbbf24" },
+                  { label: t("GEO → Revenue ROI", "GEO → 收入 ROI", lang), value: "78.7x", color: "#22c55e" },
                 ].map(({ label, value, color }) => (
                   <div key={label}>
                     <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">{label}</p>
@@ -499,8 +513,8 @@ export default function A2ADemoView({ lang }: { lang: Lang }) {
                 </p>
                 <p className="text-sm text-slate-400">
                   {t(
-                    "Avanti A2A: We don't just show you what AI recommends. We close the deal.",
-                    "Avanti A2A：我们不只是告诉你 AI 推荐什么。我们帮你成交。",
+                    "Avanti A2A: From AI signal to shelf to revenue — the full closed loop.",
+                    "Avanti A2A：从 AI 信号到上架到收入——完整闭环。",
                     lang,
                   )}
                 </p>
