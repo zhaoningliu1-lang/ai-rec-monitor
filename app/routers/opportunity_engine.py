@@ -618,3 +618,90 @@ Return ONLY a valid JSON object:
     except Exception as e:
         logger.error("Listing generation failed: %s", e)
         raise HTTPException(status_code=500, detail=f"Listing generation failed: {e}")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# P1: Shopify Storefront API + MCP endpoints
+# ═══════════════════════════════════════════════════════════════════════════
+
+@router.get("/shopify/search")
+async def shopify_search(
+    shop: str = Query(..., description="Shopify store domain (e.g., mystore.myshopify.com)"),
+    query: str = Query(..., description="Product search query"),
+    limit: int = Query(10, ge=1, le=50),
+):
+    """Search products on a Shopify store via Storefront API."""
+    from app.services.shopify_service import search_products
+    token = settings.shopify_catalog_api_key
+    products = await search_products(shop, query, limit, token)
+    return {"shop": shop, "query": query, "products": products, "count": len(products)}
+
+
+@router.post("/shopify/cart")
+async def shopify_create_cart(
+    shop: str = Query(..., description="Shopify store domain"),
+    variant_id: str = Query(..., description="Shopify variant GID"),
+    quantity: int = Query(1, ge=1),
+):
+    """Create a cart on a Shopify store and return checkout URL."""
+    from app.services.shopify_service import create_cart
+    token = settings.shopify_catalog_api_key
+    result = await create_cart(shop, variant_id, quantity, token)
+    if not result:
+        raise HTTPException(status_code=400, detail="Failed to create cart")
+    return result
+
+
+@router.get("/shopify/mcp/tools")
+async def shopify_mcp_tools(
+    shop: str = Query(..., description="Shopify store domain"),
+):
+    """List available MCP tools on a Shopify store."""
+    from app.services.shopify_service import mcp_list_tools
+    tools = await mcp_list_tools(shop)
+    return {"shop": shop, "tools": tools, "count": len(tools)}
+
+
+@router.post("/shopify/mcp/search")
+async def shopify_mcp_search(
+    shop: str = Query(..., description="Shopify store domain"),
+    query: str = Query(..., description="Search query"),
+):
+    """Search a Shopify store's catalog via MCP protocol."""
+    from app.services.shopify_service import mcp_search_products
+    result = await mcp_search_products(shop, query)
+    return {"shop": shop, "query": query, "result": result}
+
+
+@router.get("/shopify/agent-readiness")
+async def shopify_agent_readiness(
+    shop: str = Query(..., description="Shopify store domain"),
+):
+    """Check if a Shopify store is ready for AI agent commerce."""
+    from app.services.shopify_service import check_agent_readiness
+    return await check_agent_readiness(shop)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# P2: Shadow Store — Sync Amazon products → Shopify
+# ═══════════════════════════════════════════════════════════════════════════
+
+class SyncRequest(BaseModel):
+    shop_domain: str  # e.g., "avanti-shadow.myshopify.com"
+    admin_token: str  # Shopify Admin API access token
+    brand: str        # Brand name to sync from Amazon
+
+
+@router.post("/shopify/sync")
+async def sync_to_shadow_store(req: SyncRequest):
+    """Sync a brand's Amazon products to a Shopify shadow store.
+
+    Creates products on the Shopify store from Amazon data (via Rainforest API).
+    Products are tagged with ASIN for cross-platform tracking.
+    After sync, AI agents can discover these products via Shopify MCP.
+    """
+    from app.services.shopify_service import sync_brand_to_shadow_store
+    result = await sync_brand_to_shadow_store(req.shop_domain, req.admin_token, req.brand)
+    if "error" in result and result.get("synced", 0) == 0:
+        raise HTTPException(status_code=400, detail=result["error"])
+    return result
