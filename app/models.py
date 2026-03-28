@@ -410,3 +410,49 @@ class ContentDraft(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+# ── Shared Reports (Client Report Portal) ────────────────────────────────────
+
+class SharedReport(Base):
+    """A report shared via public token link for client viewing."""
+    __tablename__ = "shared_reports"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    token: Mapped[str] = mapped_column(String(100), nullable=False, unique=True, index=True)
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    brand_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    html_content: Mapped[str] = mapped_column(Text, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    view_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    views: Mapped[list["ReportView"]] = relationship(
+        "ReportView", back_populates="report", cascade="all, delete-orphan"
+    )
+
+
+class ReportView(Base):
+    """Tracks each view of a shared report."""
+    __tablename__ = "report_views"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    report_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("shared_reports.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    viewed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    ip_address: Mapped[str | None] = mapped_column(String(45), nullable=True)
+    user_agent: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    report: Mapped["SharedReport"] = relationship("SharedReport", back_populates="views")

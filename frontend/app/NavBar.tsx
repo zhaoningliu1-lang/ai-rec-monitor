@@ -61,6 +61,10 @@ function NavDropdown({ label, items, isActive }: { label: string; items: Dropdow
 
 export default function NavBar() {
   const pathname = usePathname();
+
+  // Hide NavBar on public report viewer pages
+  if (pathname?.startsWith("/r/")) return null;
+
   const isZh = pathname.startsWith("/zh");
   const [loggedIn, setLoggedIn] = useState(false);
   const [paid, setPaid] = useState(false);
@@ -125,6 +129,7 @@ export default function NavBar() {
 
   const workspaceItems: DropdownItem[] = [
     { href: h("/developers"), label: p("Developers",   "开发者"),    desc: p("API keys & agent integration", "API Key 与 Agent 集成"), badge: "New" },
+    { href: h("/reports"),    label: p("Reports",      "报告门户"),  desc: p("Share reports with trackable links", "通过可追踪链接分享报告"), badge: "New" },
     { href: h("/selection"),  label: p("Selection",    "选品情报"),  desc: p("AI product selection signals", "AI 选品信号") },
     { href: h("/schedules"),  label: p("Auto Monitor", "自动监控") },
     { href: h("/account"),    label: p("Account",      "账户设置") },

@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import NavBar from "./NavBar";
+import LayoutShell from "./LayoutShell";
 import { Analytics } from "@vercel/analytics/next";
 
 const GA_ID = "G-ED5VLNFN9R";
@@ -40,8 +41,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${geist.variable} antialiased min-h-screen`} style={{ background: "#09090f", color: "#f0f0f8" }}>
         <NavBar />
-        <main className="max-w-6xl mx-auto px-6 py-8">{children}</main>
-        <footer className="border-t mt-20 pt-12 pb-8" style={{ borderColor: "#1a1a2e" }}>
+        <LayoutShell footer={
+          <footer className="border-t mt-20 pt-12 pb-8" style={{ borderColor: "#1a1a2e" }}>
           <div className="max-w-6xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
               {/* Brand column */}
@@ -100,6 +101,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
         </footer>
+        }>
+          {children}
+        </LayoutShell>
         <Analytics />
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
         <Script id="gtag-init" strategy="afterInteractive">{`

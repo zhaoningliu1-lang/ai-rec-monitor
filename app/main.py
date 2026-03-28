@@ -25,6 +25,7 @@ from app.routers import geo_tools as geo_tools_router
 from app.routers import content_studio as content_studio_router
 from app.routers import dashboard as dashboard_router
 from app.routers import api_v1 as api_v1_router
+from app.routers import shared_reports as shared_reports_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -262,6 +263,38 @@ async def lifespan(app: FastAPI):
         await conn.execute(text(
             "CREATE INDEX IF NOT EXISTS ix_api_keys_key_hash ON api_keys (key_hash)"
         ))
+        # ── Shared Reports (Client Report Portal) ──
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS shared_reports (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                token VARCHAR(100) NOT NULL UNIQUE,
+                title VARCHAR(500) NOT NULL,
+                brand_name VARCHAR(255),
+                html_content TEXT NOT NULL,
+                is_active BOOLEAN NOT NULL DEFAULT TRUE,
+                view_count INTEGER NOT NULL DEFAULT 0,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        """))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_shared_reports_token ON shared_reports (token)"
+        ))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_shared_reports_user_id ON shared_reports (user_id)"
+        ))
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS report_views (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                report_id UUID NOT NULL REFERENCES shared_reports(id) ON DELETE CASCADE,
+                viewed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ip_address VARCHAR(45),
+                user_agent TEXT
+            )
+        """))
+        await conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_report_views_report_id ON report_views (report_id)"
+        ))
     logger.info("Database ready.")
     await _recover_stuck_runs()
 
@@ -320,6 +353,7 @@ app.include_router(geo_tools_router.router)
 app.include_router(content_studio_router.router)
 app.include_router(dashboard_router.router)
 app.include_router(api_v1_router.router)
+app.include_router(shared_reports_router.router)
 
 
 # Global exception handler — ensures CORS headers survive unhandled 500s

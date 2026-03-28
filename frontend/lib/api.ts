@@ -924,3 +924,41 @@ export const dashboardApi = {
   getBrands: () =>
     getAuth<{ brands: string[] }>("/dashboard/brands"),
 };
+
+// ── Report Portal ───────────────────────────────────────────────────────────
+
+export interface SharedReport {
+  id: string;
+  token: string;
+  title: string;
+  brand_name: string | null;
+  share_url: string;
+  view_count: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface ReportMeta {
+  title: string;
+  brand_name: string | null;
+  created_at: string;
+}
+
+export interface ReportViewEntry {
+  viewed_at: string;
+  ip_address: string | null;
+  user_agent: string | null;
+}
+
+export const reportsApi = {
+  upload: (body: { title: string; html_content: string; brand_name?: string; slug?: string }) =>
+    postAuth<SharedReport>("/reports/upload", body),
+  list: () =>
+    getAuth<SharedReport[]>("/reports"),
+  getMeta: (token: string) =>
+    get<ReportMeta>(`/reports/${token}/meta`),
+  getViews: (reportId: string) =>
+    getAuth<ReportViewEntry[]>(`/reports/${reportId}/analytics`),
+  remove: (reportId: string) =>
+    delAuth(`/reports/${reportId}`),
+};
