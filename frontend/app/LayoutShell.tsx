@@ -11,7 +11,7 @@ export default function LayoutShell({
 }) {
   const pathname = usePathname();
   const isReportViewer = pathname?.startsWith("/r/");
-  const isFullWidth = pathname?.startsWith("/a2a-demo") || pathname?.startsWith("/opportunity-engine") || pathname?.startsWith("/zh/a2a-demo") || pathname?.startsWith("/zh/opportunity-engine");
+  const isFullWidth = pathname?.startsWith("/a2a-demo") || pathname?.startsWith("/opportunity-engine") || pathname?.startsWith("/hackathon") || pathname?.startsWith("/zh/a2a-demo") || pathname?.startsWith("/zh/opportunity-engine");
 
   if (isReportViewer) {
     // Report viewer: no main wrapper, no footer — just raw children

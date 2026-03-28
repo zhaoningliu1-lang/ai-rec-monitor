@@ -29,6 +29,7 @@ const PUBLIC_PREFIX = [
   "/api/",
   "/a2a-demo",
   "/opportunity-engine",
+  "/hackathon",
 ];
 
 export function proxy(request: NextRequest) {
