@@ -142,6 +142,14 @@ const TIMELINE: TimelineStep[] = [
     content: "Seller Agent auto-monitors: ChatGPT feed score A (92%), competitor alerts active, next scan in 7 days. The flywheel keeps spinning.",
     contentZh: "卖方代理持续监控: ChatGPT Feed 评分 A (92%)，竞品告警已激活，7 天后自动扫描。飞轮持续转动。",
   },
+  // ── EverMemOS — Agent Memory ──
+  {
+    id: "p7", side: "protocol", delay: 800, type: "data",
+    title: "Agent Memory Stored (EverMemOS)", titleZh: "代理记忆已存储 (EverMemOS)",
+    content: "All intelligence persisted: ceramic wok trend (seen 3x, rising), Costco preference ($15-25/unit), Sensarte's product gaps, supplier shortlist. Next scan builds on accumulated knowledge — the agent never starts from zero.",
+    contentZh: "所有情报已持久化：ceramic wok 趋势（出现 3 次，持续上升）、Costco 偏好（$15-25/台）、Sensarte 产品缺口、供应商候选名单。下次扫描基于积累的知识——代理永远不会从零开始。",
+    highlight: true,
+  },
 ];
 
 // ── Animated typing effect ──────────────────────────────────────────────────

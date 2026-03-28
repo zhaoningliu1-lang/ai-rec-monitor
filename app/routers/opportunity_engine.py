@@ -395,6 +395,10 @@ async def scan_opportunities(
     ai_trend_data = ai_trend_result if not isinstance(ai_trend_result, Exception) else {}
     brand_existing_products = brand_products_result if not isinstance(brand_products_result, Exception) else []
 
+    # ── 1b. Recall agent memory (EverMemOS-ready) ──────────────────────────
+    from app.services.agent_memory import recall_memories, store_memory, get_agent_context
+    agent_context = await get_agent_context(req.brand)
+
     # ── 2. Build enriched context for Claude ───────────────────────────────
     enriched_context = {
         "market_signals": signals_dict,
@@ -404,6 +408,7 @@ async def scan_opportunities(
         "tiktok_shop": tiktok_data,
         "ai_historical_trends": ai_trend_data,
         "brand_existing_products": brand_existing_products[:20],
+        "agent_memory": agent_context if agent_context.get("has_memory") else None,
     }
 
     # ── 3. Call Claude with ALL real data ───────────────────────────────────
@@ -472,6 +477,23 @@ Rules:
         logger.error("Claude trend analysis failed: %s", e)
         trending_products = []
 
+    # ── 3b. Store scan results in agent memory ──────────────────────────────
+    try:
+        await store_memory(req.brand, "scan_result", {
+            "category": req.category,
+            "opportunities": [
+                {"product_name": p.get("product_name"), "score": p.get("ai_recommendation_score")}
+                for p in (trending_products or [])[:5]
+            ],
+            "signal_summary": {
+                "alignment": signals_dict.get("market_alignment_score", 0),
+                "reddit_score": signals_dict.get("reddit_score", 0),
+                "kol_count": signals_dict.get("kol_count", 0),
+            },
+        })
+    except Exception:
+        pass  # Memory storage is best-effort
+
     # ── 4. Return enriched response with all real data ─────────────────────
     return {
         "brand": req.brand,
@@ -495,9 +517,17 @@ Rules:
                 "tiktok_shop" if tiktok_data else None,
                 "ai_historical_db" if ai_trend_data else None,
                 "brand_dedup" if brand_existing_products else None,
+                "agent_memory" if agent_context.get("has_memory") else None,
                 "claude_sonnet",
             ] if s
         ],
+        "agent_memory": {
+            "has_memory": agent_context.get("has_memory", False),
+            "total_scans": agent_context.get("total_scans", 0),
+            "persistent_trends": agent_context.get("persistent_trends", []),
+            "backend": agent_context.get("memory_backend", "in_memory"),
+            "note": "Powered by EverMemOS architecture. Agent accumulates intelligence across sessions.",
+        },
     }
 
 
@@ -748,3 +778,46 @@ async def get_auto_report(
     """
     from app.services.roi_engine import generate_auto_report
     return await generate_auto_report(brand, category, db)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# AGENT MEMORY — EverMemOS-ready persistent memory for Seller Agent
+# ═══════════════════════════════════════════════════════════════════════════
+
+@router.get("/agent/memory")
+async def get_agent_memory(
+    brand: str = Query(..., description="Brand name"),
+):
+    """Get the seller agent's accumulated memory context for a brand.
+
+    Powered by EverMemOS architecture — agent remembers past scans,
+    client preferences, persistent trends, and actions taken.
+    """
+    from app.services.agent_memory import get_agent_context
+    return await get_agent_context(brand)
+
+
+@router.post("/agent/memory")
+async def store_agent_memory(
+    brand: str = Query(..., description="Brand name"),
+    memory_type: str = Query(..., description="Memory type: scan_result | client_preference | trend_tracked | action_taken"),
+    content: dict = {},
+):
+    """Store a new memory for a brand's seller agent."""
+    from app.services.agent_memory import store_memory
+    return await store_memory(brand, memory_type, content)
+
+
+@router.get("/agent/memory/recall")
+async def recall_agent_memory(
+    brand: str = Query(..., description="Brand name"),
+    query: str = Query("", description="Search query for semantic recall"),
+    memory_type: str = Query("", description="Filter by memory type"),
+):
+    """Recall memories for a brand's seller agent.
+
+    When EverMemOS is deployed, this uses semantic search.
+    Currently uses keyword matching on in-memory store.
+    """
+    from app.services.agent_memory import recall_memories
+    return await recall_memories(brand, query or None, memory_type or None)

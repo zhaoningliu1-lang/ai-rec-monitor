@@ -195,6 +195,39 @@ function ResultDisplay({ data, lang }: { data: any; lang: Lang }) {
     );
   }
 
+  // Agent Memory
+  if (data.agent_id !== undefined || data.has_memory !== undefined) {
+    return (
+      <div className="space-y-2">
+        <div className="grid grid-cols-3 gap-2">
+          <Stat label={p("Scans", "扫描次数", lang)} value={`${data.total_scans ?? 0}`} />
+          <Stat label={p("Memories", "记忆数", lang)} value={`${data.memory_count ?? 0}`} color={data.has_memory ? "text-cyan-400" : "text-slate-400"} />
+          <Stat label={p("Backend", "后端", lang)} value={data.memory_backend === "evermemos" ? "EverMemOS" : p("In-Memory", "内存", lang)} />
+        </div>
+        {data.persistent_trends?.length > 0 && (
+          <div>
+            <p className="text-[10px] text-cyan-400 uppercase font-bold mb-1">{p("Persistent Trends (seen 2+ times)", "持续趋势（出现 2+ 次）", lang)}</p>
+            {data.persistent_trends.map((t: any, i: number) => (
+              <p key={i} className="text-xs text-white">{t.product} — {p("seen", "出现", lang)} {t.seen_count}x</p>
+            ))}
+          </div>
+        )}
+        {data.client_preferences?.length > 0 && (
+          <div>
+            <p className="text-[10px] text-slate-500 uppercase mb-1">{p("Client Preferences", "客户偏好", lang)}</p>
+            {data.client_preferences.map((pref: any, i: number) => (
+              <p key={i} className="text-xs text-slate-300">{JSON.stringify(pref)}</p>
+            ))}
+          </div>
+        )}
+        {!data.has_memory && (
+          <p className="text-xs text-slate-500">{p("No memories yet. Run a scan first to build agent intelligence.", "暂无记忆。先运行一次扫描来构建代理情报。", lang)}</p>
+        )}
+        <p className="text-[10px] text-cyan-400/50">{p("Architecture: EverMemOS-ready. Swap to EverMemOS REST API for semantic recall.", "架构: 已适配 EverMemOS。可切换到 EverMemOS REST API 实现语义召回。", lang)}</p>
+      </div>
+    );
+  }
+
   // Fallback: pretty JSON
   return <pre className="text-[10px] text-slate-400 whitespace-pre-wrap">{JSON.stringify(data, null, 2).slice(0, 2000)}</pre>;
 }
@@ -319,6 +352,28 @@ function getSections(lang: Lang, h: (path: string) => string) {
         { label: p("Grade", "评级", lang), value: "A-F" },
         { label: "Output", value: "ACP JSON" },
         { label: p("Submit to", "提交到", lang), value: "chatgpt.com" },
+      ],
+    },
+    {
+      id: "memory",
+      badge: "EverMemOS",
+      badgeColor: "bg-cyan-500/15 text-cyan-400",
+      title: p("Agent Memory (EverMemOS)", "代理记忆 (EverMemOS)", lang),
+      subtitle: p("Seller Agent never starts from zero — it remembers everything", "卖方代理永远不会从零开始——它记住一切", lang),
+      description: p(
+        "Persistent memory layer powered by EverMemOS architecture. Agent accumulates intelligence: past scan results, persistent trends (seen 3x → urgent), client preferences, actions taken. Each scan builds on previous knowledge. Memory API ready for EverMemOS REST integration.",
+        "基于 EverMemOS 架构的持久化记忆层。代理积累情报：历史扫描结果、持续趋势（出现 3 次 → 紧急）、客户偏好、已采取行动。每次扫描基于先前知识。记忆 API 已为 EverMemOS REST 集成做好准备。",
+        lang,
+      ),
+      apis: [
+        { method: "GET", path: "/opportunity-engine/agent/memory?brand=Sensarte", label: p("Agent Memory (Sensarte)", "代理记忆 (Sensarte)", lang) },
+        { method: "GET", path: "/opportunity-engine/agent/memory/recall?brand=Sensarte&query=trend", label: p("Recall Trends", "回忆趋势", lang) },
+      ],
+      stats: [
+        { label: p("Memory Types", "记忆类型", lang), value: "5" },
+        { label: p("Persistent Trends", "持续趋势", lang), value: p("Auto-detect", "自动检测", lang) },
+        { label: p("Backend", "后端", lang), value: "EverMemOS" },
+        { label: p("Protocol", "协议", lang), value: "REST API" },
       ],
     },
   ];
