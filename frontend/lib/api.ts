@@ -1097,6 +1097,30 @@ export interface OEListingResult {
   ai_optimization_notes: string[];
 }
 
+export interface OEFeedFieldScore {
+  field_name: string;
+  status: "present" | "missing" | "weak";
+  score: number;
+  max_score: number;
+  tip: string;
+  category: string;
+  current_value: string;
+}
+
+export interface OEFeedScore {
+  brand: string;
+  total_score: number;
+  max_score: number;
+  score_pct: number;
+  grade: string;
+  field_scores: OEFeedFieldScore[];
+  missing_critical: string[];
+  missing_recommended: string[];
+  optimization_tips: string[];
+  feed_json: Record<string, unknown> | null;
+  product_count: number;
+}
+
 export const opportunityEngineApi = {
   scan: (body: { brand: string; category: string; market?: string }, demo = false) =>
     postAuth<OEScanResponse>(`/opportunity-engine/scan${demo ? "?demo=true" : ""}`, body),
@@ -1110,4 +1134,6 @@ export const opportunityEngineApi = {
     postAuth<OEListingResult>(`/opportunity-engine/generate-listing${demo ? "?demo=true" : ""}`, body),
   categoryTrends: (category: string) =>
     getAuth<OEAiTrendData>(`/opportunity-engine/category-trends?category=${encodeURIComponent(category)}`),
+  feedScore: (brand: string) =>
+    getAuth<OEFeedScore>(`/opportunity-engine/feed-score?brand=${encodeURIComponent(brand)}`),
 };

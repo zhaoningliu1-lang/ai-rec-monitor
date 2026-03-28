@@ -12,6 +12,7 @@ import {
   OEListingResult,
   OERedditPost,
   OEYouTubeKol,
+  OEFeedScore,
 } from "@/lib/api";
 
 type Lang = "en" | "zh";
@@ -183,10 +184,11 @@ function ScanStep({ lang, onScan, loading }: {
 
 // ── Step 2: Opportunities ───────────────────────────────────────────────────
 
-function OpportunitiesStep({ scan, lang, onSelect }: {
+function OpportunitiesStep({ scan, lang, onSelect, feedScore }: {
   scan: OEScanResponse;
   lang: Lang;
   onSelect: (product: OETrendingProduct) => void;
+  feedScore?: OEFeedScore | null;
 }) {
   const ms = scan.market_signals;
   const alignment = (ms.market_alignment_score as number) ?? 0;
@@ -353,6 +355,81 @@ function OpportunitiesStep({ scan, lang, onSelect }: {
           </div>
         )}
       </div>
+
+      {/* ChatGPT Feed Score */}
+      {feedScore && (
+        <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-bold text-white">
+                ChatGPT Shopping Feed Score
+              </h3>
+              <p className="text-sm text-slate-400">
+                {t(
+                  "How ready is your product data for ChatGPT Shopping?",
+                  "你的产品数据是否已为 ChatGPT 购物做好准备？",
+                  lang,
+                )}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <ScoreRing score={Math.round(feedScore.score_pct)} label="Feed Score" size={80} />
+              <span className={`text-3xl font-black ${
+                feedScore.grade === "A" ? "text-green-400" :
+                feedScore.grade === "B" ? "text-blue-400" :
+                feedScore.grade === "C" ? "text-yellow-400" :
+                "text-red-400"
+              }`}>{feedScore.grade}</span>
+            </div>
+          </div>
+
+          {/* Field status grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+            {feedScore.field_scores.map(f => (
+              <div key={f.field_name} className={`rounded-lg p-2 text-xs ${
+                f.status === "present" ? "bg-green-500/10 text-green-400" :
+                f.status === "weak" ? "bg-yellow-500/10 text-yellow-400" :
+                "bg-red-500/10 text-red-400"
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{f.field_name}</span>
+                  <span>{f.status === "present" ? "✓" : f.status === "weak" ? "⚠" : "✗"}</span>
+                </div>
+                <div className="text-[10px] opacity-60 mt-0.5">{f.score}/{f.max_score}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Optimization tips */}
+          {feedScore.optimization_tips.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-[10px] text-[#ff6b35] uppercase font-semibold">
+                {t("Optimization Tips", "优化建议", lang)}
+              </p>
+              {feedScore.optimization_tips.slice(0, 4).map((tip, i) => (
+                <p key={i} className="text-xs text-slate-300 leading-relaxed flex items-start gap-2">
+                  <span className="text-[#ff6b35] flex-shrink-0">{i + 1}.</span>
+                  {tip}
+                </p>
+              ))}
+            </div>
+          )}
+
+          {/* Missing critical fields */}
+          {feedScore.missing_critical.length > 0 && (
+            <div className="mt-3 rounded-lg bg-red-500/10 border border-red-500/20 p-3">
+              <p className="text-[10px] text-red-400 uppercase font-semibold mb-1">
+                {t("Critical Missing Fields", "关键缺失字段", lang)}
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {feedScore.missing_critical.map(f => (
+                  <span key={f} className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">{f}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Trending products */}
       <div>
@@ -805,13 +882,24 @@ export default function OpportunityEngineView({ lang }: { lang: Lang }) {
   const [scanResult, setScanResult] = useState<OEScanResponse | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<OETrendingProduct | null>(null);
   const [listing, setListing] = useState<OEListingResult | null>(null);
+  const [feedScore, setFeedScore] = useState<OEFeedScore | null>(null);
 
   const handleScan = async (brand: string, category: string) => {
     setScanLoading(true);
+    setFeedScore(null);
     try {
-      const result = await opportunityEngineApi.scan({ brand, category }, isDemo);
-      setScanResult(result);
-      setStep(2);
+      // Fetch scan + feed score in parallel
+      const [result, feed] = await Promise.allSettled([
+        opportunityEngineApi.scan({ brand, category }, isDemo),
+        isDemo ? Promise.resolve(null) : opportunityEngineApi.feedScore(brand),
+      ]);
+      if (result.status === "fulfilled" && result.value) {
+        setScanResult(result.value);
+        setStep(2);
+      }
+      if (feed.status === "fulfilled" && feed.value) {
+        setFeedScore(feed.value);
+      }
     } catch (e) {
       console.error("Scan failed:", e);
     }
@@ -872,7 +960,7 @@ export default function OpportunityEngineView({ lang }: { lang: Lang }) {
         )}
 
         {step === 2 && scanResult && (
-          <OpportunitiesStep scan={scanResult} lang={lang} onSelect={handleSelectProduct} />
+          <OpportunitiesStep scan={scanResult} lang={lang} onSelect={handleSelectProduct} feedScore={feedScore} />
         )}
 
         {step === 3 && selectedProduct && (

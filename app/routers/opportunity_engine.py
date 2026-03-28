@@ -548,6 +548,16 @@ async def cost_calculate(req: CostCalculateRequest):
     return breakdown.to_dict()
 
 
+@router.get("/feed-score")
+async def get_feed_score(
+    brand: str = Query(..., description="Brand name to analyze"),
+):
+    """Score a brand's product data against ChatGPT ACP Product Feed spec."""
+    from app.services.feed_optimizer import analyze_brand_feed
+    result = await analyze_brand_feed(brand)
+    return result.to_dict()
+
+
 @router.post("/generate-listing")
 async def generate_listing(
     req: GenerateListingRequest,
