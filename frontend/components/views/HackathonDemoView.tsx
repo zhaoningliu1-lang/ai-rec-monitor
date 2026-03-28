@@ -410,6 +410,80 @@ export default function HackathonDemoView({ lang = "en" }: { lang?: Lang }) {
           </p>
         </div>
 
+        {/* The Problem: Cross-border e-commerce pain points */}
+        <div className="mb-10 rounded-2xl border border-red-500/20 bg-red-500/[0.03] p-8">
+          <h2 className="text-xl font-bold text-white mb-2">
+            {p("The Problem: 10 Steps, Only 4 Have Software", "痛点：10 个环节，只有 4 个有软件", lang)}
+          </h2>
+          <p className="text-sm text-slate-400 mb-5">
+            {p(
+              "A cross-border brand's journey from idea to revenue. Today, most steps rely on expensive consultants and manual work.",
+              "一个跨境品牌从创意到收入的完整旅程。目前大部分环节依赖昂贵的顾问和人工。",
+              lang,
+            )}
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {[
+              { step: p("Product Selection", "选品", lang), ai: true, us: true, icon: "🔍" },
+              { step: p("Find Suppliers", "找供应商", lang), ai: false, us: true, icon: "🏭" },
+              { step: p("Cost Calculation", "算成本", lang), ai: true, us: true, icon: "🧮" },
+              { step: p("Product Dev", "开发产品", lang), ai: false, us: false, icon: "🔧" },
+              { step: p("Create Listing", "上架", lang), ai: true, us: true, icon: "📝" },
+              { step: p("Get Traffic", "获取流量", lang), ai: true, us: true, icon: "📡" },
+              { step: p("Convert Sales", "转化", lang), ai: false, us: false, icon: "💰" },
+              { step: p("Logistics", "物流", lang), ai: false, us: false, icon: "🚢" },
+              { step: p("After-sales", "售后", lang), ai: false, us: false, icon: "🎧" },
+              { step: p("Brand Growth", "品牌增长", lang), ai: false, us: true, icon: "📈" },
+            ].map((s) => (
+              <div key={s.step} className={`rounded-lg p-2.5 text-center text-xs ${
+                s.us ? "bg-[#ff6b35]/10 border border-[#ff6b35]/30" : "bg-slate-800/40 border border-slate-700/30"
+              }`}>
+                <span className="text-lg">{s.icon}</span>
+                <p className={`font-medium mt-1 ${s.us ? "text-white" : "text-slate-500"}`}>{s.step}</p>
+                <p className={`text-[10px] mt-0.5 ${s.us ? "text-[#ff6b35]" : "text-slate-600"}`}>
+                  {s.us ? "✓ Avanti" : p("Not our focus", "非核心", lang)}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-slate-500 mt-4 text-center">
+            {p(
+              "Orange = where Avanti replaces human consultants with AI. We focus on the 4 steps with highest AI leverage: Selection → Cost → Listing → Traffic → Revenue attribution.",
+              "橙色 = Avanti 用 AI 替代人工顾问的环节。聚焦 AI 杠杆最高的 4 步：选品 → 成本 → 上架 → 流量 → 收入归因。",
+              lang,
+            )}
+          </p>
+        </div>
+
+        {/* Vision: The closed loop */}
+        <div className="mb-10 rounded-2xl border border-green-500/20 bg-green-500/[0.03] p-8">
+          <h2 className="text-xl font-bold text-white mb-2">
+            {p("Our Vision: The AI Commerce Flywheel", "愿景：AI 商业飞轮", lang)}
+          </h2>
+          <div className="flex items-center justify-center my-6">
+            <div className="text-sm text-slate-300 font-mono text-center leading-relaxed">
+              <p className="text-[#ff6b35] font-bold">{p("What will AI recommend next?", "AI 下一步会推荐什么？", lang)}</p>
+              <p>↓</p>
+              <p>{p("Detect signal → Find supplier → Calculate cost → Generate listing", "检测信号 → 匹配供应商 → 计算成本 → 生成 Listing", lang)}</p>
+              <p>↓</p>
+              <p>{p("Optimize for ChatGPT Feed → Publish to Shopify MCP", "优化 ChatGPT Feed → 发布到 Shopify MCP", lang)}</p>
+              <p>↓</p>
+              <p>{p("AI agents discover product → Buyers purchase", "AI 代理发现产品 → 买家购买", lang)}</p>
+              <p>↓</p>
+              <p className="text-green-400 font-bold">{p("Track ROI: GEO Score ↑ → Traffic ↑ → Revenue ↑", "追踪 ROI: GEO Score ↑ → 流量 ↑ → 收入 ↑", lang)}</p>
+              <p>↓</p>
+              <p className="text-cyan-400">{p("Agent remembers (EverMemOS) → Next scan is smarter → Repeat", "代理记忆 (EverMemOS) → 下次扫描更智能 → 循环", lang)}</p>
+            </div>
+          </div>
+          <p className="text-xs text-slate-500 text-center">
+            {p(
+              "Every loop makes the agent smarter. Every scan adds to the memory. The flywheel accelerates — this is why software beats consultants.",
+              "每次循环让代理更智能。每次扫描增加记忆。飞轮加速——这就是软件击败顾问的原因。",
+              lang,
+            )}
+          </p>
+        </div>
+
         {/* Sections */}
         <div className="space-y-8">
           {sections.map((section) => (
