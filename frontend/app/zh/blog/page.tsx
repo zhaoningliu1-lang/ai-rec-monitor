@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-03-29-ai-recommendation-trends-cross-border-ecommerce-weekly",
+    tag: "每周AI趋势",
+    title: "AI推荐周报：四大AI模型本周最推荐哪些品类和品牌？",
+    excerpt:
+      "基于ChatGPT、Claude、Gemini和Perplexity的跨境电商AI推荐趋势周报，含品牌SOV数据与卖家行动建议。",
+    date: "2026年3月29日",
+    readTime: "7 分钟阅读",
+  },
+  {
     slug: "2026-03-28-smart-home-ai-recommendations",
     tag: "AI趋势",
     title: "智能家居领域的AI推荐：谁是领军者？",
