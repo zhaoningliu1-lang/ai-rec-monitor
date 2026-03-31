@@ -21,6 +21,7 @@ const PUBLIC_EXACT = new Set([
 const PUBLIC_PREFIX = [
   "/blog",
   "/research",
+  "/r/",
   "/zh/",
   "/_next",
   "/favicon",
