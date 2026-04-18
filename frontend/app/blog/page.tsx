@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-04-18-ai-recommendation-trends",
+    tag: "AI E-commerce Trends",
+    title: "AI Boosts Visibility for Tech &amp; Apparel Sellers",
+    excerpt:
+      "Discover how AI models are shaping cross-border e-commerce and key brand trends.",
+    date: "April 18, 2026",
+    readTime: "7 min read",
+  },
+  {
     slug: "2026-04-17-category-spotlight-beauty-tech",
     tag: "Beauty Tech Analysis",
     title: "AI Dominates Beauty Tech: Key Brands &amp; Insights",
