@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-05-03-beauty-tech-ai-recommendations",
+    tag: "美妆科技",
+    title: "美妆科技的AI崛起：哪家品牌主导？",
+    excerpt:
+      "探寻哪些美妆科技品牌在AI推荐中领先及其原因。",
+    date: "2026年5月3日",
+    readTime: "7 分钟阅读",
+  },
+  {
     slug: "2026-05-02-cross-border-ecommerce-ai-chinese-sellers",
     tag: "电商",
     title: "AI推动中国卖家抢先一步：使用GEO数据获取商机",
