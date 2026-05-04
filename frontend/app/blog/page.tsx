@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-05-04-ai-recommendation-trends-cross-border-ecommerce-weekly",
+    tag: "Weekly GEO Intelligence",
+    title: "AI Recommendation Trends: Which Brands Are Winning SOV This Week?",
+    excerpt:
+      "Weekly analysis of AI model recommendation share-of-voice across ChatGPT, Claude, Gemini &amp; Perplexity for cross-border ecommerce sellers.",
+    date: "May 4, 2026",
+    readTime: "7 min read",
+  },
+  {
     slug: "2026-05-03-beauty-tech-ai-recommendations",
     tag: "beauty tech",
     title: "Beauty Tech&apos;s AI Surge: Top Brands Dominating",

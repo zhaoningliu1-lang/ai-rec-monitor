@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-05-04-ai-recommendation-trends-cross-border-ecommerce-weekly",
+    tag: "每周GEO情报",
+    title: "AI推荐趋势周报：哪些品牌正在赢得AI曝光份额？",
+    excerpt:
+      "每周监测ChatGPT、Claude、Gemini、Perplexity四大AI模型的跨境电商品牌推荐份额与品类趋势。",
+    date: "2026年5月4日",
+    readTime: "7 分钟阅读",
+  },
+  {
     slug: "2026-05-03-beauty-tech-ai-recommendations",
     tag: "美妆科技",
     title: "美妆科技的AI崛起：哪家品牌主导？",
