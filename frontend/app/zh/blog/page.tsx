@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-05-14-cross-border-ecommerce-ai-intelligence",
+    tag: "AI与电商",
+    title: "利用AI在商品采购中领先竞争对手",
+    excerpt:
+      "探索中国亚马逊卖家利用AI发现采购机会的数据驱动策略。",
+    date: "2026年5月14日",
+    readTime: "6 分钟阅读",
+  },
+  {
     slug: "2026-05-13-geo-industry-update",
     tag: "GEO策略",
     title: "重要GEO策略提高AI和品牌能见度",
