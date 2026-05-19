@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-05-19-portable-electronics",
+    tag: "便携电子产品",
+    title: "便携电子产品：AI 驱动的品牌曝光分析",
+    excerpt:
+      "分析便携电子产品中的AI推荐及领先品牌。",
+    date: "2026年5月19日",
+    readTime: "5 分钟阅读",
+  },
+  {
     slug: "2026-05-18-ai-recommendation-data",
     tag: "跨境电商",
     title: "AI驱动的采购：跨境电子商务中抢占先机",
