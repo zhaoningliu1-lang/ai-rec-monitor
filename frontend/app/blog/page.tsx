@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-06-03-ai-intelligence-sourcing-opportunities",
+    tag: "AI &amp; E-commerce",
+    title: "Unlock Sourcing with AI: Stay Ahead on Amazon!",
+    excerpt:
+      "Maximize Amazon sourcing with AI insights. Discover top categories and benchmark scores.",
+    date: "June 3, 2026",
+    readTime: "5 min read",
+  },
+  {
     slug: "2026-06-02-geo-industry-update",
     tag: "E-commerce",
     title: "GEO Industry Update: New AI Visibility Strategies",
