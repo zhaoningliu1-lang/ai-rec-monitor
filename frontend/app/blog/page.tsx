@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-06-05-AI-recommendation-trends",
+    tag: "AI Trends",
+    title: "AI Recommends: Trends in Cross-Border eCommerce This Week",
+    excerpt:
+      "Discover which product categories leading AIs prefer, and seller insights.",
+    date: "June 5, 2026",
+    readTime: "5 min read",
+  },
+  {
     slug: "2026-06-04-smart-home-ai-recommendations",
     tag: "smart home",
     title: "Dominating Brands in AI-Powered Smart Home Category",
