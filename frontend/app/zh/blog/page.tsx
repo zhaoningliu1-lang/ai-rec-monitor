@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-06-08-smart-home-ai-recommendation-dominance",
+    tag: "品类聚焦",
+    title: "智能家居AI推荐深度分析：哪些品牌主导了2026年的对话",
+    excerpt:
+      "深度剖析智能家居品类AI推荐格局，揭示ChatGPT、Perplexity等引擎中哪些品牌占据引用优势及其原因。",
+    date: "2026年6月8日",
+    readTime: "9 分钟阅读",
+  },
+  {
     slug: "2026-06-07-cross-border-ecommerce-ai-intelligence",
     tag: "电商",
     title: "中国卖家用AI超越竞争者：利用GEO数据获取跨境电商优势",

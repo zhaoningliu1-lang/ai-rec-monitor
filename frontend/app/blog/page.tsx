@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-06-08-smart-home-ai-recommendation-dominance",
+    tag: "Category Spotlight",
+    title: "Smart Home AI Citations: Which Brands Own the Conversation in 2026",
+    excerpt:
+      "Deep analysis of AI recommendation patterns in smart home devices. See which brands dominate ChatGPT, Perplexity &amp; Gemini citations and why.",
+    date: "June 8, 2026",
+    readTime: "9 min read",
+  },
+  {
     slug: "2026-06-07-cross-border-ecommerce-ai-intelligence",
     tag: "ecommerce",
     title: "AI Tips for Chinese Sellers: Outpace Competitors with GEO Data",
