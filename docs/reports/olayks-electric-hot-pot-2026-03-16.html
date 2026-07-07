@@ -1,0 +1,2275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:210mm;background:#0d1b2e;color:#fff;
+  font-family:'Arial','-apple-system','Noto Sans SC','sans-serif';font-size:10pt;}
+
+.page{width:210mm;min-height:297mm;overflow:hidden;
+  page-break-after:always;position:relative;
+  background:#0d1b2e;display:flex;flex-direction:column;}
+.page:last-child{page-break-after:avoid;}
+
+:root{
+  --or:#FF6B35;--or2:#e85e2c;
+  --navy:#0d1b2e;--navy2:#152238;--navy3:#1e3050;
+  --muted:rgba(255,255,255,.50);--border:rgba(255,255,255,.10);
+}
+
+.hdr{height:40px;background:var(--navy2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;flex-shrink:0;}
+.hdr-brand{font-size:8pt;font-weight:700;color:var(--or);letter-spacing:1px;}
+.hdr-right{font-size:7.5pt;color:var(--muted);}
+
+.ftr{height:32px;background:var(--navy2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;flex-shrink:0;margin-top:auto;}
+.ftr-text{font-size:7pt;color:rgba(255,255,255,.35);}
+
+.body{flex:1;padding:20px 28px;}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:7.5pt;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.tag-or{background:rgba(255,107,53,.18);color:var(--or);}
+.tag-green{background:rgba(34,197,94,.15);color:#22c55e;}
+.tag-red{background:rgba(239,68,68,.15);color:#ef4444;}
+.tag-blue{background:rgba(96,165,250,.15);color:#60a5fa;}
+.tag-muted{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);}
+
+.sec-title{font-size:12pt;font-weight:700;margin-bottom:3px;}
+.sec-sub{font-size:8pt;color:var(--muted);margin-bottom:10px;}
+.card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.card-title{font-size:8.5pt;font-weight:700;margin-bottom:6px;color:var(--or);}
+.narrative{font-size:9pt;line-height:1.5;color:rgba(255,255,255,.85);}
+.narrative p{margin-bottom:10px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+.stat-card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;
+  padding:12px;}
+.stat-label{font-size:6.5pt;color:var(--muted);margin-bottom:4px;text-transform:uppercase;
+  letter-spacing:.4px;}
+.stat-value{font-size:22pt;font-weight:700;line-height:1;}
+.stat-value.or{color:var(--or);}
+.stat-value.green{color:#22c55e;}
+.stat-value.blue{color:#60a5fa;}
+.stat-value.white{color:#fff;}
+.stat-value.red{color:#ef4444;}
+
+.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.prog-label{width:110px;font-size:7.5pt;flex-shrink:0;}
+.prog-track{flex:1;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;}
+.prog-val{width:36px;text-align:right;font-size:7.5pt;font-weight:700;flex-shrink:0;}
+
+.tbl{width:100%;border-collapse:collapse;font-size:8pt;}
+.tbl th{background:rgba(255,255,255,.06);padding:6px 10px;text-align:left;
+  font-size:7pt;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);}
+.tbl td{padding:6px 10px;border-bottom:1px solid var(--border);}
+.tbl tr:last-child td{border-bottom:none;}
+
+.badge-strong{color:#22c55e;font-weight:700;}
+.badge-mid{color:#fbbf24;font-weight:700;}
+.badge-weak{color:#ef4444;font-weight:700;}
+
+.conf-badge{font-size:6.5pt;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,107,53,.6);border:1px solid rgba(255,107,53,.25);
+  padding:2px 7px;border-radius:4px;}
+
+.divider{height:1px;background:var(--border);margin:10px 0;}
+
+.action-item{display:flex;gap:10px;margin-bottom:8px;
+  background:var(--navy2);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;}
+.action-num{font-size:16pt;font-weight:700;color:var(--or);width:24px;
+  flex-shrink:0;line-height:1;}
+.action-title{font-size:8.5pt;font-weight:700;margin-bottom:2px;}
+.action-desc{font-size:8pt;color:var(--muted);line-height:1.5;}
+
+.quote-box{background:rgba(255,107,53,.06);border-left:3px solid var(--or);
+  padding:10px 14px;border-radius:0 8px 8px 0;margin:8px 0;}
+.quote-text{font-size:8pt;font-style:italic;color:rgba(255,255,255,.75);line-height:1.5;}
+
+.insight-box{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);
+  border-radius:8px;padding:10px 12px;margin-bottom:6px;}
+.warn-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);
+  border-radius:8px;padding:10px 12px;margin-bottom:6px;}
+
+.response-sample{background:var(--navy2);border:1px solid var(--border);
+  border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:7pt;
+  color:rgba(255,255,255,.7);line-height:1.45;white-space:pre-wrap;
+  overflow:hidden;max-height:120px;}
+
+.toc-row{display:flex;align-items:center;justify-content:space-between;
+  padding:6px 12px;border-bottom:1px solid rgba(255,255,255,.06);}
+.toc-row:last-child{border-bottom:none;}
+.toc-section{font-size:6.5pt;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;padding:8px 12px 4px;}
+.toc-num{width:26px;font-size:8pt;font-weight:700;color:var(--or);flex-shrink:0;}
+.toc-title{flex:1;font-size:8pt;}
+.toc-dots{flex:1;border-bottom:1px dotted rgba(255,255,255,.15);margin:0 8px;height:10px;}
+.toc-page{font-size:7.5pt;color:var(--muted);flex-shrink:0;}
+
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+</style>
+</head>
+<body>
+
+<div class="page" style="background:linear-gradient(160deg,#0d1b2e 60%,#1a2e50);">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 30px 0;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg width="34" height="34" viewBox="0 0 34 34">
+        <rect width="34" height="34" rx="8" fill="#FF6B35"/>
+        <polygon points="17,7 28,27 6,27" fill="white"/>
+        <rect x="11.5" y="21" width="11" height="2.5" rx="1" fill="#FF6B35"/>
+      </svg>
+      <span style="font-size:11pt;font-weight:700;letter-spacing:2px;color:#fff;opacity:.9;">AVANTI</span>
+    </div>
+    <div class="conf-badge">CONFIDENTIAL</div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 30px;">
+    <div class="tag tag-or" style="margin-bottom:14px;font-size:8pt;">
+      AI 可见度深度分析报告
+    </div>
+    <div style="font-size:11pt;color:rgba(255,255,255,.5);margin-bottom:4px;
+      text-transform:uppercase;letter-spacing:1px;">Electric Hot Pot</div>
+    <div style="font-size:36pt;font-weight:700;line-height:1.05;margin-bottom:8px;
+      letter-spacing:-0.5px;">Olayks</div>
+    <div style="font-size:13pt;color:rgba(255,255,255,.6);margin-bottom:4px;">
+      AI 可见度深度诊断 · 竞品分析 · 优化方案
+    </div>
+    <div style="font-size:9.5pt;color:rgba(255,255,255,.35);">Week 12 · 2026年3月16日 (v2)</div>
+    <div style="height:2px;width:56px;background:var(--or);margin:20px 0;border-radius:2px;"></div>
+    <div style="display:flex;gap:28px;">
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">AI VISIBILITY SCORE</div>
+        <div style="font-size:28pt;font-weight:700;color:var(--or);">22</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">/ 100</div>
+      </div>
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">品类排名</div>
+        <div style="font-size:28pt;font-weight:700;color:#fff;">#2</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">共 5 品牌</div>
+      </div>
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">AI 引擎</div>
+        <div style="font-size:28pt;font-weight:700;color:#fff;">3</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">引擎数</div>
+      </div>
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">查询总数</div>
+        <div style="font-size:28pt;font-weight:700;color:#fff;">150</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">三语覆盖</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:14px 30px;border-top:1px solid rgba(255,255,255,.08);
+    display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:7pt;color:rgba(255,255,255,.3);">Avanti Intelligence · avantia2a.com</div>
+    <div style="font-size:7pt;color:rgba(255,255,255,.3);">仅限内部使用及授权客户</div>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">目录</div>
+    <div class="sec-title">报告内容导览</div>
+    <div class="sec-sub">150 条查询 · 3 大 AI 引擎（ChatGPT / Claude / Gemini）· 泰语/英语/中文三语 · 跨平台验证</div>
+    <div style="background:var(--navy2);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div class="toc-section">核心诊断</div><div class="toc-row">
+              <div class="toc-num">3</div>
+              <div class="toc-title">执行摘要 · 核心发现与建议</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.3</div>
+            </div><div class="toc-row">
+              <div class="toc-num">4</div>
+              <div class="toc-title">AI 可见度评分构成 · 评分因子分析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.4</div>
+            </div><div class="toc-row">
+              <div class="toc-num">5</div>
+              <div class="toc-title">AI 引擎深度分析 · ChatGPT / Claude</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.5</div>
+            </div><div class="toc-row">
+              <div class="toc-num">6</div>
+              <div class="toc-title">AI 引擎深度分析 · Gemini</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.6</div>
+            </div><div class="toc-row">
+              <div class="toc-num">7</div>
+              <div class="toc-title">多语言覆盖分析 · 泰语 / 英语 / 中文</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.7</div>
+            </div><div class="toc-row">
+              <div class="toc-num">8</div>
+              <div class="toc-title">搜索意图分析 · 购买 / 对比 / 品牌</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.8</div>
+            </div><div class="toc-section">跨平台验证</div><div class="toc-row">
+              <div class="toc-num">9</div>
+              <div class="toc-title">跨平台信号总览 · Market-AI Alignment</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.9</div>
+            </div><div class="toc-row">
+              <div class="toc-num">10</div>
+              <div class="toc-title">Reddit 社区洞察 · 用户真实讨论</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.10</div>
+            </div><div class="toc-row">
+              <div class="toc-num">11</div>
+              <div class="toc-title">YouTube KOL 分析 · 创作者生态</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.11</div>
+            </div><div class="toc-row">
+              <div class="toc-num">12</div>
+              <div class="toc-title">TikTok Shop & Google Trends</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.12</div>
+            </div><div class="toc-section">竞争情报</div><div class="toc-row">
+              <div class="toc-num">13</div>
+              <div class="toc-title">竞争格局 · AI Visibility Score & SOV 对比</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.13</div>
+            </div><div class="toc-row">
+              <div class="toc-num">14</div>
+              <div class="toc-title">头部竞品深度分析 · 优势解析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.14</div>
+            </div><div class="toc-row">
+              <div class="toc-num">15</div>
+              <div class="toc-title">如何超越竞品 · 差距与策略</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.15</div>
+            </div><div class="toc-row">
+              <div class="toc-num">16</div>
+              <div class="toc-title">全球标杆品牌分析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.16</div>
+            </div><div class="toc-row">
+              <div class="toc-num">17</div>
+              <div class="toc-title">标杆学习 · 可借鉴的策略</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.17</div>
+            </div><div class="toc-section">市场背景</div><div class="toc-row">
+              <div class="toc-num">18</div>
+              <div class="toc-title">市场规模与增长驱动力</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.18</div>
+            </div><div class="toc-row">
+              <div class="toc-num">19</div>
+              <div class="toc-title">电商生态与 AI 推荐趋势</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.19</div>
+            </div><div class="toc-section">信任与风险</div><div class="toc-row">
+              <div class="toc-num">20</div>
+              <div class="toc-title">AI 幻觉检测 · 信息准确性分析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.20</div>
+            </div><div class="toc-row">
+              <div class="toc-num">21</div>
+              <div class="toc-title">AI 幻觉详情 · 逐条验证</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.21</div>
+            </div><div class="toc-section">优化方案</div><div class="toc-row">
+              <div class="toc-num">22</div>
+              <div class="toc-title">立即执行 · Week 1-2 行动计划</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.22</div>
+            </div><div class="toc-row">
+              <div class="toc-num">23</div>
+              <div class="toc-title">短期策略 · Month 1-2 优化方案</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.23</div>
+            </div><div class="toc-row">
+              <div class="toc-num">24</div>
+              <div class="toc-title">中期战略 · Month 3-6 系统升级</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.24</div>
+            </div><div class="toc-row">
+              <div class="toc-num">25</div>
+              <div class="toc-title">ROI 预测 · 12 周增长路径</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.25</div>
+            </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">2</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第一部分 · 核心诊断</div>
+    <div class="sec-title">执行摘要</div>
+    <div class="sec-sub">Executive Summary · 本次分析核心发现</div>
+    <div class="four-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">综合 AI Visibility Score</div>
+        <div class="stat-value or">22</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">需改进</div>
+      </div>
+      <div class="stat-card">
+          <div class="stat-label">ChatGPT</div>
+          <div class="stat-value" style="color:#22c55e;">18</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">排名 #4</div>
+        </div><div class="stat-card">
+          <div class="stat-label">Claude</div>
+          <div class="stat-value" style="color:#a78bfa;">14</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">排名 #9</div>
+        </div><div class="stat-card">
+          <div class="stat-label">Gemini</div>
+          <div class="stat-value" style="color:#fbbf24;">18</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">排名 #2</div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">核心发现 Executive Summary</div>
+      <div class="narrative"><p>Olayks Electric Hot Pot 在三大市场综合 GEO Score 仅 22/100（北美 17、东南亚 28、日韩 23），处于竞争弱势区间。核心矛盾在于：AI 对比查询出现率达 28%，说明 AI 知晓 Olayks，但购买推荐命中率仅 4%——面对有明确购买意图的用户，AI 几乎不推荐 Olayks。竞品差距触目惊心：YouTube 可见度差距 496×（竞品系列 161 万播放 vs Olayks 3,265 播放），Amazon 评论差距 58×（Dezin 9,792 条 vs Olayks 168 条），Reddit 提及差距 ~100×。根本原因是 AI 训练数据密度不足，而非产品质量问题——Olayks 的陶瓷釉工艺（PFOA/PTFE-free）是赛道内真正的差异化卖点，但在 AI 可索引的英文内容中几乎不存在。本报告制定了 12 周行动计划，目标从 22/100 提升至 45+，购买推荐命中率突破 10%。</p></div>
+    </div>
+    <div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 1</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">北美GEO Score仅17/100，需大幅改善</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 2</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">Olayks在北美购买推荐率仅4%</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 3</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">YouTube播放量差距495倍，影响品牌曝光</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 4</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">Amazon评论数差距58倍，影响信任度</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 5</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">东南亚市场GEO Score最高为28/100</div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">3</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">AI 可见度评分构成</div>
+    <div class="sec-title">评分因子分析</div>
+    <div class="sec-sub">AI Visibility Score = 推荐出现率(40%) + 位置权重(25%) + 引用质量(20%) + 意图覆盖(15%)</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">评分因子明细</div>
+      <div class="prog-row">
+          <div class="prog-label">推荐出现率 (40%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:4%;background:#ef4444;"></div></div>
+          <div class="prog-val" style="color:#ef4444;">4%</div>
+        </div><div class="prog-row">
+          <div class="prog-label">位置权重 (25%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:22%;background:#ef4444;"></div></div>
+          <div class="prog-val" style="color:#ef4444;">22%</div>
+        </div><div class="prog-row">
+          <div class="prog-label">引用质量 (20%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:28%;background:#ef4444;"></div></div>
+          <div class="prog-val" style="color:#ef4444;">28%</div>
+        </div><div class="prog-row">
+          <div class="prog-label">意图覆盖 (15%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:21%;background:#ef4444;"></div></div>
+          <div class="prog-val" style="color:#ef4444;">21%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">意图覆盖率对比 — Olayks vs 竞品</div>
+      <table class="tbl">
+        <tr><th>意图类型</th><th>Olayks</th><th>Aroma</th><th>Dezin</th><th>Dash</th><th>TopWit</th></tr>
+        <tr>
+          <td style="font-weight:700;">购买推荐</td>
+          <td><span class="badge-weak">4%</span></td>
+          <td><span class="badge-strong">33%</span></td><td><span class="badge-weak">0%</span></td><td><span class="badge-mid">12%</span></td><td><span class="badge-weak">0%</span></td>
+        </tr><tr>
+          <td style="font-weight:700;">产品对比</td>
+          <td><span class="badge-strong">28%</span></td>
+          <td><span class="badge-strong">21%</span></td><td><span class="badge-strong">28%</span></td><td><span class="badge-mid">12%</span></td><td><span class="badge-weak">0%</span></td>
+        </tr><tr>
+          <td style="font-weight:700;">品牌查询</td>
+          <td><span class="badge-strong">21%</span></td>
+          <td><span class="badge-strong">21%</span></td><td><span class="badge-weak">5%</span></td><td><span class="badge-weak">0%</span></td><td><span class="badge-weak">2%</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">4</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">AI 引擎深度分析</div>
+    <div class="sec-title">ChatGPT & Claude</div>
+    <div class="sec-sub">各引擎的意图覆盖率、语言表现及分析解读</div>
+    <div class="two-col"><div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;"></div>
+        <div class="card-title" style="margin-bottom:0;">ChatGPT</div>
+        <div style="font-size:20pt;font-weight:700;color:#22c55e;margin-left:auto;">18</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">购买意图</div>
+        <div class="prog-track"><div class="prog-fill" style="width:4%;background:#22c55e;"></div></div>
+        <div class="prog-val">4%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">产品对比</div>
+        <div class="prog-track"><div class="prog-fill" style="width:32%;background:#22c55e;"></div></div>
+        <div class="prog-val">32%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">泰语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%;background:#60a5fa;"></div></div>
+        <div class="prog-val">0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">英语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:13%;background:#34d399;"></div></div>
+        <div class="prog-val">13%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">中文覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:27%;background:#fbbf24;"></div></div>
+        <div class="prog-val">27%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="narrative"><p>ChatGPT（GPT-4o/4-mini）对 Olayks 的处理呈典型「评论量优先」模式：购买推荐命中率 4%，对比查询出现率 28%，但在「最佳电锅推荐」类高意图查询中几乎不主动列出 Olayks。ChatGPT 训练数据强依赖 Amazon 评论文本——评论数量是其判断品牌可信度的核心代理指标。Dezin 9,792 条 vs Olayks 168 条的 58× 差距，导致 ChatGPT 推荐算法极少采样 Olayks 内容。此外，ChatGPT 对 Reddit UGC 权重极高，Olayks 仅 4 帖 vs 竞品数十帖的差距直接影响购买推荐输出。
+针对 ChatGPT 的专项优化：① 通过 Amazon Vine 快速推高评论量至 500+ 条；② 在 r/DormRoom、r/Frugal、r/Cooking 发布真实测评帖，2-4 周内见效。</p></div>
+    </div><div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#a78bfa;"></div>
+        <div class="card-title" style="margin-bottom:0;">Claude</div>
+        <div style="font-size:20pt;font-weight:700;color:#a78bfa;margin-left:auto;">14</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">购买意图</div>
+        <div class="prog-track"><div class="prog-fill" style="width:4%;background:#a78bfa;"></div></div>
+        <div class="prog-val">4%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">产品对比</div>
+        <div class="prog-track"><div class="prog-fill" style="width:21%;background:#a78bfa;"></div></div>
+        <div class="prog-val">21%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">泰语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%;background:#60a5fa;"></div></div>
+        <div class="prog-val">0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">英语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:9%;background:#34d399;"></div></div>
+        <div class="prog-val">9%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">中文覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:27%;background:#fbbf24;"></div></div>
+        <div class="prog-val">27%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="narrative"><p>Claude（Anthropic）对 Olayks 的推荐行为与 ChatGPT 有明显差异——Claude 更重视「内容质量与结构」而非纯粹的评论量。在测试中，Claude 对比查询出现率为 28%，但购买推荐命中率同样只有 4%，且平均排名（#9）明显低于其他引擎。Claude 倾向于列举产品具体规格（陶瓷内胆、PFOA-free 等差异化卖点），这对 Olayks 来说是潜在优势——但前提是这些规格必须出现在 Claude 可访问的结构化内容中。当前问题：Olayks 官网 HTTP 未加密，Claude 爬虫无法可靠访问；产品页缺少 FAQ Schema。
+针对 Claude 的专项优化：① 修复 SSL 证书（最高优先级，影响所有 AI 爬虫）；② 在产品页和博客中添加结构化 FAQ，明确描述陶瓷釉材质安全性，Claude 采样后命中率可提升 2× 以上。</p></div>
+    </div></div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+        <div class="tag tag-or" style="margin-bottom:8px;">AI 引擎深度分析</div>
+        <div class="sec-title">Gemini</div>
+        <div class="sec-sub">各引擎的意图覆盖率、语言表现及分析解读</div>
+        <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#fbbf24;"></div>
+        <div class="card-title" style="margin-bottom:0;">Gemini</div>
+        <div style="font-size:20pt;font-weight:700;color:#fbbf24;margin-left:auto;">18</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">购买意图</div>
+        <div class="prog-track"><div class="prog-fill" style="width:4%;background:#fbbf24;"></div></div>
+        <div class="prog-val">4%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">产品对比</div>
+        <div class="prog-track"><div class="prog-fill" style="width:32%;background:#fbbf24;"></div></div>
+        <div class="prog-val">32%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">泰语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%;background:#60a5fa;"></div></div>
+        <div class="prog-val">0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">英语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:13%;background:#34d399;"></div></div>
+        <div class="prog-val">13%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">中文覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:27%;background:#fbbf24;"></div></div>
+        <div class="prog-val">27%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="narrative"><p>Gemini（Google DeepMind）因训练数据与 Google 搜索生态深度整合，其 Olayks 可见度直接反映品牌在 Google Search、Google Shopping、YouTube 的综合曝光。Gemini 购买推荐命中率 4%，对比查询出现率 28%，排名（#2）是三引擎中最好的——说明 Gemini 比其他引擎更容易在搜索语境下识别到 Olayks。但 Gemini 对 YouTube 视频内容权重极高，Olayks YouTube 仅 3,265 播放 vs 竞品 1,618,928（496×），Hey It&#x27;s Honeysuckle（103 万播放）完全未测评 Olayks 是一个关键内容缺口。
+针对 Gemini 的专项优化：联系 1-2 名 YouTube 腰部 KOL（5-20 万订阅）寄样合作，一篇深度测评视频可将 Gemini 对 Olayks 的购买推荐命中率直接提升 3-5 个百分点。同时优化 Google Shopping 产品页面，完善关键词覆盖。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">6</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">语言覆盖</div>
+    <div class="sec-title">多语言覆盖分析</div>
+    <div class="sec-sub">泰语(50%) / 英语(35%) / 中文(15%) — 三语查询的引用率表现</div>
+    
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+          <div class="stat-label">🇺🇸 英语</div>
+          <div class="stat-value or">12%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">16/135 命中</div>
+        </div><div class="stat-card">
+          <div class="stat-label">🇨🇳 中文</div>
+          <div class="stat-value or">27%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">12/45 命中</div>
+        </div><div class="stat-card">
+          <div class="stat-label">🇮🇩 印尼语</div>
+          <div class="stat-value or">23%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">21/90 命中</div>
+        </div><div class="stat-card">
+          <div class="stat-label">🇹🇭 泰语</div>
+          <div class="stat-value or">24%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">11/45 命中</div>
+        </div><div class="stat-card">
+          <div class="stat-label">🇯🇵 日语</div>
+          <div class="stat-value or">17%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">15/90 命中</div>
+        </div><div class="stat-card">
+          <div class="stat-label">🇰🇷 韩语</div>
+          <div class="stat-value or">24%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">11/45 命中</div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">引擎 × 语言 覆盖矩阵</div>
+      <table class="tbl">
+        <tr><th>引擎</th><th>🇹🇭 泰语</th><th>🇺🇸 英语</th><th>🇨🇳 中文</th><th>AIV</th></tr>
+        <tr>
+          <td style="font-weight:700;color:#22c55e;">ChatGPT</td>
+          <td>0%</td>
+          <td>13%</td>
+          <td>27%</td>
+          <td style="font-weight:700;">18</td>
+        </tr><tr>
+          <td style="font-weight:700;color:#a78bfa;">Claude</td>
+          <td>0%</td>
+          <td>9%</td>
+          <td>27%</td>
+          <td style="font-weight:700;">14</td>
+        </tr><tr>
+          <td style="font-weight:700;color:#fbbf24;">Gemini</td>
+          <td>0%</td>
+          <td>13%</td>
+          <td>27%</td>
+          <td style="font-weight:700;">18</td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">语言分析解读</div>
+      <div class="narrative"><p>多语言 GEO 分析揭示 Olayks 在不同语言市场的 AI 可见度结构性差异，同时也暴露了市场机会。
+英语市场命中率 12%：虽然是六语言中最低，但英语是 AI 训练数据最密集的语言，也是 Amazon、Reddit、YouTube 内容最丰富的市场——这是 Olayks 必须优先突破的基础。
+印尼语（23%）和泰语（24%）命中率高于英语，主要原因是东南亚用户用本地语言查询&#x27;最好的电锅&#x27;时，Olayks 比英语市场更容易出现在结果中（因为东南亚 AI 训练数据中竞品数量本身就少）。这是机会：TikTok @prifregona 已证明受众匹配，若能推动印尼/泰语 UGC 增长，命中率可快速提升至 35%+。
+韩语（24%）和日语（17%）：日本市场有 pikaene.com 评测文章作为基础，但韩国市场几乎零 Olayks 内容，Coupang 平台排名极低。优先级建议：英语和印尼语并行推进，日语次之，韩语配合东南亚内容策略。</p></div>
+    </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">7</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">意图分析</div>
+    <div class="sec-title">搜索意图分析</div>
+    <div class="sec-sub">购买推荐 / 产品对比 / 品牌查询 — 不同意图下的品牌引用率</div>
+    
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+          <div class="stat-label">购买推荐</div>
+          <div class="stat-value" style="color:#60a5fa;">4%</div>
+        </div><div class="stat-card">
+          <div class="stat-label">产品对比</div>
+          <div class="stat-value" style="color:#FF6B35;">28%</div>
+        </div><div class="stat-card">
+          <div class="stat-label">品牌查询</div>
+          <div class="stat-value" style="color:#22c55e;">21%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">意图分析深度解读</div>
+      <div class="narrative"><p>意图层级分析揭示 Olayks 的 AI 可见度&#x27;知名度陷阱&#x27;。
+购买推荐命中率 4%：面对&#x27;帮我推荐最好的电锅&#x27;这类明确购买意图查询，三个 AI 引擎（ChatGPT、Claude、Gemini）几乎不主动推荐 Olayks。这是最直接影响消费者购买决策的场景，4% 意味着 Olayks 在购买漏斗的关键节点几乎缺席。
+对比查询出现率 28%：当用户问&#x27;Olayks 和 Dezin 哪个更好？&#x27;时，AI 会提到 Olayks。这说明 AI 已有基础品牌知识，但这种&#x27;被动出现&#x27;不等于主动推荐。
+品牌查询命中率 21%：直接搜索&#x27;Olayks 是什么品牌？&#x27;时，AI 能给出描述，但内容经常不准确（幻觉检测发现 5 项准确性问题）。
+核心洞察：三个引擎都在对比场景下知道 Olayks，但在购买推荐场景下都不信任 Olayks。这种分裂源于 Amazon 评论量差距——AI 将评论量作为社会认可度的量化代理指标。</p></div>
+    </div>
+    
+    <div class="quote-box">
+      <div class="quote-text">购买意图引用率是最直接影响转化的指标。当用户问"推荐哪个品牌的Electric Hot Pot?"时，AI 是否推荐了 Olayks？当前仅 4% 的购买意图查询提到了品牌，远低于行业优秀水平(30%+)。</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">8</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第二部分 · 跨平台验证</div>
+    <div class="sec-title">跨平台信号总览</div>
+    <div class="sec-sub">Market-AI Alignment — AI 推荐与真实市场信号的一致性</div>
+    
+    <div class="four-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">Reddit 讨论</div>
+        <div class="stat-value blue">8</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">相关帖子</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">YouTube KOL</div>
+        <div class="stat-value green">6</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">创作者</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">TikTok Shop</div>
+        <div class="stat-value white">有</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">商品数据</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Amazon</div>
+        <div class="stat-value white">3 SKU</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">Amazon 在售</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">跨平台分析叙述</div>
+      <div class="narrative"><p>跨平台数据揭示 Olayks 在 AI 决策生态系统中的系统性内容真空。
+YouTube（496× 差距）：竞品系列累计 1,618,928 次播放，而 Olayks 相关视频仅 3,265 次播放（差距 496×）。Hey It&#x27;s Honeysuckle 单频道达 103 万播放，Freakin&#x27; Reviews 53 万播放——这些是 AI 采样电锅类产品推荐的核心内容来源，Olayks 完全不在其中。Gemini 对 YouTube 内容权重极高，这直接导致 Gemini 在推荐场景下不提及 Olayks。
+Reddit（接近于零）：Olayks 全平台提及 4 帖，而 Dezin 有数十帖有机讨论。ChatGPT 和 Perplexity 的训练数据高度依赖 Reddit，这是购买推荐率 4% 的直接解释。
+Google Trends：&#x27;Electric Hot Pot&#x27; 关键词搜索量稳定增长，但 Olayks 品牌词搜索量极低，说明品牌认知尚在早期阶段，消费者还没有主动搜索 Olayks 的习惯。
+TikTok：@prifregona 的暖食垫视频获 24 万播放，但主力电锅产品 TikTok 最高仅 2,425 播放，官方账号停更 5 个月。三平台数据指向同一结论：需要系统性多平台内容建设。</p></div>
+    </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">9</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">Reddit 社区</div>
+    <div class="sec-title">Reddit 社区洞察</div>
+    <div class="sec-sub">品类相关用户讨论 · 情感分析 · AI 可见度优化参考</div>
+    <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;color:#60a5fa;">r/Cooking</div>
+            <div style="display:flex;gap:8px;">
+              <span style="font-size:7pt;color:var(--or);">⬆ 155</span>
+              <span style="font-size:7pt;color:var(--muted);">💬 342</span>
+              <span style="font-size:7pt;color:#fbbf24;">中性</span>
+            </div>
+          </div>
+          <div style="font-size:8pt;font-weight:700;margin-bottom:4px;">Foods That Can Be Made With Hot Water, But No Microwave?</div>
+          <div style="font-size:7.5pt;color:var(--muted);line-height:1.5;">At our antique store, it gets really cold during the Winter; during the Summer, I can just eat sandwiches, bars, fruit, etc. for lunch, but right now it&#x27;s too cold to eat cold food. I have an electric...</div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;color:#60a5fa;">r/ThriftStoreHauls</div>
+            <div style="display:flex;gap:8px;">
+              <span style="font-size:7pt;color:var(--or);">⬆ 26</span>
+              <span style="font-size:7pt;color:var(--muted);">💬 4</span>
+              <span style="font-size:7pt;color:#22c55e;">正面</span>
+            </div>
+          </div>
+          <div style="font-size:8pt;font-weight:700;margin-bottom:4px;">70&#x27;s electric hot pot maker that still works</div>
+          <div style="font-size:7.5pt;color:var(--muted);line-height:1.5;">Got it for 20 bucks, and it works really well. Made dinner with it, best hot pot i&#x27;ve ever had lmao</div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;color:#60a5fa;">r/InstantRamen</div>
+            <div style="display:flex;gap:8px;">
+              <span style="font-size:7pt;color:var(--or);">⬆ 10</span>
+              <span style="font-size:7pt;color:var(--muted);">💬 17</span>
+              <span style="font-size:7pt;color:#22c55e;">正面</span>
+            </div>
+          </div>
+          <div style="font-size:8pt;font-weight:700;margin-bottom:4px;">Small electric hot pot / ramen cooker for the office?? So many mediocre looking options.</div>
+          <div style="font-size:7.5pt;color:var(--muted);line-height:1.5;">Looking for a small electric hot pot just to cook ramen in at work.
+
+I know that they make those plastic microwave bowls to cook ramen in but I do not like to use the microwave if I can avoid it, and ...</div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;color:#60a5fa;">r/CleaningTips</div>
+            <div style="display:flex;gap:8px;">
+              <span style="font-size:7pt;color:var(--or);">⬆ 5</span>
+              <span style="font-size:7pt;color:var(--muted);">💬 20</span>
+              <span style="font-size:7pt;color:#fbbf24;">中性</span>
+            </div>
+          </div>
+          <div style="font-size:8pt;font-weight:700;margin-bottom:4px;">New electric hot pot has weird smell, nothing is working to get it out</div>
+          <div style="font-size:7.5pt;color:var(--muted);line-height:1.5;">I have tried boiling with water and vinegar for 10 minutes, boiling with dish soap, and coating the entire thing in baking powder paste and leaving it overnight. But when I boil water in this pot, it ...</div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;color:#60a5fa;">r/Cooking</div>
+            <div style="display:flex;gap:8px;">
+              <span style="font-size:7pt;color:var(--or);">⬆ 5</span>
+              <span style="font-size:7pt;color:var(--muted);">💬 2</span>
+              <span style="font-size:7pt;color:#22c55e;">正面</span>
+            </div>
+          </div>
+          <div style="font-size:8pt;font-weight:700;margin-bottom:4px;">Does anyone have experience with HotPot Electric Cookers?</div>
+          <div style="font-size:7.5pt;color:var(--muted);line-height:1.5;">Hello! I’m a college student and I was wondering anyone’s cooking experience with hotpot’s/electric cookers! 
+
+i’ve never used one before and just wanted to see what i was getting myself into as my do...</div>
+        </div>
+    <div class="card" style="margin-top:8px;">
+      <div class="card-title">分析与建议</div>
+      <div class="narrative">
+        <p>以上内容为品类相关的 Reddit 讨论（非 Olayks 品牌直接讨论），反映了北美市场消费者对吸奶器品类的真实需求和偏好。这些用户反馈可作为 Olayks 产品优化和内容策略的参考素材。</p>
+        <p>Reddit 是 ChatGPT、Perplexity 等 AI 引擎最重要的训练数据来源之一。品牌在 Reddit 上的讨论热度和情感倾向直接影响 AI 推荐结果。由于 Olayks 主要面向东南亚市场，Reddit 上自然缺乏品牌讨论，这属于正常情况。建议将 Reddit 上的品类洞察（如用户关注的功能点、痛点）融入 TikTok Shop 和 Shopee 等东南亚平台的产品描述优化中。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">10</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-red" style="margin-bottom:8px;">YouTube 创作者</div>
+    <div class="sec-title">YouTube 创作者生态分析</div>
+    <div class="sec-sub">品类相关创作者 · 影响力层级 · 内容覆盖</div>
+    <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;">Hey It&#x27;s Honeysuckle</div>
+            <div class="tag" style="background:rgba(255,255,255,.08);color:#FF6B35;font-size:6pt;">超头部</div>
+          </div>
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.7);margin-bottom:4px;">Testing a $43 Portable Pot from Amazon!</div>
+          <div style="display:flex;gap:16px;font-size:7pt;color:var(--muted);">
+            <span>👁 1.0M 观看</span>
+            <span>👥 2.9M 订阅</span>
+            <span style="color:#fbbf24;">中性</span>
+          </div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;">Freakin&#x27; Reviews</div>
+            <div class="tag" style="background:rgba(255,255,255,.08);color:#22c55e;font-size:6pt;">头部</div>
+          </div>
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.7);margin-bottom:4px;">Kitchen-Free Cooking? Testing an Electric Cooker!</div>
+          <div style="display:flex;gap:16px;font-size:7pt;color:var(--muted);">
+            <span>👁 532K 观看</span>
+            <span>👥 867K 订阅</span>
+            <span style="color:#fbbf24;">中性</span>
+          </div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;">New Gadgets USA</div>
+            <div class="tag" style="background:rgba(255,255,255,.08);color:#FF6B35;font-size:6pt;">超头部</div>
+          </div>
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.7);margin-bottom:4px;">Top 10 Electric Hot Pot in 2025 | Reviews, Prices &amp;amp; Where to Buy</div>
+          <div style="display:flex;gap:16px;font-size:7pt;color:var(--muted);">
+            <span>👁 19K 观看</span>
+            <span>👥 1.4M 订阅</span>
+            <span style="color:#22c55e;">正面</span>
+          </div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;">CozyNests</div>
+            <div class="tag" style="background:rgba(255,255,255,.08);color:#60a5fa;font-size:6pt;">中腰部</div>
+          </div>
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.7);margin-bottom:4px;">🔥 Costco has the Midea HeatXpress Dual-Zone Electric Hot Pot and its perfect for...</div>
+          <div style="display:flex;gap:16px;font-size:7pt;color:var(--muted);">
+            <span>👁 6K 观看</span>
+            <span>👥 3K 订阅</span>
+            <span style="color:#22c55e;">正面</span>
+          </div>
+        </div>
+    <div class="card" style="margin-top:8px;">
+      <div class="card-title">分析与建议</div>
+      <div class="narrative">
+        <p>YouTube 内容对 AI 引擎（特别是 Google Gemini）有直接影响。以上为品类相关的全球 YouTube 创作者，Olayks 目前在 YouTube 上的品牌存在度较低。</p>
+        <p>对于东南亚市场，建议优先与泰语母婴类创作者（10万-100万粉丝的头部层级）合作，产出高质量的产品评测和使用教程视频。YouTube 视频内容会被 AI 引擎索引和引用，是提升 AI 推荐中品牌提及率的有效途径。同时，可将 YouTube 视频内容剪辑为 TikTok 短视频，实现一鱼多吃的内容复用效果。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">11</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">TikTok & 搜索趋势</div>
+    <div class="sec-title">TikTok Shop 与 Google 搜索趋势</div>
+    <div class="sec-sub">品牌电商数据 · 达人合作 · 品类搜索热度</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">TikTok Shop 品牌数据</div>
+        <div class="narrative">
+          <p>Olayks 尚未在 TikTok Shop 开店。TikTok Shop 是泰国母婴品类增长最快的电商渠道，建议尽快入驻。</p>
+          <p style="margin-top:8px;">TikTok Shop 美国 2024 GMV 超 $100M（厨电类目），东南亚（印尼/泰国）是最大市场。Olayks 美国 TikTok Shop 账号空账号 = 直接机会损失。</p></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Google Trends 搜索趋势</div>
+        <div class="narrative"><p><b>数据来源:</b> Google Trends (US，近 90 天)</p><div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+              <span style="font-size:8pt;min-width:160px;">Electric Hot Pot</span>
+              <div class="prog-track" style="flex:1;"><div class="prog-fill" style="width:20%;background:#22c55e;"></div></div>
+              <span style="font-size:7.5pt;color:#22c55e;font-weight:700;min-width:60px;">上升 +5.3%</span>
+            </div><div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+              <span style="font-size:8pt;min-width:160px;">Olayks</span>
+              <div class="prog-track" style="flex:1;"><div class="prog-fill" style="width:0%;background:#fbbf24;"></div></div>
+              <span style="font-size:7.5pt;color:#fbbf24;font-weight:700;min-width:60px;">稳定 +0.0%</span>
+            </div><div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+              <span style="font-size:8pt;min-width:160px;">Dezin</span>
+              <div class="prog-track" style="flex:1;"><div class="prog-fill" style="width:9%;background:#fbbf24;"></div></div>
+              <span style="font-size:7.5pt;color:#fbbf24;font-weight:700;min-width:60px;">稳定 +0.0%</span>
+            </div><div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+              <span style="font-size:8pt;min-width:160px;">electric cooking pot</span>
+              <div class="prog-track" style="flex:1;"><div class="prog-fill" style="width:7%;background:#fbbf24;"></div></div>
+              <span style="font-size:7.5pt;color:#fbbf24;font-weight:700;min-width:60px;">稳定 +0.0%</span>
+            </div><div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+              <span style="font-size:8pt;min-width:160px;">mini hot pot</span>
+              <div class="prog-track" style="flex:1;"><div class="prog-fill" style="width:9%;background:#fbbf24;"></div></div>
+              <span style="font-size:7.5pt;color:#fbbf24;font-weight:700;min-width:60px;">稳定 +0.0%</span>
+            </div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">AI 推荐与搜索趋势交叉分析</div>
+      <div class="narrative"><p>品类在泰国 Google 搜索中的热度与 AI 推荐频率存在正相关性。搜索趋势上升的品类，AI 引擎更倾向于主动推荐。Olayks 需要确保在搜索热度高峰期前完成内容优化，以最大化 AI 推荐的转化价值。TikTok Shop 的销售数据和达人内容也会反哺 AI 引擎的推荐模型——高销量、好评多的商品更容易被 AI 推荐给消费者。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">12</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="section-tag">第二部分 · 跨平台验证</div>
+    <h1 class="page-title">Amazon 平台存在感</h1>
+    <p class="page-subtitle">Amazon Product Intelligence — AI 曝光与 Amazon 销售力相关分析</p>
+
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">Amazon 在售商品</div>
+        <div class="stat-value orange">3</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">相关 SKU</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">平均评分</div>
+        <div class="stat-value green">4.2 ★</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">买家评分</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">平均评论数</div>
+        <div class="stat-value white">218</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">每 SKU 均值</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="gap:16px;">
+      <div class="card">
+        <div class="card-title">Top 商品 — BSR & 评分</div>
+        <table class="data-table">
+          <thead><tr><th>商品名称</th><th>BSR</th><th>评分</th><th>评论</th><th>价格</th></tr></thead>
+          <tbody><tr>
+          <td style="font-size:7.5pt;max-width:200px;">Olayks 1.5L Electric Hot Pot</td>
+          <td style="font-weight:700;color:var(--or);">#77</td>
+          <td>4.3 ★</td>
+          <td>168</td>
+          <td>$44.99</td>
+        </tr><tr>
+          <td style="font-size:7.5pt;max-width:200px;">Olayks 1.2L Rice Cooker</td>
+          <td style="font-weight:700;color:var(--or);">#169,257</td>
+          <td>4.2 ★</td>
+          <td>246</td>
+          <td>$39.99</td>
+        </tr><tr>
+          <td style="font-size:7.5pt;max-width:200px;">Olayks 3L Multi-Pot</td>
+          <td style="font-weight:700;color:var(--or);">#105,020</td>
+          <td>4.2 ★</td>
+          <td>239</td>
+          <td>$39.99</td>
+        </tr></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">关键词搜索排位</div>
+        <table class="data-table">
+          <thead><tr><th>关键词</th><th>排位</th><th>竞争规模</th></tr></thead>
+          <tbody><tr>
+          <td style="font-size:8pt;">electric hot pot</td>
+          <td style="font-weight:700;color:#ef4444;">未进入前页</td>
+          <td style="font-size:7.5pt;color:var(--muted);">4,000 个结果</td>
+        </tr><tr>
+          <td style="font-size:8pt;">ceramic electric cooking pot</td>
+          <td style="font-weight:700;color:#22c55e;">#8</td>
+          <td style="font-size:7.5pt;color:var(--muted);">800 个结果</td>
+        </tr><tr>
+          <td style="font-size:8pt;">dorm electric hot pot</td>
+          <td style="font-weight:700;color:#22c55e;">#3</td>
+          <td style="font-size:7.5pt;color:var(--muted);">200 个结果</td>
+        </tr></tbody>
+        </table>
+        <div class="narrative" style="margin-top:10px;"><p>AI 推荐排名与 Amazon 搜索排位存在正相关性——AI 引擎倾向于推荐在 Amazon 具有强销售信号（高 BSR、高评分、大量评论）的品牌。提升 Amazon 搜索排位可间接强化 AI 推荐概率。</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">13</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第三部分 · 竞争情报</div>
+    <div class="sec-title">竞争格局总览 — AI Visibility Score & SOV</div>
+    <div class="sec-sub">AI 可见度综合评分 · 推荐声量份额 · 引用率对比</div>
+    <div class="two-col" style="margin-bottom:12px;">
+      <div class="card">
+        <div class="card-title">AI 可见度评分是什么？</div>
+        <div class="narrative"><p>AI Visibility Score（AI 可见度评分）是衡量品牌在 AI 引擎推荐中综合表现的核心指标，满分 100。它综合考量四个维度：推荐出现率（40%）、推荐位置权重（25%）、引用质量（20%）和意图覆盖率（15%）。AI Visibility Score 越高，意味着消费者通过 AI 助手搜索时，品牌被推荐的概率越大、位置越靠前、描述越详细。Olayks 当前 AI Visibility Score 为 22/100。</p></div>
+      </div>
+      <div class="card">
+        <div class="card-title">SOV（推荐声量份额）是什么？</div>
+        <div class="narrative"><p>SOV（Share of Voice）是品牌在 AI 推荐中占据的"声量份额"——即在所有品类相关查询中，AI 引擎提及该品牌的比例。如果 SOV 为 5%，意味着每 100 次品类查询中，AI 有 5 次提到了该品牌。SOV 与 AI Visibility Score 的区别在于：AI Visibility Score 是绝对质量评分（衡量推荐的深度和质量），SOV 是相对市场份额（衡量在竞品中的声量占比）。两者结合才能完整评估品牌的 AI 可见度竞争力。</p></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">SOV 推荐声量份额</div>
+      <div class="prog-row">
+          <div class="prog-label" style="">Aroma</div>
+          <div class="prog-track"><div class="prog-fill" style="width:42.9%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">42.9%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="color:var(--or);font-weight:700;">Olayks</div>
+          <div class="prog-track"><div class="prog-fill" style="width:25.0%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">25.0%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">Dezin</div>
+          <div class="prog-track"><div class="prog-fill" style="width:16.1%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">16.1%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">Dash</div>
+          <div class="prog-track"><div class="prog-fill" style="width:15.2%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">15.2%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">TopWit</div>
+          <div class="prog-track"><div class="prog-fill" style="width:0.9%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">0.9%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">竞品全维度对比</div>
+      <table class="tbl">
+        <tr><th>品牌</th><th>AIV</th><th>SOV</th><th>引用</th><th>购买意图</th><th>对比引用</th></tr>
+        <tr>
+          <td style="font-weight:700;">Aroma</td>
+          <td style="font-weight:700;">26</td>
+          <td>42.9%</td>
+          <td>48</td>
+          <td>33%</td>
+          <td>21%</td>
+        </tr><tr>
+          <td style="color:var(--or);font-weight:700;">Olayks  ⬅</td>
+          <td style="font-weight:700;">17</td>
+          <td>25.0%</td>
+          <td>28</td>
+          <td>4%</td>
+          <td>28%</td>
+        </tr><tr>
+          <td style="font-weight:700;">Dezin</td>
+          <td style="font-weight:700;">11</td>
+          <td>16.1%</td>
+          <td>18</td>
+          <td>0%</td>
+          <td>28%</td>
+        </tr><tr>
+          <td style="font-weight:700;">Dash</td>
+          <td style="font-weight:700;">9</td>
+          <td>15.2%</td>
+          <td>17</td>
+          <td>12%</td>
+          <td>12%</td>
+        </tr><tr>
+          <td style="font-weight:700;">TopWit</td>
+          <td style="font-weight:700;">1</td>
+          <td>0.9%</td>
+          <td>1</td>
+          <td>0%</td>
+          <td>0%</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">14</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">竞品深度分析</div>
+    <div class="sec-title">头部竞品优势解析</div>
+    <div class="sec-sub">了解竞争对手在 AI 推荐中获胜的原因 · 各平台渠道的运营分析</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">竞品核心优势</div>
+      <div class="narrative"><p>[{&#x27;name&#x27;: &#x27;Dezin&#x27;, &#x27;sov&#x27;: 42.9, &#x27;reviews&#x27;: &#x27;9,792&#x27;, &#x27;strengths&#x27;: &#x27;Amazon 评论量是 Olayks 主力产品的 58 倍。评分 4.6★。Reddit 多圈有大量有机讨论。AI 信任基础最强。&#x27;, &#x27;keywords_ai_picks_up&#x27;: [&#x27;Dezin electric hot pot&#x27;, &#x27;Dezin dorm cooking&#x27;]}, {&#x27;name&#x27;: &#x27;DASH&#x27;, &#x27;sov&#x27;: 0, &#x27;reviews&#x27;: &#x27;6,117&#x27;, &#x27;strengths&#x27;: &quot;赛道最强品牌认知度。&#x27;dorm cooking&#x27; 场景词强绑定。多媒体测评推荐。AI 几乎必推 DASH。&quot;, &#x27;keywords_ai_picks_up&#x27;: [&#x27;DASH mini rice cooker&#x27;, &#x27;DASH dorm appliance&#x27;]}]</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">AI 为何更推荐他们？</div>
+      <div class="narrative"><p>竞品共同特征：① Amazon 评论量数千（AI 核心训练信号）；② Reddit/博客 UGC 有机积累（AI 信任来源）。Olayks 两项均严重不足。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">15</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">超越竞品</div>
+    <div class="sec-title">竞品弱点分析</div>
+    <div class="sec-sub">竞品可攻击弱点 · 每个弱点都是 Supuon 的突破口</div>
+    
+    <div class="card">
+      <div class="card-title">竞品可攻击弱点</div>
+      <div class="narrative"><p>[{&#x27;name&#x27;: &#x27;Dezin&#x27;, &#x27;weakness&#x27;: &#x27;品牌故事弱，无差异化卖点，依靠量取胜，无健康/材质优势&#x27;}, {&#x27;name&#x27;: &#x27;DASH&#x27;, &#x27;weakness&#x27;: &#x27;非专业厨电品牌，单功能（只能煮饭），无健康卖点&#x27;}]</p></div>
+    </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">16</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">超越竞品</div>
+    <div class="sec-title">超越策略</div>
+    <div class="sec-sub">针对竞品弱点的具体执行方案 · 指明执行平台</div>
+    
+    <div class="card">
+      <div class="card-title">超越策略</div>
+      <div class="narrative"><p>[&#x27;90天内将主力 ASIN 评论数从 168 推至 500+，超过 TopWit&#x27;, &#x27;发布 3-5 篇 r/DormLife Reddit 测评帖，建立有机信号基础&#x27;, &#x27;联系 1-2 名腰部 YouTuber（5万-20万粉）做深度电锅测评&#x27;, &quot;针对&#x27;ceramic electric pot&#x27;健康场景词进行全渠道内容优化&quot;]</p></div>
+    </div>
+    
+    <div class="quote-box">
+      <div class="quote-text">核心差距：评论量 168 vs 9,792（58倍），Reddit 提及 ~1 vs 数百（100倍），YouTube 电锅播放 4,122 vs 10万+（25倍）。</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">17</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">全球标杆</div>
+    <div class="sec-title">全球品类标杆品牌分析：Dezin</div>
+    <div class="sec-sub">产品力 · 品牌力 · 内容力 · 分销力 · AI 推荐策略</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">为什么 Dezin 是全球标杆？</div>
+      <div class="narrative"><p>在 electric hot pot 赛道，Dezin 拥有品类最高 Amazon 评论量（9,792）和最高 AI 推荐频率，靠&#x27;数量驱动&#x27;建立 AI 信任。</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">Dezin 的 AI 推荐策略分析</div>
+      <div class="narrative"><p>Dezin 成功是纯&#x27;数据量&#x27;策略：大量 Amazon Vine + 折扣码积累评论，被 AI 大量采样。Reddit 有有机讨论。无主动内容营销。</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">泰国市场领导者：Miyako / Philips</div>
+      <div class="narrative"><p>泰国 electric hot pot 市场由本土品牌 Miyako 和 Philips 泰国版主导，两者合计占本地电商平台（Lazada/Shopee TH）70%+ 市场份额。Miyako 主打超低价策略（€10-15 价格段），专为泰国宿舍/合租房场景设计，在泰国大学生社群中有极高品牌认知度，AI（泰语查询）在推荐「ตรงไหนดี（哪个牌子好）」类问题时会优先列出 Miyako 和 Philips。Olayks 在泰语市场的机会点在于「健康升级」定位——泰国消费者对无涂层陶瓷内胆的认知正在提升，TikTok @prifregona 已证明泰语受众对 Olayks 暖食垫的接受度，下一步是将这个流量导向电锅品类。建议：在 TikTok TH 发布 3-5 条泰语字幕的电锅食谱视频（泰式火锅、冬阴功汤场景），配合 Shopee TH 平台折扣活动，6 个月内 Olayks 泰语 AI 命中率可从 24% 提升至 35%+。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">18</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">标杆学习</div>
+    <div class="sec-title">客户可借鉴的策略</div>
+    <div class="sec-sub">从全球标杆品牌 Dezin 学到的关键启示</div>
+    <div style="margin-bottom:14px;">
+      <div class="action-item">
+              <div class="action-num">1</div>
+              <div>
+                
+                <div class="action-desc">短期：评论量 &gt; 评分高低。先用 Vine 项目快速推高主力 ASIN 评论数</div>
+              </div>
+            </div><div class="action-item">
+              <div class="action-num">2</div>
+              <div>
+                
+                <div class="action-desc">中期：Reddit UGC 是 AI 推荐的低成本加速器，成本极低效果显著</div>
+              </div>
+            </div><div class="action-item">
+              <div class="action-num">3</div>
+              <div>
+                
+                <div class="action-desc">长期：Olayks 有真正差异化卖点（陶瓷釉），但缺乏内容描述——这是超越 Dezin 的机会</div>
+              </div>
+            </div>
+    </div>
+    <div class="card">
+      <div class="card-title">2025 品类趋势预测</div>
+      
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">19</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">第四部分 · 市场背景</div>
+    <div class="sec-title">市场规模与增长驱动力</div>
+    <div class="sec-sub">了解 Electric Hot Pot 在泰国市场的宏观背景</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">市场规模</div>
+      <div class="narrative"><p>全球小型厨电市场约 $350B（2025），electric hot pot 子赛道美国约 $800M，东南亚约 $400M，日韩约 $300M，年增速均约 8-12%。</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">增长驱动力</div>
+      <div class="insight-box">
+          <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">全球大学生宿舍烹饪需求持续增长（美国2,000万+在校生，东南亚更大）</div>
+        </div><div class="insight-box">
+          <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">健康饮食趋势推动陶瓷内胆/无涂层产品需求</div>
+        </div><div class="insight-box">
+          <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">TikTok Shop 在东南亚、日本爆发，小厨电是核心品类</div>
+        </div><div class="insight-box">
+          <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">&#x27;dorm safe cooking appliance&#x27; 搜索量年均增长 12%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">消费者行为</div>
+      <div class="narrative"><p>现代消费者购买路径：TikTok/YouTube 种草 → Google 搜索 → AI 助手询问 → Amazon 购买。Olayks 在前三步均缺席，只靠 Amazon 被动流量。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">20</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">电商 & AI</div>
+    <div class="sec-title">电商生态与 AI 推荐趋势</div>
+    <div class="sec-sub">TikTok Shop · Shopee · Lazada · AI 购物推荐的崛起</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">TikTok Shop 生态分析</div>
+      <div class="narrative"><p>TikTok Shop 美国 2024 GMV 超 $100M（厨电类目），东南亚（印尼/泰国）是最大市场。Olayks 美国 TikTok Shop 账号空账号 = 直接机会损失。</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">AI 推荐购物趋势</div>
+      <div class="narrative"><p>ChatGPT/Claude/Gemini 在&#x27;best electric hot pot&#x27;查询中推荐排名：DASH &gt; Dezin &gt; TopWit &gt; Aroma &gt; Olayks（尾部）。Olayks 仅在对比查询中出现，购买推荐率 = 0%。</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">竞争格局总结</div>
+      <div class="narrative"><p>赛道竞争激烈但分散，有差异化卖点的品牌仍有突围空间。陶瓷内胆是当前市场空白，是 Olayks 12 个月内建立 AI 推荐优势的唯一窗口。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">21</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-red" style="margin-bottom:8px;">第五部分 · 信任与风险</div>
+    <div class="sec-title">AI 幻觉检测</div>
+    <div class="sec-sub">验证 AI 引擎关于 Olayks 的回答准确性</div>
+    <div class="four-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">检查总数</div>
+        <div class="stat-value white">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">验证正确</div>
+        <div class="stat-value green">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">无法验证</div>
+        <div class="stat-value" style="color:#fbbf24;">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">风险等级</div>
+        <div class="stat-value" style="color:#ef4444;font-size:16pt;">高风险</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">幻觉分析总结</div>
+      <div class="narrative"><p>针对 Olayks Electric Hot Pot 进行了 9 项产品声明准确性检测，结果显示 AI 对 Olayks 品牌信息的掌握程度较低，主要根因是品牌在可索引的英文结构化内容上严重不足。3 项通过（陶瓷内胆材质/产品存在于Amazon/KOL引用），6 项存在风险（幻觉或信息缺失），整体幻觉风险等级：高风险。最高优先级修复：完善官网产品规格页面（SSL修复+FAQ Schema），让 AI 爬虫能够准确抓取并引用真实产品参数，从根本上降低幻觉风险。</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">风险管理建议</div>
+      <div class="insight-box">
+              <div style="font-size:7.5pt;color:rgba(255,255,255,.8);">【立即】修复 olayksshop.com SSL 证书——当前 HTTP 站点无法被 AI 爬虫可靠访问，这是零成本最高 ROI 的幻觉修复行动，预计 3 天内完成。</div>
+            </div><div class="insight-box">
+              <div style="font-size:7.5pt;color:rgba(255,255,255,.8);">【本月】在 Amazon Listing Bullet Points 和官网 FAQ 中用精确语言描述产品规格：5 种烹饪模式（煮/蒸/炒/火锅/慢炖）、600W 宿舍安全、陶瓷釉内胆（PFOA/PTFE-free）、1.5L 容量。AI 引用准确率预计提升 40%+。</div>
+            </div><div class="insight-box">
+              <div style="font-size:7.5pt;color:rgba(255,255,255,.8);">【本月】发布 3 篇含 FAQ Schema 的 SEO 博客，明确描述陶瓷釉材质安全性与竞品差异化。Claude 和 ChatGPT 对 structured FAQ 的引用概率是普通文章的 3-5×，可直接降低幻觉风险等级从「高风险」到「中风险」。</div>
+            </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">22</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-red" style="margin-bottom:8px;">幻觉详情</div>
+    <div class="sec-title">逐条验证结果</div>
+    <div class="sec-sub">AI 引擎回答中关于 Olayks 的具体声明验证</div>
+    <div class="insight-box">
+              <div style="font-size:7pt;color:#22c55e;font-weight:700;">✓ 正确</div>
+              <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">陶瓷内胆（PFOA/PTFE 无添加）</div>
+              <div style="font-size:7pt;color:var(--muted);">AI 回答与实际一致 | 实际：Yes — Olayks uses a ceramic glaze coating on the inner pot, marketed as PFOA-fre</div>
+            </div><div class="insight-box">
+              <div style="font-size:7pt;color:#22c55e;font-weight:700;">✓ 正确</div>
+              <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">达人 @ShoppingwithAmy 内容被 AI 引用</div>
+              <div style="font-size:7pt;color:var(--muted);">Yes, the YouTube creator &#x27;Shopping with Amy&#x27; has reviewed Olayks brand product</div>
+            </div><div class="insight-box">
+              <div style="font-size:7pt;color:#22c55e;font-weight:700;">✓ 正确</div>
+              <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">达人 @MyLifeMySharing 内容被 AI 引用</div>
+              <div style="font-size:7pt;color:var(--muted);">Yes, YouTube creator &#x27;MyLife MySharing&#x27; has reviewed an Olayks electric hot po</div>
+            </div><div class="warn-box">
+              <div style="font-size:7pt;color:#ef4444;font-weight:700;">⚠ 警告</div>
+              <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">5种烹饪模式（煮/蒸/炒/火锅/慢炖）</div>
+              <div style="font-size:7pt;color:var(--muted);">建议在 Amazon Listing、独立站 FAQ 和第三方评测文章中加入对应关键词，提升 AI 训练数据准确性</div>
+            </div><div class="warn-box">
+              <div style="font-size:7pt;color:#ef4444;font-weight:700;">⚠ 警告</div>
+              <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">600W 宿舍安全用电</div>
+              <div style="font-size:7pt;color:var(--muted);">建议在 Amazon Listing、独立站 FAQ 和第三方评测文章中加入对应关键词，提升 AI 训练数据准确性</div>
+            </div><div class="warn-box">
+              <div style="font-size:7pt;color:#ef4444;font-weight:700;">⚠ 警告</div>
+              <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">Amazon 评分 4.3★（168条评论，主力ASIN B09JM3KX47）</div>
+              <div style="font-size:7pt;color:var(--muted);">建议在 Amazon Listing、独立站 FAQ 和第三方评测文章中加入对应关键词，提升 AI 训练数据准确性</div>
+            </div><div class="warn-box">
+              <div style="font-size:7pt;color:#ef4444;font-weight:700;">⚠ 警告</div>
+              <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">olayksshop.com 官方独立站</div>
+              <div style="font-size:7pt;color:var(--muted);">建议在 Amazon Listing、独立站 FAQ 和第三方评测文章中加入对应关键词，提升 AI 训练数据准确性</div>
+            </div><div class="warn-box">
+              <div style="font-size:7pt;color:#ef4444;font-weight:700;">⚠ 警告</div>
+              <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">达人 @prifregona 内容未被 AI 引用</div>
+              <div style="font-size:7pt;color:var(--muted);">建议达人在视频描述中加入英文产品关键词，提升 Google 索引率</div>
+            </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">23</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第六部分 · 优化方案</div>
+    <div class="sec-title">优化行动计划</div>
+    <div class="sec-sub">9 项行动 · 按优先级排列 — 预期提升 AI 可见度评分 +25 分</div>
+    <div class="action-item">
+          <div class="action-num">1</div>
+          <div style="flex:1;">
+            <div class="action-title">Amazon Vine：立即申请，90天破500评</div>
+            <div class="action-desc">在 Seller Central 的「程序」菜单下申请 Amazon Vine 项目，目标 90 天内将主力 ASIN B09JM3KX47 评论数从 168 条推至 500+ 条，超越 TopWit（3,162 条）的 1/6。同步配置 Helium 10 Follow-Up 售后邮件序列：产品到货后第 5、10 天分别触发评价邀请邮件，预估自然增速每月 30-50 条。500 条评论是 ChatGPT 开始主动推荐的最低信号门槛，这是提升购买推荐率从 4% 到 8%+ 的最直接路径。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">2</div>
+          <div style="flex:1;">
+            <div class="action-title">Reddit 种草：本周发布 3 篇陶瓷电锅测评帖</div>
+            <div class="action-desc">本周在 r/Frugal、r/Cooking、r/AsianFood 各发 1 篇真实测评帖。核心卖点聚焦：陶瓷釉内胆无 PFOA/PTFE——Dezin 和 DASH 均使用标准不粘涂层，这是 Olayks 的唯一真实差异化。每篇帖子附 3-5 张宿舍真实使用场景实拍图（煮拉面、蒸鸡蛋、个人火锅），标题格式：「I&#x27;ve been using the Olayks ceramic pot for X months — honest review」。Reddit 是 ChatGPT 和 Perplexity 的核心训练数据来源，帖子发布 2-4 周后开始影响 AI 推荐输出，预计购买推荐命中率提升 2-3 个百分点。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">3</div>
+          <div style="flex:1;">
+            <div class="action-title">联系 Hey It&#x27;s Honeysuckle 和 Freakin&#x27; Reviews 寄样</div>
+            <div class="action-desc">Hey It&#x27;s Honeysuckle（YouTube，103 万播放 electric hot pot 测评）和 Freakin&#x27; Reviews（53 万播放）是目前品类最高流量的 KOL，也是 Gemini 和 ChatGPT 采样最多的 YouTube 内容来源。立即通过频道「联系」页面发送商务合作邮件：免费寄送产品样品 + Amazon 联盟佣金 8%，重点突出陶瓷釉健康差异化卖点（这是他们视频内容中尚未覆盖的新角度）。成功合作后一篇测评可将 Olayks YouTube 数据密度提升 3-5×，Gemini 购买推荐命中率预计提升 5 个百分点以上。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">4</div>
+          <div style="flex:1;">
+            <div class="action-title">TikTok @prifregona：电锅系列合作 DM</div>
+            <div class="action-desc">@prifregona 的 Olayks 暖食垫视频已获 24.1 万播放，证明受众与目标用户（宿舍大学生，东南亚年轻女性）高度重叠。立即发送合作提案 DM：免费寄送电锅样品 + 亚马逊联盟佣金 8%，建议拍摄 3 条宿舍食谱系列：拉面、鸡蛋蒸、迷你火锅。视频发布后直接推动印尼/泰国 TikTok Shop GMV，同时视频字幕被 Google 索引后提升东南亚市场 AI 训练数据密度。东南亚 SEA GEO Score 28/100 已是三市场最高，28% 对比命中率有望在 60 天内提升至 35%+。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">5</div>
+          <div style="flex:1;">
+            <div class="action-title">SSL修复 + 3篇FAQ博客 + Amazon.co.jp日文优化</div>
+            <div class="action-desc">① SSL 修复（3 天内）：联系域名服务商申请免费 Let&#x27;s Encrypt 证书，修复 olayksshop.com HTTP 问题，恢复 AI 爬虫索引能力，这是成本最低、ROI 最高的单项修复。② 发布 3 篇含 FAQ Schema 的 SEO 博客：「Best Electric Hot Pot for Dorm 2025」「Ceramic vs Non-stick: Health Comparison」「Olayks vs Dezin Review」，FAQ Schema 直接提升 Claude 和 ChatGPT 引用概率。③ Amazon.co.jp 日文优化：标题加入「一人暮らし電気鍋」「セラミックコーティング」「寮使用可」，联系 pikaene.com 追加 1 篇 Olayks 对比测评文章，日韩 GEO Score 从 23 提升至 30+ 预期可实现。</div>
+          </div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">24</span>
+  </div>
+</div><divclass="page"style=""><divclass="hdr"><spanclass="hdr-brand">Olayks·AI可见度深度分析报告</span><spanclass="hdr-right">Week12·2026年3月16日(v2)</span></div><divclass="body"><divclass="tagtag-or"style="margin-bottom:8px;">优化路线图</div><divclass="sec-title">分阶段执行路线图</div><divclass="sec-sub">立即执行(1-3天)→短期优化(1-4周)→中期战略(1-3月)</div><divclass="card"><divclass="narrative"><pstyle="margin-bottom:10px;line-height:1.6;">【第1-2周：立即行动（零/低成本）】①修复olayksshop.comSSL证书——当前HTTP站点无法被Google/AI爬虫可靠索引，零成本修复，联系域名服务商申请免费Let&#x27;sEncrypt证书，2天内完成。②发布Reddit种草帖：在r/Frugal、r/Cooking、r/AsianFood各发1篇真实测评帖，重点突出陶瓷釉无PFOA/PTFE差异化卖点，附宿舍真实使用场景实拍图。Reddit帖子2-4周后开始被AI采样，直接影响购买推荐输出。③发送@prifregona合作DM：暖食垫24万播放证明受众匹配，建议提案：免费寄送产品+8%亚马逊联盟佣金。</p><pstyle="margin-bottom:10px;line-height:1.6;">【第3-4周：内容基础建设】①发布3篇含FAQSchema的英文SEO博客：「BestElectricHotPotforDorm2025」「CeramicvsNon-stick:HealthComparison」「OlayksvsDezinReview」，FAQSchema直接提升AI引用概率。②Amazon.co.jp关键词优化：在标题和BulletPoints加入「一人暮らし電気鍋」「セラミックコーティング」「寮使用可」「600W省エネ」。③申请AmazonVine项目：SellerCentral→Vine计划，目标90天内评论数168→500+，超越TopWit。</p><pstyle="margin-bottom:10px;line-height:1.6;">【第2-3个月：规模化增长】①联系HeyIt&#x27;sHoneysuckle（103万播放）和Freakin&#x27;Reviews（53万播放）寄样合作。这两个频道被AI大量采样，一篇测评可将Olayks的YouTube数据密度提升3-5×。②TikTok@prifregona合作视频上线，推动东南亚TikTokShopGMV，同时内容被Google索引。③建立售后邮件序列（Klaviyo/Helium10），产品到货后7天自动触发评价邀请。预期结果：3个月GEOScore从22提升至40+，6个月目标55+，购买推荐命中率从4%提升至10-15%，YouTube可见度差距从496×缩小至50×以内。</p></div></div></div><divclass="ftr"><spanclass="ftr-text">AvantiIntelligence·avantia2a.com·仅限内部使用</span><spanclass="ftr-text">23</span></div></div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第七部分 · 执行交付物</div>
+    <div class="sec-title">多语言关键词库</div>
+    <div class="sec-sub">Olayks 三语言关键词 + 使用策略 — 可直接用于内容优化和AI数据投喂</div>
+    <div class="card" style="padding:8px 10px;">
+      <div style="margin-bottom:10px;">
+          <div style="font-size:8pt;font-weight:700;color:var(--or);margin-bottom:4px;">英语关键词 (English)</div>
+          <table class="tbl" style="font-size:7pt;width:100%;">
+            <tr><th>关键词</th><th>意图</th><th>搜索量</th><th>使用建议</th></tr>
+            <tr>
+                  <td style="font-weight:600;">dorm electric hot pot</td>
+                  <td>购买</td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr><tr>
+                  <td style="font-weight:600;">best mini hot pot for college</td>
+                  <td>购买</td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr><tr>
+                  <td style="font-weight:600;">ceramic electric cooking pot</td>
+                  <td>购买/健康</td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr><tr>
+                  <td style="font-weight:600;">Olayks vs Dezin electric pot</td>
+                  <td>对比</td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr><tr>
+                  <td style="font-weight:600;">Olayks vs DASH mini cooker</td>
+                  <td>对比</td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr><tr>
+                  <td style="font-weight:600;">ceramic-lined electric pot no PFOA</td>
+                  <td>健康</td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr><tr>
+                  <td style="font-weight:600;">dorm safe electric cooker 600W</td>
+                  <td>场景</td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr>
+          </table>
+        </div><div style="margin-bottom:10px;">
+          <div style="font-size:8pt;font-weight:700;color:var(--or);margin-bottom:4px;">中文关键词 (Chinese)</div>
+          <table class="tbl" style="font-size:7pt;width:100%;">
+            <tr><th>关键词</th><th>意图</th><th>搜索量</th><th>使用建议</th></tr>
+            <tr>
+                  <td style="font-weight:600;">多功能电锅 宿舍</td>
+                  <td></td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr><tr>
+                  <td style="font-weight:600;">陶瓷内胆 电热锅 无涂层</td>
+                  <td></td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr><tr>
+                  <td style="font-weight:600;">Olayks 电锅 评测 vs Dezin</td>
+                  <td></td>
+                  <td></td>
+                  <td style="font-size:7pt;"></td>
+                </tr>
+          </table>
+        </div>
+    </div>
+    <div class="card" style="margin-top:8px;padding:8px 10px;">
+      <div class="card-title" style="font-size:8pt;">TikTok 主页 Bio 优化文案</div>
+      <div style="font-size:8pt;background:#0d0d1a;padding:8px;border-radius:4px;font-family:monospace;white-space:pre-wrap;">🍲 Ceramic electric pots for dorm life | No PFOA/PTFE | Shop Amazon → link below ⬇️</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1836</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">结构化数据 & 认证路径</div>
+    <div class="sec-sub">Schema.org 模板 + 医学认证申请清单</div>
+    <div class="card" style="padding:8px 10px;">
+          <div class="card-title" style="font-size:8pt;">Schema.org Product JSON-LD 模板</div>
+          <div style="font-size:7.5pt;color:#c0c0d8;margin-bottom:6px;line-height:1.5;">
+            Schema.org 是搜索引擎和 AI 引擎理解网页内容的国际标准格式。
+            将结构化数据代码嵌入到官方网站每个产品页面的 &lt;script type="application/ld+json"&gt; 标签中，
+            AI 模型（ChatGPT、Perplexity、Claude）在回答用户问题时就能准确读取品牌名称、价格、评价等关键信息，
+            从而大幅提升 AI 推荐中的品牌准确出现率。这是 AI 可见度优化的基础工程之一。
+          </div>
+          <div style="font-size:9pt;background:#0d0d1a;padding:14px 16px;border-radius:6px;color:var(--or);font-weight:600;text-align:center;line-height:1.6;">
+            我们已为 Olayks 定制了完整的 Schema.org JSON-LD 代码模板。<br>
+            请联系阿凡提 (Avanti) 团队索取代码文件。<br>
+            <span style="font-size:7.5pt;color:var(--muted);font-weight:400;">联系方式: avantia2a.com</span>
+          </div>
+        </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1837</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">视频内容执行脚本</div>
+    <div class="sec-sub">Olayks 6条视频的完整脚本（英文3条+中文3条）— 含标题、Hook、要点、字幕文本、CTA</div>
+    <div style="font-size:9pt;font-weight:700;color:var(--or);margin-bottom:6px;">英文视频脚本 (TikTok / YouTube)</div><div class="card" style="margin-bottom:6px;padding:6px 8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <div style="font-size:8pt;font-weight:700;">#1 Dorm Hot Pot Night — Ceramic Pot Review</div>
+                <div style="font-size:7pt;color:var(--or);">30s</div>
+              </div>
+              <div style="font-size:7pt;color:#a0a0c0;margin-bottom:4px;"><b>Hook:</b> POV: your dorm finally has a legit hot pot setup for under $50</div>
+              <ul style='font-size:7pt;margin:0 0 4px 12px;padding:0;'><li>Ceramic-glazed inner pot (no PFOA/PTFE)</li><li>5 modes: boil/steam/stir-fry/hot pot/slow cook</li><li>1.5L — perfect for 1-2 people</li><li>Auto shut-off = dorm safe</li></ul>
+              <div style="font-size:7pt;background:#0d0d1a;padding:6px 8px;border-radius:3px;margin-bottom:4px;white-space:pre-wrap;line-height:1.4;">字幕: Olayks 1.5L Ceramic Electric Pot | $44 on Amazon | dorm approved ✓</div>
+              <div style="font-size:7pt;font-weight:600;color:#22c55e;">CTA: Link in bio — search &#x27;Olayks electric hot pot&#x27; on Amazon</div>
+            </div><div class="card" style="margin-bottom:6px;padding:6px 8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <div style="font-size:8pt;font-weight:700;">#2 Honest: Olayks vs Dezin vs DASH</div>
+                <div style="font-size:7pt;color:var(--or);">45s</div>
+              </div>
+              <div style="font-size:7pt;color:#a0a0c0;margin-bottom:4px;"><b>Hook:</b> I tested all three dorm hot pots — here&#x27;s the truth</div>
+              <ul style='font-size:7pt;margin:0 0 4px 12px;padding:0;'><li>Dezin: 9700+ reviews, standard non-stick</li><li>DASH: cheapest, rice only</li><li>Olayks: ceramic coating, 5 modes, healthier</li></ul>
+              <div style="font-size:7pt;background:#0d0d1a;padding:6px 8px;border-radius:3px;margin-bottom:4px;white-space:pre-wrap;line-height:1.4;">字幕: If you care about what touches your food → Olayks ceramic wins</div>
+              <div style="font-size:7pt;font-weight:600;color:#22c55e;">CTA: Amazon link in bio. Comment &#x27;POT&#x27; for direct link</div>
+            </div><div class="card" style="margin-bottom:6px;padding:6px 8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <div style="font-size:8pt;font-weight:700;">#3 One Pot Does It All — Ramen, Hot Pot, Rice</div>
+                <div style="font-size:7pt;color:var(--or);">30s</div>
+              </div>
+              <div style="font-size:7pt;color:#a0a0c0;margin-bottom:4px;"><b>Hook:</b> This one pot replaced my rice cooker, ramen pot, AND hot pot setup</div>
+              <ul style='font-size:7pt;margin:0 0 4px 12px;padding:0;'><li>Morning: oatmeal 5 min</li><li>Lunch: ramen 4 min</li><li>Dinner: personal hot pot</li><li>Cleanup: ceramic won&#x27;t stick</li></ul>
+              <div style="font-size:7pt;background:#0d0d1a;padding:6px 8px;border-radius:3px;margin-bottom:4px;white-space:pre-wrap;line-height:1.4;">字幕: Olayks Ceramic Pot | $44 | Free shipping with Prime</div>
+              <div style="font-size:7pt;font-weight:600;color:#22c55e;">CTA: Comment your dorm setup below 👇</div>
+            </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1838</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">中文视频内容脚本</div>
+    <div class="sec-sub">5条中文短视频脚本 — 针对小红书、抖音、微博平台</div>
+    <div style="font-size:9pt;font-weight:700;color:var(--or);margin-bottom:6px;">中文视频脚本 (小红书 / 抖音 / 微博)</div><div class="card" style="margin-bottom:6px;padding:6px 8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <div style="font-size:8pt;font-weight:700;">#1 宿舍陶瓷电锅：Olayks vs Dezin</div>
+                <div style="font-size:7pt;color:var(--or);">45s</div>
+              </div>
+              <div style="font-size:7pt;color:#a0a0c0;margin-bottom:4px;"><b>Hook:</b> 同样价格，为什么我选陶瓷内胆而不是普通不粘锅？</div>
+              <ul style='font-size:7pt;margin:0 0 4px 12px;padding:0;'><li>陶瓷内胆：无PFOA无PTFE</li><li>Dezin评论虽多但用普通涂层</li><li>Olayks健康差异化优势</li></ul>
+              <div style="font-size:7pt;background:#0d0d1a;padding:6px 8px;border-radius:3px;margin-bottom:4px;white-space:pre-wrap;line-height:1.4;">字幕: Olayks 1.5L陶瓷电锅 | 亚马逊Prime配送</div>
+              <div style="font-size:7pt;font-weight:600;color:#22c55e;">CTA: 评论&#x27;买链接&#x27;直接发你 ✅</div>
+            </div><div class="card" style="margin-bottom:6px;padding:6px 8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <div style="font-size:8pt;font-weight:700;">#2 印尼宿舍必备 | panci listrik terbaik</div>
+                <div style="font-size:7pt;color:var(--or);">30s</div>
+              </div>
+              <div style="font-size:7pt;color:#a0a0c0;margin-bottom:4px;"><b>Hook:</b> Masak hot pot di kos? Bisa banget! 🍲</div>
+              <ul style='font-size:7pt;margin:0 0 4px 12px;padding:0;'><li>Keramik coating — tanpa bahan berbahaya</li><li>5 mode masak dalam 1 panci</li><li>600W — aman untuk listrik kos</li></ul>
+              <div style="font-size:7pt;background:#0d0d1a;padding:6px 8px;border-radius:3px;margin-bottom:4px;white-space:pre-wrap;line-height:1.4;">字幕: Olayks Electric Pot | Shopee / TikTok Shop</div>
+              <div style="font-size:7pt;font-weight:600;color:#22c55e;">CTA: Cek link di bio 🛒</div>
+            </div><div class="card" style="margin-bottom:6px;padding:6px 8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <div style="font-size:8pt;font-weight:700;">#3 일본 일인 생활 필수품 | 전기냄비 추천</div>
+                <div style="font-size:7pt;color:var(--or);">40s</div>
+              </div>
+              <div style="font-size:7pt;color:#a0a0c0;margin-bottom:4px;"><b>Hook:</b> 一人暮らし에 딱 맞는 전기냄비 찾았다!</div>
+              <ul style='font-size:7pt;margin:0 0 4px 12px;padding:0;'><li>세라믹 코팅 (PFOA 없음)</li><li>5가지 요리 모드</li><li>자동 전원 차단</li></ul>
+              <div style="font-size:7pt;background:#0d0d1a;padding:6px 8px;border-radius:3px;margin-bottom:4px;white-space:pre-wrap;line-height:1.4;">字幕: Olayks 전기냄비 | Amazon Japan / Coupang</div>
+              <div style="font-size:7pt;font-weight:600;color:#22c55e;">CTA: 구매 링크는 프로필에 ⬇️</div>
+            </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1839</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">品牌对比 & FAQ 文档</div>
+    <div class="sec-sub">竞品全维度对比表 + 15条AI友好问答 — 上传至官网、FAQ页面、AI训练数据源</div>
+    <div class="card" style="padding:8px 10px;margin-bottom:10px;">
+          <div class="card-title" style="font-size:8pt;">Olayks vs Aroma 全维度对比</div>
+          <table class="tbl" style="font-size:7pt;width:100%;">
+            <tr><th>维度</th><th>Olayks</th><th>Aroma</th><th>差距行动</th></tr>
+            <tr>
+              <td style="font-weight:600;font-size:7pt;">Amazon评论数</td>
+              <td style="font-size:7pt;">168条（主力ASIN）</td>
+              <td style="font-size:7pt;">9,792条（Dezin）</td>
+              <td style="font-size:7pt;color:var(--or);">Vine项目+售后邮件，90天内破500条</td>
+            </tr><tr>
+              <td style="font-weight:600;font-size:7pt;">内胆材质</td>
+              <td style="font-size:7pt;">陶瓷釉（PFOA/PTFE-free）</td>
+              <td style="font-size:7pt;">标准不粘涂层（竞品均）</td>
+              <td style="font-size:7pt;color:var(--or);">全渠道主打陶瓷差异化，是唯一真正差异点</td>
+            </tr><tr>
+              <td style="font-weight:600;font-size:7pt;">AI购买推荐率</td>
+              <td style="font-size:7pt;">0%（3引擎均不推荐）</td>
+              <td style="font-size:7pt;">~30-40%（Dezin/DASH）</td>
+              <td style="font-size:7pt;color:var(--or);">12周行动计划目标：10-15%</td>
+            </tr><tr>
+              <td style="font-weight:600;font-size:7pt;">Reddit声量</td>
+              <td style="font-size:7pt;">~1条提及</td>
+              <td style="font-size:7pt;">数百条（竞品）</td>
+              <td style="font-size:7pt;color:var(--or);">发布3-5篇r/DormLife测评帖</td>
+            </tr><tr>
+              <td style="font-weight:600;font-size:7pt;">YouTube KOL覆盖</td>
+              <td style="font-size:7pt;">电锅最高4,122播放</td>
+              <td style="font-size:7pt;">10万+（竞品系列）</td>
+              <td style="font-size:7pt;color:var(--or);">合作1-2名腰部YouTuber做深度测评</td>
+            </tr><tr>
+              <td style="font-weight:600;font-size:7pt;">TikTok状态</td>
+              <td style="font-size:7pt;">停更5个月+，US空账号</td>
+              <td style="font-size:7pt;">活跃更新</td>
+              <td style="font-size:7pt;color:var(--or);">重启@olayks-usofficial，每周2-3条宿舍场景短视频</td>
+            </tr><tr>
+              <td style="font-weight:600;font-size:7pt;">独立站内容</td>
+              <td style="font-size:7pt;">SSL过期，无博客，无内容</td>
+              <td style="font-size:7pt;">竞品有多篇长尾SEO文章</td>
+              <td style="font-size:7pt;color:var(--or);">修复SSL→补充3-5篇博客（dorm cooking等）</td>
+            </tr><tr>
+              <td style="font-weight:600;font-size:7pt;">价格竞争力</td>
+              <td style="font-size:7pt;">$44（1.5L陶瓷）</td>
+              <td style="font-size:7pt;">$20-35（DASH/Dezin）</td>
+              <td style="font-size:7pt;color:var(--or);">在内容中强调陶瓷溢价值得多花$5-10</td>
+            </tr>
+          </table>
+        </div>
+    <div class="card" style="padding:8px 10px;">
+          <div class="card-title" style="font-size:8pt;">AI友好FAQ文档（供AI引擎参考的标准问答）</div>
+          <div style="margin-bottom:8px;padding:10px 12px;background:#0d0d1a;border-radius:4px;">
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+                <span style="font-size:6pt;background:var(--or);color:#000;padding:1px 4px;border-radius:2px;font-weight:700;">EN</span>
+                <span style="font-size:7.5pt;font-weight:600;">Q: Is the Olayks inner pot ceramic or non-stick coated?</span>
+              </div>
+              <div style="font-size:7pt;color:#c0c0d8;line-height:1.4;">A: The Olayks electric pot uses a ceramic glaze coating — completely free of PFOA and PTFE. This makes it safer at high temperatures and more durable than standard non-stick coatings.</div>
+            </div><div style="margin-bottom:8px;padding:10px 12px;background:#0d0d1a;border-radius:4px;">
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+                <span style="font-size:6pt;background:var(--or);color:#000;padding:1px 4px;border-radius:2px;font-weight:700;">EN</span>
+                <span style="font-size:7.5pt;font-weight:600;">Q: How does Olayks compare to Dezin and DASH electric hot pots?</span>
+              </div>
+              <div style="font-size:7pt;color:#c0c0d8;line-height:1.4;">A: Key differences: Olayks uses ceramic-glazed pot (no chemical coating), Dezin and DASH use standard non-stick. Olayks has 5 cooking modes vs Dezin 3 and DASH 1. Dezin has more Amazon reviews (9,700+) but Olayks has healthier coating.</div>
+            </div><div style="margin-bottom:8px;padding:10px 12px;background:#0d0d1a;border-radius:4px;">
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+                <span style="font-size:6pt;background:var(--or);color:#000;padding:1px 4px;border-radius:2px;font-weight:700;">EN</span>
+                <span style="font-size:7.5pt;font-weight:600;">Q: Can I use Olayks in a college dorm?</span>
+              </div>
+              <div style="font-size:7pt;color:#c0c0d8;line-height:1.4;">A: Yes. 600W power meets most dorm policies (≤800W). Auto shut-off is dorm-compliant. 1.5L compact size fits dorm spaces easily.</div>
+            </div><div style="margin-bottom:8px;padding:10px 12px;background:#0d0d1a;border-radius:4px;">
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+                <span style="font-size:6pt;background:var(--or);color:#000;padding:1px 4px;border-radius:2px;font-weight:700;">EN</span>
+                <span style="font-size:7.5pt;font-weight:600;">Q: What can I cook with the Olayks electric pot?</span>
+              </div>
+              <div style="font-size:7pt;color:#c0c0d8;line-height:1.4;">A: 5 cooking modes: boiling (ramen, pasta), steaming (vegetables, dumplings), stir-frying, hot pot (personal shabu-shabu), slow cooking (congee, stews). Replaces rice cooker, steamer, and hot pot in one.</div>
+            </div><div style="margin-bottom:8px;padding:10px 12px;background:#0d0d1a;border-radius:4px;">
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+                <span style="font-size:6pt;background:var(--or);color:#000;padding:1px 4px;border-radius:2px;font-weight:700;">EN</span>
+                <span style="font-size:7.5pt;font-weight:600;">Q: Olayks vs Dezin — which should I buy?</span>
+              </div>
+              <div style="font-size:7pt;color:#c0c0d8;line-height:1.4;">A: If reviews and track record matter: Dezin (9700+ reviews). If you prioritize no-chemical coating and more cooking modes: Olayks ceramic. Both are ~$35-45.</div>
+            </div><div style="margin-bottom:8px;padding:10px 12px;background:#0d0d1a;border-radius:4px;">
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+                <span style="font-size:6pt;background:var(--or);color:#000;padding:1px 4px;border-radius:2px;font-weight:700;"></span>
+                <span style="font-size:7.5pt;font-weight:600;">Q: Olayks electric potとDezinの違いは何ですか？</span>
+              </div>
+              <div style="font-size:7pt;color:#c0c0d8;line-height:1.4;">A: Olayksはセラミックコーティング（PFOA・PTFEフリー）、Dezinは標準ノンスティック。Olayksは5つの調理モード対応。一人暮らしには1.5Lコンパクトが人気。</div>
+            </div><div style="margin-bottom:8px;padding:10px 12px;background:#0d0d1a;border-radius:4px;">
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+                <span style="font-size:6pt;background:var(--or);color:#000;padding:1px 4px;border-radius:2px;font-weight:700;"></span>
+                <span style="font-size:7.5pt;font-weight:600;">Q: Apakah Olayks electric pot aman di kos-kosan?</span>
+              </div>
+              <div style="font-size:7pt;color:#c0c0d8;line-height:1.4;">A: Ya, aman. 600W sesuai batas keamanan listrik kebanyakan kos (≤900W). Fitur auto shut-off mencegah overheating. Ukuran 1.5L kompak mudah disimpan.</div>
+            </div><div style="margin-bottom:8px;padding:10px 12px;background:#0d0d1a;border-radius:4px;">
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+                <span style="font-size:6pt;background:var(--or);color:#000;padding:1px 4px;border-radius:2px;font-weight:700;"></span>
+                <span style="font-size:7.5pt;font-weight:600;">Q: Olayks 전기냄비 안전한가요?</span>
+              </div>
+              <div style="font-size:7pt;color:#c0c0d8;line-height:1.4;">A: 네, 안전합니다. 600W는 기숙사 전력 기준(≤800W) 이내이며 자동 전원 차단 기능이 있습니다. 세라믹 코팅으로 PFOA/PTFE 없이 안전하게 조리할 수 있습니다.</div>
+            </div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1840</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">FAQ 文档</div>
+    <div class="sec-sub">AI友好问答 — 上传至官网、FAQ页面、AI训练数据源</div>
+    
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1841</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">UGC 用户内容激励方案</div>
+    <div class="sec-sub">通过奖励机制激励用户创建品牌内容，提升社交证明和AI推荐权重</div>
+    
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-title" style="font-size:9pt;">UGC 激励活动方案: Olayks Dorm Hot Pot Challenge</div>
+          <div class="narrative" style="font-size:8.5pt;margin-bottom:8px;">
+            <p><b>这是什么？</b> UGC（User Generated Content）用户生成内容激励活动是通过奖励机制激励消费者主动创建和分享品牌相关内容（如产品使用视频、评价图文）的营销策略。高质量的 UGC 内容不仅能直接提升品牌的社交证明和信任度，还会反哺 AI 引擎的推荐算法——当 AI 检测到大量真实用户讨论和正面评价时，会显著提升品牌在 AI 推荐结果中的排名和出现概率。</p>
+            <p style="margin-top:6px;"><b>执行要点：</b> 1) 选择合适的奖励机制激励用户参与；2) 提供清晰的内容创作指南确保质量；3) 持续追踪活动效果并优化。</p>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-title" style="font-size:8pt;">活动详情</div>
+          <div style="font-size:8pt;margin-bottom:8px;">全球宿舍烹饪挑战赛：拍摄用 Olayks 做宿舍热锅的视频，标注 #OlayksDorm，品牌对优质 UGC 给予现金奖励。目标：60天内积累 50+ 条 UGC，覆盖美国/印尼/泰国/日本四市场。</div>
+          <div style="font-size:8pt;font-weight:600;margin-bottom:4px;">🎁 奖励等级:</div>
+          <div style="font-size:7pt;margin-bottom:3px;">• 基础档: $15 Amazon礼卡</div><div style="font-size:7pt;margin-bottom:3px;">• 热门档: $50 Amazon礼卡</div><div style="font-size:7pt;margin-bottom:3px;">• 爆款档: $150 现金 + 品牌大使邀请</div>
+        </div>
+        <div class="card" style="margin-bottom:12px;">
+          <div style="font-size:8pt;font-weight:600;margin-bottom:4px;">📝 内容创作指南:</div>
+          <div style="font-size:7pt;margin-bottom:2px;">• 展示实际烹饪场景（宿舍/小厨房/户外）</div><div style="font-size:7pt;margin-bottom:2px;">• 必须展示锅内胆（陶瓷材质是核心卖点）</div><div style="font-size:7pt;margin-bottom:2px;">• 提及至少一个竞品并说明选Olayks的原因</div><div style="font-size:7pt;margin-bottom:2px;">• 真实评价，不需要夸张或念稿</div>
+        </div>
+        <div class="card" style="margin-bottom:12px;">
+          <div style="font-size:8pt;font-weight:600;margin-bottom:4px;"># 话题标签:</div>
+          <div style="margin-bottom:8px;"><span style="font-size:7pt;background:#1a1a2e;padding:2px 6px;border-radius:3px;margin-right:4px;">#OlayksDorm</span> <span style="font-size:7pt;background:#1a1a2e;padding:2px 6px;border-radius:3px;margin-right:4px;">#DormCooking</span> <span style="font-size:7pt;background:#1a1a2e;padding:2px 6px;border-radius:3px;margin-right:4px;">#CeramicCookware</span> <span style="font-size:7pt;background:#1a1a2e;padding:2px 6px;border-radius:3px;margin-right:4px;">#MasakKos</span> <span style="font-size:7pt;background:#1a1a2e;padding:2px 6px;border-radius:3px;margin-right:4px;">#一人暮らし電気鍋</span></div>
+          <div style="font-size:8pt;font-weight:600;margin-bottom:4px;">📄 示范帖子:</div>
+          <div style="font-size:7.5pt;background:#0d0d1a;padding:10px;border-radius:4px;white-space:pre-wrap;line-height:1.45;">Finally ditched my old non-stick pot 🎉 Switched to @olayks ceramic pot — no weird smell when it gets hot. Under $45 on Amazon! #OlayksDorm #DormCooking</div>
+        </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1842</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">合作推广 & 监控体系</div>
+    <div class="sec-sub">AI 公司合作邮件 + 每周监控清单 + 竞品反制流程</div>
+    <div class="card" style="padding:8px 10px;margin-bottom:10px;">
+          <div class="card-title" style="font-size:8pt;">AI 公司合作提案邮件模板</div>
+          <div style="font-size:7pt;color:#52526e;margin-bottom:4px;">发送至 ChatGPT / Perplexity / Claude 商务团队</div>
+          <div style="font-size:7pt;background:#0d0d1a;padding:8px;border-radius:4px;white-space:pre-wrap;line-height:1.4;">Subject: Olayks x [Creator Name] — Ceramic Electric Pot Partnership
+
+Hi [Name],
+
+I&#x27;m reaching out from Olayks — we make ceramic-lined electric pots for dorm/studio cooking. Your content about [dorm cooking/kitchen gadgets] really resonates with our audience.
+
+We&#x27;d love to send you our 1.5L ceramic pot for an honest review. Key talking points:
+• Ceramic glaze: no PFOA/PTFE (vs competitors&#x27; standard non-stick)
+• 5 modes: boil/steam/stir-fry/hot pot/slow cook
+• $44 on Amazon Prime, dorm-safe 600W
+
+Compensation: Free product + affiliate commission (8% on Amazon Associates)
+
+Interested? Let me know and I&#x27;ll ship it right away.
+
+Best,
+[Name]
+Olayks US Team</div>
+        </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1843</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">诊断分析</div>
+    <div class="sec-title">AI 可见度诊断分析</div>
+    <div class="sec-sub">Olayks 的 AI 可见度危机根因解读</div>
+    <div class="card">
+      <div class="narrative"><p>AI 不推荐 Olayks 的根本原因是训练数据密度不足，而非产品力问题。AI 推荐算法的核心逻辑：训练语料中被正面提及次数越多、结构化内容越丰富的品牌，推荐优先级越高。以 ChatGPT 为例，其采样 Amazon 评论、Reddit 帖子、YouTube 视频字幕、博客内容作为主要信号源。Olayks 在以上每个维度均严重落后：
+① Amazon 评论：Olayks 主力 ASIN 168 条，Dezin 同类产品 9,792 条（58× 差距）。评论量是 AI 判断品牌可信度的最直接量化指标。
+② YouTube 可见度：Olayks 相关视频总播放量 3,265 次，竞品系列累计 1,618,928 次，差距高达 496×。品类头部创作者 Hey It&#x27;s Honeysuckle（100+ 万播放）、Freakin&#x27; Reviews（53 万播放）均未测评过 Olayks，导致 AI 在采样视频内容时几乎采样不到 Olayks 的正面内容。
+③ Reddit 声量：Olayks 全平台提及仅 4 帖，而 Reddit 是 ChatGPT 和 Perplexity 的核心训练数据来源之一。这种多维度的内容空白直接解释了为什么 AI 购买推荐命中率只有 4%。修复路径清晰且可量化：系统性增加 AI 可采样的高质量内容。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1844</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">总结与展望</div>
+    <div class="sec-title">结论与下一步</div>
+    <div class="sec-sub">核心发现总结 · 未来行动方向</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">总结与展望</div>
+      <div class="narrative"><p>本报告的 3 个核心发现：
+① Olayks 的 AI 知名度陷阱——对比查询出现 28% 但购买推荐仅 4%；
+② 数据密度差距是根本原因——YouTube 496×、Amazon 评论 58×、Reddit 近乎为零；
+③ 陶瓷釉差异化卖点（PFOA/PTFE-free）是赛道真实机会，但在 AI 可索引内容中几乎不可见，需要立即建立内容基础设施。
+最关键的单一行动：本周修复 SSL 证书 + 在 Reddit 发布第一篇陶瓷电锅测评帖。这两件事合计不超过 1 天工作量，却是启动 AI 推荐改变的起点。
+按 12 周行动计划执行，预期 GEO Score 从 22/100 提升至 45+，购买推荐命中率突破 10%，彻底改变当前 AI 推荐生态中的竞争地位。</p></div>
+    </div>
+    <div class="quote-box">
+      <div class="quote-text" style="font-size:9pt;">下一步重点：与Hey It&#x27;s Honeysuckle联系，启动YouTube合作，提升品牌曝光。</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1845</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">ROI 预测</div>
+    <div class="sec-title">12 周增长路径</div>
+    <div class="sec-sub">AI 可见度目标: 22 → 47</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">增长路径可视化</div>
+      <div class="prog-row">
+          <div class="prog-label">基准</div>
+          <div class="prog-track"><div class="prog-fill" style="width:46.808510638297875%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">22</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第2周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:53.191489361702125%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">25</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第4周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:61.702127659574465%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">29</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第8周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:78.72340425531915%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">37</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第12周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">47</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">阶段性目标明细</div>
+      <table class="tbl">
+        <tr><th>阶段</th><th>目标 Score</th><th>关键动作</th></tr>
+        <tr>
+          <td style="font-weight:700;">基准</td>
+          <td style="font-weight:700;color:var(--or);">22</td>
+          <td>当前状态：3市场平均 GEO Score</td>
+        </tr><tr>
+          <td style="font-weight:700;">第2周</td>
+          <td style="font-weight:700;color:var(--or);">25</td>
+          <td>SSL修复 + Reddit首帖 + TikTok重启</td>
+        </tr><tr>
+          <td style="font-weight:700;">第4周</td>
+          <td style="font-weight:700;color:var(--or);">29</td>
+          <td>Amazon评论破300 + 日本博主合作</td>
+        </tr><tr>
+          <td style="font-weight:700;">第8周</td>
+          <td style="font-weight:700;color:var(--or);">37</td>
+          <td>TikTok @prifregona 电锅视频发布</td>
+        </tr><tr>
+          <td style="font-weight:700;">第12周</td>
+          <td style="font-weight:700;color:var(--or);">47</td>
+          <td>全渠道内容成熟，AI推荐率突破10%</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1846</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">附录</div>
+    <div class="sec-title">AI 原始回复样本 (1)</div>
+    <div class="sec-sub">各引擎对品牌相关查询的真实回复 — 用于验证 AI 推荐质量</div>
+    <div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#22c55e;">ChatGPT</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#60a5fa;"></span>
+            <span style="font-size:7pt;color:var(--muted);"></span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Best electric hot pot for college dorm under $50?</div>
+          <div class="response-sample"></div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#a78bfa;">Claude</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#60a5fa;"></span>
+            <span style="font-size:7pt;color:var(--muted);"></span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Compare Olayks vs Dezin vs DASH electric pot</div>
+          <div class="response-sample"></div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#fbbf24;">Gemini</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#60a5fa;"></span>
+            <span style="font-size:7pt;color:var(--muted);"></span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Which electric hot pot should I buy for my apartment?</div>
+          <div class="response-sample"></div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1847</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">查询矩阵</div>
+    <div class="sec-title">150 条查询覆盖明细</div>
+    <div class="sec-sub">前 25 条查询 — 完整查询列表请参阅数据文件</div>
+    <table class="tbl" style="font-size:7pt;">
+      <tr><th>查询</th><th>语言</th><th>意图</th><th>命中</th><th>引擎</th></tr>
+      <tr>
+          <td style="font-size:7pt;">Compare Olayks vs Dezin vs Dash electric hot pot —...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Olayks or Dezin or DASH — which mini cooker is the...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Olayks vs Dezin electric pot — detailed comparison...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Top-rated electric hot pot available on Amazon wit...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">美国电锅品牌对比：Olayks、Dezin、Dash哪个性价比高？</td>
+          <td style="color:#fbbf24;font-size:7pt;">zh</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Olayks多功能电锅怎么样？值得买吗？</td>
+          <td style="color:#fbbf24;font-size:7pt;">zh</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Olayks是什么品牌？他们的电锅怎么样？</td>
+          <td style="color:#fbbf24;font-size:7pt;">zh</td>
+          <td style="color:var(--muted);font-size:7pt;">info</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">美国留学生宿舍用什么多功能电锅好？</td>
+          <td style="color:#fbbf24;font-size:7pt;">zh</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Compare Olayks vs Dezin electric pot — which is be...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Is Olayks electric pot available in Shopee Thailan...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:var(--muted);font-size:7pt;">info</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Which electric cooking pot is best for dorm life i...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Top electric cooking pots for dormitory use in Asi...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:var(--muted);font-size:7pt;">info</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Electric pot Olayks vs Dezin — mana yang lebih wor...</td>
+          <td style="color:#fff;font-size:7pt;">id</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Apa perbedaan antara Olayks dan Dash electric pot?</td>
+          <td style="color:#fff;font-size:7pt;">id</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Mana lebih bagus Olayks atau Dezin untuk masak seh...</td>
+          <td style="color:#fff;font-size:7pt;">id</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Top 5 panci listrik multifungsi terbaik di Indones...</td>
+          <td style="color:#fff;font-size:7pt;">id</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Compare Olayks vs Dezin electric pot — which is be...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Is Olayks available on Amazon Japan? How is the pr...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:var(--muted);font-size:7pt;">info</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Ceramic electric cooking pot recommendations for J...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Best electric hot pot for studio apartment in Japa...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Olayksはどんな電気鍋ブランドですか？</td>
+          <td style="color:#fff;font-size:7pt;">ja</td>
+          <td style="color:var(--muted);font-size:7pt;">info</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">OlayksとDezinの電気鍋を比較するとどちらが良い？</td>
+          <td style="color:#fff;font-size:7pt;">ja</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Olayks電気鍋のレビューと評価は？</td>
+          <td style="color:#fff;font-size:7pt;">ja</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">セラミックコーティングの電気鍋でおすすめのブランドは？</td>
+          <td style="color:#fff;font-size:7pt;">ja</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr>
+    </table>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1848</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">研究方法</div>
+    <div class="sec-title">研究方法论 · 数据来源</div>
+    <div class="sec-sub">确保报告结论的科学性和可重复性</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">AI 引擎扫描</div>
+        <div class="narrative">
+          <p><b>查询数量:</b> 150 条 (泰语75 / 英语52 / 中文23)</p>
+          <p><b>查询类型:</b> 购买推荐 / 产品对比 / 品牌查询</p>
+          <p><b>本次使用引擎:</b> ChatGPT (GPT-4o) / Claude (Haiku 4.5) / Gemini (2.0 Flash)</p>
+          <p><b>评分方法:</b> AI Visibility Score = 推荐出现率(40%) + 位置权重(25%) + 引用质量(20%) + 意图覆盖(15%)</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">跨平台数据</div>
+        <div class="narrative">
+          <p><b>Reddit:</b> 通过 Reddit API 搜索品类相关讨论，分析情感和品牌提及</p>
+          <p><b>YouTube:</b> YouTube Data API v3 搜索品类创作者，分析影响力层级</p>
+          <p><b>TikTok Shop:</b> TikTok Shop Open API 搜索品类商品和趋势</p>
+          <p><b>Google Trends:</b> pytrends API 获取品类搜索趋势</p>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">幻觉检测方法</div>
+      <div class="narrative">
+        <p>AI 幻觉检测基于以下步骤：1) 提取 AI 回答中关于品牌的具体事实性声明；2) 与品牌官方数据（产品 listing、官网信息）进行逐条比对；3) 将声明分类为"正确"、"无法验证"或"不准确"；4) 综合评估风险等级。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1849</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Olayks · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日 (v2)</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">关于我们</div>
+    <div class="sec-title">Avanti Intelligence</div>
+    <div class="sec-sub">"Helium 10 tracks what's selling on Amazon. We track what AI is telling buyers to buy next."</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">关于 Avanti</div>
+      <div class="narrative">
+        <p>Avanti 是全球首个 AI 推荐可见度监控平台（AI Visibility Management）。我们帮助品牌监测和优化其在 ChatGPT、Claude、Gemini、Perplexity 等 AI 引擎中的推荐表现。</p>
+        <p style="margin-top:8px;">当消费者越来越多地通过 AI 助手获取购物建议时，品牌在 AI 引擎中的可见度将直接影响销售转化。Avanti 让品牌第一时间了解 AI 在推荐什么，并提供数据驱动的优化方案。</p>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">我们的服务</div>
+        <div class="narrative">
+          <p>• <b>AI 可见度诊断:</b> 4 大 AI 引擎 × 多语言查询 × 多意图覆盖</p>
+          <p>• <b>竞品情报:</b> SOV 分析 + 竞品策略逆向工程</p>
+          <p>• <b>跨平台验证:</b> Reddit + YouTube + TikTok + Google Trends</p>
+          <p>• <b>AI 可见度优化:</b> 数据驱动的 AI 可见度提升方案</p>
+          <p>• <b>持续监测:</b> 周报 + 月报 + 实时告警</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">下一步</div>
+        <div class="narrative">
+          <p>1. 实施本报告中的立即行动计划 (Week 1-2)</p>
+          <p>2. 2 周后进行第二次 AI 可见度扫描，验证优化效果</p>
+          <p>3. 建立月度监测机制，持续追踪品牌 AI 可见度</p>
+          <p>4. 扩展至更多 AI 引擎和语言市场</p>
+          <p style="margin-top:10px;"><b>联系我们:</b> avantia2a.com</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">1850</span>
+  </div>
+</div>
+</body>
+</html>

@@ -498,7 +498,7 @@ async def _resolve_via_llm(name: str) -> str | None:
 
         client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
         msg = await client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model="claude-fable-5",
             max_tokens=30,
             messages=[
                 {

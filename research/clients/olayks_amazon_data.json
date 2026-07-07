@@ -1,0 +1,96 @@
+[
+  {
+    "brand": "olayks",
+    "asin": "B09JM3KX47",
+    "label": "1.5L electric hot pot",
+    "error": "The read operation timed out"
+  },
+  {
+    "brand": "olayks",
+    "asin": "B0C4KX1W7W",
+    "label": "mini rice cooker 2cup",
+    "title": "Olayks Mini Rice Cooker 2 Cup Uncooked, Small Electric Cooke",
+    "rating": 4.2,
+    "reviews": 246,
+    "price": 56.99,
+    "bsr_rank": 169257,
+    "bsr_cat": "Kitchen & Dining"
+  },
+  {
+    "brand": "olayks",
+    "asin": "B0BJPMBWKB",
+    "label": "3L electric hot pot",
+    "title": "Hot Pot Electric, 3L Portable Electric Pot with Ceramic Non-",
+    "rating": 4.2,
+    "reviews": 239,
+    "price": 49.99,
+    "bsr_rank": 105020,
+    "bsr_cat": "Kitchen & Dining"
+  },
+  {
+    "brand": "olayks",
+    "asin": "B0FR3WB5XP",
+    "label": "induction cooktop set",
+    "title": "olayks Induction Cooktop, Portable Induction Cooktop with Co",
+    "rating": 4.1,
+    "reviews": 17,
+    "price": 99.99,
+    "bsr_rank": 89872,
+    "bsr_cat": "Kitchen & Dining"
+  },
+  {
+    "brand": "olayks",
+    "asin": "B0C65PP55D",
+    "label": "food chopper 1.2L",
+    "title": "Olayks Meat Grinder Electric, 1.2L Stainless Steel Food Proc",
+    "rating": 4.3,
+    "reviews": 120,
+    "price": 0,
+    "bsr_rank": 556180,
+    "bsr_cat": "Kitchen & Dining"
+  },
+  {
+    "brand": "olayks",
+    "asin": "B0DJPPX838",
+    "label": "espresso machine",
+    "title": "Espresso Machine 20 Bar, Professtional Espresso Coffee Maker",
+    "rating": 4.2,
+    "reviews": 43,
+    "price": 99.99,
+    "bsr_rank": 1353041,
+    "bsr_cat": "Home & Kitchen"
+  },
+  {
+    "brand": "dezin",
+    "asin": "B07PHXLLQG",
+    "label": "dezin electric hot pot",
+    "title": "N/A",
+    "rating": 0,
+    "reviews": 0,
+    "price": 0,
+    "bsr_rank": null,
+    "bsr_cat": ""
+  },
+  {
+    "brand": "topwit",
+    "asin": "B08Q3D9FCF",
+    "label": "topwit electric pot",
+    "title": "N/A",
+    "rating": 0,
+    "reviews": 0,
+    "price": 0,
+    "bsr_rank": null,
+    "bsr_cat": ""
+  },
+  {
+    "brand": "dash",
+    "asin": "B07N9K17QC",
+    "label": "dash mini toaster oven",
+    "title": "Dash Mini Toaster Oven - Sleek & Stylish - For Creative Home",
+    "rating": 4.2,
+    "reviews": 6117,
+    "price": 22.57,
+    "bsr_rank": 9436,
+    "bsr_cat": "Kitchen & Dining"
+  }
+]

@@ -10,7 +10,7 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 # Use a more capable model for content generation
-_CONTENT_MODEL = "claude-sonnet-4-5"
+_CONTENT_MODEL = "claude-fable-5"
 
 # Platform-specific system prompts
 _PLATFORM_SYSTEM: dict[str, str] = {
@@ -235,7 +235,11 @@ async def generate_content(
     msg = await client.messages.create(
         model=_CONTENT_MODEL,
         max_tokens=2000,
-        system=_PLATFORM_SYSTEM[platform],
+        system=[{
+            "type": "text",
+            "text": _PLATFORM_SYSTEM[platform],
+            "cache_control": {"type": "ephemeral"},
+        }],
         messages=[{"role": "user", "content": user_prompt}],
     )
 

@@ -391,6 +391,101 @@ async def list_api_keys(
     ]
 
 
+ADMIN_EMAIL = "hello@avantia2a.com"
+
+
+def _require_admin(user: User) -> None:
+    if user.email != ADMIN_EMAIL:
+        raise HTTPException(status_code=403, detail="Admin only")
+
+
+@router.get("/admin/users")
+async def admin_list_users(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    _require_admin(user)
+    result = await db.execute(
+        select(User).order_by(User.created_at.desc())
+    )
+    users = result.scalars().all()
+    return [
+        {
+            "id": str(u.id),
+            "email": u.email,
+            "full_name": u.full_name,
+            "company_name": u.company_name,
+            "subscription_tier": u.subscription_tier.value if u.subscription_tier else "free",
+            "subscription_status": u.subscription_status.value if u.subscription_status else "none",
+            "credit_balance": u.credit_balance,
+            "is_active": True,
+            "created_at": u.created_at.isoformat() if u.created_at else None,
+        }
+        for u in users
+    ]
+
+
+@router.get("/admin/activity")
+async def admin_activity(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    _require_admin(user)
+    from app.models import Run
+    result = await db.execute(
+        select(Run, User).join(User, Run.user_id == User.id, isouter=True)
+        .order_by(Run.created_at.desc())
+        .limit(200)
+    )
+    rows = result.all()
+    return [
+        {
+            "id": str(r.id),
+            "brand_name": r.brand_name,
+            "category": r.category,
+            "status": r.status.value if r.status else "unknown",
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+            "user_email": u.email if u else "anonymous",
+        }
+        for r, u in rows
+    ]
+
+
+@router.get("/admin/stats")
+async def admin_stats(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    _require_admin(user)
+    from app.models import Run
+    from sqlalchemy import func
+    from datetime import datetime, timedelta, timezone
+    now = datetime.now(timezone.utc)
+    three_months_ago = now - timedelta(days=90)
+
+    total_users = (await db.execute(select(func.count(User.id)))).scalar() or 0
+    new_users_90d = (await db.execute(
+        select(func.count(User.id)).where(User.created_at >= three_months_ago)
+    )).scalar() or 0
+    paid_users = (await db.execute(
+        select(func.count(User.id)).where(
+            User.subscription_status == SubscriptionStatus.active
+        )
+    )).scalar() or 0
+    total_runs = (await db.execute(select(func.count(Run.id)))).scalar() or 0
+    runs_90d = (await db.execute(
+        select(func.count(Run.id)).where(Run.created_at >= three_months_ago)
+    )).scalar() or 0
+
+    return {
+        "total_users": total_users,
+        "new_users_90d": new_users_90d,
+        "paid_users": paid_users,
+        "total_runs": total_runs,
+        "runs_90d": runs_90d,
+    }
+
+
 @router.delete("/api-keys/{key_id}", status_code=204)
 async def revoke_api_key(
     key_id: uuid.UUID,

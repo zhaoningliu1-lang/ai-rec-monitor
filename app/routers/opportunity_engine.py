@@ -462,9 +462,9 @@ Rules:
     try:
         client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
         message = await client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-fable-5",
             max_tokens=2000,
-            system=system_prompt,
+            system=[{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": user_prompt}],
         )
         text = message.content[0].text.strip()
@@ -634,9 +634,9 @@ Return ONLY a valid JSON object:
     try:
         client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
         message = await client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-fable-5",
             max_tokens=3000,
-            system=system_prompt,
+            system=[{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": user_prompt}],
         )
         text = message.content[0].text.strip()

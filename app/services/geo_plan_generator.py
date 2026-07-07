@@ -296,13 +296,21 @@ async def generate_geo_plan(
         f"Generate the AI Visibility Plan JSON."
     )
 
-    # ── 5. Call Claude Sonnet ────────────────────────────────────────────────
+    # ── 5. Call Claude Fable 5 ──────────────────────────────────────────────
+    _MODEL = "claude-fable-5"
     import anthropic
 
     client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
     message = await client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model=_MODEL,
         max_tokens=4000,
+        # Cache the large static system prompt — saves ~90% input token cost
+        # across the many geo plan calls generated per week.
+        system=[{
+            "type": "text",
+            "text": _GEO_PLAN_SYSTEM,
+            "cache_control": {"type": "ephemeral"},
+        }],
         messages=[{"role": "user", "content": prompt}],
     )
     text = message.content[0].text.strip()
@@ -324,7 +332,7 @@ async def generate_geo_plan(
         weaknesses=plan_data["weaknesses"],
         actions=plan_data["actions"],
         generated_at=datetime.now(timezone.utc),
-        model_used="claude-sonnet-4-20250514",
+        model_used=_MODEL,
     )
 
     async with session_factory() as db:

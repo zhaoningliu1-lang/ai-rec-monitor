@@ -179,7 +179,7 @@ class Recommendation(Base):
     generated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
-    model_used: Mapped[str] = mapped_column(String(100), nullable=False, default="claude-haiku-4-5-20251001")
+    model_used: Mapped[str] = mapped_column(String(100), nullable=False, default="claude-fable-5")
 
     run: Mapped["Run"] = relationship("Run", back_populates="recommendation")
 

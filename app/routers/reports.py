@@ -979,7 +979,7 @@ async def get_content_briefs(
         )
 
         message = await client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model="claude-fable-5",
             max_tokens=2500,
             messages=[{"role": "user", "content": prompt}],
         )
@@ -1071,7 +1071,7 @@ async def get_why_analysis(
         )
 
         message = await client.messages.create(
-            model="claude-sonnet-4-6",
+            model="claude-fable-5",
             max_tokens=1500,
             messages=[{"role": "user", "content": prompt}],
         )

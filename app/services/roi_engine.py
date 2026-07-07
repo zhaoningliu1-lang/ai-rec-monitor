@@ -352,7 +352,7 @@ Write for a cross-border e-commerce brand manager. Be specific with numbers. Ret
     try:
         client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
         msg = await client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-fable-5",
             max_tokens=300,
             messages=[{"role": "user", "content": summary_prompt}],
         )

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ShoppingCart, Music, Globe, Store, Check } from "lucide-react";
 
-const CALENDLY = "https://calendly.com/brivesubscription/30min";
+const CALENDLY = "https://cal.com/johnson-liu-avanti/30min";
 
 const reveal = {
   initial: { opacity: 0, y: 30 },
@@ -40,7 +40,7 @@ const TIERS = [
     name: "Starter",
     price: 99,
     annual: 79,
-    description: "For solo sellers testing their AI presence. Amazon FBA, TikTok Shop, or DTC brands.",
+    description: "For startups and solo founders tracking their AI presence. B2B SaaS, DTC brands, or consumer products.",
     cta: "Start free",
     href: "/signup",
     highlight: false,
@@ -164,9 +164,8 @@ export default function PricingPage() {
         </div>
         <h1 className="text-4xl font-bold">Simple, transparent pricing</h1>
         <p className="text-sm leading-relaxed" style={{ color: "#7070a0" }}>
-          Built for Amazon FBA sellers, TikTok Shop brands, DTC / independent site sellers,
-          cross-border agencies, and Shopee / Lazada operators serious about AI visibility.
-          All plans include a 14-day free trial. No credit card required.
+          Built for B2B SaaS companies, consumer brands, DTC sellers, and agencies
+          serious about being visible in AI search. All plans include a 14-day free trial. No credit card required.
         </p>
       </motion.div>
 
@@ -266,10 +265,10 @@ export default function PricingPage() {
         <div className="text-xs font-bold uppercase tracking-widest" style={{ color: "#ff6b35" }}>Who uses Avanti</div>
         <div className="grid md:grid-cols-4 gap-4 text-xs">
           {[
-            { Icon: ShoppingCart, type: "Amazon FBA Sellers", desc: "Track AI recommendations for your category before restocking. Know if AI is driving buyers to competitors." },
-            { Icon: Music, type: "TikTok Shop Brands", desc: "Monitor which products AI engines are recommending after TikTok virality. Ride the signal before it peaks." },
-            { Icon: Globe, type: "DTC / Independent Sites", desc: "Build brand authority in AI search. Earn citations in the AI answer layer that drives top-of-funnel." },
-            { Icon: Store, type: "Shopee / Lazada Sellers", desc: "Track AI visibility in SE Asia markets. Understand which brands AI recommends for cross-border expansion." },
+            { Icon: Globe, type: "B2B SaaS Companies", desc: "When buyers search AI for solutions in your category, are you in the answer? Track your AI recommendation share vs competitors." },
+            { Icon: ShoppingCart, type: "Consumer & DTC Brands", desc: "Build brand authority in AI search. Earn citations in the AI answer layer that drives top-of-funnel discovery." },
+            { Icon: Store, type: "Professional Services", desc: "Clients increasingly ask AI to recommend firms and consultants. Know if you appear — and fix it when you don't." },
+            { Icon: Music, type: "Agencies", desc: "Manage AI visibility across all your client brands with white-label reporting and a single dashboard." },
           ].map((item) => (
             <div key={item.type} className="space-y-1.5">
               <item.Icon size={20} style={{ color: "#ff6b35" }} />

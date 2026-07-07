@@ -36,9 +36,30 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Avanti",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "description": "AI brand visibility platform. Measure how often ChatGPT, Claude, and Gemini recommend your brand vs competitors — then close the gap with data-driven GEO action plans.",
+  "url": "https://avantia2a.com",
+  "offers": [
+    { "@type": "Offer", "name": "Starter", "price": "49", "priceCurrency": "USD" },
+    { "@type": "Offer", "name": "Growth", "price": "149", "priceCurrency": "USD" },
+    { "@type": "Offer", "name": "Agency", "price": "799", "priceCurrency": "USD" },
+  ],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className={`${geist.variable} antialiased min-h-screen`} style={{ background: "#09090f", color: "#f0f0f8" }}>
         <NavBar />
         <LayoutShell footer={
@@ -49,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="md:col-span-1">
                 <span className="font-black text-lg tracking-tight" style={{ color: "#ff6b35" }}>AVANTI</span>
                 <p className="text-xs mt-3 leading-relaxed" style={{ color: "#52526e" }}>
-                  AI brand visibility platform for cross-border ecommerce. Track how ChatGPT, Claude, and Gemini recommend your products — and optimize for the AI age.
+                  Know where your brand stands in AI search. Track how ChatGPT, Claude, Gemini, and Perplexity recommend you — and close the gap.
                 </p>
               </div>
 

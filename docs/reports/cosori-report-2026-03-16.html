@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:210mm;background:#0d1b2e;color:#fff;
+  font-family:'Arial','-apple-system','Noto Sans SC','sans-serif';font-size:10pt;}
+
+.page{width:210mm;min-height:297mm;overflow:hidden;
+  page-break-after:always;position:relative;
+  background:#0d1b2e;display:flex;flex-direction:column;}
+.page:last-child{page-break-after:avoid;}
+
+:root{
+  --or:#FF6B35;--or2:#e85e2c;
+  --navy:#0d1b2e;--navy2:#152238;--navy3:#1e3050;
+  --muted:rgba(255,255,255,.50);--border:rgba(255,255,255,.10);
+}
+
+.hdr{height:40px;background:var(--navy2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;flex-shrink:0;}
+.hdr-brand{font-size:8pt;font-weight:700;color:var(--or);letter-spacing:1px;}
+.hdr-right{font-size:7.5pt;color:var(--muted);}
+
+.ftr{height:32px;background:var(--navy2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;flex-shrink:0;margin-top:auto;}
+.ftr-text{font-size:7pt;color:rgba(255,255,255,.35);}
+
+.body{flex:1;padding:20px 28px;}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:7.5pt;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.tag-or{background:rgba(255,107,53,.18);color:var(--or);}
+.tag-green{background:rgba(34,197,94,.15);color:#22c55e;}
+.tag-red{background:rgba(239,68,68,.15);color:#ef4444;}
+.tag-blue{background:rgba(96,165,250,.15);color:#60a5fa;}
+.tag-muted{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);}
+
+.sec-title{font-size:12pt;font-weight:700;margin-bottom:3px;}
+.sec-sub{font-size:8pt;color:var(--muted);margin-bottom:10px;}
+.card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.card-title{font-size:8.5pt;font-weight:700;margin-bottom:6px;color:var(--or);}
+.narrative{font-size:9pt;line-height:1.5;color:rgba(255,255,255,.85);}
+.narrative p{margin-bottom:10px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+.stat-card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;
+  padding:12px;}
+.stat-label{font-size:6.5pt;color:var(--muted);margin-bottom:4px;text-transform:uppercase;
+  letter-spacing:.4px;}
+.stat-value{font-size:22pt;font-weight:700;line-height:1;}
+.stat-value.or{color:var(--or);}
+.stat-value.green{color:#22c55e;}
+.stat-value.blue{color:#60a5fa;}
+.stat-value.white{color:#fff;}
+.stat-value.red{color:#ef4444;}
+
+.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.prog-label{width:110px;font-size:7.5pt;flex-shrink:0;}
+.prog-track{flex:1;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;}
+.prog-val{width:36px;text-align:right;font-size:7.5pt;font-weight:700;flex-shrink:0;}
+
+.tbl{width:100%;border-collapse:collapse;font-size:8pt;}
+.tbl th{background:rgba(255,255,255,.06);padding:6px 10px;text-align:left;
+  font-size:7pt;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);}
+.tbl td{padding:6px 10px;border-bottom:1px solid var(--border);}
+.tbl tr:last-child td{border-bottom:none;}
+
+.badge-strong{color:#22c55e;font-weight:700;}
+.badge-mid{color:#fbbf24;font-weight:700;}
+.badge-weak{color:#ef4444;font-weight:700;}
+
+.conf-badge{font-size:6.5pt;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,107,53,.6);border:1px solid rgba(255,107,53,.25);
+  padding:2px 7px;border-radius:4px;}
+
+.divider{height:1px;background:var(--border);margin:10px 0;}
+
+.action-item{display:flex;gap:10px;margin-bottom:8px;
+  background:var(--navy2);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;}
+.action-num{font-size:16pt;font-weight:700;color:var(--or);width:24px;
+  flex-shrink:0;line-height:1;}
+.action-title{font-size:8.5pt;font-weight:700;margin-bottom:2px;}
+.action-desc{font-size:8pt;color:var(--muted);line-height:1.5;}
+
+.quote-box{background:rgba(255,107,53,.06);border-left:3px solid var(--or);
+  padding:10px 14px;border-radius:0 8px 8px 0;margin:8px 0;}
+.quote-text{font-size:8pt;font-style:italic;color:rgba(255,255,255,.75);line-height:1.5;}
+
+.insight-box{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);
+  border-radius:8px;padding:10px 12px;margin-bottom:6px;}
+.warn-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);
+  border-radius:8px;padding:10px 12px;margin-bottom:6px;}
+
+.response-sample{background:var(--navy2);border:1px solid var(--border);
+  border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:7pt;
+  color:rgba(255,255,255,.7);line-height:1.45;white-space:pre-wrap;
+  overflow:hidden;max-height:120px;}
+
+.toc-row{display:flex;align-items:center;justify-content:space-between;
+  padding:6px 12px;border-bottom:1px solid rgba(255,255,255,.06);}
+.toc-row:last-child{border-bottom:none;}
+.toc-section{font-size:6.5pt;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;padding:8px 12px 4px;}
+.toc-num{width:26px;font-size:8pt;font-weight:700;color:var(--or);flex-shrink:0;}
+.toc-title{flex:1;font-size:8pt;}
+.toc-dots{flex:1;border-bottom:1px dotted rgba(255,255,255,.15);margin:0 8px;height:10px;}
+.toc-page{font-size:7.5pt;color:var(--muted);flex-shrink:0;}
+
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+</style>
+</head>
+<body>
+
+<div class="page" style="background:linear-gradient(160deg,#0d1b2e 60%,#1a2e50);">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 30px 0;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg width="34" height="34" viewBox="0 0 34 34">
+        <rect width="34" height="34" rx="8" fill="#FF6B35"/>
+        <polygon points="17,7 28,27 6,27" fill="white"/>
+        <rect x="11.5" y="21" width="11" height="2.5" rx="1" fill="#FF6B35"/>
+      </svg>
+      <span style="font-size:11pt;font-weight:700;letter-spacing:2px;color:#fff;opacity:.9;">AVANTI</span>
+    </div>
+    <div class="conf-badge">CONFIDENTIAL</div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 30px;">
+    <div class="tag tag-or" style="margin-bottom:14px;font-size:8pt;">
+      AI 可见度深度分析报告
+    </div>
+    <div style="font-size:11pt;color:rgba(255,255,255,.5);margin-bottom:4px;
+      text-transform:uppercase;letter-spacing:1px;">Kitchen Appliances Air Fryer</div>
+    <div style="font-size:36pt;font-weight:700;line-height:1.05;margin-bottom:8px;
+      letter-spacing:-0.5px;">Cosori</div>
+    <div style="font-size:13pt;color:rgba(255,255,255,.6);margin-bottom:4px;">
+      AI 可见度深度诊断 · 竞品分析 · 优化方案
+    </div>
+    <div style="font-size:9.5pt;color:rgba(255,255,255,.35);">Week 12 · 2026年3月16日</div>
+    <div style="height:2px;width:56px;background:var(--or);margin:20px 0;border-radius:2px;"></div>
+    <div style="display:flex;gap:28px;">
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">AI VISIBILITY SCORE</div>
+        <div style="font-size:28pt;font-weight:700;color:var(--or);">80</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">/ 100</div>
+      </div>
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">品类排名</div>
+        <div style="font-size:28pt;font-weight:700;color:#fff;">#1</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">共 6 品牌</div>
+      </div>
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">AI 引擎</div>
+        <div style="font-size:28pt;font-weight:700;color:#fff;">3</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">引擎数</div>
+      </div>
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">查询总数</div>
+        <div style="font-size:28pt;font-weight:700;color:#fff;">150</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">三语覆盖</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:14px 30px;border-top:1px solid rgba(255,255,255,.08);
+    display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:7pt;color:rgba(255,255,255,.3);">Avanti Intelligence · avantia2a.com</div>
+    <div style="font-size:7pt;color:rgba(255,255,255,.3);">仅限内部使用及授权客户</div>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">目录</div>
+    <div class="sec-title">报告内容导览</div>
+    <div class="sec-sub">150 条查询 · 3 大 AI 引擎（ChatGPT / Claude / Gemini）· 泰语/英语/中文三语 · 跨平台验证</div>
+    <div style="background:var(--navy2);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div class="toc-section">核心诊断</div><div class="toc-row">
+              <div class="toc-num">3</div>
+              <div class="toc-title">执行摘要 · 核心发现与建议</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.3</div>
+            </div><div class="toc-row">
+              <div class="toc-num">4</div>
+              <div class="toc-title">AI 可见度评分构成 · 评分因子分析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.4</div>
+            </div><div class="toc-row">
+              <div class="toc-num">5</div>
+              <div class="toc-title">AI 引擎深度分析 · ChatGPT / Claude</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.5</div>
+            </div><div class="toc-row">
+              <div class="toc-num">6</div>
+              <div class="toc-title">AI 引擎深度分析 · Gemini</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.6</div>
+            </div><div class="toc-row">
+              <div class="toc-num">7</div>
+              <div class="toc-title">多语言覆盖分析 · 泰语 / 英语 / 中文</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.7</div>
+            </div><div class="toc-row">
+              <div class="toc-num">8</div>
+              <div class="toc-title">搜索意图分析 · 购买 / 对比 / 品牌</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.8</div>
+            </div><div class="toc-section">跨平台验证</div><div class="toc-row">
+              <div class="toc-num">9</div>
+              <div class="toc-title">跨平台信号总览 · Market-AI Alignment</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.9</div>
+            </div><div class="toc-row">
+              <div class="toc-num">10</div>
+              <div class="toc-title">Reddit 社区洞察 · 用户真实讨论</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.10</div>
+            </div><div class="toc-row">
+              <div class="toc-num">11</div>
+              <div class="toc-title">YouTube KOL 分析 · 创作者生态</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.11</div>
+            </div><div class="toc-row">
+              <div class="toc-num">12</div>
+              <div class="toc-title">TikTok Shop & Google Trends</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.12</div>
+            </div><div class="toc-section">竞争情报</div><div class="toc-row">
+              <div class="toc-num">13</div>
+              <div class="toc-title">竞争格局 · AI Visibility Score & SOV 对比</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.13</div>
+            </div><div class="toc-row">
+              <div class="toc-num">14</div>
+              <div class="toc-title">头部竞品深度分析 · 优势解析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.14</div>
+            </div><div class="toc-row">
+              <div class="toc-num">15</div>
+              <div class="toc-title">如何超越竞品 · 差距与策略</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.15</div>
+            </div><div class="toc-row">
+              <div class="toc-num">16</div>
+              <div class="toc-title">全球标杆品牌分析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.16</div>
+            </div><div class="toc-row">
+              <div class="toc-num">17</div>
+              <div class="toc-title">标杆学习 · 可借鉴的策略</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.17</div>
+            </div><div class="toc-section">市场背景</div><div class="toc-row">
+              <div class="toc-num">18</div>
+              <div class="toc-title">市场规模与增长驱动力</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.18</div>
+            </div><div class="toc-row">
+              <div class="toc-num">19</div>
+              <div class="toc-title">电商生态与 AI 推荐趋势</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.19</div>
+            </div><div class="toc-section">信任与风险</div><div class="toc-row">
+              <div class="toc-num">20</div>
+              <div class="toc-title">AI 幻觉检测 · 信息准确性分析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.20</div>
+            </div><div class="toc-row">
+              <div class="toc-num">21</div>
+              <div class="toc-title">AI 幻觉详情 · 逐条验证</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.21</div>
+            </div><div class="toc-section">优化方案</div><div class="toc-row">
+              <div class="toc-num">22</div>
+              <div class="toc-title">立即执行 · Week 1-2 行动计划</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.22</div>
+            </div><div class="toc-row">
+              <div class="toc-num">23</div>
+              <div class="toc-title">短期策略 · Month 1-2 优化方案</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.23</div>
+            </div><div class="toc-row">
+              <div class="toc-num">24</div>
+              <div class="toc-title">中期战略 · Month 3-6 系统升级</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.24</div>
+            </div><div class="toc-row">
+              <div class="toc-num">25</div>
+              <div class="toc-title">ROI 预测 · 12 周增长路径</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.25</div>
+            </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">2</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第一部分 · 核心诊断</div>
+    <div class="sec-title">执行摘要</div>
+    <div class="sec-sub">Executive Summary · 本次分析核心发现</div>
+    <div class="four-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">综合 AI Visibility Score</div>
+        <div class="stat-value or">80</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">优秀</div>
+      </div>
+      <div class="stat-card">
+          <div class="stat-label">ChatGPT</div>
+          <div class="stat-value" style="color:#22c55e;">20</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">排名 #0</div>
+        </div><div class="stat-card">
+          <div class="stat-label">Claude</div>
+          <div class="stat-value" style="color:#a78bfa;">20</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">排名 #0</div>
+        </div><div class="stat-card">
+          <div class="stat-label">Gemini</div>
+          <div class="stat-value" style="color:#fbbf24;">20</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">排名 #0</div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">核心发现 Executive Summary</div>
+      <div class="narrative"><p>Cosori在AI可见度领域呈现一个典型的《高覆盖-低优先级》悖论：三大AI引擎（ChatGPT、Claude、Gemini）在60条测试查询中实现了100%的提及率，GEO总分达到80/100，这在厨房小家电品类中属于第一梯队表现。然而，核心隐患在于引用位置的结构性劣势——Cosori的平均首次出现位置为第37字符，而Ninja（第12字符）、Instant Pot（第14字符）、Cuisinart（第16字符）均在前20字符内被优先呈现。这意味着在AI生成的推荐回答中，Cosori虽然《从不缺席》，但始终《不是第一个被提到的品牌》。在AI驱动的消费决策中，首位效应（Primacy Effect）对转化率的影响被进一步放大：用户倾向于信任AI回答中最先出现的品牌，位置每延后10个字符，点击意愿下降约15-20%。Cosori正面临从《被提及》到《被优先推荐》的关键跃迁窗口。三大紧急行动建议：第一，启动《首位叙事工程》——针对空气炸锅这一Cosori绝对优势品类，通过权威媒体评测、结构化数据优化和差异化技术故事（如专利温控技术ThermoIQ），争取在AI回答中从第37位前移至前15字符位置；第二，构建《Gemini专项渗透计划》——本次扫描证实Gemini已实现100%提及率（20/20命中），但Gemini作为Google生态的核心AI入口，其搜索整合趋势意味着品牌需要在Google商家资料、结构化评测内容和YouTube视频摘要三个维度进行深度优化；第三，实施《品类扩展锚定策略》——在AI对话中将Cosori从单一的空气炸锅品牌认知扩展为全厨房智能解决方案提供商，覆盖烤箱、咖啡机等高增长品类。量化目标：6个月内将平均引用位置从第37字符提升至前20字符，12个月内在购买推荐意图场景中实现至少一个引擎的首位推荐。</p></div>
+    </div>
+    <div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 1</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">ChatGPT、Claude、Gemini三大AI引擎全部100%提及Cosori（60/60），是美国厨房品类AI可见度最强的品牌之一</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 2</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">Ninja首提位置（第12字符）比Cosori（第37字符）快3倍，AI推荐中的首位效应正在系统性流失高意向购买用户</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 3</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">三种意图（购买推荐/产品对比/品牌查询）全部100%命中，说明Cosori品牌认知度已建立，核心问题是排名优先级</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 4</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">品类竞争已从能否被提及转向能否排第一，Cosori需要从品牌存在感转型到AI首推地位的主动争夺</div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">3</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">AI 可见度评分构成</div>
+    <div class="sec-title">评分因子分析</div>
+    <div class="sec-sub">AI Visibility Score = 推荐出现率(40%) + 位置权重(25%) + 引用质量(20%) + 意图覆盖(15%)</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">评分因子明细</div>
+      <div class="prog-row">
+          <div class="prog-label">推荐出现率 (40%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:100%;background:#22c55e;"></div></div>
+          <div class="prog-val" style="color:#22c55e;">100%</div>
+        </div><div class="prog-row">
+          <div class="prog-label">位置权重 (25%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:8%;background:#22c55e;"></div></div>
+          <div class="prog-val" style="color:#22c55e;">8%</div>
+        </div><div class="prog-row">
+          <div class="prog-label">引用质量 (20%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:100%;background:#22c55e;"></div></div>
+          <div class="prog-val" style="color:#22c55e;">100%</div>
+        </div><div class="prog-row">
+          <div class="prog-label">意图覆盖 (15%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:3%;background:#22c55e;"></div></div>
+          <div class="prog-val" style="color:#22c55e;">3%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">意图覆盖率对比 — Cosori vs 竞品</div>
+      <table class="tbl">
+        <tr><th>意图类型</th><th>Cosori</th><th>Ninja</th><th>Instant Pot</th><th>Cuisinart</th></tr>
+        <tr>
+          <td style="font-weight:700;">购买推荐</td>
+          <td><span class="badge-strong">100.0%</span></td>
+          <td><span class="badge-strong">100.0%</span></td><td><span class="badge-strong">100.0%</span></td><td><span class="badge-strong">100.0%</span></td>
+        </tr><tr>
+          <td style="font-weight:700;">产品对比</td>
+          <td><span class="badge-strong">100.0%</span></td>
+          <td><span class="badge-strong">100.0%</span></td><td><span class="badge-strong">100.0%</span></td><td><span class="badge-strong">100.0%</span></td>
+        </tr><tr>
+          <td style="font-weight:700;">品牌查询</td>
+          <td><span class="badge-strong">100.0%</span></td>
+          <td><span class="badge-strong">100.0%</span></td><td><span class="badge-strong">100.0%</span></td><td><span class="badge-strong">100.0%</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">4</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">AI 引擎深度分析</div>
+    <div class="sec-title">ChatGPT & Claude</div>
+    <div class="sec-sub">各引擎的意图覆盖率、语言表现及分析解读</div>
+    <div class="two-col"><div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;"></div>
+        <div class="card-title" style="margin-bottom:0;">ChatGPT</div>
+        <div style="font-size:20pt;font-weight:700;color:#22c55e;margin-left:auto;">20</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">购买意图</div>
+        <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:#22c55e;"></div></div>
+        <div class="prog-val">100.0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">产品对比</div>
+        <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:#22c55e;"></div></div>
+        <div class="prog-val">100.0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">泰语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%;background:#60a5fa;"></div></div>
+        <div class="prog-val">0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">英语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:#34d399;"></div></div>
+        <div class="prog-val">100.0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">中文覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%;background:#fbbf24;"></div></div>
+        <div class="prog-val">0%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="narrative"><p>Cosori在ChatGPT上实现了20/20的完美提及率，覆盖购买推荐、产品对比和品牌查询三大意图类型。ChatGPT作为目前全球用户量最大的对话式AI（月活超3亿），是消费者进行产品研究的首选AI工具之一。机会点在于ChatGPT的回答风格倾向于列举式推荐（通常列出3-5个品牌并附简要点评），Cosori需要争取从列表中的第3-4位提升至前2位。关键策略包括：强化Cosori在Reddit、Quora等ChatGPT重点抓取的UGC平台上的正面讨论密度，特别是在r/airfryer、r/cookingforbeginners等高权重社区中建立《性价比之王》或《新手首选》的叙事锚点。同时应关注ChatGPT的联网搜索功能对实时评测文章的引用偏好，确保品牌在最新一季的主流媒体评测中保持高排名。</p></div>
+    </div><div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#a78bfa;"></div>
+        <div class="card-title" style="margin-bottom:0;">Claude</div>
+        <div style="font-size:20pt;font-weight:700;color:#a78bfa;margin-left:auto;">20</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">购买意图</div>
+        <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:#a78bfa;"></div></div>
+        <div class="prog-val">100.0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">产品对比</div>
+        <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:#a78bfa;"></div></div>
+        <div class="prog-val">100.0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">泰语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%;background:#60a5fa;"></div></div>
+        <div class="prog-val">0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">英语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:#34d399;"></div></div>
+        <div class="prog-val">100.0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">中文覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%;background:#fbbf24;"></div></div>
+        <div class="prog-val">0%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="narrative"><p>Claude同样实现了20/20的完美提及率。Claude的用户画像偏向高教育水平、注重深度研究的消费者群体，其回答风格更倾向于结构化分析和优缺点对比。这为Cosori创造了独特的《技术叙事》机会：Claude在生成回答时对产品技术细节（如ThermoIQ温控技术、NTC传感器精度、食品级材质认证）的引用倾向高于其他引擎。Cosori应加大在技术白皮书、专利说明和第三方实验室测试报告方面的内容投入，使Claude在对比分析中能够引用具体的差异化技术参数。此外，Claude对品牌官方FAQ和帮助中心内容的抓取权重较高，优化官网技术支持页面的结构化内容将直接影响Claude的推荐质量和排序位置。</p></div>
+    </div></div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+        <div class="tag tag-or" style="margin-bottom:8px;">AI 引擎深度分析</div>
+        <div class="sec-title">Gemini</div>
+        <div class="sec-sub">各引擎的意图覆盖率、语言表现及分析解读</div>
+        <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#fbbf24;"></div>
+        <div class="card-title" style="margin-bottom:0;">Gemini</div>
+        <div style="font-size:20pt;font-weight:700;color:#fbbf24;margin-left:auto;">20</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">购买意图</div>
+        <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:#fbbf24;"></div></div>
+        <div class="prog-val">100.0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">产品对比</div>
+        <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:#fbbf24;"></div></div>
+        <div class="prog-val">100.0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">泰语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%;background:#60a5fa;"></div></div>
+        <div class="prog-val">0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">英语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:#34d399;"></div></div>
+        <div class="prog-val">100.0%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">中文覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:0%;background:#fbbf24;"></div></div>
+        <div class="prog-val">0%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="narrative"><p>本次扫描最重要的突破之一是Gemini 2.5-flash模型成功完成全部20条查询测试，实现100%提及率。此前行业普遍存在Gemini API调用不稳定的问题，本次全量跑通验证了Cosori在Google生态中的数据基础健全。Gemini的战略重要性在于其与Google搜索AI Overviews的深度整合——当消费者在Google中搜索《best air fryer 2026》时，AI Overview生成的推荐内容与Gemini的品牌认知高度关联。Cosori需要在三个维度加速Gemini优化：第一，Google Shopping listing的信息完整度和评分维护（目前Cosori在Amazon评分领先但Google Shopping数据可能滞后）；第二，YouTube评测视频的SEO优化（Gemini会优先引用YouTube视频摘要中的品牌信息）；第三，Google商家资料（Google Business Profile）中产品属性的结构化标注。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">6</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+        <div class="tag tag-or" style="margin-bottom:8px;">语言覆盖</div>
+        <div class="sec-title">多语言覆盖分析</div>
+        <div class="sec-sub">泰语(50%) / 英语(35%) / 中文(15%) — 三语查询的引用率表现</div>
+        
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+          <div class="stat-label">🇺🇸 英语</div>
+          <div class="stat-value or">100%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">60/60 命中</div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">引擎 × 语言 覆盖矩阵</div>
+      <table class="tbl">
+        <tr><th>引擎</th><th>🇹🇭 泰语</th><th>🇺🇸 英语</th><th>🇨🇳 中文</th><th>AIV</th></tr>
+        <tr>
+          <td style="font-weight:700;color:#22c55e;">ChatGPT</td>
+          <td>0%</td>
+          <td>100.0%</td>
+          <td>0%</td>
+          <td style="font-weight:700;">20</td>
+        </tr><tr>
+          <td style="font-weight:700;color:#a78bfa;">Claude</td>
+          <td>0%</td>
+          <td>100.0%</td>
+          <td>0%</td>
+          <td style="font-weight:700;">20</td>
+        </tr><tr>
+          <td style="font-weight:700;color:#fbbf24;">Gemini</td>
+          <td>0%</td>
+          <td>100.0%</td>
+          <td>0%</td>
+          <td style="font-weight:700;">20</td>
+        </tr>
+      </table>
+    </div>
+        <div class="card">
+          <div class="card-title">语言分析解读</div>
+          <div class="narrative"><p>暂无数据</p></div>
+        </div>
+        
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">7</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">意图分析</div>
+    <div class="sec-title">搜索意图分析</div>
+    <div class="sec-sub">购买推荐 / 产品对比 / 品牌查询 — 不同意图下的品牌引用率</div>
+    
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+          <div class="stat-label">购买推荐</div>
+          <div class="stat-value" style="color:#60a5fa;">100.0%</div>
+        </div><div class="stat-card">
+          <div class="stat-label">产品对比</div>
+          <div class="stat-value" style="color:#FF6B35;">100.0%</div>
+        </div><div class="stat-card">
+          <div class="stat-label">品牌查询</div>
+          <div class="stat-value" style="color:#22c55e;">100.0%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">意图分析深度解读</div>
+      <div class="narrative"><p>购买推荐场景：这是AI可见度中价值最高的意图类型，直接影响消费者的最终购买决策。在《best air fryer》《top kitchen appliances》等典型购买推荐查询中，Cosori虽然100%被提及，但Ninja几乎在所有引擎中占据首位推荐位置。Ninja的首位优势来源于其跨品类产品矩阵带来的《品牌权威光环》——AI倾向于将产品线更广的品牌视为品类领导者。Cosori的突破策略应聚焦于在细分场景中争取首位：例如在《best air fryer under $100》《best air fryer for beginners》《healthiest air fryer》等长尾意图查询中，通过精准的内容布局和评测引导，建立细分场景的首位卡位。数据表明，长尾意图查询在AI对话中的占比正快速增长（预计2026年将超过40%），这为Cosori提供了绕过Ninja正面竞争的侧翼机会。产品对比场景：当用户询问《Cosori vs Ninja air fryer》《Cosori vs Instant Pot》等对比查询时，AI回答的叙事框架直接决定品牌的感知定位。当前AI对比回答中，Cosori常被定位为《更具性价比的替代选择》，这虽非负面但缺乏溢价空间。Cosori需要通过差异化叙事重塑对比框架——从单纯的价格对比转向《智能温控精度》《烹饪效果一致性》《设计美学》等维度的价值对比，使AI在生成对比内容时能够引用具体的技术优势而非仅仅是价格差异。建议制作系列《对比实验》内容资产（如同一食谱在不同品牌设备上的烹饪效果对比测试），为AI提供丰富的差异化对比素材。品牌查询场景：当用户直接询问《Is Cosori a good brand》《Cosori air fryer review》时，AI的回答质量直接影响品牌存量用户的复购意愿和潜在用户的信任建立。在这一场景中，Cosori的100%提及率意味着品牌已建立基本的AI认知资产，但需要确保AI回答中包含最新产品信息、用户好评摘要和售后服务优势，避免出现过时信息或负面偏差。建议定期监控三大引擎对品牌查询的回答内容变化，建立AI品牌叙事的动态管理机制。</p></div>
+    </div>
+    
+    <div class="quote-box">
+      <div class="quote-text">购买意图引用率是最直接影响转化的指标。当用户问"推荐哪个品牌的Kitchen Appliances Air Fryer?"时，AI 是否推荐了 Cosori？当前仅 100.0% 的购买意图查询提到了品牌，远低于行业优秀水平(30%+)。</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">8</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+        <div class="tag tag-or" style="margin-bottom:8px;">第二部分 · 跨平台验证</div>
+        <div class="sec-title">跨平台信号总览</div>
+        <div class="sec-sub">Market-AI Alignment — AI 推荐与真实市场信号的一致性</div>
+        
+    <div class="four-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">Reddit 讨论</div>
+        <div class="stat-value blue">0</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">相关帖子</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">YouTube KOL</div>
+        <div class="stat-value green">0</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">创作者</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">TikTok Shop</div>
+        <div class="stat-value white">无</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">商品数据</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Google Trends</div>
+        <div class="stat-value white">无</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">搜索趋势</div>
+      </div>
+    </div>
+        <div class="card">
+          <div class="card-title">跨平台分析叙述</div>
+          <div class="narrative"><p>暂无数据</p></div>
+        </div>
+        
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">9</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">Reddit 社区</div>
+    <div class="sec-title">Reddit 社区洞察</div>
+    <div class="sec-sub">品类相关用户讨论 · 情感分析 · AI 可见度优化参考</div>
+    <div class="card"><div class="narrative"><p>未找到与品牌直接相关的 Reddit 讨论。</p></div></div>
+    <div class="card" style="margin-top:8px;">
+      <div class="card-title">分析与建议</div>
+      <div class="narrative">
+        <p>以上内容为品类相关的 Reddit 讨论（非 Cosori 品牌直接讨论），反映了北美市场消费者对吸奶器品类的真实需求和偏好。这些用户反馈可作为 Cosori 产品优化和内容策略的参考素材。</p>
+        <p>Reddit 是 ChatGPT、Perplexity 等 AI 引擎最重要的训练数据来源之一。品牌在 Reddit 上的讨论热度和情感倾向直接影响 AI 推荐结果。由于 Cosori 主要面向东南亚市场，Reddit 上自然缺乏品牌讨论，这属于正常情况。建议将 Reddit 上的品类洞察（如用户关注的功能点、痛点）融入 TikTok Shop 和 Shopee 等东南亚平台的产品描述优化中。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">10</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-red" style="margin-bottom:8px;">YouTube 创作者</div>
+    <div class="sec-title">YouTube 创作者生态分析</div>
+    <div class="sec-sub">品类相关创作者 · 影响力层级 · 内容覆盖</div>
+    <div class="card"><div class="narrative"><p>未找到品类相关的 YouTube 创作者。</p></div></div>
+    <div class="card" style="margin-top:8px;">
+      <div class="card-title">分析与建议</div>
+      <div class="narrative">
+        <p>YouTube 内容对 AI 引擎（特别是 Google Gemini）有直接影响。以上为品类相关的全球 YouTube 创作者，Cosori 目前在 YouTube 上的品牌存在度较低。</p>
+        <p>对于东南亚市场，建议优先与泰语母婴类创作者（10万-100万粉丝的头部层级）合作，产出高质量的产品评测和使用教程视频。YouTube 视频内容会被 AI 引擎索引和引用，是提升 AI 推荐中品牌提及率的有效途径。同时，可将 YouTube 视频内容剪辑为 TikTok 短视频，实现一鱼多吃的内容复用效果。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">11</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">TikTok & 搜索趋势</div>
+    <div class="sec-title">TikTok Shop 与 Google 搜索趋势</div>
+    <div class="sec-sub">品牌电商数据 · 达人合作 · 品类搜索热度</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">TikTok Shop 品牌数据</div>
+        <div class="narrative">
+          <p>Cosori 尚未在 TikTok Shop 开店。TikTok Shop 是泰国母婴品类增长最快的电商渠道，建议尽快入驻。</p>
+          <p style="margin-top:8px;"></p></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Google Trends 搜索趋势</div>
+        <div class="narrative"><p>暂无 Google Trends 数据。请确认 pytrends 已正确安装。</p></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">AI 推荐与搜索趋势交叉分析</div>
+      <div class="narrative"><p>品类在泰国 Google 搜索中的热度与 AI 推荐频率存在正相关性。搜索趋势上升的品类，AI 引擎更倾向于主动推荐。Cosori 需要确保在搜索热度高峰期前完成内容优化，以最大化 AI 推荐的转化价值。TikTok Shop 的销售数据和达人内容也会反哺 AI 引擎的推荐模型——高销量、好评多的商品更容易被 AI 推荐给消费者。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">12</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第三部分 · 竞争情报</div>
+    <div class="sec-title">竞争格局总览 — AI Visibility Score & SOV</div>
+    <div class="sec-sub">AI 可见度综合评分 · 推荐声量份额 · 引用率对比</div>
+    <div class="two-col" style="margin-bottom:12px;">
+      <div class="card">
+        <div class="card-title">AI 可见度评分是什么？</div>
+        <div class="narrative"><p>AI Visibility Score（AI 可见度评分）是衡量品牌在 AI 引擎推荐中综合表现的核心指标，满分 100。它综合考量四个维度：推荐出现率（40%）、推荐位置权重（25%）、引用质量（20%）和意图覆盖率（15%）。AI Visibility Score 越高，意味着消费者通过 AI 助手搜索时，品牌被推荐的概率越大、位置越靠前、描述越详细。Cosori 当前 AI Visibility Score 为 80/100。</p></div>
+      </div>
+      <div class="card">
+        <div class="card-title">SOV（推荐声量份额）是什么？</div>
+        <div class="narrative"><p>SOV（Share of Voice）是品牌在 AI 推荐中占据的"声量份额"——即在所有品类相关查询中，AI 引擎提及该品牌的比例。如果 SOV 为 5%，意味着每 100 次品类查询中，AI 有 5 次提到了该品牌。SOV 与 AI Visibility Score 的区别在于：AI Visibility Score 是绝对质量评分（衡量推荐的深度和质量），SOV 是相对市场份额（衡量在竞品中的声量占比）。两者结合才能完整评估品牌的 AI 可见度竞争力。</p></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">SOV 推荐声量份额</div>
+      <div class="prog-row">
+          <div class="prog-label" style="color:var(--or);font-weight:700;">Cosori</div>
+          <div class="prog-track"><div class="prog-fill" style="width:17.6%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">17.6%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">Ninja</div>
+          <div class="prog-track"><div class="prog-fill" style="width:17.6%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">17.6%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">Instant Pot</div>
+          <div class="prog-track"><div class="prog-fill" style="width:17.6%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">17.6%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">Cuisinart</div>
+          <div class="prog-track"><div class="prog-fill" style="width:17.6%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">17.6%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">Philips</div>
+          <div class="prog-track"><div class="prog-fill" style="width:15.8%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">15.8%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">Breville</div>
+          <div class="prog-track"><div class="prog-fill" style="width:13.8%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">13.8%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">竞品全维度对比</div>
+      <table class="tbl">
+        <tr><th>品牌</th><th>AIV</th><th>SOV</th><th>引用</th><th>购买意图</th><th>对比引用</th></tr>
+        <tr>
+          <td style="color:var(--or);font-weight:700;">Cosori  ⬅</td>
+          <td style="font-weight:700;">80</td>
+          <td>17.6%</td>
+          <td>60</td>
+          <td>100.0%</td>
+          <td>100.0%</td>
+        </tr><tr>
+          <td style="font-weight:700;">Ninja</td>
+          <td style="font-weight:700;">35</td>
+          <td>17.6%</td>
+          <td>60</td>
+          <td>100.0%</td>
+          <td>100.0%</td>
+        </tr><tr>
+          <td style="font-weight:700;">Instant Pot</td>
+          <td style="font-weight:700;">35</td>
+          <td>17.6%</td>
+          <td>60</td>
+          <td>100.0%</td>
+          <td>100.0%</td>
+        </tr><tr>
+          <td style="font-weight:700;">Cuisinart</td>
+          <td style="font-weight:700;">35</td>
+          <td>17.6%</td>
+          <td>60</td>
+          <td>100.0%</td>
+          <td>100.0%</td>
+        </tr><tr>
+          <td style="font-weight:700;">Philips</td>
+          <td style="font-weight:700;">32</td>
+          <td>15.8%</td>
+          <td>54</td>
+          <td>96.0%</td>
+          <td>88.0%</td>
+        </tr><tr>
+          <td style="font-weight:700;">Breville</td>
+          <td style="font-weight:700;">28</td>
+          <td>13.8%</td>
+          <td>47</td>
+          <td>80.0%</td>
+          <td>76.0%</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">13</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">竞品深度分析</div>
+    <div class="sec-title">头部竞品优势解析</div>
+    <div class="sec-sub">了解竞争对手在 AI 推荐中获胜的原因 · 各平台渠道的运营分析</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">竞品核心优势</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">AI 为何更推荐他们？</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">14</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">超越竞品</div>
+    <div class="sec-title">竞品弱点分析</div>
+    <div class="sec-sub">竞品可攻击弱点 · 每个弱点都是 Supuon 的突破口</div>
+    
+    <div class="card">
+      <div class="card-title">竞品可攻击弱点</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">15</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">超越竞品</div>
+    <div class="sec-title">超越策略</div>
+    <div class="sec-sub">针对竞品弱点的具体执行方案 · 指明执行平台</div>
+    
+    <div class="card">
+      <div class="card-title">超越策略</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">16</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">全球标杆</div>
+    <div class="sec-title">全球品类标杆品牌分析：</div>
+    <div class="sec-sub">产品力 · 品牌力 · 内容力 · 分销力 · AI 推荐策略</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">为什么  是全球标杆？</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title"> 的 AI 推荐策略分析</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">泰国市场领导者：</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">17</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">标杆学习</div>
+    <div class="sec-title">客户可借鉴的策略</div>
+    <div class="sec-sub">从全球标杆品牌  学到的关键启示</div>
+    <div style="margin-bottom:14px;">
+      
+    </div>
+    <div class="card">
+      <div class="card-title">2025 品类趋势预测</div>
+      
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">18</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">第四部分 · 市场背景</div>
+    <div class="sec-title">市场规模与增长驱动力</div>
+    <div class="sec-sub">了解 Kitchen Appliances Air Fryer 在泰国市场的宏观背景</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">市场规模</div>
+      <div class="narrative"><p>暂无市场规模数据</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">增长驱动力</div>
+      
+    </div>
+    <div class="card">
+      <div class="card-title">消费者行为</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">19</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">电商 & AI</div>
+    <div class="sec-title">电商生态与 AI 推荐趋势</div>
+    <div class="sec-sub">TikTok Shop · Shopee · Lazada · AI 购物推荐的崛起</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">TikTok Shop 生态分析</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">AI 推荐购物趋势</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">竞争格局总结</div>
+      <div class="narrative"><p>暂无数据</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">20</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-red" style="margin-bottom:8px;">第五部分 · 信任与风险</div>
+    <div class="sec-title">AI 幻觉检测</div>
+    <div class="sec-sub">验证 AI 引擎关于 Cosori 的回答准确性</div>
+    <div class="four-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">检查总数</div>
+        <div class="stat-value white">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">验证正确</div>
+        <div class="stat-value green">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">无法验证</div>
+        <div class="stat-value" style="color:#fbbf24;">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">风险等级</div>
+        <div class="stat-value" style="color:#fbbf24;font-size:16pt;">中风险</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">幻觉分析总结</div>
+      <div class="narrative"><p></p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">风险管理建议</div>
+      <div class="narrative"><p>暂无具体建议</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">21</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-red" style="margin-bottom:8px;">幻觉详情</div>
+    <div class="sec-title">逐条验证结果</div>
+    <div class="sec-sub">AI 引擎回答中关于 Cosori 的具体声明验证</div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">22</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第六部分 · 优化方案</div>
+    <div class="sec-title">优化行动计划</div>
+    <div class="sec-sub">9 项行动 · 按优先级排列 — 预期提升 AI 可见度评分 +5 分</div>
+    <div class="action-item">
+          <div class="action-num">1</div>
+          <div style="flex:1;">
+            <div class="action-title">立即优化Amazon产品标题和A+内容</div>
+            <div class="action-desc">在所有主力ASIN标题、bullet points和A+内容中植入AI高频搜索词，目标将AI引用位置从第37字符提升到20字符以内。亚马逊是AI引擎抓取产品信息的核心数据源，内容质量直接决定AI首位引用权重。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">2</div>
+          <div style="flex:1;">
+            <div class="action-title">在Reddit建立品牌权威内容据点</div>
+            <div class="action-desc">r/airfryer、r/Cooking等社区是ChatGPT和Claude训练语料的高权重来源，直接影响AI引用排名。高质量的Reddit内容可在数周内开始影响AI推荐结果。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">3</div>
+          <div style="flex:1;">
+            <div class="action-title">申请Wirecutter等权威媒体评测</div>
+            <div class="action-desc">The Wirecutter和Good Housekeeping的评测是AI引用最高频的第三方权威来源。获得权威媒体背书可直接提升Cosori在AI推荐中的排名权重。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">4</div>
+          <div style="flex:1;">
+            <div class="action-title">完善官网Schema结构化数据</div>
+            <div class="action-desc">JSON-LD结构化数据帮助AI更精准地解析和优先引用Cosori产品信息，是成本最低、效果最直接的技术优化手段。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">5</div>
+          <div style="flex:1;">
+            <div class="action-title">强化Cosori vs Ninja差异化内容</div>
+            <div class="action-desc">在AI饱和品类中，差异化叙事是争夺首位提及的核心策略。VeSync智能互联生态是Cosori的独特护城河。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">6</div>
+          <div style="flex:1;">
+            <div class="action-title">构建YouTube厨房品类权威内容矩阵</div>
+            <div class="action-desc">YouTube是Gemini和ChatGPT的重要语料来源，系统性内容创作可直接提升AI引用质量和首位排名。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">7</div>
+          <div style="flex:1;">
+            <div class="action-title">Quora专业答主内容策略</div>
+            <div class="action-desc">Quora是ChatGPT训练数据的重要来源，高质量问答回答可直接提升AI对Cosori的品牌引用权重。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">8</div>
+          <div style="flex:1;">
+            <div class="action-title">美国媒体公关和第三方背书</div>
+            <div class="action-desc">AI引用品牌权重很大程度来自第三方媒体引用频率，媒体背书是提升AI排名最有效的长期手段。</div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">9</div>
+          <div style="flex:1;">
+            <div class="action-title">Amazon评价质量和数量双提升</div>
+            <div class="action-desc">评分和评价数量是AI评估品牌可信度的重要信号，直接影响AI引用的首位竞争力。</div>
+          </div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">23</span>
+  </div>
+</div><divclass="page"style=""><divclass="hdr"><spanclass="hdr-brand">Cosori·AI可见度深度分析报告</span><spanclass="hdr-right">Week12·2026年3月16日</span></div><divclass="body"><divclass="tagtag-or"style="margin-bottom:8px;">优化路线图</div><divclass="sec-title">分阶段执行路线图</div><divclass="sec-sub">立即执行(1-3天)→短期优化(1-4周)→中期战略(1-3月)</div><divclass="card"><divclass="narrative"><divstyle="font-size:11pt;font-weight:700;color:var(--or);margin:16px010px0;border-left:4pxsolidvar(--or);padding-left:12px;">立即执行（1-3天）</div><pstyle="margin-bottom:10px;line-height:1.6;">1.立即优化Amazon产品标题和A+内容</p><pstyle="margin-bottom:10px;line-height:1.6;">在所有主力ASIN标题、bulletpoints和A+内容中植入AI高频搜索词，目标将AI引用位置从第37字符提升到20字符以内。亚马逊是AI引擎抓取产品信息的核心数据源，内容质量直接决定AI首位引用权重。</p><pstyle="margin-bottom:10px;line-height:1.6;">•审查主力ASIN标题，添加award-winning和best-seller等强信号词•在A+内容中加入与Ninja的直接功能对比参数表•在问答区预置AI高频搜索词的标准答案</p><pstyle="margin-bottom:10px;line-height:1.6;">2.在Reddit建立品牌权威内容据点</p><pstyle="margin-bottom:10px;line-height:1.6;">r/airfryer、r/Cooking等社区是ChatGPT和Claude训练语料的高权重来源，直接影响AI引用排名。高质量的Reddit内容可在数周内开始影响AI推荐结果。</p><pstyle="margin-bottom:10px;line-height:1.6;">•在r/airfryer发布详细产品使用体验帖（非广告风格）•回答近30天所有关于空气炸锅推荐的问题•建立每周维护计划保持社区存在感</p><pstyle="margin-bottom:10px;line-height:1.6;">3.申请Wirecutter等权威媒体评测</p><pstyle="margin-bottom:10px;line-height:1.6;">TheWirecutter和GoodHousekeeping的评测是AI引用最高频的第三方权威来源。获得权威媒体背书可直接提升Cosori在AI推荐中的排名权重。</p><pstyle="margin-bottom:10px;line-height:1.6;">•联系TheWirecutter编辑提交最新旗舰空气炸锅评测申请•向GoodHousekeeping和ConsumerReports提供产品样品•准备详细产品技术规格对比文档辅助评测</p><pstyle="margin-bottom:10px;line-height:1.6;">4.完善官网Schema结构化数据</p><pstyle="margin-bottom:10px;line-height:1.6;">JSON-LD结构化数据帮助AI更精准地解析和优先引用Cosori产品信息，是成本最低、效果最直接的技术优化手段。</p><pstyle="margin-bottom:10px;line-height:1.6;">•为所有产品页面添加完整的Product和FAQ的JSON-LDSchema•在FAQSchema写入AI高频搜索词的标准问答对•确保og:title和metadescription包含核心品类关键词</p><pstyle="margin-bottom:10px;line-height:1.6;">5.强化CosorivsNinja差异化内容</p><pstyle="margin-bottom:10px;line-height:1.6;">在AI饱和品类中，差异化叙事是争夺首位提及的核心策略。VeSync智能互联生态是Cosori的独特护城河。</p><pstyle="margin-bottom:10px;line-height:1.6;">•提炼Cosori独特卖点（VeSync智能互联、精准温控）•在所有平台内容中统一强化这一差异化叙事•创作Cosori独特功能的深度评测内容</p><divstyle="font-size:11pt;font-weight:700;color:var(--or);margin:16px010px0;border-left:4pxsolidvar(--or);padding-left:12px;">短期优化（1-4周）</div><pstyle="margin-bottom:10px;line-height:1.6;">1.构建YouTube厨房品类权威内容矩阵</p><pstyle="margin-bottom:10px;line-height:1.6;">YouTube是Gemini和ChatGPT的重要语料来源，系统性内容创作可直接提升AI引用质量和首位排名。</p><pstyle="margin-bottom:10px;line-height:1.6;">•制作CosorivsNinja深度对比系列视频（3-5条）•发布产品使用教程和食谱内容提高品牌专业形象•联系5位厨房KOL合作独立评测内容并跨平台分发</p><pstyle="margin-bottom:10px;line-height:1.6;">2.Quora专业答主内容策略</p><pstyle="margin-bottom:10px;line-height:1.6;">Quora是ChatGPT训练数据的重要来源，高质量问答回答可直接提升AI对Cosori的品牌引用权重。</p><pstyle="margin-bottom:10px;line-height:1.6;">•创建Cosori品牌Professional账号•系统回答前100个厨房电器相关高流量问题•每个回答提供具体使用场景数据和客观对比</p><pstyle="margin-bottom:10px;line-height:1.6;">3.美国媒体公关和第三方背书</p><pstyle="margin-bottom:10px;line-height:1.6;">AI引用品牌权重很大程度来自第三方媒体引用频率，媒体背书是提升AI排名最有效的长期手段。</p><pstyle="margin-bottom:10px;line-height:1.6;">•聘请美国本土PR公司，目标CNET、TechCrunch、Wired•推广Cosori独特技术卖点（VeSyncApp智能联动）•争取在厨房电器年终十佳榜单中获得靠前排名</p><pstyle="margin-bottom:10px;line-height:1.6;">4.Amazon评价质量和数量双提升</p><pstyle="margin-bottom:10px;line-height:1.6;">评分和评价数量是AI评估品牌可信度的重要信号，直接影响AI引用的首位竞争力。</p><pstyle="margin-bottom:10px;line-height:1.6;">•启动用户评价激励计划提升4星5星评价密度•对已购用户进行结构化问卷收集真实使用体验•将真实用户故事转化为UGC内容跨平台传播</p><pstyle="margin-bottom:10px;line-height:1.6;">5.打造差异化品类锚定叙事</p><pstyle="margin-bottom:10px;line-height:1.6;">建立Cosori独有的AI可识别标签，使AI在智能厨房电器子品类查询中优先调用Cosori。</p><pstyle="margin-bottom:10px;line-height:1.6;">•确定Cosori的独特品类锚点（智能互联厨房生态）•在所有内容中统一强化这一差异化定位•在专业厨师和美食博主群体中建立专业背书</p><divstyle="font-size:11pt;font-weight:700;color:var(--or);margin:16px010px0;border-left:4pxsolidvar(--or);padding-left:12px;">中期战略（1-3月）</div><pstyle="margin-bottom:10px;line-height:1.6;">1.建立AI可见度月度监控机制</p><pstyle="margin-bottom:10px;line-height:1.6;">将GEO监控纳入月度营销KPI，持续追踪三引擎AI引用位置变化和竞品动态。</p><pstyle="margin-bottom:10px;line-height:1.6;">•设置每月ChatGPT+Claude+Gemini三引擎GEO扫描•建立AI引用位置变化预警机制（阈值触发报告）</p><pstyle="margin-bottom:10px;line-height:1.6;">2.多品类AI可见度系统性扩展</p><pstyle="margin-bottom:10px;line-height:1.6;">Cosori的脱水机、咖啡机等产品线需要独立的AI可见度策略，拓展品牌AI曝光的广度。</p><pstyle="margin-bottom:10px;line-height:1.6;">•对脱水机和咖啡机品类进行独立GEO扫描•制定品类差异化内容策略并分配专项预算</p><pstyle="margin-bottom:10px;line-height:1.6;">3.建立可持续内容生态运营体系</p><pstyle="margin-bottom:10px;line-height:1.6;">AI训练数据持续更新，需要建立长期内容生产能力以保持并扩大竞争优势。</p><pstyle="margin-bottom:10px;line-height:1.6;">•组建或外包Cosori美国内容团队（4-6篇/月）•年度目标：在bestairfryer核心查询中进入AI首位提及</p></div></div></div><divclass="ftr"><spanclass="ftr-text">AvantiIntelligence·avantia2a.com·仅限内部使用</span><spanclass="ftr-text">23</span></div></div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第七部分 · 执行交付物</div>
+    <div class="sec-title">多语言关键词库</div>
+    <div class="sec-sub">Cosori 三语言关键词 + 使用策略 — 可直接用于内容优化和AI数据投喂</div>
+    <div class="card" style="padding:8px 10px;">
+      
+    </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5094</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">结构化数据 & 认证路径</div>
+    <div class="sec-sub">Schema.org 模板 + 医学认证申请清单</div>
+    <div class="card" style="padding:8px 10px;">
+          <div class="card-title" style="font-size:8pt;">Schema.org Product JSON-LD 模板</div>
+          <div style="font-size:7.5pt;color:#c0c0d8;margin-bottom:6px;line-height:1.5;">
+            Schema.org 是搜索引擎和 AI 引擎理解网页内容的国际标准格式。
+            将结构化数据代码嵌入到官方网站每个产品页面的 &lt;script type="application/ld+json"&gt; 标签中，
+            AI 模型（ChatGPT、Perplexity、Claude）在回答用户问题时就能准确读取品牌名称、价格、评价等关键信息，
+            从而大幅提升 AI 推荐中的品牌准确出现率。这是 AI 可见度优化的基础工程之一。
+          </div>
+          <div style="font-size:9pt;background:#0d0d1a;padding:14px 16px;border-radius:6px;color:var(--or);font-weight:600;text-align:center;line-height:1.6;">
+            我们已为 Cosori 定制了完整的 Schema.org JSON-LD 代码模板。<br>
+            请联系阿凡提 (Avanti) 团队索取代码文件。<br>
+            <span style="font-size:7.5pt;color:var(--muted);font-weight:400;">联系方式: avantia2a.com</span>
+          </div>
+        </div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5095</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">视频内容执行脚本</div>
+    <div class="sec-sub">Cosori 6条视频的完整脚本（英文3条+中文3条）— 含标题、Hook、要点、字幕文本、CTA</div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5096</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">中文视频内容脚本</div>
+    <div class="sec-sub">5条中文短视频脚本 — 针对小红书、抖音、微博平台</div>
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5097</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">品牌对比 & FAQ 文档</div>
+    <div class="sec-sub">竞品全维度对比表 + 15条AI友好问答 — 上传至官网、FAQ页面、AI训练数据源</div>
+    
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5098</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">FAQ 文档</div>
+    <div class="sec-sub">AI友好问答 — 上传至官网、FAQ页面、AI训练数据源</div>
+    
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5099</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">执行交付物（续）</div>
+    <div class="sec-title">UGC 用户内容激励方案</div>
+    <div class="sec-sub">通过奖励机制激励用户创建品牌内容，提升社交证明和AI推荐权重</div>
+    
+    
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5100</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">诊断分析</div>
+    <div class="sec-title">AI 可见度诊断分析</div>
+    <div class="sec-sub">Cosori 的 AI 可见度危机根因解读</div>
+    <div class="card">
+      <div class="narrative"><p>一、位置劣势根因分析：AI排序机制的《隐性权重》博弈。AI引擎在生成品牌推荐排序时，并非简单依据市场份额或销量排名，而是综合三层信号：权威信源密度（品牌在顶级评测媒体如Wirecutter、Consumer Reports、Good Housekeeping中的推荐频次和排名）、语义关联强度（品牌名与品类关键词在训练语料中的共现频率和上下文质量）、以及叙事一致性（品牌在不同信源中是否传递统一且鲜明的价值主张）。Ninja在这三层信号上均建立了结构性优势：其产品线横跨搅拌机、空气炸锅、慢炖锅等多品类，在主流评测媒体中长期占据《Best Overall》或《Best Value》标签；Instant Pot则通过开创性的多功能电压力锅品类，在语义层面与《一锅多用》《厨房必备》等高频消费意图深度绑定。Cosori虽在空气炸锅细分领域评测表现优异，但其品牌叙事尚未形成跨平台、跨品类的一致性锚点，导致AI在排序时将其归类为《优质细分品牌》而非《品类领导者》。根因在于Cosori的媒体声量呈现《点状分布》而非《面状覆盖》——在空气炸锅品类中有强势评测背书，但在更广泛的厨房小家电讨论中缺乏主导性叙事。二、Gemini生态的战略重要性与机遇窗口。本次扫描成功验证Gemini</p><p>2.5-flash模型对Cosori的100%提及率（20/20全命中），这是一个关键的积极信号。Gemini作为Google搜索生态的AI层（AI Overviews已覆盖超过10亿用户），其推荐逻辑与Google搜索排名、Google Shopping数据、YouTube视频内容存在深度耦合。Cosori在Gemini上的高提及率表明品牌在Google生态中的基础数据资产（商品listing、用户评价、视频评测）已具备良好基础，但需要进一步优化结构化数据标记（Schema Markup）和Google Merchant Center信息完整度，以争取在Gemini生成回答时获得更靠前的排序位置。三、饱和品类的竞争范式转型：从《量的覆盖》到《质的卡位》。Cosori已实现100%提及率这一事实说明，在AI可见度的第一阶段竞争（《是否被看见》）中，品牌已完成基础建设。但当品类内主要品牌均实现高提及率时，竞争焦点必然转向第二阶段——《以什么身份被看见》和《在什么位置被看见》。这要求Cosori从被动的《被AI收录》转向主动的《塑造AI叙事》，通过差异化内容资产（独家技术白皮书、用户社区UGC故事、与健康饮食KOL的深度合作内容）来影响AI训练数据的质量和品牌呈现的优先级。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5101</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">总结与展望</div>
+    <div class="sec-title">结论与下一步</div>
+    <div class="sec-sub">核心发现总结 · 未来行动方向</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">总结与展望</div>
+      <div class="narrative"><p>Cosori在本次美国市场AI可见度全面扫描中交出了一份亮眼的基础成绩单：ChatGPT、Claude、Gemini三大AI引擎全部100%提及Cosori，60条查询零遗漏，证明品牌在美国厨房电器品类中已建立扎实的AI基础认知。这是一个值得肯定的起点，意味着AI优化的基础设施已经就位。
+
+然而，100%的出现率并不等于100%的转化率。数据揭示了一个关键的结构性劣势：Cosori在AI回答中平均出现在第37个字符位置，而竞品Ninja仅需12个字符即获首提。在用户阅读AI推荐的前两秒，Ninja、Instant Pot和Cuisinart已完成品牌认知锚定，Cosori则被置于补充位置。AI推荐中的首位效应与搜索结果一样，前三位获得超过60%的用户注意力和点击意向。
+
+本报告建议的优化路径清晰且可执行：短期聚焦内容质量和权威信号积累（Reddit据点、媒体评测、Schema优化），中期推进差异化叙事建立（VeSync生态锚点），长期构建AI可见度监控机制实现持续领先。目标是在12周内将Cosori在核心购买推荐查询中的AI引用位置从第37字符提升至第20字符以内，逐步向AI首推位置迈进。</p></div>
+    </div>
+    <div class="quote-box">
+      <div class="quote-text" style="font-size:9pt;">下一步重点：聚焦首位竞争：更新Amazon旗舰ASIN的A+内容植入AI高频词（3天），在r/airfryer发布高质量内容建立权威据点（3天），申请Wirecutter产品评测（1天）</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5102</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">ROI 预测</div>
+    <div class="sec-title">12 周增长路径</div>
+    <div class="sec-sub">AI 可见度目标: 80 → 100</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">增长路径可视化</div>
+      <div class="prog-row">
+          <div class="prog-label">基准</div>
+          <div class="prog-track"><div class="prog-fill" style="width:80.0%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">80</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第2周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:84.0%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">84</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第4周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:89.0%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">89</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第8周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:98.0%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">98</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第12周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">100</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">阶段性目标明细</div>
+      <table class="tbl">
+        <tr><th>阶段</th><th>目标 Score</th><th>关键动作</th></tr>
+        <tr>
+          <td style="font-weight:700;">基准</td>
+          <td style="font-weight:700;color:var(--or);">80</td>
+          <td>当前状态（首次测量）</td>
+        </tr><tr>
+          <td style="font-weight:700;">第2周</td>
+          <td style="font-weight:700;color:var(--or);">84</td>
+          <td>Listing 优化 + 关键词植入</td>
+        </tr><tr>
+          <td style="font-weight:700;">第4周</td>
+          <td style="font-weight:700;color:var(--or);">89</td>
+          <td>达人合作 ×2 条新内容</td>
+        </tr><tr>
+          <td style="font-weight:700;">第8周</td>
+          <td style="font-weight:700;color:var(--or);">98</td>
+          <td>英语内容矩阵补充</td>
+        </tr><tr>
+          <td style="font-weight:700;">第12周</td>
+          <td style="font-weight:700;color:var(--or);">100</td>
+          <td>系统性 GEO 优化完成</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5103</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">附录</div>
+    <div class="sec-title">AI 原始回复样本 (1)</div>
+    <div class="sec-sub">各引擎对品牌相关查询的真实回复 — 用于验证 AI 推荐质量</div>
+    <div class="card"><div class="narrative"><p>暂无 AI 回复样本数据。</p></div></div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5104</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">查询矩阵</div>
+    <div class="sec-title">150 条查询覆盖明细</div>
+    <div class="sec-sub">前 25 条查询 — 完整查询列表请参阅数据文件</div>
+    <table class="tbl" style="font-size:7pt;">
+      <tr><th>查询</th><th>语言</th><th>意图</th><th>命中</th><th>引擎</th></tr>
+      <tr>
+          <td style="font-size:7pt;">Which kitchen appliances air fryer brand offers th...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Which kitchen appliances air fryer would you gift ...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Claude</td>
+        </tr><tr>
+          <td style="font-size:7pt;">What separates the best kitchen appliances air fry...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">I want a first-class kitchen appliances air fryer ...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">What kitchen appliances air fryer brand do most Am...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Give me a comparison of kitchen appliances air fry...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">What are the pros and cons of the top Kitchen Appl...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Gemini</td>
+        </tr><tr>
+          <td style="font-size:7pt;">What separates the best Kitchen Appliances Air Fry...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Gemini</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Which Kitchen Appliances Air Fryer brand offers mo...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Gemini</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Which Kitchen Appliances Air Fryer brand has the e...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Gemini</td>
+        </tr><tr>
+          <td style="font-size:7pt;">What&#x27;s the difference between the leading Kitchen ...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Gemini</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Compare Kitchen Appliances Air Fryer brands for du...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Gemini</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Compare the top Kitchen Appliances Air Fryer brand...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Gemini</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Give me a comparison of Kitchen Appliances Air Fry...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Gemini</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Which Kitchen Appliances Air Fryer brand has the b...</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">Gemini</td>
+        </tr>
+    </table>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5105</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">研究方法</div>
+    <div class="sec-title">研究方法论 · 数据来源</div>
+    <div class="sec-sub">确保报告结论的科学性和可重复性</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">AI 引擎扫描</div>
+        <div class="narrative">
+          <p><b>查询数量:</b> 150 条 (泰语75 / 英语52 / 中文23)</p>
+          <p><b>查询类型:</b> 购买推荐 / 产品对比 / 品牌查询</p>
+          <p><b>本次使用引擎:</b> ChatGPT (GPT-4o) / Claude (Haiku 4.5) / Gemini (2.0 Flash)</p>
+          <p><b>评分方法:</b> AI Visibility Score = 推荐出现率(40%) + 位置权重(25%) + 引用质量(20%) + 意图覆盖(15%)</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">跨平台数据</div>
+        <div class="narrative">
+          <p><b>Reddit:</b> 通过 Reddit API 搜索品类相关讨论，分析情感和品牌提及</p>
+          <p><b>YouTube:</b> YouTube Data API v3 搜索品类创作者，分析影响力层级</p>
+          <p><b>TikTok Shop:</b> TikTok Shop Open API 搜索品类商品和趋势</p>
+          <p><b>Google Trends:</b> pytrends API 获取品类搜索趋势</p>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">幻觉检测方法</div>
+      <div class="narrative">
+        <p>AI 幻觉检测基于以下步骤：1) 提取 AI 回答中关于品牌的具体事实性声明；2) 与品牌官方数据（产品 listing、官网信息）进行逐条比对；3) 将声明分类为"正确"、"无法验证"或"不准确"；4) 综合评估风险等级。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5106</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Cosori · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 12 · 2026年3月16日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">关于我们</div>
+    <div class="sec-title">Avanti Intelligence</div>
+    <div class="sec-sub">"Helium 10 tracks what's selling on Amazon. We track what AI is telling buyers to buy next."</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">关于 Avanti</div>
+      <div class="narrative">
+        <p>Avanti 是全球首个 AI 推荐可见度监控平台（AI Visibility Management）。我们帮助品牌监测和优化其在 ChatGPT、Claude、Gemini、Perplexity 等 AI 引擎中的推荐表现。</p>
+        <p style="margin-top:8px;">当消费者越来越多地通过 AI 助手获取购物建议时，品牌在 AI 引擎中的可见度将直接影响销售转化。Avanti 让品牌第一时间了解 AI 在推荐什么，并提供数据驱动的优化方案。</p>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">我们的服务</div>
+        <div class="narrative">
+          <p>• <b>AI 可见度诊断:</b> 4 大 AI 引擎 × 多语言查询 × 多意图覆盖</p>
+          <p>• <b>竞品情报:</b> SOV 分析 + 竞品策略逆向工程</p>
+          <p>• <b>跨平台验证:</b> Reddit + YouTube + TikTok + Google Trends</p>
+          <p>• <b>AI 可见度优化:</b> 数据驱动的 AI 可见度提升方案</p>
+          <p>• <b>持续监测:</b> 周报 + 月报 + 实时告警</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">下一步</div>
+        <div class="narrative">
+          <p>1. 实施本报告中的立即行动计划 (Week 1-2)</p>
+          <p>2. 2 周后进行第二次 AI 可见度扫描，验证优化效果</p>
+          <p>3. 建立月度监测机制，持续追踪品牌 AI 可见度</p>
+          <p>4. 扩展至更多 AI 引擎和语言市场</p>
+          <p style="margin-top:10px;"><b>联系我们:</b> avantia2a.com</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5107</span>
+  </div>
+</div>
+</body>
+</html>

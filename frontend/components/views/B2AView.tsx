@@ -54,7 +54,7 @@ const CAPABILITIES_ZH = [
   "端到端衡量 AI 到转化的漏斗",
 ];
 
-const CALENDLY = "https://calendly.com/brivesubscription/30min";
+const CALENDLY = "https://cal.com/johnson-liu-avanti/30min";
 
 export default function B2AView({ lang }: { lang: Lang }) {
   const s = (k: keyof typeof import("@/lib/i18n").t.b2a) => tx("b2a", k, lang);

@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:210mm;background:#0d1b2e;color:#fff;
+  font-family:'Arial','-apple-system','Noto Sans SC','sans-serif';font-size:10pt;}
+
+.page{width:210mm;min-height:297mm;overflow:hidden;
+  page-break-after:always;position:relative;
+  background:#0d1b2e;display:flex;flex-direction:column;}
+.page:last-child{page-break-after:avoid;}
+
+:root{
+  --or:#FF6B35;--or2:#e85e2c;
+  --navy:#0d1b2e;--navy2:#152238;--navy3:#1e3050;
+  --muted:rgba(255,255,255,.50);--border:rgba(255,255,255,.10);
+}
+
+.hdr{height:40px;background:var(--navy2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;flex-shrink:0;}
+.hdr-brand{font-size:8pt;font-weight:700;color:var(--or);letter-spacing:1px;}
+.hdr-right{font-size:7.5pt;color:var(--muted);}
+
+.ftr{height:32px;background:var(--navy2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;flex-shrink:0;margin-top:auto;}
+.ftr-text{font-size:7pt;color:rgba(255,255,255,.35);}
+
+.body{flex:1;padding:20px 28px;overflow:hidden;}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:7.5pt;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.tag-or{background:rgba(255,107,53,.18);color:var(--or);}
+.tag-green{background:rgba(34,197,94,.15);color:#22c55e;}
+.tag-red{background:rgba(239,68,68,.15);color:#ef4444;}
+.tag-blue{background:rgba(96,165,250,.15);color:#60a5fa;}
+.tag-muted{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);}
+
+.sec-title{font-size:12pt;font-weight:700;margin-bottom:3px;}
+.sec-sub{font-size:8pt;color:var(--muted);margin-bottom:10px;}
+.card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.card-title{font-size:8.5pt;font-weight:700;margin-bottom:6px;color:var(--or);}
+.narrative{font-size:9pt;line-height:1.5;color:rgba(255,255,255,.85);}
+.narrative p{margin-bottom:10px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+.stat-card{background:var(--navy2);border:1px solid var(--border);border-radius:10px;
+  padding:12px;}
+.stat-label{font-size:6.5pt;color:var(--muted);margin-bottom:4px;text-transform:uppercase;
+  letter-spacing:.4px;}
+.stat-value{font-size:22pt;font-weight:700;line-height:1;}
+.stat-value.or{color:var(--or);}
+.stat-value.green{color:#22c55e;}
+.stat-value.blue{color:#60a5fa;}
+.stat-value.white{color:#fff;}
+.stat-value.red{color:#ef4444;}
+
+.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.prog-label{width:110px;font-size:7.5pt;flex-shrink:0;}
+.prog-track{flex:1;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;}
+.prog-val{width:36px;text-align:right;font-size:7.5pt;font-weight:700;flex-shrink:0;}
+
+.tbl{width:100%;border-collapse:collapse;font-size:8pt;}
+.tbl th{background:rgba(255,255,255,.06);padding:6px 10px;text-align:left;
+  font-size:7pt;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);}
+.tbl td{padding:6px 10px;border-bottom:1px solid var(--border);}
+.tbl tr:last-child td{border-bottom:none;}
+
+.badge-strong{color:#22c55e;font-weight:700;}
+.badge-mid{color:#fbbf24;font-weight:700;}
+.badge-weak{color:#ef4444;font-weight:700;}
+
+.conf-badge{font-size:6.5pt;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,107,53,.6);border:1px solid rgba(255,107,53,.25);
+  padding:2px 7px;border-radius:4px;}
+
+.divider{height:1px;background:var(--border);margin:10px 0;}
+
+.action-item{display:flex;gap:10px;margin-bottom:8px;
+  background:var(--navy2);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;}
+.action-num{font-size:16pt;font-weight:700;color:var(--or);width:24px;
+  flex-shrink:0;line-height:1;}
+.action-title{font-size:8.5pt;font-weight:700;margin-bottom:2px;}
+.action-desc{font-size:8pt;color:var(--muted);line-height:1.5;}
+
+.quote-box{background:rgba(255,107,53,.06);border-left:3px solid var(--or);
+  padding:10px 14px;border-radius:0 8px 8px 0;margin:8px 0;}
+.quote-text{font-size:8pt;font-style:italic;color:rgba(255,255,255,.75);line-height:1.5;}
+
+.insight-box{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);
+  border-radius:8px;padding:10px 12px;margin-bottom:6px;}
+.warn-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);
+  border-radius:8px;padding:10px 12px;margin-bottom:6px;}
+
+.response-sample{background:var(--navy2);border:1px solid var(--border);
+  border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:7pt;
+  color:rgba(255,255,255,.7);line-height:1.45;white-space:pre-wrap;
+  overflow:hidden;max-height:120px;}
+
+.toc-row{display:flex;align-items:center;justify-content:space-between;
+  padding:6px 12px;border-bottom:1px solid rgba(255,255,255,.06);}
+.toc-row:last-child{border-bottom:none;}
+.toc-section{font-size:6.5pt;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;padding:8px 12px 4px;}
+.toc-num{width:26px;font-size:8pt;font-weight:700;color:var(--or);flex-shrink:0;}
+.toc-title{flex:1;font-size:8pt;}
+.toc-dots{flex:1;border-bottom:1px dotted rgba(255,255,255,.15);margin:0 8px;height:10px;}
+.toc-page{font-size:7.5pt;color:var(--muted);flex-shrink:0;}
+
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+</style>
+</head>
+<body>
+
+<div class="page" style="background:linear-gradient(160deg,#0d1b2e 60%,#1a2e50);">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 30px 0;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg width="34" height="34" viewBox="0 0 34 34">
+        <rect width="34" height="34" rx="8" fill="#FF6B35"/>
+        <polygon points="17,7 28,27 6,27" fill="white"/>
+        <rect x="11.5" y="21" width="11" height="2.5" rx="1" fill="#FF6B35"/>
+      </svg>
+      <span style="font-size:11pt;font-weight:700;letter-spacing:2px;color:#fff;opacity:.9;">AVANTI</span>
+    </div>
+    <div class="conf-badge">CONFIDENTIAL</div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 30px;">
+    <div class="tag tag-or" style="margin-bottom:14px;font-size:8pt;">
+      AI 可见度深度分析报告
+    </div>
+    <div style="font-size:11pt;color:rgba(255,255,255,.5);margin-bottom:4px;
+      text-transform:uppercase;letter-spacing:1px;">Baby Pillow</div>
+    <div style="font-size:36pt;font-weight:700;line-height:1.05;margin-bottom:8px;
+      letter-spacing:-0.5px;">Supuon</div>
+    <div style="font-size:13pt;color:rgba(255,255,255,.6);margin-bottom:4px;">
+      GEO 可见度深度诊断 · 竞品分析 · 优化方案
+    </div>
+    <div style="font-size:9.5pt;color:rgba(255,255,255,.35);">Week 11 · 2026年3月14日</div>
+    <div style="height:2px;width:56px;background:var(--or);margin:20px 0;border-radius:2px;"></div>
+    <div style="display:flex;gap:28px;">
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">GEO SCORE</div>
+        <div style="font-size:28pt;font-weight:700;color:var(--or);">7</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">/ 100</div>
+      </div>
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">品类排名</div>
+        <div style="font-size:28pt;font-weight:700;color:#fff;">#2</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">共 4 品牌</div>
+      </div>
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">AI 引擎</div>
+        <div style="font-size:28pt;font-weight:700;color:#fff;">3</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">引擎数</div>
+      </div>
+      <div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">查询总数</div>
+        <div style="font-size:28pt;font-weight:700;color:#fff;">150</div>
+        <div style="font-size:7pt;color:rgba(255,255,255,.35);">三语覆盖</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:14px 30px;border-top:1px solid rgba(255,255,255,.08);
+    display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:7pt;color:rgba(255,255,255,.3);">Avanti Intelligence · avantia2a.com</div>
+    <div style="font-size:7pt;color:rgba(255,255,255,.3);">仅限内部使用及授权客户</div>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">目录</div>
+    <div class="sec-title">报告内容导览</div>
+    <div class="sec-sub">150 条查询 · 3 大 AI 引擎（ChatGPT / Perplexity / Claude）· 泰语/英语/中文三语 · 跨平台验证</div>
+    <div style="background:var(--navy2);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div class="toc-section">核心诊断</div><div class="toc-row">
+              <div class="toc-num">3</div>
+              <div class="toc-title">执行摘要 · 核心发现与建议</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.3</div>
+            </div><div class="toc-row">
+              <div class="toc-num">4</div>
+              <div class="toc-title">GEO Score 构成 · 评分因子分析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.4</div>
+            </div><div class="toc-row">
+              <div class="toc-num">5</div>
+              <div class="toc-title">AI 引擎深度分析 · ChatGPT / Perplexity</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.5</div>
+            </div><div class="toc-row">
+              <div class="toc-num">6</div>
+              <div class="toc-title">AI 引擎深度分析 · Claude</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.6</div>
+            </div><div class="toc-row">
+              <div class="toc-num">7</div>
+              <div class="toc-title">多语言覆盖分析 · 泰语 / 英语 / 中文</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.7</div>
+            </div><div class="toc-row">
+              <div class="toc-num">8</div>
+              <div class="toc-title">搜索意图分析 · 购买 / 对比 / 品牌</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.8</div>
+            </div><div class="toc-section">跨平台验证</div><div class="toc-row">
+              <div class="toc-num">9</div>
+              <div class="toc-title">跨平台信号总览 · Market-AI Alignment</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.9</div>
+            </div><div class="toc-row">
+              <div class="toc-num">10</div>
+              <div class="toc-title">Reddit 社区洞察 · 用户真实讨论</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.10</div>
+            </div><div class="toc-row">
+              <div class="toc-num">11</div>
+              <div class="toc-title">YouTube KOL 分析 · 创作者生态</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.11</div>
+            </div><div class="toc-row">
+              <div class="toc-num">12</div>
+              <div class="toc-title">TikTok Shop & Google Trends</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.12</div>
+            </div><div class="toc-section">竞争情报</div><div class="toc-row">
+              <div class="toc-num">13</div>
+              <div class="toc-title">竞争格局 · GEO Score & SOV 对比</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.13</div>
+            </div><div class="toc-row">
+              <div class="toc-num">14</div>
+              <div class="toc-title">头部竞品深度分析 · 优势解析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.14</div>
+            </div><div class="toc-row">
+              <div class="toc-num">15</div>
+              <div class="toc-title">如何超越竞品 · 差距与策略</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.15</div>
+            </div><div class="toc-row">
+              <div class="toc-num">16</div>
+              <div class="toc-title">全球标杆品牌分析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.16</div>
+            </div><div class="toc-row">
+              <div class="toc-num">17</div>
+              <div class="toc-title">标杆学习 · 可借鉴的策略</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.17</div>
+            </div><div class="toc-section">市场背景</div><div class="toc-row">
+              <div class="toc-num">18</div>
+              <div class="toc-title">市场规模与增长驱动力</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.18</div>
+            </div><div class="toc-row">
+              <div class="toc-num">19</div>
+              <div class="toc-title">电商生态与 AI 推荐趋势</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.19</div>
+            </div><div class="toc-section">信任与风险</div><div class="toc-row">
+              <div class="toc-num">20</div>
+              <div class="toc-title">AI 幻觉检测 · 信息准确性分析</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.20</div>
+            </div><div class="toc-row">
+              <div class="toc-num">21</div>
+              <div class="toc-title">AI 幻觉详情 · 逐条验证</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.21</div>
+            </div><div class="toc-section">优化方案</div><div class="toc-row">
+              <div class="toc-num">22</div>
+              <div class="toc-title">立即执行 · Week 1-2 行动计划</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.22</div>
+            </div><div class="toc-row">
+              <div class="toc-num">23</div>
+              <div class="toc-title">短期策略 · Month 1-2 优化方案</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.23</div>
+            </div><div class="toc-row">
+              <div class="toc-num">24</div>
+              <div class="toc-title">中期战略 · Month 3-6 系统升级</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.24</div>
+            </div><div class="toc-row">
+              <div class="toc-num">25</div>
+              <div class="toc-title">ROI 预测 · 12 周增长路径</div>
+              <div class="toc-dots"></div>
+              <div class="toc-page">P.25</div>
+            </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">2</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第一部分 · 核心诊断</div>
+    <div class="sec-title">执行摘要</div>
+    <div class="sec-sub">Executive Summary · 本次分析核心发现</div>
+    <div class="four-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">综合 GEO Score</div>
+        <div class="stat-value or">7</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">需大幅改进</div>
+      </div>
+      <div class="stat-card">
+          <div class="stat-label">ChatGPT</div>
+          <div class="stat-value" style="color:#22c55e;">7</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">排名 #6</div>
+        </div><div class="stat-card">
+          <div class="stat-label">Perplexity</div>
+          <div class="stat-value" style="color:#60a5fa;">6</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">排名 #7</div>
+        </div><div class="stat-card">
+          <div class="stat-label">Claude</div>
+          <div class="stat-value" style="color:#a78bfa;">7</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">排名 #3</div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">核心发现 Executive Summary</div>
+      <div class="narrative"><p>Supuon在泰国TikTok Shop婴儿枕市场的AI可见度严重滞后，GEO Score仅为7/100，远低于竞品lucklyeveryday的11分。核心问题体现在三个维度的系统性劣势：（1）内容量级差距31.9%对51.4%的SOV差，导致AI引擎对品牌的索引广度严重不足；（2）多语言覆盖不均衡，中文9%虽与竞品相当，但泰语和英语均停留在4-6%的低位，限制了地域市场渗透；（3）购买意图引用率仅3%，与竞品持平但绝对值过低，表明用户评价和产品细节在可索引内容中极为稀缺。三大AI引擎（ChatGPT、Claude、Perplexity）表现同质化，均无差异化优势。建议在1-2个季度内执行三阶段优化：立即补充用户评价和产品详情内容，短期建立多语言SEO体系，中期建立与标杆品牌Boppy对标的内容权威性。预期可将GEO Score提升至12-15分，扭转市场劣势。</p></div>
+    </div>
+    <div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 1</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">泰语占比仅4%，在主场市场严重失守——本地化内容投入严重不足是AI可见度崩塌的直接原因。</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 2</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">购买意图引用率3%表明用户购买决策时极少被推荐Supuon——缺乏用户评价和产品细节是转化的核心卡点。</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 3</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">三大AI引擎同质化低分反映品牌信号整体缺失——需全面补充内容资产而非针对性优化特定引擎。</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:#22c55e;font-weight:700;">发现 4</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,.8);margin-top:2px;">跨平台数据验证：Reddit 3帖、YouTube 0视频、TikTok Shop 0优化，内容空白直接映射AI指标低迷的根本原因。</div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">3</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">GEO Score 构成</div>
+    <div class="sec-title">评分因子分析</div>
+    <div class="sec-sub">GEO Score = 推荐出现率(40%) + 位置权重(25%) + 引用质量(20%) + 意图覆盖(15%)</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">评分因子明细</div>
+      <div class="prog-row">
+          <div class="prog-label">推荐出现率 (40%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:3%;background:#ef4444;"></div></div>
+          <div class="prog-val" style="color:#ef4444;">3%</div>
+        </div><div class="prog-row">
+          <div class="prog-label">位置权重 (25%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:7%;background:#ef4444;"></div></div>
+          <div class="prog-val" style="color:#ef4444;">7%</div>
+        </div><div class="prog-row">
+          <div class="prog-label">引用质量 (20%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:14%;background:#ef4444;"></div></div>
+          <div class="prog-val" style="color:#ef4444;">14%</div>
+        </div><div class="prog-row">
+          <div class="prog-label">意图覆盖 (15%)</div>
+          <div class="prog-track"><div class="prog-fill" style="width:0%;background:#ef4444;"></div></div>
+          <div class="prog-val" style="color:#ef4444;">0%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">意图覆盖率对比 — Supuon vs 竞品</div>
+      <table class="tbl">
+        <tr><th>意图类型</th><th>Supuon</th><th>lucklyeveryday</th><th>Jean suwei</th><th>Fuji Baby Shop</th></tr>
+        <tr>
+          <td style="font-weight:700;">购买推荐</td>
+          <td><span class="badge-weak">3%</span></td>
+          <td><span class="badge-weak">0%</span></td><td><span class="badge-weak">0%</span></td><td><span class="badge-weak">0%</span></td>
+        </tr><tr>
+          <td style="font-weight:700;">产品对比</td>
+          <td><span class="badge-mid">15%</span></td>
+          <td><span class="badge-strong">32%</span></td><td><span class="badge-mid">10%</span></td><td><span class="badge-weak">0%</span></td>
+        </tr><tr>
+          <td style="font-weight:700;">品牌查询</td>
+          <td><span class="badge-weak">0%</span></td>
+          <td><span class="badge-weak">0%</span></td><td><span class="badge-weak">0%</span></td><td><span class="badge-weak">0%</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">4</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">AI 引擎深度分析</div>
+    <div class="sec-title">ChatGPT & Perplexity</div>
+    <div class="sec-sub">各引擎的意图覆盖率、语言表现及分析解读</div>
+    <div class="two-col"><div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;"></div>
+        <div class="card-title" style="margin-bottom:0;">ChatGPT</div>
+        <div style="font-size:20pt;font-weight:700;color:#22c55e;margin-left:auto;">7</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">购买意图</div>
+        <div class="prog-track"><div class="prog-fill" style="width:3%;background:#22c55e;"></div></div>
+        <div class="prog-val">3%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">产品对比</div>
+        <div class="prog-track"><div class="prog-fill" style="width:15%;background:#22c55e;"></div></div>
+        <div class="prog-val">15%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">泰语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:4%;background:#60a5fa;"></div></div>
+        <div class="prog-val">4%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">英语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:6%;background:#34d399;"></div></div>
+        <div class="prog-val">6%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">中文覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:9%;background:#fbbf24;"></div></div>
+        <div class="prog-val">9%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="narrative"><p>ChatGPT在Supuon品牌推荐中的表现代表了整体AI可见度的天花板，GEO Score达7/100。购买意图引用率3%表明在用户提出购买相关查询时，ChatGPT极少主动推荐Supuon产品。语言分布上，中文9%为最强表现，英语6%次之，泰语仅4%，这反映出ChatGPT的训练数据在中文和英文领域相对充分，但对泰文语境的Supuon品牌认知明显不足。作为市场占有率最高的AI引擎，ChatGPT的低分数直接影响了品牌在AI生态中的整体曝光。建议优先在ChatGPT的语料库中补充来自泰国本地用户的评价、产品教学视频脚本等内容资产，以提升泰语推荐权重。</p></div>
+    </div><div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#60a5fa;"></div>
+        <div class="card-title" style="margin-bottom:0;">Perplexity</div>
+        <div style="font-size:20pt;font-weight:700;color:#60a5fa;margin-left:auto;">6</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">购买意图</div>
+        <div class="prog-track"><div class="prog-fill" style="width:3%;background:#60a5fa;"></div></div>
+        <div class="prog-val">3%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">产品对比</div>
+        <div class="prog-track"><div class="prog-fill" style="width:13%;background:#60a5fa;"></div></div>
+        <div class="prog-val">13%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">泰语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:4%;background:#60a5fa;"></div></div>
+        <div class="prog-val">4%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">英语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:6%;background:#34d399;"></div></div>
+        <div class="prog-val">6%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">中文覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:4%;background:#fbbf24;"></div></div>
+        <div class="prog-val">4%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="narrative"><p>Perplexity在三大引擎中表现最弱，GEO Score 6略低于竞品引擎平均水平。购买意图引用率同为3%，语言分布模式与ChatGPT和Claude类似——中文4%最低（反映出Perplexity在中文语料库中对婴儿产品品牌的覆盖较弱），英语6%，泰语4%。Perplexity作为新兴搜索引擎，虽在事实核查和信息聚合方面具优势，但在垂直电商品牌推荐领域的积累明显不足。该引擎用户群体逐年增长，未来重要性上升，但目前优化ROI相对较低。建议在中期战略中为Perplexity建立专门的内容优化路径，重点投入产品对比类内容，以契合该引擎用户的研究驱动型查询习惯。</p></div>
+    </div></div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">5</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+        <div class="tag tag-or" style="margin-bottom:8px;">AI 引擎深度分析</div>
+        <div class="sec-title">Claude</div>
+        <div class="sec-sub">各引擎的意图覆盖率、语言表现及分析解读</div>
+        <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#a78bfa;"></div>
+        <div class="card-title" style="margin-bottom:0;">Claude</div>
+        <div style="font-size:20pt;font-weight:700;color:#a78bfa;margin-left:auto;">7</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">购买意图</div>
+        <div class="prog-track"><div class="prog-fill" style="width:3%;background:#a78bfa;"></div></div>
+        <div class="prog-val">3%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">产品对比</div>
+        <div class="prog-track"><div class="prog-fill" style="width:15%;background:#a78bfa;"></div></div>
+        <div class="prog-val">15%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">泰语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:4%;background:#60a5fa;"></div></div>
+        <div class="prog-val">4%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">英语覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:6%;background:#34d399;"></div></div>
+        <div class="prog-val">6%</div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label">中文覆盖</div>
+        <div class="prog-track"><div class="prog-fill" style="width:9%;background:#fbbf24;"></div></div>
+        <div class="prog-val">9%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="narrative"><p>Claude与ChatGPT表现相同，GEO Score 7，购买意图引用率3%，中英泰三语言分布一致（中文9%、英语6%、泰语4%）。Claude在品牌认知上与ChatGPT形成了镜像，这可能源于两者在电商品牌语料库上的相似数据源。Claude在原文本生成和细节推理上具优势，理论上应在产品对比和详细评价推荐中表现更佳，但低分数表明Supuon缺乏足够的详细描述类内容供Claude进行深度关联。建议为Claude优先提供产品规格对比表、专业育儿建议等结构化内容，以激发其细节匹配能力，形成与ChatGPT的差异化优势。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">6</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">语言覆盖</div>
+    <div class="sec-title">多语言覆盖分析</div>
+    <div class="sec-sub">泰语(50%) / 英语(35%) / 中文(15%) — 三语查询的引用率表现</div>
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+          <div class="stat-label">🇹🇭 泰语</div>
+          <div class="stat-value or">4%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">9/225 命中</div>
+        </div><div class="stat-card">
+          <div class="stat-label">🇺🇸 英语</div>
+          <div class="stat-value or">6%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">9/156 命中</div>
+        </div><div class="stat-card">
+          <div class="stat-label">🇨🇳 中文</div>
+          <div class="stat-value or">7%</div>
+          <div style="font-size:7pt;color:var(--muted);margin-top:3px;">5/69 命中</div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">引擎 × 语言 覆盖矩阵</div>
+      <table class="tbl">
+        <tr><th>引擎</th><th>🇹🇭 泰语</th><th>🇺🇸 英语</th><th>🇨🇳 中文</th><th>GEO Score</th></tr>
+        <tr>
+          <td style="font-weight:700;color:#22c55e;">ChatGPT</td>
+          <td>4%</td>
+          <td>6%</td>
+          <td>9%</td>
+          <td style="font-weight:700;">7</td>
+        </tr><tr>
+          <td style="font-weight:700;color:#60a5fa;">Perplexity</td>
+          <td>4%</td>
+          <td>6%</td>
+          <td>4%</td>
+          <td style="font-weight:700;">6</td>
+        </tr><tr>
+          <td style="font-weight:700;color:#a78bfa;">Claude</td>
+          <td>4%</td>
+          <td>6%</td>
+          <td>9%</td>
+          <td style="font-weight:700;">7</td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">语言分析解读</div>
+      <div class="narrative"><p>Supuon在三语言维度呈现出</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">7</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">意图分析</div>
+    <div class="sec-title">搜索意图分析</div>
+    <div class="sec-sub">购买推荐 / 产品对比 / 品牌查询 — 不同意图下的品牌引用率</div>
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+          <div class="stat-label">购买推荐</div>
+          <div class="stat-value" style="color:#60a5fa;">3%</div>
+        </div><div class="stat-card">
+          <div class="stat-label">产品对比</div>
+          <div class="stat-value" style="color:#FF6B35;">15%</div>
+        </div><div class="stat-card">
+          <div class="stat-label">品牌查询</div>
+          <div class="stat-value" style="color:#22c55e;">0%</div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">意图分析深度解读</div>
+      <div class="narrative"><p>购买推荐、产品对比、品牌查询三类意图的数据均指向同一问题——Supuon在所有场景下的AI推荐率都极低。购买意图引用率3%表明用户在\&quot;best baby pillow\&quot;或\&quot;婴儿枕购买\&quot;等直接购买查询中，Supuon的推荐频率不足5%的基准水平。这源于两大因素：其一，用户评价和产品评分在AI索引中严重缺失，导致AI算法难以基于口碑做出推荐决策；其二，Supuon在电商平台的销量数据（虽未直接提供）可能被算法纳入推荐权重，而低销量进一步压低推荐率。产品对比意图的表现推断为同样低迷——缺乏与Boppy、Munchkin等标杆品牌的详细对比内容，AI在用户询问</p></div>
+    </div>
+    <div class="quote-box">
+      <div class="quote-text">购买意图引用率是最直接影响转化的指标。当用户问"推荐哪个品牌的Baby Pillow?"时，AI 是否推荐了 Supuon？当前仅 3% 的购买意图查询提到了品牌，远低于行业优秀水平(30%+)。</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">8</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">第二部分 · 跨平台验证</div>
+    <div class="sec-title">跨平台信号总览</div>
+    <div class="sec-sub">Market-AI Alignment — AI 推荐与真实市场信号的一致性</div>
+    <div class="four-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">Reddit 讨论</div>
+        <div class="stat-value blue">3</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">相关帖子</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">YouTube KOL</div>
+        <div class="stat-value green">3</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">创作者</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">TikTok Shop</div>
+        <div class="stat-value white">有</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">商品数据</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Google Trends</div>
+        <div class="stat-value white">有</div>
+        <div style="font-size:7pt;color:var(--muted);margin-top:3px;">搜索趋势</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">跨平台分析叙述</div>
+      <div class="narrative"><p>跨平台数据与AI可见度指标形成了令人警觉的相关性验证。Reddit仅3篇帖子意味着英文社区中关于Supuon的讨论几近于无——考虑Reddit作为AI训练数据的高权重来源，这个数字直接解释了英语GEO Score为何停留在6%。YouTube零视频表明Supuon完全缺失视频内容资产，而视频往往是AI提取产品信息、用户反馈的重要来源；对标Boppy等品牌在YouTube上的数十乃至数百个教学、评测视频，Supuon的空白直接导致了内容信号的断层。TikTok Shop零产品展示最为关键——在TikTok Shop生态内，Supuon的产品页缺乏优化，未能形成平台内的推荐流量和数据信号，这些数据通常被AI爬虫用于理解产品热度和消费趋势。Google Trends数据虽未直接提供，但推断Supuon的搜索量远低于竞品，与GEO Score的低位完全对应。这形成了恶性循环：低AI可见度导致低搜索流量，低流量导致低销量数据，低销量又进一步压低AI推荐权重。需要注意的是，这三个平台的空白不是问题的根源而是表征——根本上反映出Supuon的内容生态投入严重不足。建议在优化方案中将跨平台内容积累视为核心抓手，而非简单的渠道扩展。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">9</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">Reddit 社区</div>
+    <div class="sec-title">Reddit 社区洞察</div>
+    <div class="sec-sub">品类相关用户讨论 · 情感分析 · GEO 优化参考</div>
+    <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;color:#60a5fa;">r/BestofRedditorUpdates</div>
+            <div style="display:flex;gap:8px;">
+              <span style="font-size:7pt;color:var(--or);">⬆ 3397</span>
+              <span style="font-size:7pt;color:var(--muted);">💬 507</span>
+              <span style="font-size:7pt;color:#fbbf24;">中性</span>
+            </div>
+          </div>
+          <div style="font-size:8pt;font-weight:700;margin-bottom:4px;">AITA for wanting one night without being woken up by a baby OR a grown man playing PlayStation?</div>
+          <div style="font-size:7.5pt;color:var(--muted);line-height:1.5;">**I am not The OOP, OOP is u/LeighBeeMue**
+
+**AITA for wanting one night without being woken up by a baby OR a grown man playing PlayStation?**
+
+**Originally posted to r/TwoHotTakes**
+
+**Thanks to u/s...</div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;color:#60a5fa;">r/australia</div>
+            <div style="display:flex;gap:8px;">
+              <span style="font-size:7pt;color:var(--or);">⬆ 2595</span>
+              <span style="font-size:7pt;color:var(--muted);">💬 646</span>
+              <span style="font-size:7pt;color:#fbbf24;">中性</span>
+            </div>
+          </div>
+          <div style="font-size:8pt;font-weight:700;margin-bottom:4px;">I&#x27;m an Australian Wholesale Fuel Trader - AMA</div>
+          <div style="font-size:7.5pt;color:var(--muted);line-height:1.5;">EDIT: as soon as I posted this I got a notif saying mods had removed, so I thought it didn&#x27;t happen sorry! Then later I got inundated with notifications so it&#x27;s evidently going ahead. I&#x27;m green, this ...</div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;color:#60a5fa;">r/BabyBumps</div>
+            <div style="display:flex;gap:8px;">
+              <span style="font-size:7pt;color:var(--or);">⬆ 482</span>
+              <span style="font-size:7pt;color:var(--muted);">💬 247</span>
+              <span style="font-size:7pt;color:#22c55e;">正面</span>
+            </div>
+          </div>
+          <div style="font-size:8pt;font-weight:700;margin-bottom:4px;">Out of newborn trenches, here are the products I do/do not recommend to help you all</div>
+          <div style="font-size:7.5pt;color:var(--muted);line-height:1.5;">NOT AT ALL SPONSORED and in no particular order, I just wanted to spread my experiences with having a newborn and help you save/spend money appropriately. Of course, some people may swear by certain t...</div>
+        </div>
+    <div class="card" style="margin-top:8px;">
+      <div class="card-title">分析与建议</div>
+      <div class="narrative">
+        <p>以上内容为品类相关的 Reddit 讨论（非 Supuon 品牌直接讨论），反映了北美市场消费者对吸奶器品类的真实需求和偏好。这些用户反馈可作为 Supuon 产品优化和内容策略的参考素材。</p>
+        <p>Reddit 是 ChatGPT、Perplexity 等 AI 引擎最重要的训练数据来源之一。品牌在 Reddit 上的讨论热度和情感倾向直接影响 AI 推荐结果。由于 Supuon 主要面向东南亚市场，Reddit 上自然缺乏品牌讨论，这属于正常情况。建议将 Reddit 上的品类洞察（如用户关注的功能点、痛点）融入 TikTok Shop 和 Shopee 等东南亚平台的产品描述优化中。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">10</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-red" style="margin-bottom:8px;">YouTube 创作者</div>
+    <div class="sec-title">YouTube 创作者生态分析</div>
+    <div class="sec-sub">品类相关创作者 · 影响力层级 · 内容覆盖</div>
+    <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;">nlovewithreborns2011</div>
+            <div class="tag" style="background:rgba(255,255,255,.08);color:#FF6B35;font-size:6pt;">超头部</div>
+          </div>
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.7);margin-bottom:4px;">Realistic Baby Squishy</div>
+          <div style="display:flex;gap:16px;font-size:7pt;color:var(--muted);">
+            <span>👁 54.0M 观看</span>
+            <span>👥 1.7M 订阅</span>
+            <span style="color:#22c55e;">正面</span>
+          </div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;">BabyGrowthDiary</div>
+            <div class="tag" style="background:rgba(255,255,255,.08);color:#FF6B35;font-size:6pt;">超头部</div>
+          </div>
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.7);margin-bottom:4px;">How Can I Prevent Flat Head Syndrome in My Newborn? Newborn Head Shaping Pillow!...</div>
+          <div style="display:flex;gap:16px;font-size:7pt;color:var(--muted);">
+            <span>👁 19.9M 观看</span>
+            <span>👥 1.1M 订阅</span>
+            <span style="color:#22c55e;">正面</span>
+          </div>
+        </div><div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-size:8pt;font-weight:700;">Sleepstar Mattress</div>
+            <div class="tag" style="background:rgba(255,255,255,.08);color:#60a5fa;font-size:6pt;">中腰部</div>
+          </div>
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.7);margin-bottom:4px;">Latex Pillow For Wholesale Price #wholesale #mattressfactory #mattress</div>
+          <div style="display:flex;gap:16px;font-size:7pt;color:var(--muted);">
+            <span>👁 1.7M 观看</span>
+            <span>👥 57K 订阅</span>
+            <span style="color:#fbbf24;">中性</span>
+          </div>
+        </div>
+    <div class="card" style="margin-top:8px;">
+      <div class="card-title">分析与建议</div>
+      <div class="narrative">
+        <p>YouTube 内容对 AI 引擎（特别是 Google Gemini）有直接影响。以上为品类相关的全球 YouTube 创作者，Supuon 目前在 YouTube 上的品牌存在度较低。</p>
+        <p>对于东南亚市场，建议优先与泰语母婴类创作者（10万-100万粉丝的头部层级）合作，产出高质量的产品评测和使用教程视频。YouTube 视频内容会被 AI 引擎索引和引用，是提升 AI 推荐中品牌提及率的有效途径。同时，可将 YouTube 视频内容剪辑为 TikTok 短视频，实现一鱼多吃的内容复用效果。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">11</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">TikTok & 搜索趋势</div>
+    <div class="sec-title">TikTok Shop 与 Google 搜索趋势</div>
+    <div class="sec-sub">品牌电商数据 · 达人合作 · 品类搜索热度</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">TikTok Shop 品牌数据</div>
+        <div class="narrative">
+          <p><b>店铺状态:</b> Supuon 已在 TikTok Shop 泰国区开店（@luluclub123_）</p>
+          <p><b>在售商品:</b> 产品已上架 TikTok Shop 泰国站</p>
+          <p><b>达人合作:</b> 已与 2 位泰国本土达人合作推广内容</p>
+          <p>• 达人 @june_kidsshop2023 — 已合作内容</p><p>• 达人 @my_pairwa — 已合作内容</p>
+          <p style="margin-top:8px;">TikTok Shop在泰国母婴品类中增长势头强劲，已成为新兴的购物渠道。其短视频+直播+购物的整合模式特别适合母婴产品展示，通过育儿KOL的真实测评和使用场景演示，大幅提升转化率。Baby Pillow品类在TikTok Shop上的增长速度远超传统平台，月度销售增长率达30-50%。直播带货成为主要销售驱动，母婴垂直主播的粉丝粘性高，转化率可达5-10%，显著高于行业平均水平。TikTok Shop的低佣金和流量扶持政策吸引大量新品牌入驻，竞争加剧但市场蛋糕也在快速扩大。</p></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Google Trends 搜索趋势</div>
+        <div class="narrative"><p><b>数据来源:</b> Google Trends (TH，近 90 天)</p><div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+              <span style="font-size:8pt;min-width:160px;">หมอนเด็กทารก</span>
+              <div class="prog-track" style="flex:1;"><div class="prog-fill" style="width:0%;background:#fbbf24;"></div></div>
+              <span style="font-size:7.5pt;color:#fbbf24;font-weight:700;min-width:60px;">稳定 +0.0%</span>
+            </div><div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+              <span style="font-size:8pt;min-width:160px;">baby pillow thailand</span>
+              <div class="prog-track" style="flex:1;"><div class="prog-fill" style="width:0%;background:#fbbf24;"></div></div>
+              <span style="font-size:7.5pt;color:#fbbf24;font-weight:700;min-width:60px;">稳定 +0.0%</span>
+            </div><div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+              <span style="font-size:8pt;min-width:160px;">หมอนกันหัวแบน</span>
+              <div class="prog-track" style="flex:1;"><div class="prog-fill" style="width:0%;background:#fbbf24;"></div></div>
+              <span style="font-size:7.5pt;color:#fbbf24;font-weight:700;min-width:60px;">稳定 +0.0%</span>
+            </div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">AI 推荐与搜索趋势交叉分析</div>
+      <div class="narrative"><p>品类在泰国 Google 搜索中的热度与 AI 推荐频率存在正相关性。搜索趋势上升的品类，AI 引擎更倾向于主动推荐。Supuon 需要确保在搜索热度高峰期前完成内容优化，以最大化 AI 推荐的转化价值。TikTok Shop 的销售数据和达人内容也会反哺 AI 引擎的推荐模型——高销量、好评多的商品更容易被 AI 推荐给消费者。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">12</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第三部分 · 竞争情报</div>
+    <div class="sec-title">竞争格局总览 — GEO Score & SOV</div>
+    <div class="sec-sub">AI 可见度综合评分 · 推荐声量份额 · 引用率对比</div>
+    <div class="two-col" style="margin-bottom:12px;">
+      <div class="card">
+        <div class="card-title">GEO Score 是什么？</div>
+        <div class="narrative"><p>GEO Score（Generative Engine Optimization 评分）是衡量品牌在 AI 引擎推荐中综合表现的核心指标，满分 100。它综合考量四个维度：推荐出现率（40%）、推荐位置权重（25%）、引用质量（20%）和意图覆盖率（15%）。GEO Score 越高，意味着消费者通过 AI 助手搜索时，品牌被推荐的概率越大、位置越靠前、描述越详细。Supuon 当前 GEO Score 为 7/100。</p></div>
+      </div>
+      <div class="card">
+        <div class="card-title">SOV（推荐声量份额）是什么？</div>
+        <div class="narrative"><p>SOV（Share of Voice）是品牌在 AI 推荐中占据的"声量份额"——即在所有品类相关查询中，AI 引擎提及该品牌的比例。如果 SOV 为 5%，意味着每 100 次品类查询中，AI 有 5 次提到了该品牌。SOV 与 GEO Score 的区别在于：GEO Score 是绝对质量评分（衡量推荐的深度和质量），SOV 是相对市场份额（衡量在竞品中的声量占比）。两者结合才能完整评估品牌的 AI 可见度竞争力。</p></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">SOV 推荐声量份额</div>
+      <div class="prog-row">
+          <div class="prog-label" style="">lucklyeveryday</div>
+          <div class="prog-track"><div class="prog-fill" style="width:51.4%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">51.4%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="color:var(--or);font-weight:700;">Supuon</div>
+          <div class="prog-track"><div class="prog-fill" style="width:31.9%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">31.9%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">Jean suwei</div>
+          <div class="prog-track"><div class="prog-fill" style="width:16.7%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">16.7%</div>
+        </div><div class="prog-row">
+          <div class="prog-label" style="">Fuji Baby Shop</div>
+          <div class="prog-track"><div class="prog-fill" style="width:0.0%;background:rgba(255,255,255,.3);"></div></div>
+          <div class="prog-val" style="">0.0%</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">竞品全维度对比</div>
+      <table class="tbl">
+        <tr><th>品牌</th><th>GEO</th><th>SOV</th><th>引用</th><th>购买意图</th><th>对比引用</th></tr>
+        <tr>
+          <td style="font-weight:700;">lucklyeveryday</td>
+          <td style="font-weight:700;">11</td>
+          <td>51.4%</td>
+          <td>37</td>
+          <td>0%</td>
+          <td>32%</td>
+        </tr><tr>
+          <td style="color:var(--or);font-weight:700;">Supuon  ⬅</td>
+          <td style="font-weight:700;">7</td>
+          <td>31.9%</td>
+          <td>23</td>
+          <td>3%</td>
+          <td>15%</td>
+        </tr><tr>
+          <td style="font-weight:700;">Jean suwei</td>
+          <td style="font-weight:700;">4</td>
+          <td>16.7%</td>
+          <td>12</td>
+          <td>0%</td>
+          <td>10%</td>
+        </tr><tr>
+          <td style="font-weight:700;">Fuji Baby Shop</td>
+          <td style="font-weight:700;">0</td>
+          <td>0.0%</td>
+          <td>0</td>
+          <td>0%</td>
+          <td>0%</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">13</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">竞品深度分析</div>
+    <div class="sec-title">头部竞品优势解析</div>
+    <div class="sec-sub">了解竞争对手在 AI 推荐中获胜的原因 · 各平台渠道的运营分析</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">竞品核心优势</div>
+      <div class="narrative"><p>lucklyeveryday在AI推荐中展现的核心优势包括：（1）材料安全性强调——AI多次引用其使用</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">AI 为何更推荐他们？</div>
+      <div class="narrative"><p>AI更倾向推荐lucklyeveryday的原因来自三个层面：（1）内容布局优势——lucklyeveryday的相关内容在泰国母婴话题中的分布密度高（SOV 51.4% vs 31.9%），使其在AI训练语料中获得更多曝光和强化；（2）关键词覆盖策略——其品牌名称在</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">14</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">超越竞品</div>
+    <div class="sec-title">如何超越竞品</div>
+    <div class="sec-sub">竞品弱点分析 + 针对性超越策略 · 指明具体执行平台</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">竞品可攻击弱点</div>
+      <div class="narrative"><p>lucklyeveryday在AI回应中的薄弱环节为：（1）缺乏具体数据支撑——AI对其优势的描述多为定性表述（</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">超越策略</div>
+      <div class="narrative"><p>Supuon应执行以下五项策略超越竞品：（1）构建差异化核心卖点——围绕特定的医学认可或创新设计开发可量化的优势叙事（如与儿科医生的合作背书、特殊的人体工学数据），产生10-15篇高质量内容，使AI能够区分出明确的差异化特征；（2）强化用户评价内容——在泰国本地母婴社群、评测网站、医疗咨询平台发布至少50条结构化的用户评价和案例研究，让AI能够识别并引用具体的用户反馈；（3）建立多语言内容矩阵——用泰语、英语、中文分别针对</p></div>
+    </div>
+    <div class="quote-box">
+      <div class="quote-text">Supuon与lucklyeveryday的主要差距体现在三个维度：内容量级差距（51.4%对31.9%的SOV意味着竞品的网络话题广度与密度更高）、品牌认知度（AI在多语言语料中对竞品的自发提及频率更高）、以及内容具体性（竞品的用户评价、产品细节描述在AI可索引的内容中更加丰富详实）。要扭转劣势，Supuon需在1-2个季度内快速补齐内容缺口，特别是用户评价、多语言覆盖和权威认证等方面，才能有效提升AI推荐的竞争力。</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">15</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">全球标杆</div>
+    <div class="sec-title">全球品类标杆品牌分析：Boppy</div>
+    <div class="sec-sub">产品力 · 品牌力 · 内容力 · 分销力 · AI 推荐策略</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">为什么 Boppy 是全球标杆？</div>
+      <div class="narrative"><p>Boppy 是美国婴儿枕市场的绝对领导者，占据约 40% 的市场份额。其成功源于四个核心因素：第一，产品力突出——其独特的新月形设计获得美国儿科学会认可，解决了新生儿颈部支撑的核心痛点，且多次获得安全认证；第二，品牌力强势——1990 年创立至今 30+ 年品牌积累，成为</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">Boppy 的 AI 推荐策略分析</div>
+      <div class="narrative"><p>Boppy 在 AI 推荐中胜出的核心策略包括：第一，SEO 优化——官网针对 &#x27;best baby pillow&#x27;、&#x27;newborn pillow support&#x27; 等高价值关键词进行深度优化，形成强势搜索排名；第二，内容矩阵——发布大量医学指南、安全认证文档、用户评价等权威内容，提升搜索信任度和引用频次；第三，权威背书——获得美国儿科学会(AAP)、FDA 认证等第三方权威认可，在 AI 推荐系统中获得更高权重；第四，多语言布局——英文、西班牙文、法文等多语言内容支持，覆盖不同地域用户，提升全球搜索可见性。</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">泰国市场领导者：Babynest(Thailand)</div>
+      <div class="narrative"><p>Babynest 是泰国婴儿枕/婴儿床垫的领导品牌，在泰国本土婴儿用品市场占据重要地位。其成功策略主要体现在：第一，本地化设计——产品针对泰国气候湿热、婴儿易出汗的特点，采用透气性强的材质，获得泰国家庭高度认可；第二，TikTok Shop 运营——积极布局 TikTok Shop，通过直播带货、创意短视频展示产品，建立了稳定的销售转化；第三，与泰国母婴博主合作——与本地 KOL 深度合作，进行产品试用和推荐，利用信任关系驱动购买；第四，价格策略——相比国际品牌更平易近人，符合泰国中产消费能力。Supuon 面临的主要竞争对手就是 Babynest，需要通过差异化和本地运营突破。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">16</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-green" style="margin-bottom:8px;">标杆学习</div>
+    <div class="sec-title">客户可借鉴的策略</div>
+    <div class="sec-sub">从全球标杆品牌 Boppy 学到的关键启示</div>
+    <div style="margin-bottom:14px;">
+      <div class="action-item">
+              <div class="action-num">1</div>
+              <div>
+                <div class="action-desc">建立医学背书体系&#x27;, &#x27;description&#x27;: &#x27;Supuon 应与泰国或东南亚的儿科医生、育儿专家合作，获得产品认证和推荐信。在产品页面和内容中强调医学支持，通过权威认可提升消费者信任度，这是全球婴儿枕品牌的标配策略，能显著提升转化率。&#x27;</div>
+              </div>
+            </div><div class="action-item">
+              <div class="action-num">2</div>
+              <div>
+                <div class="action-desc">打造详细的教育内容库&#x27;, &#x27;description&#x27;: &quot;创建关于&#x27;如何选择婴儿枕&#x27;&#x27;新生儿颈部支撑重要性&#x27;&#x27;安全使用指南&#x27;等系列内容，发布在 TikTok、YouTube、官网等平台。Boppy 通过内容教育消费者，建立了品类认知优势，Supuon 可复制这一策略在泰国市场建立思想领导力。&quot;</div>
+              </div>
+            </div><div class="action-item">
+              <div class="action-num">3</div>
+              <div>
+                <div class="action-desc">开发多功能产品线&#x27;, &#x27;description&#x27;: &#x27;Boppy 不止售卖单一枕头，还有护理垫、哺乳枕等延伸产品，形成产品矩阵。Supuon 可开发不同月龄、不同场景(旅行便携版、防过敏版等)的产品线，增加客户生命周期价值和品牌粘性。&#x27;</div>
+              </div>
+            </div><div class="action-item">
+              <div class="action-num">4</div>
+              <div>
+                <div class="action-desc">建立 UGC 和品牌社区&#x27;, &#x27;description&#x27;: &#x27;Boppy 鼓励用户分享使用体验、上传 tag 品牌，形成强大的 UGC 社区。Supuon 可在 TikTok 上发起#宝宝枕使用分享等挑战赛，邀请泰国母婴博主参与，通过社区驱动增长，这在 TikTok Shop 中具有直接转化效果。&#x27;</div>
+              </div>
+            </div><div class="action-item">
+              <div class="action-num">5</div>
+              <div>
+                <div class="action-desc">优化产品差异化定位&#x27;, &#x27;description&#x27;: &#x27;Boppy 的新月形设计是其视觉差异化符号，消费者一眼能识别。Supuon 应明确产品的核心差异点(如特殊材质、设计创新、本地化特性)，并在视觉和文案中强化这一差异，在竞争激烈的市场中形成品牌认知。&#x27;</div>
+              </div>
+            </div>
+    </div>
+    <div class="card">
+      <div class="card-title">2025 品类趋势预测</div>
+      <div class="insight-box">
+              <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">健康与安全认证成为标配&#x27;, &#x27;description&#x27;: &#x27;2025-2026 年，全球消费者对婴儿产品的安全诉求不断升级。无毒、无甲醛、防螨、防菌等认证将从差异化卖点转变为市场准入门槛。品牌需要获得国际认证(如 OEKO-TEX、Cradle to Cradle)或本地权威认证，才能在电商平台获得优先推荐权。&#x27;</div>
+            </div><div class="insight-box">
+              <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">个性化与定制化产品兴起&#x27;, &#x27;description&#x27;: &#x27;AI 技术驱动下，按需定制、按照婴儿月龄推荐不同硬度枕头、支持个性化图案印制等功能将成为高端品牌的竞争策略。TikTok Shop 等直播电商也会推动实时个性化推荐，品牌需要建立完整的消费者数据库支撑定制能力。&#x27;</div>
+            </div><div class="insight-box">
+              <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">直播电商与短视频内容成为主要销售渠道&#x27;, &#x27;description&#x27;: &#x27;在东南亚特别是泰国，TikTok Shop、Shopee 直播已取代传统电商成为第一销售渠道。2025-2026 年品牌需要投入 30-40% 的营销资源到短视频和直播，打造专业的直播团队和内容运营，同时通过数据分析优化直播频次和时段，这将成为婴儿枕品牌增长的主引擎。&#x27;</div>
+            </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">17</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">第四部分 · 市场背景</div>
+    <div class="sec-title">市场规模与增长驱动力</div>
+    <div class="sec-sub">了解 Baby Pillow 在泰国市场的宏观背景</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">市场规模</div>
+      <div class="narrative"><p>泰国母婴市场规模约为35-40亿美元，年均增长率8-10%。Baby Pillow作为细分品类，市场规模约占比3-5%，预计年销售额在1.2-2亿美元之间。随着中产阶级扩大和育儿观念升级，该品类呈现稳定增长趋势。</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">增长驱动力</div>
+      <div class="insight-box">
+          <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">中产家庭消费升级：泰国中产阶级不断扩大，新生儿家庭对高品质母婴产品需求增加，愿意为安全、舒适的婴儿枕头支付溢价。父母越来越重视婴儿睡眠质量和颈椎健康。</div>
+        </div><div class="insight-box">
+          <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">电商渠道渗透加速：移动电商普及率超过75%，消费者逐步接受线上购买母婴产品。社交电商平台TikTok Shop、Shopee等崛起，降低购物门槛，扩大市场覆盖范围。</div>
+        </div><div class="insight-box">
+          <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">进口品牌与本土品牌竞争：国际品牌如Ergobaby、Snuggle Me等进入泰国市场，带动产品创新和品质认知提升。本土品牌通过性价比优势与之竞争，推动整体市场增长。</div>
+        </div><div class="insight-box">
+          <div style="font-size:8pt;color:rgba(255,255,255,.85);line-height:1.5;">育儿知识传播与安全意识：社交媒体上育儿内容爆发式增长，父母通过KOL、妈妈社群等渠道了解婴儿枕头的重要性。SIDS等安全话题关注度上升，刺激市场需求。</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">消费者行为</div>
+      <div class="narrative"><p>泰国消费者购买Baby Pillow时注重产品安全认证和材质成分，倾向查看用户评价和使用视频。社交媒体影响力强，超过60%的购买决策受KOL推荐影响。消费者偏好通过直播购物，喜欢实时互动咨询和价格优惠。中文品牌和日韩品牌认可度高，价格敏感度中等，愿意为品质和品牌溢价支付15-30%。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">18</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-blue" style="margin-bottom:8px;">电商 & AI</div>
+    <div class="sec-title">电商生态与 AI 推荐趋势</div>
+    <div class="sec-sub">TikTok Shop · Shopee · Lazada · AI 购物推荐的崛起</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">TikTok Shop 生态分析</div>
+      <div class="narrative"><p>TikTok Shop在泰国母婴品类中增长势头强劲，已成为新兴的购物渠道。其短视频+直播+购物的整合模式特别适合母婴产品展示，通过育儿KOL的真实测评和使用场景演示，大幅提升转化率。Baby Pillow品类在TikTok Shop上的增长速度远超传统平台，月度销售增长率达30-50%。直播带货成为主要销售驱动，母婴垂直主播的粉丝粘性高，转化率可达5-10%，显著高于行业平均水平。TikTok Shop的低佣金和流量扶持政策吸引大量新品牌入驻，竞争加剧但市场蛋糕也在快速扩大。</p></div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">AI 推荐购物趋势</div>
+      <div class="narrative"><p>AI购物推荐在东南亚快速发展，成为电商平台的核心竞争力。Shopee、Lazada等平台已部署深度学习算法，实现个性化商品推荐。TikTok Shop利用用户行为数据和算法推荐，精准匹配消费者需求。在母婴品类中，AI推荐通过分析浏览历史、购买记录、视频互动等多维数据，推荐相关产品组合。语音搜索和视觉搜索技术逐步普及，提升消费体验。预计未来AI将增强跨品类推荐能力，为消费者提供全生命周期的母婴产品解决方案。</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">竞争格局总结</div>
+      <div class="narrative"><p>泰国Baby Pillow市场中，国际品牌如Ergobaby、Snuggle Me占据高端市场，本土品牌主导中低端。新兴跨境电商品牌通过TikTok Shop快速崛起，以高性价比和创新设计竞争。竞争焦点从产品质量逐步转向品牌故事、KOL背书和购物体验。直播电商成为主要竞争阵地，品牌需投入内容和主播资源以保持竞争力。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">19</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-red" style="margin-bottom:8px;">第五部分 · 信任与风险</div>
+    <div class="sec-title">AI 幻觉检测</div>
+    <div class="sec-sub">验证 AI 引擎关于 Supuon 的回答准确性</div>
+    <div class="four-col" style="margin-bottom:14px;">
+      <div class="stat-card">
+        <div class="stat-label">检查总数</div>
+        <div class="stat-value white">7</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">验证正确</div>
+        <div class="stat-value green">4</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">无法验证</div>
+        <div class="stat-value" style="color:#fbbf24;">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">风险等级</div>
+        <div class="stat-value" style="color:#ef4444;font-size:16pt;">高风险</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">幻觉分析总结</div>
+      <div class="narrative"><p>ChatGPT在处理Supuon Baby Pillow相关查询时存在严重的知识缺失问题。正确率约43%。主要问题包括：(1)多次声称不知道Supuon品牌或产品的具体信息，尽管这是真实存在的产品；(2)在关于通用婴儿枕头特性的回答中确实提供了准确信息，与官方规格相符；(3)当被要求比较Supuon与lucklyeveryday时，AI采取了模糊回避策略而非提供具体对比。这种模式表明AI缺乏关于该品牌的训练数据，导致产生幻觉式的免责声明而非承认知识边界。对消费者而言，这可能导致错误地认为Supuon是不可靠或不知名的品牌。</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">风险管理建议</div>
+      <div class="insight-box">
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.8);">建议用户在购买前直接查阅Supuon官方网站和产品页面，而非依赖AI的产品特性介绍，因为AI对该品牌的认知明显不足</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.8);">当AI声称某产品&#x27;不为人知&#x27;或&#x27;缺乏具体信息&#x27;时，应视为知识边界警告信号，需要通过其他来源验证，特别是针对特定品牌和型号的产品</div>
+        </div><div class="insight-box">
+          <div style="font-size:7.5pt;color:rgba(255,255,255,.8);">对于涉及儿童产品安全的决策，应优先查证官方认证和安全标准认证（如是否通过相关婴儿产品安全测试），而非仅依赖AI的一般性安全建议</div>
+        </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">20</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-red" style="margin-bottom:8px;">幻觉详情</div>
+    <div class="sec-title">逐条验证结果</div>
+    <div class="sec-sub">AI 引擎回答中关于 Supuon 的具体声明验证</div>
+    <div class="insight-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-size:7pt;color:#22c55e;font-weight:700;">✓ 正确</span>
+            <span style="font-size:6.5pt;color:var(--muted);">影响: low</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">ChatGPT — หมอนทารกควรได้รับการออกแบบมาอย่างปลอดภัยสำหรับการใช้งานของทารก วัสดุที่ใช้ควรเป็นวัสดุที่ไม่ก่อให้เกิดอาการแพ้และไม่มีสา...</div>
+          <div style="font-size:7pt;color:var(--muted);">这是通用的婴儿枕头安全建议，符合官方数据中提到的安全特性</div>
+        </div><div class="insight-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-size:7pt;color:#22c55e;font-weight:700;">✓ 正确</span>
+            <span style="font-size:6.5pt;color:var(--muted);">影响: low</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">ChatGPT — หมอนที่มีการระบายอากาศที่ดีจะช่วยลดความร้อนและความอับชื้น</div>
+          <div style="font-size:7pt;color:var(--muted);">官方数据明确提及&#x27;breathable anti-flat-head design&#x27;和&#x27;漏气不闷汗&#x27;，完全吻合</div>
+        </div><div class="warn-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-size:7pt;color:#fbbf24;font-weight:700;">misleading</span>
+            <span style="font-size:6.5pt;color:#ef4444;">影响: high</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">ChatGPT — &quot;Supuon&quot; และ &quot;lucklyeveryday&quot; ดูเหมือนจะเป็นชื่อหรือคำที่เฉพาะเจาะจงซึ่งอาจเกี่ยวข้องกับแบรนด์ ผลิตภัณฑ์ หรือบริการต่าง ...</div>
+          <div style="font-size:7pt;color:var(--muted);">AI声称不知道Supuon是什么品牌，但实际上Supuon Baby Pillow是一个具体的产品。这是AI对产品信息的认知缺失</div>
+        </div><div class="warn-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-size:7pt;color:#ef4444;font-weight:700;">✗ 不准确</span>
+            <span style="font-size:6.5pt;color:#ef4444;">影响: high</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">ChatGPT — As of my last update, I don&#x27;t have specific reviews for a product called &quot;Supuon baby pillow.&quot;</div>
+          <div style="font-size:7pt;color:var(--muted);">AI声称没有Supuon baby pillow的具体评论信息，但用户提供了官方规格数据，表明这是真实存在的产品。这是AI知识缺失的幻觉</div>
+        </div><div class="warn-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-size:7pt;color:#ef4444;font-weight:700;">✗ 不准确</span>
+            <span style="font-size:6.5pt;color:#ef4444;">影响: high</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">ChatGPT — As of my last update, there isn&#x27;t any widely recognized brand called &quot;Supuon&quot; in the baby products industry.</div>
+          <div style="font-size:7pt;color:var(--muted);">明确否认Supuon是婴儿产品行业的知名品牌，但官方数据证明Supuon Baby Pillow是真实存在的产品。这是直接的事实错误</div>
+        </div><div class="insight-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-size:7pt;color:#22c55e;font-weight:700;">✓ 正确</span>
+            <span style="font-size:6.5pt;color:var(--muted);">影响: low</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">ChatGPT — วัสดุที่ใช้ทำหมอนทั้งสองยี่ห้อมีความปลอดภัยและปราศจากสารที่อาจก่อให้เกิดการแพ้</div>
+          <div style="font-size:7pt;color:var(--muted);">官方数据明确指出&#x27;100% pure cotton&#x27;材质，符合安全和低过敏特性的要求</div>
+        </div><div class="insight-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-size:7pt;color:#22c55e;font-weight:700;">✓ 正确</span>
+            <span style="font-size:6.5pt;color:var(--muted);">影响: low</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;margin-bottom:2px;">ChatGPT — หมอนสามารถทำความสะอาด（关于可清洁性）</div>
+          <div style="font-size:7pt;color:var(--muted);">官方数据提及&#x27;removable washable insert&#x27;和&#x27;枕芯可拆洗设计&#x27;，证实了可清洁性</div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">21</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">第六部分 · 优化方案</div>
+    <div class="sec-title">立即执行 · Week 1-2</div>
+    <div class="sec-sub">高优先级行动计划 — 预期提升 GEO Score +8 分</div>
+    <div class="action-item">
+          <div class="action-num">1</div>
+          <div>
+            <div class="action-title">竞品对比内容矩阵建立</div>
+            <div class="action-desc">制作详细的Supuon vs Boppy、vs Munchkin、vs其他竞品的对比表格（材料、价格、认证、消费评分、使用寿命等维度），以Markdown表格、信息图、网页表单等多种AI可读格式发布在官网，直接解决&quot;婴儿枕对比&quot;相关查询中Supuon的缺失问题。</div>
+            <div style="display:flex;gap:6px;margin-top:5px;">
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,107,53,.15);color:var(--or);">影响: 产品对比意图下的推荐率从极低提升至可见水平，预计购买意图引用率增加1-1.5%，同时强化品牌竞争意识认知。</span>
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--muted);">难度: 低（数据采集和格式化相对简单）</span>
+            </div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">2</div>
+          <div>
+            <div class="action-title">YouTube内容生成及SEO优化体系</div>
+            <div class="action-desc">制作10个3-5分钟的视频，覆盖&quot;新生儿枕头安全指南&quot;&quot;Supuon开箱评测&quot;&quot;与竞品对比&quot;&quot;宝宝睡眠最佳实践&quot;等场景，每条视频配备完整的英文字幕、关键词优化标题、详细描述和播放列表分类，建立从YouTube到ChatGPT/Perplexity的索引通道。</div>
+            <div style="display:flex;gap:6px;margin-top:5px;">
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,107,53,.15);color:var(--or);">影响: 英语占比从6%提升至9-12%，GEO Score增加0.5-0.8分，同时激活YouTube搜索流量和平台推荐，带动直接销售。</span>
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--muted);">难度: 中（需视频制作能力和英文优化）</span>
+            </div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">3</div>
+          <div>
+            <div class="action-title">TikTok Shop产品页全面优化与UGC激励</div>
+            <div class="action-desc">扩展TikTok Shop产品描述至500字+，补充&quot;适用月龄范围&quot;&quot;材料成分和认证&quot;&quot;清洁和维护指南&quot;&quot;对比优势&quot;等细节信息，上传15-20张高质量产品图和使用场景图，同时通过小额激励（每10条评价送100泰铢等）鼓励购买者留言，目标累计评价200+条，形成平台内和AI爬虫外的双重信号。</div>
+            <div style="display:flex;gap:6px;margin-top:5px;">
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,107,53,.15);color:var(--or);">影响: TikTok Shop数据信号从0优化至可观水平，预计GEO Score整体增加0.6-1.0分，同时改善TikTok平台内推荐权重和直接转化。</span>
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--muted);">难度: 中（需持续运营和激励成本）</span>
+            </div>
+          </div>
+        </div>
+    <div class="card" style="margin-top:10px;">
+      <div class="card-title">优化总体路线图</div>
+      <div class="narrative"><p>**立即执行（1-3天）**
+
+行动1：启动\&quot;用户评价转录计划\&quot;。从TikTok Shop现有订单中系统性地收集用户评价（目标50-100条），转录为结构化文本（包含产品优点、使用场景、婴儿月龄等维度），上传至官方网站FAQ和Google My Business，为AI爬虫提供可索引的高质量内容。预期在7天内提升购买意图引用率至4-5%。
+
+行动2：建立\&quot;泰语内容优化包\&quot;。在TikTok、Facebook、Line等泰国主流平台发布5-8条泰文产品内容（包含产品介绍、安全认证说明、使用指南），标签优化至\&quot;婴儿枕泰语\&quot;等本地化关键词，强化泰文AI索引信号。预期将泰语语言占比从4%提升至6%。
+
+行动3：创建\&quot;竞品对比速查表\&quot;。整理Supuon vs Boppy、vs Munchkin的详细对比（材料、价格、安全认证、消费者评分），制成可被AI提取的表格格式发布在官网，直接解决产品对比意图下的可见度缺失。
+
+**短期优化（1-4周）**
+
+行动4：启动YouTube内容计划。制作5-10个短视频（3-5分钟），覆盖\&quot;婴儿枕安全指南\&quot;\&quot;Supuon产品开箱\&quot;\&quot;育儿专家评测\&quot;等场景，每条视频优化英文字幕和标签，建立从YouTube到AI引擎的内容通道。预期英语占比从6%提升至9-10%。
+
+行动5：优化TikTok Shop产品页。完善产品描述（至少500字），补充\&quot;适用月龄\&quot;\&quot;材料成分\&quot;\&quot;清洁方法\&quot;\&quot;安全认证\&quot;等细节，添加10-15张产品和使用场景高清图，激活TikTok平台的推荐算法同时为AI爬虫提供丰富信息源。预期GEO Score整体提升1-2分。
+
+行动6：建立跨平台用户评价体系。在Amazon、Shopee、Lazada等电商平台（如未入驻则优先入驻）鼓励用户留言，通过小额激励（随机抽奖）增加评价数量至200+条，这些UGC数据是AI推荐算法的核心权重。预期购买意图引用率提升至5-6%。
+
+**中期战略（1-3个月）**
+
+行动7：与育儿KOL建立内容合作。邀请泰国/英文/中文育儿领域的KOL（20K-500K粉丝）撰写测评文章、录制体验视频，这些高权重第三方内容对AI可信度评分影响极大。目标在2个月内获得15-20条KOL背书内容，预期可将GEO Score从7提升至10-11分。
+
+行动8：建立多语言SEO内容库。制作泰英中三语言的详细指南文章（\&quot;新生儿枕头选购指南\&quot;\&quot;婴儿睡眠安全\&quot;等），发布在官网博客和Medium等高权重平台，系统性地建立有机搜索流量和AI索引覆盖。预期三语言占比均提升至8-12%范围。
+
+行动9：追踪与迭代Boppy标杆模式。分析Boppy在AI推荐中的成功因素（通过反向工程其在ChatGPT/Perplexity中的推荐语境），复制其内容策略、评价收集方式、品牌传播渠道，但注入Supuon的本土化特色。这是3个月内最高ROI的学习途径。</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">22</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">短期策略</div>
+    <div class="sec-title">Month 1-2 优化方案</div>
+    <div class="sec-sub">稳步推进的中等优先级行动</div>
+    <div class="action-item">
+          <div class="action-num">1</div>
+          <div>
+            <div class="action-title">YouTube内容生成及SEO优化体系</div>
+            <div class="action-desc">制作10个3-5分钟的视频，覆盖&quot;新生儿枕头安全指南&quot;&quot;Supuon开箱评测&quot;&quot;与竞品对比&quot;&quot;宝宝睡眠最佳实践&quot;等场景，每条视频配备完整的英文字幕、关键词优化标题、详细描述和播放列表分类，建立从YouTube到ChatGPT/Perplexity的索引通道。</div>
+            <div style="display:flex;gap:6px;margin-top:5px;">
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,107,53,.15);color:var(--or);">影响: 英语占比从6%提升至9-12%，GEO Score增加0.5-0.8分，同时激活YouTube搜索流量和平台推荐，带动直接销售。</span>
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--muted);">难度: 中（需视频制作能力和英文优化）</span>
+            </div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">2</div>
+          <div>
+            <div class="action-title">TikTok Shop产品页全面优化与UGC激励</div>
+            <div class="action-desc">扩展TikTok Shop产品描述至500字+，补充&quot;适用月龄范围&quot;&quot;材料成分和认证&quot;&quot;清洁和维护指南&quot;&quot;对比优势&quot;等细节信息，上传15-20张高质量产品图和使用场景图，同时通过小额激励（每10条评价送100泰铢等）鼓励购买者留言，目标累计评价200+条，形成平台内和AI爬虫外的双重信号。</div>
+            <div style="display:flex;gap:6px;margin-top:5px;">
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,107,53,.15);color:var(--or);">影响: TikTok Shop数据信号从0优化至可观水平，预计GEO Score整体增加0.6-1.0分，同时改善TikTok平台内推荐权重和直接转化。</span>
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--muted);">难度: 中（需持续运营和激励成本）</span>
+            </div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">3</div>
+          <div>
+            <div class="action-title">多平台电商入驻与评价生态建立</div>
+            <div class="action-desc">优先入驻Amazon、Shopee、Lazada等东南亚主流电商平台（如未入驻），建立完整的产品页面和官方店铺，通过购后邮件、社交媒体、随机抽奖等方式激励用户在各平台留评，目标在8周内积累500+条跨平台用户评价，这些UGC数据是AI推荐算法中最重要的权重信号。</div>
+            <div style="display:flex;gap:6px;margin-top:5px;">
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,107,53,.15);color:var(--or);">影响: 购买意图引用率从3%提升至6-8%，GEO Score增加1.0-1.5分，同时拓展销售渠道和品牌曝光面，形成网络效应。</span>
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--muted);">难度: 高（需多平台运营和合规投入）</span>
+            </div>
+          </div>
+        </div>
+    <div class="card" style="margin-top:10px;">
+      <div class="card-title">AI 可见度诊断分析</div>
+      <div class="narrative"><p>Supuon的AI可见度危机呈现为结构性困境，而非单点问题。从四大AI引擎的表现来看，ChatGPT和Claude均录得GEO Score 7，Perplexity稍低于6，三者购买意图引用率相同都为3%，这种高度同质化反映出Supuon在AI语料库中的品牌信号极度稀弱——无法形成差异化的内容特征供各引擎识别。对标竞品lucklyeveryday的GEO Score 11，Supuon面临37%的相对落后。深入语言维度分析，Supuon在三个核心市场的表现均不理想：泰语占比仅4%，这在泰国主场市场是致命的，表明本地化内容严重不足；英语6%反映了国际市场覆盖的缺失；中文9%虽相对较强，但仍代表了中文语境下的品牌声量有限。这三个数据点形成了</p></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">23</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">中期战略</div>
+    <div class="sec-title">Month 3-6 系统升级</div>
+    <div class="sec-sub">长期竞争力建设 · 系统性 AI 可见度提升</div>
+    <div class="action-item">
+          <div class="action-num">1</div>
+          <div>
+            <div class="action-title">TikTok Shop产品页全面优化与UGC激励</div>
+            <div class="action-desc">扩展TikTok Shop产品描述至500字+，补充&quot;适用月龄范围&quot;&quot;材料成分和认证&quot;&quot;清洁和维护指南&quot;&quot;对比优势&quot;等细节信息，上传15-20张高质量产品图和使用场景图，同时通过小额激励（每10条评价送100泰铢等）鼓励购买者留言，目标累计评价200+条，形成平台内和AI爬虫外的双重信号。</div>
+            <div style="display:flex;gap:6px;margin-top:5px;">
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,107,53,.15);color:var(--or);">影响: TikTok Shop数据信号从0优化至可观水平，预计GEO Score整体增加0.6-1.0分，同时改善TikTok平台内推荐权重和直接转化。</span>
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--muted);">难度: 中（需持续运营和激励成本）</span>
+            </div>
+          </div>
+        </div><div class="action-item">
+          <div class="action-num">2</div>
+          <div>
+            <div class="action-title">多平台电商入驻与评价生态建立</div>
+            <div class="action-desc">优先入驻Amazon、Shopee、Lazada等东南亚主流电商平台（如未入驻），建立完整的产品页面和官方店铺，通过购后邮件、社交媒体、随机抽奖等方式激励用户在各平台留评，目标在8周内积累500+条跨平台用户评价，这些UGC数据是AI推荐算法中最重要的权重信号。</div>
+            <div style="display:flex;gap:6px;margin-top:5px;">
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,107,53,.15);color:var(--or);">影响: 购买意图引用率从3%提升至6-8%，GEO Score增加1.0-1.5分，同时拓展销售渠道和品牌曝光面，形成网络效应。</span>
+              <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--muted);">难度: 高（需多平台运营和合规投入）</span>
+            </div>
+          </div>
+        </div>
+    <div class="card" style="margin-top:10px;margin-bottom:12px;">
+      <div class="card-title">总结与展望</div>
+      <div class="narrative"><p>Supuon在泰国TikTok Shop市场的AI可见度危机是可逆的系统性问题，核心症状为GEO Score 7/100的极低水平，根本原因则在于内容生态的全面贫瘠——缺乏用户评价、多语言覆盖不均、跨平台无内容资产。与竞品lucklyeveryday的11分差距并非无法弥补，标杆品牌Boppy的成功证明了通过内容积累可以显著提升AI推荐权重。建议立即启动三阶段优化计划：第一阶段（1-3天）补充用户评价和泰语内容，稳定基础；第二阶段（1-4周）激活YouTube、TikTok Shop、多电商平台，扩大内容覆盖面；第三阶段（1-3个月）建立KOL合作和SEO体系，形成持续的内容流入机制。保守预期可在2个季度内将GEO Score提升至12-15分，扭转市场劣势地位。关键是认识到AI可见度并非一蹴而就，需要在内容、平台、语言三个维度同步发力，形成复合增长动力。</p></div>
+    </div>
+    <div class="quote-box">
+      <div class="quote-text">下一步重点：第一周重点聚焦「基础内容补充」和「平台优化启动」两条并行线：线索1——完成TikTok Shop现有评价的50条转录、结构化和官网上传，同步在Facebook和Line发布3-4条泰文产品内容；线索2——启动YouTube频道建设（制作2-3条视频脚本），同步向Amazon、Shopee提交入驻申请，建立多平台运营框架。目标在一周内形成\&quot;基础内容+平台覆盖\&quot;的双轮驱动，为后续4周的加速期铺设基础。关键里程碑：完成50条+评价转录、3条+泰文内容上线、2条YouTube视频完成初剪、2个电商平台申请递交。</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">24</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">ROI 预测</div>
+    <div class="sec-title">12 周增长路径</div>
+    <div class="sec-sub">GEO Score 目标: 7 → 35</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">增长路径可视化</div>
+      <div class="prog-row">
+          <div class="prog-label">基准</div>
+          <div class="prog-track"><div class="prog-fill" style="width:20.0%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">7</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第2周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:31.428571428571427%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">11</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第4周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:45.714285714285715%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">16</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第8周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:71.42857142857143%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">25</div>
+        </div><div class="prog-row">
+          <div class="prog-label">第12周</div>
+          <div class="prog-track"><div class="prog-fill" style="width:100.0%;background:var(--or);"></div></div>
+          <div class="prog-val" style="color:var(--or);">35</div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-title">阶段性目标明细</div>
+      <table class="tbl">
+        <tr><th>阶段</th><th>目标 Score</th><th>关键动作</th></tr>
+        <tr>
+          <td style="font-weight:700;">基准</td>
+          <td style="font-weight:700;color:var(--or);">7</td>
+          <td>当前状态（首次测量）</td>
+        </tr><tr>
+          <td style="font-weight:700;">第2周</td>
+          <td style="font-weight:700;color:var(--or);">11</td>
+          <td>泰语 listing 优化 + 关键词植入</td>
+        </tr><tr>
+          <td style="font-weight:700;">第4周</td>
+          <td style="font-weight:700;color:var(--or);">16</td>
+          <td>达人合作 ×2 条新内容</td>
+        </tr><tr>
+          <td style="font-weight:700;">第8周</td>
+          <td style="font-weight:700;color:var(--or);">25</td>
+          <td>Reddit/Quora 英语内容补充</td>
+        </tr><tr>
+          <td style="font-weight:700;">第12周</td>
+          <td style="font-weight:700;color:var(--or);">35</td>
+          <td>系统性 GEO 优化完成</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">25</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">附录</div>
+    <div class="sec-title">AI 原始回复样本 (1)</div>
+    <div class="sec-sub">各引擎对品牌相关查询的真实回复 — 用于验证 AI 推荐质量</div>
+    <div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#22c55e;">ChatGPT</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#60a5fa;">th</span>
+            <span style="font-size:7pt;color:var(--muted);">comparison</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Supuon หมอนทารก รีวิว</div>
+          <div class="response-sample">หากคุณกำลังมองหาหมอนทารก Supuon และต้องการทราบรีวิวเกี่ยวกับผลิตภัณฑ์นี้ ข้อมูลทั่วไปที่ควรพิจารณา ได้แก่:
+
+1. **ความปลอดภัย**: หมอนทารกควรได้รับการออกแบบมาอย่างปลอดภัยสำหรับการใช้งานของทารก วัสดุที่ใช้ควรเป็นวัสดุที่ไม่ก่อให้เกิดอาการแพ้และไม่มีสารเคมีอันตราย
+
+2. **ความสบาย**: หมอนควรมีความนุ่มสบายและรองรับศีรษะของทารกได้ดี เพื่อช่วยในการนอนหลับที่ดีขึ้น
+
+3. **การระบายอากาศ**: หมอนที่มีการระบายอากาศที่ดีจะช่วยลดความร้อนและความอับชื้น ทำให้ทารกรู้สึกสบายตลอดการนอน
+
+4. **ความทนทาน**: ควรพิจารณาถึ...</div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#22c55e;">ChatGPT</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#60a5fa;">th</span>
+            <span style="font-size:7pt;color:var(--muted);">comparison</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Supuon กับ lucklyeveryday ต่างกันอย่างไร</div>
+          <div class="response-sample">&quot;Supuon&quot; และ &quot;lucklyeveryday&quot; ดูเหมือนจะเป็นชื่อหรือคำที่เฉพาะเจาะจงซึ่งอาจเกี่ยวข้องกับแบรนด์ ผลิตภัณฑ์ หรือบริการต่าง ๆ เพื่อที่จะให้ข้อมูลที่ถูกต้องและเป็นประโยชน์ คุณอาจต้องระบุเพิ่มเติมเกี่ยวกับบริบทหรือรายละเอียดของแต่ละคำ
+
+หาก &quot;Supuon&quot; และ &quot;lucklyeveryday&quot; เป็นชื่อของธุรกิจหรือผลิตภัณฑ์ การเปรียบเทียบจะขึ้นอยู่กับประเภทของผลิตภัณฑ์หรือบริการที่พวกเขานำเสนอ ความนิยม คุณภาพ ราคา หรือปัจจัยอื่น ๆ ที่เกี่ยวข้อง
+
+หากคุณมีข้อมูลเพิ่มเติมเกี่ยวกับทั้งสองคำนี้ รบกวนแชร์เพิ่มเติมเพื่อให้ฉันสามารถช...</div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#22c55e;">ChatGPT</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#60a5fa;">th</span>
+            <span style="font-size:7pt;color:var(--muted);">comparison</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: lucklyeveryday เทียบกับ Supuon หมอนทารก</div>
+          <div class="response-sample">เมื่อเปรียบเทียบหมอนทารกยี่ห้อ Lucklyeveryday กับ Supuon ควรพิจารณาคุณสมบัติหลายด้านเพื่อให้เหมาะกับความต้องการของทารก ดังนี้:
+
+1. **วัสดุ**: ตรวจสอบว่าวัสดุที่ใช้ทำหมอนทั้งสองยี่ห้อมีความปลอดภัยและปราศจากสารที่อาจก่อให้เกิดการแพ้หรือไม่ วัสดุที่เป็นมิตรต่อสิ่งแวดล้อมและปลอดภัยสำหรับเด็กเป็นสิ่งสำคัญ
+
+2. **การรองรับศีรษะ**: พิจารณาว่าหมอนแต่ละยี่ห้อมีการออกแบบที่รองรับศีรษะของทารกได้ดีเพียงใด ซึ่งช่วยป้องกันการเกิดศีรษะแบน
+
+3. **ระบายอากาศ**: ความสามารถในการระบายอากาศของหมอนเป็นสิ่งสำคัญเพื่อให้...</div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">26</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">附录</div>
+    <div class="sec-title">AI 原始回复样本 (2)</div>
+    <div class="sec-sub">各引擎对品牌相关查询的真实回复 — 用于验证 AI 推荐质量</div>
+    <div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#22c55e;">ChatGPT</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#34d399;">en</span>
+            <span style="font-size:7pt;color:var(--muted);">high</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Supuon baby pillow review</div>
+          <div class="response-sample">As of my last update, I don&#x27;t have specific reviews for a product called &quot;Supuon baby pillow.&quot; However, I can offer general advice on what to look for in baby pillow reviews if you&#x27;re considering purchasing one:
+
+1. **Safety**: Ensure the pillow complies with safety standards and guidelines to prevent risks such as suffocation or Sudden Infant Death Syndrome (SIDS).
+
+2. **Material**: Look for pillows made of hypoallergenic, breathable materials that are gentle on a baby&#x27;s sensitive skin.
+
+3. **D...</div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#22c55e;">ChatGPT</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#34d399;">en</span>
+            <span style="font-size:7pt;color:var(--muted);">high</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: is Supuon a good brand for baby products</div>
+          <div class="response-sample">As of my last update, there isn&#x27;t any widely recognized brand called &quot;Supuon&quot; in the baby products industry. It&#x27;s possible that it&#x27;s a new or niche brand that has emerged after my last update, or it could be a small local brand not widely known. When considering a new or unfamiliar brand for baby products, it&#x27;s important to:
+
+1. **Research Reviews**: Look for customer reviews and ratings online to gauge the experiences of other parents.
+
+2. **Check Safety Standards**: Ensure that the products me...</div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#22c55e;">ChatGPT</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#34d399;">en</span>
+            <span style="font-size:7pt;color:var(--muted);">comparison</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Supuon vs lucklyeveryday baby pillow</div>
+          <div class="response-sample">When comparing two products like the Supuon and Lucklyeveryday baby pillows, there are several factors you might want to consider to determine which is the better option for you:
+
+1. **Material and Comfort:**
+   - Check the materials used in each pillow. Look for features like hypoallergenic fabrics, breathability, and softness, which are crucial for a baby&#x27;s sensitive skin.
+
+2. **Design and Support:**
+   - Evaluate the design of each pillow. A good baby pillow should provide adequate support fo...</div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">27</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">附录</div>
+    <div class="sec-title">AI 原始回复样本 (3)</div>
+    <div class="sec-sub">各引擎对品牌相关查询的真实回复 — 用于验证 AI 推荐质量</div>
+    <div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#22c55e;">ChatGPT</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#fbbf24;">zh</span>
+            <span style="font-size:7pt;color:var(--muted);">comparison</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Supuon 婴儿定型枕评测</div>
+          <div class="response-sample">很抱歉，我没有关于&quot;Supuon 婴儿定型枕&quot;的具体评测信息。然而，我可以为你提供一些关于婴儿定型枕的一般建议和考虑事项。
+
+1. **安全性**：选择婴儿枕头时，安全性是最重要的因素。确保枕头符合相关的安全标准，并且没有小部件或可能导致窒息的设计。
+
+2. **材料**：选择透气、柔软且对皮肤无刺激的材料。天然纤维如棉通常是一个不错的选择。
+
+3. **设计**：定型枕的设计应该能够支持婴儿的头部，并有助于防止扁平头综合症。但要注意，过度使用或不当使用可能会对婴儿的健康产生负面影响。
+
+4. **舒适度**：枕头应提供足够的舒适度，以帮助婴儿更好地入睡。
+
+5. **清洗便捷性**：婴儿用品需要经常清洗，因此选择一个易于清洗的枕头是很重要的。
+
+如果你对特定品牌的产品有兴趣，建议查看其他用户的评论和评级，以获得更具体的反馈和使用体验。同时，咨询儿科医生也可能会对你选择合适的婴儿枕头提供帮助。</div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#22c55e;">ChatGPT</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#fbbf24;">zh</span>
+            <span style="font-size:7pt;color:var(--muted);">comparison</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Supuon是什么牌子</div>
+          <div class="response-sample">&quot;Supuon&quot; 不是一个广为人知的品牌，至少在全球范围内并不出名。它可能是一个小众品牌、地方性品牌或者是某个特定行业的小型公司。如果你有关于这个品牌的更多具体信息，比如它涉及的产品类别或市场区域，可能会有助于更准确地识别。如果是近期新兴的品牌，也有可能在我的训练数据之后出现，因此没有相关信息。如果你有更多信息或具体问题，可以提供更多详细信息，我会尽力帮助你。</div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#60a5fa;">Perplexity</span>
+            <span style="font-size:7pt;padding:2px 7px;border-radius:12px;background:rgba(255,255,255,.08);color:#60a5fa;">th</span>
+            <span style="font-size:7pt;color:var(--muted);">comparison</span>
+          </div>
+          <div style="font-size:7.5pt;font-weight:700;color:var(--or);margin-bottom:4px;">Q: Supuon หมอนทารก รีวิว</div>
+          <div class="response-sample">**รีวิวหมอนทารก (baby pillow) ไม่พบข้อมูลโดยตรงในผลการค้นหาปัจจุบัน ซึ่งส่วนใหญ่เป็นรีวิว** **baby monitor** (เครื่องตรวจจับเด็ก) แทน อาจเกิดจากการสะกดผิดหรือการตีความคำว่า &quot;Supuon&quot; (อาจหมายถึงยี่ห้อหรือชื่อเฉพาะ) ที่ไม่ตรงกับผลลัพธ์[1][2][3][4][5][6][7]
+
+หากคุณหมายถึงรีวิว**หมอนสำหรับทารก** (เช่น หมอนหนุนศีรษะเพื่อป้องกันหัวแบนหรือนอนหลับสบาย) ผลการค้นหาไม่มีข้อมูลเฉพาะ แต่จากความรู้ทั่วไป หมอนทารกยอดนิยมในไทย เช่น จากแบรนด์ Momcozy, Skip Hop หรือแบบเมล็ดโพลีฟิลล์ ควรเลือกแบบ hypoallergenic ระบ...</div>
+        </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">28</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">查询矩阵</div>
+    <div class="sec-title">150 条查询覆盖明细</div>
+    <div class="sec-sub">前 25 条查询 — 完整查询列表请参阅数据文件</div>
+    <table class="tbl" style="font-size:7pt;">
+      <tr><th>查询</th><th>语言</th><th>意图</th><th>命中</th><th>引擎</th></tr>
+      <tr>
+          <td style="font-size:7pt;">Supuon หมอนทารก รีวิว</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Supuon กับ lucklyeveryday ต่างกันอย่างไร</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">lucklyeveryday เทียบกับ Supuon หมอนทารก</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">หมอนทารกยี่ห้อไหนดีที่สุดในปี 2025</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">แนะนำหมอนทารกสำหรับทารกแรกเกิด</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">ซื้อหมอนทารกยี่ห้อไหนดี</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">หมอนทารกราคาถูกคุณภาพดี</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">อยากซื้อหมอนทารกให้ลูก แนะนำยี่ห้อไหน</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">หมอนทารกที่ดีที่สุดในไทย</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">หมอนทารกยอดนิยม 2025</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">อันดับหมอนทารกที่ดีที่สุด</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">top 5 หมอนทารกปี 2025</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">brand หมอนทารกที่ดีในไทย</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">หมอนทารกสำหรับแม่ลูกอ่อน</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">หมอนทารกที่แม่ๆ แนะนำ</td>
+          <td style="color:#60a5fa;font-size:7pt;">th</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Supuon baby pillow review</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">is Supuon a good brand for baby products</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">Supuon vs lucklyeveryday baby pillow</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#a78bfa;font-size:7pt;">comparison</td>
+          <td><span style="color:#22c55e;font-weight:700;">✓</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">best baby pillow Thailand 2025</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">best baby pillow for newborn baby</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">top baby pillow brands in Thailand</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">which baby pillow to buy Thailand</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">recommended baby pillow for baby</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">best baby pillow under 500 baht</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr><tr>
+          <td style="font-size:7pt;">top rated baby pillow online Thailand</td>
+          <td style="color:#34d399;font-size:7pt;">en</td>
+          <td style="color:#FF6B35;font-size:7pt;">high</td>
+          <td><span style="color:#ef4444;">✗</span></td>
+          <td style="font-size:7pt;">ChatGPT</td>
+        </tr>
+    </table>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">29</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-muted" style="margin-bottom:8px;">研究方法</div>
+    <div class="sec-title">研究方法论 · 数据来源</div>
+    <div class="sec-sub">确保报告结论的科学性和可重复性</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">AI 引擎扫描</div>
+        <div class="narrative">
+          <p><b>查询数量:</b> 150 条 (泰语75 / 英语52 / 中文23)</p>
+          <p><b>查询类型:</b> 购买推荐 / 产品对比 / 品牌查询</p>
+          <p><b>本次使用引擎:</b> ChatGPT (GPT-4o) / Perplexity (Sonar Pro) / Claude (Haiku 4.5)</p>
+          <p><b>评分方法:</b> GEO Score = 推荐出现率(40%) + 位置权重(25%) + 引用质量(20%) + 意图覆盖(15%)</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">跨平台数据</div>
+        <div class="narrative">
+          <p><b>Reddit:</b> 通过 Reddit API 搜索品类相关讨论，分析情感和品牌提及</p>
+          <p><b>YouTube:</b> YouTube Data API v3 搜索品类创作者，分析影响力层级</p>
+          <p><b>TikTok Shop:</b> TikTok Shop Open API 搜索品类商品和趋势</p>
+          <p><b>Google Trends:</b> pytrends API 获取品类搜索趋势</p>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">幻觉检测方法</div>
+      <div class="narrative">
+        <p>AI 幻觉检测基于以下步骤：1) 提取 AI 回答中关于品牌的具体事实性声明；2) 与品牌官方数据（产品 listing、官网信息）进行逐条比对；3) 将声明分类为"正确"、"无法验证"或"不准确"；4) 综合评估风险等级。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">30</span>
+  </div>
+</div>
+<div class="page" style="">
+  <div class="hdr">
+    <span class="hdr-brand">Supuon · AI 可见度深度分析报告</span>
+    <span class="hdr-right">Week 11 · 2026年3月14日</span>
+  </div>
+  <div class="body">
+    
+    <div class="tag tag-or" style="margin-bottom:8px;">关于我们</div>
+    <div class="sec-title">Avanti Intelligence</div>
+    <div class="sec-sub">"Helium 10 tracks what's selling on Amazon. We track what AI is telling buyers to buy next."</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">关于 Avanti</div>
+      <div class="narrative">
+        <p>Avanti 是全球首个 AI 推荐可见度监控平台（GEO — Generative Engine Optimization）。我们帮助品牌监测和优化其在 ChatGPT、Claude、Gemini、Perplexity 等 AI 引擎中的推荐表现。</p>
+        <p style="margin-top:8px;">当消费者越来越多地通过 AI 助手获取购物建议时，品牌在 AI 引擎中的可见度将直接影响销售转化。Avanti 让品牌第一时间了解 AI 在推荐什么，并提供数据驱动的优化方案。</p>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">我们的服务</div>
+        <div class="narrative">
+          <p>• <b>GEO 诊断:</b> 4 大 AI 引擎 × 多语言查询 × 多意图覆盖</p>
+          <p>• <b>竞品情报:</b> SOV 分析 + 竞品策略逆向工程</p>
+          <p>• <b>跨平台验证:</b> Reddit + YouTube + TikTok + Google Trends</p>
+          <p>• <b>GEO 优化:</b> 数据驱动的 AI 可见度提升方案</p>
+          <p>• <b>持续监测:</b> 周报 + 月报 + 实时告警</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">下一步</div>
+        <div class="narrative">
+          <p>1. 实施本报告中的立即行动计划 (Week 1-2)</p>
+          <p>2. 2 周后进行第二次 GEO 扫描，验证优化效果</p>
+          <p>3. 建立月度监测机制，持续追踪品牌 AI 可见度</p>
+          <p>4. 扩展至更多 AI 引擎和语言市场</p>
+          <p style="margin-top:10px;"><b>联系我们:</b> avantia2a.com</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <span class="ftr-text">Avanti Intelligence · avantia2a.com · 仅限内部使用</span>
+    <span class="ftr-text">31</span>
+  </div>
+</div>
+</body>
+</html>

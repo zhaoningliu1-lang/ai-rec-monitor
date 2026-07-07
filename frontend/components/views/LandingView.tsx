@@ -6,7 +6,7 @@ import { Lang } from "@/lib/i18n";
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
 
-const CALENDLY = "https://calendly.com/brivesubscription/30min";
+const CALENDLY = "https://cal.com/johnson-liu-avanti/30min";
 const MONO = `'JetBrains Mono','Fira Code','Cascadia Code','Courier New',monospace`;
 
 interface Props { lang: Lang; }
@@ -329,30 +329,30 @@ export default function LandingView({ lang: _lang }: Props) {
           fontWeight: 900, color: "#f0f0f8",
           letterSpacing: "-0.02em", marginBottom: "24px",
         }}>
-          {p("Real brands. Real growth.", "真实品牌，真实增长。")}
+          {p("What we found. What we fixed.", "我们发现了什么，我们解决了什么。")}
         </h2>
 
-        <Term title="avanti case-study --client DriveX --period 90d">
-          <TPrompt cmd="avanti case-study --client DriveX --category automotive --period 90d" />
+        <Term title="avanti scan --brand Jellyfish --category engineering-analytics">
+          <TPrompt cmd={`avanti scan --brand Jellyfish --engines chatgpt,claude,perplexity,gemini`} />
           <TOut color="#1e1e35"> </TOut>
-          <TOut color="#1e1e35">{"BRAND           CATEGORY       SOV BEFORE → AFTER    RESULT"}</TOut>
+          <TOut color="#1e1e35">{"ENGINE          QUERY                          BRAND APPEARS   COMPETITOR"}</TOut>
           <TSep len={64} />
           {[
-            { brand: "JumpStart Pro", cat: p("Jump Starters","启动电源"),  before: "0%", after: "23.7%", c: "#22c55e", note: p("AI rank: unlisted → #2","AI 排名 → 第 2 位") },
-            { brand: "MagDrive Pro",  cat: p("Phone Mounts","车载支架"),   before: "0%", after: "7.8%",  c: "#f5a623", note: p("Won PCMag Editor's Choice","获 PCMag 编辑推荐") },
-            { brand: "DriveSafe Pro", cat: p("Dash Cameras","行车记录仪"), before: "0%", after: "5.2%",  c: "#ff6b35", note: p("Root cause: zero reviews","根因：零英文评测") },
+            { engine: "ChatGPT",    query: p("best engineering analytics","最佳工程分析平台"),  appears: false, competitor: "LinearB" },
+            { engine: "Claude",     query: p("engineering intelligence tool","工程智能工具"),    appears: false, competitor: "Allstacks" },
+            { engine: "Perplexity", query: p("DORA metrics platform","DORA 指标平台"),          appears: false, competitor: "Milestone" },
+            { engine: "Gemini",     query: p("dev productivity analytics","开发效能分析"),      appears: false, competitor: "Waydev" },
           ].map((r) => (
-            <TOut key={r.brand}>
-              <span style={{ color: "#888898", display: "inline-block", width: "136px" }}>{r.brand}</span>
-              <span style={{ color: "#2a2a45", display: "inline-block", width: "112px" }}>{r.cat}</span>
-              <span style={{ color: "#1e1e35", display: "inline-block", width: "32px" }}>{r.before}</span>
-              <span style={{ color: "#3a3a5c" }}> → </span>
-              <span style={{ color: r.c, fontWeight: "bold", display: "inline-block", width: "60px" }}>{r.after}</span>
-              <span style={{ color: "#181828" }}>{"// "}{r.note}</span>
+            <TOut key={r.engine}>
+              <span style={{ color: "#888898", display: "inline-block", width: "120px" }}>{r.engine}</span>
+              <span style={{ color: "#2a2a45", display: "inline-block", width: "200px" }}>{r.query}</span>
+              <span style={{ color: "#ff4d6d", fontWeight: "bold", display: "inline-block", width: "80px" }}>✗ missing</span>
+              <span style={{ color: "#181828" }}>{"// "}{r.competitor}{p(" ranked instead"," 占据位置")}</span>
             </TOut>
           ))}
           <TSep len={64} />
-          <TOut color="#181828">{"exit_code 0  // program completed in 90 days"}</TOut>
+          <TOut color="#ff6b35">{"GEO_SCORE: 0 / 100  // invisible across all 4 engines"}</TOut>
+          <TOut color="#181828">{"→ "}{p("action plan generated: 8 steps to first citation","行动方案：8 步获得首次 AI 引用")}</TOut>
         </Term>
       </motion.section>
 

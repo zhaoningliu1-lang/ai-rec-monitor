@@ -1,3 +1,4 @@
+import os
 from pydantic_settings import BaseSettings
 from pydantic import field_validator
 
@@ -24,7 +25,7 @@ class Settings(BaseSettings):
 
     # Anthropic/Claude (optional — required when "claude" is in a run's providers list)
     anthropic_api_key: str | None = None
-    claude_model: str = "claude-haiku-4-5-20251001"
+    claude_model: str = "claude-fable-5"
     claude_max_concurrency: int = 5
 
     # Perplexity (optional — required when "perplexity" is in a run's providers list)
@@ -36,9 +37,21 @@ class Settings(BaseSettings):
     notion_database_id: str | None = None
 
     # Auth — JWT
+    # SECURITY: must be overridden via JWT_SECRET_KEY env var in production.
+    # The default is intentionally weak so startup fails loudly if unset.
     jwt_secret_key: str = "change-me-in-production"
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 60 * 24 * 30  # 30 days
+
+    @field_validator("jwt_secret_key")
+    @classmethod
+    def _require_real_jwt_secret(cls, v: str) -> str:
+        if v == "change-me-in-production" and os.getenv("ENV", "development") == "production":
+            raise ValueError(
+                "JWT_SECRET_KEY must be set to a strong random secret in production. "
+                "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
+            )
+        return v
 
     # Stripe
     stripe_secret_key: str | None = None
@@ -52,6 +65,11 @@ class Settings(BaseSettings):
     from_email: str = "Avanti <hello@avantia2a.com>"
     site_url: str = "https://avantia2a.com"
     admin_email: str = "hello@avantia2a.com"
+
+    # Shopify
+    shopify_client_id: str | None = None
+    shopify_client_secret: str | None = None
+    shopify_catalog_api_key: str | None = None  # Storefront/Catalog API
 
     # Amazon (Rainforest API — product data, BSR, search rankings)
     rainforest_api_key: str | None = None

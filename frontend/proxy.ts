@@ -16,6 +16,8 @@ const PUBLIC_EXACT = new Set([
   "/book-demo",
   "/product",
   "/company",
+  "/audit",       // free public audit — core cold-email landing page
+  "/zh/audit",
 ]);
 
 const PUBLIC_PREFIX = [
@@ -31,6 +33,7 @@ const PUBLIC_PREFIX = [
   "/a2a-demo",
   "/opportunity-engine",
   "/hackathon",
+  "/audit",       // covers /audit and any sub-paths
 ];
 
 export function proxy(request: NextRequest) {

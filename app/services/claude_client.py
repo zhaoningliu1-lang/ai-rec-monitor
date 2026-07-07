@@ -28,6 +28,13 @@ class ClaudeProvider(BaseProvider):
         import anthropic
         self._client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
 
+    _SYSTEM = (
+        "You are an AI visibility analyst. When asked whether an AI assistant would mention "
+        "a specific brand or product in a response to a user query, answer accurately and concisely. "
+        "If the brand is mentioned, quote the relevant part of your response. "
+        "Do not add disclaimers or hedges unrelated to the visibility question."
+    )
+
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=1, max=10),
@@ -41,6 +48,11 @@ class ClaudeProvider(BaseProvider):
             msg = await self._client.messages.create(
                 model=settings.claude_model,
                 max_tokens=1024,
+                system=[{
+                    "type": "text",
+                    "text": self._SYSTEM,
+                    "cache_control": {"type": "ephemeral"},
+                }],
                 messages=[{"role": "user", "content": prompt}],
             )
             text = msg.content[0].text if msg.content else ""

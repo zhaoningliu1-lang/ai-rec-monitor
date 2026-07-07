@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchMe, type UserProfile } from "@/lib/auth";
 
-const ADMIN_EMAIL = "johnsonliu@hks.harvard.edu";
+const ADMIN_EMAIL = "hello@avantia2a.com";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
 

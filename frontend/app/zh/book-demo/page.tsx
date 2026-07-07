@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL ?? "https://calendly.com/brivesubscription/30min";
+const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL ?? "https://cal.com/johnson-liu-avanti/30min";
 
 export default function ZhBookDemoPage() {
   useEffect(() => {

@@ -6,7 +6,7 @@ export const metadata = {
     "AI 可见度监控、选品情报与 GEO 优化的透明定价。专为亚马逊卖家、TikTok Shop 品牌、DTC 独立站、跨境代理机构及 Shopee/Lazada 卖家打造。",
 };
 
-const CALENDLY = "https://calendly.com/brivesubscription/30min";
+const CALENDLY = "https://cal.com/johnson-liu-avanti/30min";
 
 const TIERS = [
   {

@@ -203,7 +203,7 @@ export default function OptimizerPage() {
                 Start GEO Monitoring →
               </Link>
               <a
-                href="https://calendly.com/brivesubscription/30min"
+                href="https://cal.com/johnson-liu-avanti/30min"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-center text-sm font-medium px-4 py-2.5 rounded-lg transition-colors hover:text-white"

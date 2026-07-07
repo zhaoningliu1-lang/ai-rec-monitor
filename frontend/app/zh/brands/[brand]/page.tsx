@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { api, Run, RunSnapshot, Recommendation } from "@/lib/api";
 
-const CALENDLY = "https://calendly.com/brivesubscription/30min";
+const CALENDLY = "https://cal.com/johnson-liu-avanti/30min";
 import TrendChart from "./TrendChart";
 
 const priorityStyle: Record<string, { bg: string; color: string }> = {

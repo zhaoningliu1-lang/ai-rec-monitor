@@ -1,0 +1,898 @@
+{
+  "brand": "Olayks",
+  "product_en": "Electric Hot Pot",
+  "report_slug": "olayks-electric-hot-pot",
+  "report_type": "weekly",
+  "report_type_label": "AI 可见度周报",
+  "report_date": "Week 12 · 2026年3月17日",
+  "period_label": "周",
+  "geo_score": 100,
+  "geo_score_level": "优秀",
+  "geo_score_delta": "+0",
+  "geo_score_delta_class": "flat",
+  "category_avg_score": 100,
+  "top_brand_score": 100,
+  "citation_count_90d": 60,
+  "citation_delta": "+0",
+  "citation_delta_class": "flat",
+  "citation_rate": 100,
+  "category_rank": 1,
+  "rank_delta": "-",
+  "rank_delta_class": "flat",
+  "category_total_brands": 1,
+  "top_competitor_name": "N/A",
+  "top_competitor_score": 0,
+  "top_competitor_color": "white",
+  "score_gap": 100,
+  "engine_coverage": 1,
+  "summary_headline": "Olayks 在 US 市场领先 N/A",
+  "key_insights": [
+    "Olayks 的 GEO 得分为 100",
+    "N/A 的 SOV 达 0%",
+    "Olayks 的购买意图引用率为 100%",
+    "覆盖 1 个 AI 引擎"
+  ],
+  "engines": [
+    {
+      "name": "Gemini",
+      "score": 20,
+      "rank": 0,
+      "color": "#fbbf24",
+      "bar_class": "yl"
+    }
+  ],
+  "engine_details": [
+    {
+      "name": "Gemini",
+      "score": 20,
+      "color": "#fbbf24",
+      "bar_class": "yl",
+      "hi_rate": 0,
+      "comp_rate": 100.0,
+      "info_rate": 0,
+      "n_results": 60,
+      "th_rate": 0,
+      "en_rate": 100.0,
+      "zh_rate": 0
+    }
+  ],
+  "intents": [
+    {
+      "name": "购买推荐",
+      "rate": 0,
+      "bar_class": "bl"
+    },
+    {
+      "name": "产品对比",
+      "rate": 100.0,
+      "bar_class": "or"
+    },
+    {
+      "name": "品牌查询",
+      "rate": 0,
+      "bar_class": "gr"
+    }
+  ],
+  "score_factors": [
+    {
+      "name": "推荐出现率 (40%)",
+      "weight": 40,
+      "score": "100",
+      "color": "#22c55e"
+    },
+    {
+      "name": "位置权重 (25%)",
+      "weight": 25,
+      "score": "10",
+      "color": "#22c55e"
+    },
+    {
+      "name": "引用质量 (20%)",
+      "weight": 20,
+      "score": "0",
+      "color": "#ef4444"
+    },
+    {
+      "name": "意图覆盖 (15%)",
+      "weight": 15,
+      "score": "1",
+      "color": "#ef4444"
+    }
+  ],
+  "intent_comparison": [
+    {
+      "intent": "购买推荐",
+      "self_pct": 0,
+      "self_level": "weak",
+      "comp_vals": []
+    },
+    {
+      "intent": "产品对比",
+      "self_pct": 100.0,
+      "self_level": "strong",
+      "comp_vals": []
+    },
+    {
+      "intent": "品牌查询",
+      "self_pct": 0,
+      "self_level": "weak",
+      "comp_vals": []
+    }
+  ],
+  "competitors": [
+    {
+      "name": "Olayks",
+      "sov": 100.0,
+      "geo_score": 100,
+      "citations": 60,
+      "is_self": true,
+      "hi_rate": 0,
+      "comp_rate": 100.0,
+      "info_rate": 0
+    }
+  ],
+  "lang_breakdown": [
+    {
+      "lang": "en",
+      "label": "英语",
+      "flag": "🇺🇸",
+      "hits": 60,
+      "total": 60,
+      "rate": 100
+    }
+  ],
+  "query_samples": [
+    {
+      "query": "Quick recommendation: best electric hot pot brand under $100 for everyday use?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "How do electric hot pot prices compare across different brands?",
+      "lang": "en",
+      "intent": "info",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "I need a reliable electric hot pot under $100 — what do you recommend?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "What are the most trusted electric hot pot brands among US consumers?",
+      "lang": "en",
+      "intent": "info",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "What's the top-rated electric hot pot available under $100 right now?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "I need a durable electric hot pot — which brand lasts longest under $100?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "How do electric hot pot brands differ in quality?",
+      "lang": "en",
+      "intent": "info",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "I want to buy a electric hot pot under $100 — which brand should I choose?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "How long do electric hot pot products typically last?",
+      "lang": "en",
+      "intent": "info",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "Which electric hot pot brand would you buy yourself for under $100?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "Which electric hot pot would you gift someone for under $100?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "Give me a comparison of electric hot pot options for US shoppers.",
+      "lang": "en",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "What separates the best electric hot pot brand from the rest?",
+      "lang": "en",
+      "intent": "comparison",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "What should I look for when buying a electric hot pot?",
+      "lang": "en",
+      "intent": "info",
+      "hit": true,
+      "engine": "Gemini"
+    },
+    {
+      "query": "What's the most popular electric hot pot brand in the US under $100?",
+      "lang": "en",
+      "intent": "high",
+      "hit": true,
+      "engine": "Gemini"
+    }
+  ],
+  "kol_details": [
+    {
+      "handle": "@basicmade694",
+      "platform": "YouTube",
+      "market": "US",
+      "product": "Electric Hot Pot",
+      "views": 5399,
+      "likes": 0,
+      "badge_class": "cool",
+      "badge_label": "带货达人",
+      "note": "Olayks electric cooker intro (Malaysia)",
+      "cited": false,
+      "status_label": "待验证",
+      "status_color": "#94a3b8",
+      "citation_snippet": "",
+      "url": "https://youtube.com/watch?v=IV2lNkD2s6k",
+      "upload_date": ""
+    },
+    {
+      "handle": "@mylifemysharing1871",
+      "platform": "YouTube",
+      "market": "US",
+      "product": "Electric Hot Pot",
+      "views": 4122,
+      "likes": 0,
+      "badge_class": "cool",
+      "badge_label": "带货达人",
+      "note": "Unbox, Review & Demo: OLAYKS Electric Cooker Hotpot Steamer Grill via Lazada",
+      "cited": false,
+      "status_label": "待验证",
+      "status_color": "#94a3b8",
+      "citation_snippet": "",
+      "url": "https://youtube.com/watch?v=NqXMrzjud74",
+      "upload_date": ""
+    },
+    {
+      "handle": "@muziekdoos2023",
+      "platform": "YouTube",
+      "market": "US",
+      "product": "Electric Hot Pot",
+      "views": 2029,
+      "likes": 0,
+      "badge_class": "cool",
+      "badge_label": "带货达人",
+      "note": "Olayks - Electric hot pot",
+      "cited": false,
+      "status_label": "待验证",
+      "status_color": "#94a3b8",
+      "citation_snippet": "",
+      "url": "https://youtube.com/watch?v=z9Fsui9rlfk",
+      "upload_date": ""
+    },
+    {
+      "handle": "@BESTGADGET01",
+      "platform": "YouTube",
+      "market": "US",
+      "product": "Electric Hot Pot",
+      "views": 711,
+      "likes": 0,
+      "badge_class": "cool",
+      "badge_label": "带货达人",
+      "note": "Olayks Electric Hot Pot Reviews | Best Gadgets Reviews In 2022",
+      "cited": false,
+      "status_label": "待验证",
+      "status_color": "#94a3b8",
+      "citation_snippet": "",
+      "url": "https://youtube.com/watch?v=2QOeYWbK4eY",
+      "upload_date": ""
+    },
+    {
+      "handle": "@reviewsinsideTV",
+      "platform": "YouTube",
+      "market": "US",
+      "product": "Electric Hot Pot",
+      "views": 506,
+      "likes": 0,
+      "badge_class": "cool",
+      "badge_label": "带货达人",
+      "note": "Olayks 3L Electric Hot Pot Review: Is It Worth the Hype for Multi-Meal Cooking?",
+      "cited": false,
+      "status_label": "待验证",
+      "status_color": "#94a3b8",
+      "citation_snippet": "",
+      "url": "https://youtube.com/watch?v=lVqgBdnm7HU",
+      "upload_date": ""
+    },
+    {
+      "handle": "@UlasPakar",
+      "platform": "YouTube",
+      "market": "US",
+      "product": "Electric Hot Pot",
+      "views": 160,
+      "likes": 0,
+      "badge_class": "cool",
+      "badge_label": "带货达人",
+      "note": "Review Olayks Multifunction Electric Cooker With Steamer Steamboat Cooker Hotpot",
+      "cited": false,
+      "status_label": "待验证",
+      "status_color": "#94a3b8",
+      "citation_snippet": "",
+      "url": "https://youtube.com/watch?v=xTKl-L441sc",
+      "upload_date": ""
+    },
+    {
+      "handle": "@knitSheep7972",
+      "platform": "YouTube",
+      "market": "US",
+      "product": "Electric Hot Pot",
+      "views": 150,
+      "likes": 0,
+      "badge_class": "cool",
+      "badge_label": "带货达人",
+      "note": "Review Olayks Hot Pot Electric, 3L Portable Electric Pot with Ceramic Non-stick ",
+      "cited": false,
+      "status_label": "待验证",
+      "status_color": "#94a3b8",
+      "citation_snippet": "",
+      "url": "https://youtube.com/watch?v=zE_gbNOt9Bs",
+      "upload_date": ""
+    },
+    {
+      "handle": "@Next-LevelReviews",
+      "platform": "YouTube",
+      "market": "US",
+      "product": "Electric Hot Pot",
+      "views": 82,
+      "likes": 0,
+      "badge_class": "cool",
+      "badge_label": "带货达人",
+      "note": "Review Olayks Hot Pot Electric, 3L Portable Electric Pot with Ceramic Non-stick ",
+      "cited": false,
+      "status_label": "待验证",
+      "status_color": "#94a3b8",
+      "citation_snippet": "",
+      "url": "https://youtube.com/watch?v=4PkfWwLOgbw",
+      "upload_date": ""
+    }
+  ],
+  "hallucination_total": 0,
+  "hallucination_ok": 0,
+  "hallucination_warn": 0,
+  "hallucination_warnings": [],
+  "hallucination_ok_items": [],
+  "expected_score_gain": 5,
+  "actions": [
+    {
+      "title": "Implement Structured Product Data Markup",
+      "description": "Add Schema.org markup (Product, Review, AggregateRating) to all product pages to enhance AI recommendation eligibility and increase appearance in AI-generated comparisons. This ensures Olayks products are machine-readable for AI systems.",
+      "impact": 5,
+      "difficulty": "中等难度 · 1周内完成",
+      "urgency": "立即"
+    },
+    {
+      "title": "Build Comparison-Focused Content",
+      "description": "Create dedicated comparison guides (e.g., 'Olayks vs Other Brands') and product comparison tables targeting high-intent comparison queries. This captures users actively evaluating options and improves visibility in AI comparative recommendations.",
+      "impact": 5,
+      "difficulty": "中等难度 · 1周内完成",
+      "urgency": "立即"
+    },
+    {
+      "title": "Develop Comprehensive FAQ & Attribute Content",
+      "description": "Create FAQ pages and detailed attribute documentation addressing common product questions and use-cases. AI systems use this content for context-aware recommendations, filling gaps that competitors may not have covered.",
+      "impact": 5,
+      "difficulty": "中等难度 · 1周内完成",
+      "urgency": "立即"
+    }
+  ],
+  "next_week_focus": "专注于提高 Olayks 的 GEO 得分和 SOV。",
+  "roi_steps": [
+    {
+      "week": "基准",
+      "score": 100,
+      "action": "当前状态（首次测量）"
+    },
+    {
+      "week": "第2周",
+      "score": 100,
+      "action": "Listing 优化 + 关键词植入"
+    },
+    {
+      "week": "第4周",
+      "score": 100,
+      "action": "达人合作 ×2 条新内容"
+    },
+    {
+      "week": "第8周",
+      "score": 100,
+      "action": "英语内容矩阵补充"
+    },
+    {
+      "week": "第12周",
+      "score": 100,
+      "action": "系统性 GEO 优化完成"
+    }
+  ],
+  "roi_target_w12": 100,
+  "amazon": {
+    "available": true,
+    "brand": "Olayks",
+    "domain": "amazon.com",
+    "presence": {
+      "available": true,
+      "brand": "Olayks",
+      "product_count": 41,
+      "top_products": [
+        {
+          "asin": "B0C4KX1W7W",
+          "title": "Olayks Mini Rice Cooker 2 Cup Uncooked, Small Electric Cooker, with 4 Cooking Functions, 24 Hour Preset and Heat Preservation, Anti Scald Carry Handle",
+          "rating": 4.2,
+          "reviews": 246,
+          "price": 0,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0C4KX1W7W"
+        },
+        {
+          "asin": "B0BJPMBWKB",
+          "title": "Olayks Hot Pot Electric, 3L Portable Electric Pot with Ceramic Non-stick Coating, Dual Power Multi-functional Romen Cooker for Steak, Pasta, Hot Pot, Ramen, Quick Heating and Overheat Protection",
+          "rating": 4.2,
+          "reviews": 239,
+          "price": 49.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0BJPMBWKB"
+        },
+        {
+          "asin": "B09JM3KX47",
+          "title": "Electric Hot Pot, 1.5L Ceramic Glaze Non-stick Mini Pan, Portable Electric Pot for Steak, Egg, Fried Rice, Ramen, Oatmeal, Soup with 2 Power Adjustment, Electric Pot for Dorm",
+          "rating": 4.3,
+          "reviews": 169,
+          "price": 29.99,
+          "bsr": 165659,
+          "url": "https://www.amazon.com/dp/B09JM3KX47"
+        },
+        {
+          "asin": "B0DJM6V2GV",
+          "title": "Juicer Machines, Cold Press Juicer for Fruit and Vegetable, Masticating Machine with Juice Recipe, Self Feeding Effortless for Batch Juicing,Easy to Clean,High Juice Yield Grey",
+          "rating": 4.3,
+          "reviews": 102,
+          "price": 49.99,
+          "bsr": 18337,
+          "url": "https://www.amazon.com/dp/B0DJM6V2GV"
+        },
+        {
+          "asin": "B0FMK29MXJ",
+          "title": "Juicer Machines, Cold Press Juicer with 4.3\" Large Feed Chute Fit Whole Fruit and Vegetable, Masticating Machine with Juice Recipe, Self Feeding Effortless for Batch Juicing,Easy to Clean,Black",
+          "rating": 4.3,
+          "reviews": 102,
+          "price": 49.99,
+          "bsr": 18337,
+          "url": "https://www.amazon.com/dp/B0FMK29MXJ"
+        },
+        {
+          "asin": "B0CHP2LZLJ",
+          "title": "Olayks Portable Induction Cooktop, 1500W Induction Cooktop with 6 Temperature 8 Power Settings, 99 Minutes Timer, Including 8L Cast Iron Cooking Pot and Cast Iron Pan",
+          "rating": 4.1,
+          "reviews": 91,
+          "price": 109.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0CHP2LZLJ"
+        },
+        {
+          "asin": "B0FCFH9ZGJ",
+          "title": "Electric Steamer for Cooking, 2L Ceramic Glaze Non-stick Pot, Dual Power Multi-functional Electric Cooker, Suitable for Steak, Pasta, Hot Pot, Ramen, Quick Heating and Overheat White 2.1 Quarts",
+          "rating": 4.6,
+          "reviews": 61,
+          "price": 51.99,
+          "bsr": 76715,
+          "url": "https://www.amazon.com/dp/B0FCFH9ZGJ"
+        },
+        {
+          "asin": "B0FCFMBPDT",
+          "title": "Hot Pot Electric,2L Ceramic Glaze Non-Stick Pan, Portable Hot Pot with Dual Power Adjustment, Electric Cooker for Egg, Ramen, Oatmeal,Soup Quick Heating and Overheat Protection White 2L",
+          "rating": 4.6,
+          "reviews": 61,
+          "price": 39.99,
+          "bsr": 76715,
+          "url": "https://www.amazon.com/dp/B0FCFMBPDT"
+        },
+        {
+          "asin": "B0DHZQV2RL",
+          "title": "Olayks Conical Burr Coffee Grinder Electric with Electronic Timer, Anti-Static, Coffee Grinders for Home Use, Adjustable Conical Burr Mill with 48 Precise Settings for Espersso/Drip/French Press",
+          "rating": 4.3,
+          "reviews": 59,
+          "price": 99.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0DHZQV2RL"
+        },
+        {
+          "asin": "B0DM4X5Y2Q",
+          "title": "Travel Steamer for Clothes, Fashion Portable Handheld Garment Steamer for Clothes, 15S Heat Up, Min Steamer ＆ Iron 2 In 1, 1.1lbs, Fabric Wrinkle Remover for All Clothes, White,120V",
+          "rating": 4.2,
+          "reviews": 59,
+          "price": 32.99,
+          "bsr": 302282,
+          "url": "https://www.amazon.com/dp/B0DM4X5Y2Q"
+        },
+        {
+          "asin": "B0FNMV155X",
+          "title": "olayks Vacuum Sealer Machine for Food, 60KPA Automatic Food Saver with Dry& Moist Modes, Compact Air Sealing Machine includes 10 Sealer Bags for Kitchen Storage, Meat, Meal Prep, Sous Vide",
+          "rating": 4.2,
+          "reviews": 47,
+          "price": 29.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FNMV155X"
+        },
+        {
+          "asin": "B0F1XYWR5V",
+          "title": "olayks Portable Induction Cooktop, Countertop Burner Hot Plate 1500W With Sensor Touch, Electric Induction Cooker With 9-Level Adjustment, 3-Hour Timer, Auto-Shut-Off, LED Display, Auto Pot Detection",
+          "rating": 3.7,
+          "reviews": 46,
+          "price": 29.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0F1XYWR5V"
+        },
+        {
+          "asin": "B0DJPPX838",
+          "title": "Olayks Espresso Machine 20 Bar, Professtional Espresso Coffee Maker with Milk Frother Steam Wand for Latte, Cappuccino, Espresso Maker with 1.8L Removable Water Tank, Gift for Dad or Mom",
+          "rating": 4.2,
+          "reviews": 43,
+          "price": 99.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0DJPPX838"
+        },
+        {
+          "asin": "B0FFMDX8GC",
+          "title": "olakys Electric Hot Pot with Steamer,1.5L Ceramic Glaze Non-stick Portable Pot, Dual Power Multi-functional Electric Cooker, Suitable for Steak, Pasta, Hot Pot, Ramen, Electric Pot for Dorm White 1.6 Quarts",
+          "rating": 4.2,
+          "reviews": 40,
+          "price": 32.99,
+          "bsr": 19383,
+          "url": "https://www.amazon.com/dp/B0FFMDX8GC"
+        },
+        {
+          "asin": "B0FCBR7S4P",
+          "title": "olakys Electric Hot Pot,1.5L Mini Hot Pot, Ceramic Glaze Non-stick Portable Pot, Electric Pot for for Steak, Egg, Fried Rice, Oatmeal, Soup,Ramen with Dual Power Control, Electric Pot for Dorm White 1.5L",
+          "rating": 4.2,
+          "reviews": 40,
+          "price": 25.99,
+          "bsr": 19383,
+          "url": "https://www.amazon.com/dp/B0FCBR7S4P"
+        },
+        {
+          "asin": "B0DL9HJ41G",
+          "title": "Olayks Juicer Machine,Slow Masticating Juicer with 2 Speed Modes & Quiet Motor,Cold Press Juicer Machines Vegetable and Fruit with Reverse Function,Celery Juicer,BPA-Free,Easy to Clean",
+          "rating": 4.2,
+          "reviews": 35,
+          "price": 49.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0DL9HJ41G"
+        },
+        {
+          "asin": "B0FDB467MX",
+          "title": "olayks Conical Burr Coffee Grinder Electric Coffee Bean Grinder with 48 Precise Settings, Anti-Static Coffee Grinders for Home Use, Adjustable Conical Burr Mill for Espersso/Drip/French Press",
+          "rating": 4.3,
+          "reviews": 32,
+          "price": 99.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FDB467MX"
+        },
+        {
+          "asin": "B0F2152CRV",
+          "title": "olayks Food Processor, Electric Meat Grinder with 4 Stainless Steel Blades, 1.2L Food Chopper Small Grinder Meat Processor with 2 Speeds for Vegetable, Fruits, Baby Food, Meat, Garlic, 5 Cups",
+          "rating": 4.4,
+          "reviews": 32,
+          "price": 29.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0F2152CRV"
+        },
+        {
+          "asin": "B0DNH3ZD7V",
+          "title": "Juicer Machines, Cold Press Juicer with 4.3\" Large Feed Chute Fit Whole Fruit and Vegetable, Masticating Machine with Juice Recipe, Self Feeding Effortless for Batch Juicing,Easy to Clean,Black",
+          "rating": 3.4,
+          "reviews": 26,
+          "price": 49.99,
+          "bsr": 449133,
+          "url": "https://www.amazon.com/dp/B0DNH3ZD7V"
+        },
+        {
+          "asin": "B0FGDMRJR9",
+          "title": "Electric Kettle With Infuser, 1.5L Electric Tea Kettle With Temperature Control, Glass Kettle & Hot Water Boiler,1200W Fast heating for Pour Over Coffee, Brew Tea, Easy to Clean G888B",
+          "rating": 4.2,
+          "reviews": 23,
+          "price": 75.99,
+          "bsr": 609196,
+          "url": "https://www.amazon.com/dp/B0FGDMRJR9"
+        },
+        {
+          "asin": "B0FHKXFCRM",
+          "title": "olayks Nut Milk Maker Machine, 20oz Automatic Soy Milk Maker with 12 Blades for Homemade Soy, Oat, Almond, Plant Based Milk and Non Dairy Beverages, Delay Start/Self-Cleaning/Boil Water with Recipe",
+          "rating": 4.5,
+          "reviews": 21,
+          "price": 49.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FHKXFCRM"
+        },
+        {
+          "asin": "B0FXXDXVX2",
+          "title": "olayks Rice Cooker 2 Cup Uncooked, Mini Rice Cooker Small Electric Cooker with 4 Cooking Functions, 24 Hour Preset, Heat Preservation, Non-Stick Ceramic Coating for 1-2 People",
+          "rating": 4.3,
+          "reviews": 18,
+          "price": 59.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FXXDXVX2"
+        },
+        {
+          "asin": "B0FR3WB5XP",
+          "title": "olayks Induction Cooktop, Portable Induction Cooktop with Cooking Pot and Grill Pan, 1500W Hot Plate Electric Stove with Sensor Touch 8 Power Levels, 99 Min Timer",
+          "rating": 4.1,
+          "reviews": 17,
+          "price": 99.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FR3WB5XP"
+        },
+        {
+          "asin": "B0DQ3LKVW3",
+          "title": "Olayks Food Warming Mat for food, Electric Warming Tray with 17 Temp Setting, 3 Hours Timer, Full-Surface Heat in 10s, Portable & Rollable Versatile Food Warmer for Countertop for Gatherings, Parties",
+          "rating": 4.2,
+          "reviews": 16,
+          "price": 27.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0DQ3LKVW3"
+        },
+        {
+          "asin": "B0FCBKV2TM",
+          "title": "olayks Professional 20-Bar Espresso Coffee Maker, Semi-Automatic with Steam Wand Milk Frother, All-in-One Machine with 1.8L Removable Tank for Latte Cappuccino, Easy Clean",
+          "rating": 3.5,
+          "reviews": 12,
+          "price": 99.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FCBKV2TM"
+        },
+        {
+          "asin": "B0FDG8L29V",
+          "title": "olayks Mini Rice Cooker, Small Electric Cooker 2 Cup Uncooked with 4 Cooking Functions, Ceramic Rice Cooker with 24 Hour Preset, Heat Preservation, Anti Scald Carry Handle",
+          "rating": 3.9,
+          "reviews": 10,
+          "price": 59.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FDG8L29V"
+        },
+        {
+          "asin": "B0D8SYYFVJ",
+          "title": "Olayks Vaccum Sealer Rolls with BPA Free, 2 Roll 11\"×20' for Pre-Cut Vacuum Sealer for Food Bags, Commercial Grade Vacuum Food Storage Bags for Sous Vide Freezer Vac Storage Meal Prep",
+          "rating": 4.3,
+          "reviews": 9,
+          "price": 17.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0D8SYYFVJ"
+        },
+        {
+          "asin": "B0D8SYD1BD",
+          "title": "Olayks Vaccum Sealer Bag with BPA Free, 8\"×10\" 100 Pack for Pre-Cut Vacuum Sealer for Food Bags, Commercial Grade Vacuum Food Storage Bags for Sous Vide Freezer Vac Storage Meal Prep",
+          "rating": 4.4,
+          "reviews": 9,
+          "price": 21.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0D8SYD1BD"
+        },
+        {
+          "asin": "B0D8SXZ8HQ",
+          "title": "Vaccum Sealer Bag with BPA Free, 8\"×12\" 100 Pack for Pre-Cut Vacuum Sealer for Food Bags, Commercial Grade Vacuum Food Storage Bags for Sous Vide Freezer Vac Storage Meal Prep",
+          "rating": 4.4,
+          "reviews": 9,
+          "price": 23.99,
+          "bsr": 409521,
+          "url": "https://www.amazon.com/dp/B0D8SXZ8HQ"
+        },
+        {
+          "asin": "B0D8SYSQ7C",
+          "title": "Vaccum Sealer Bag with BPA Free, 6\"×8\" 100 Pack for Pre-Cut Vacuum Sealer for Food Bags, Commercial Grade Vacuum Food Storage Bags for Sous Vide Freezer Vac Storage Meal Prep",
+          "rating": 4.4,
+          "reviews": 9,
+          "price": 16.99,
+          "bsr": 409521,
+          "url": "https://www.amazon.com/dp/B0D8SYSQ7C"
+        },
+        {
+          "asin": "B0D8SYT2W9",
+          "title": "Vaccum Sealer Bag with BPA Free, 11\"×16\" 100 Pack for Pre-Cut Vacuum Sealer for Food Bags, Commercial Grade Vacuum Food Storage Bags for Sous Vide Freezer Vac Storage Meal Prep",
+          "rating": 4.4,
+          "reviews": 9,
+          "price": 32.99,
+          "bsr": 409521,
+          "url": "https://www.amazon.com/dp/B0D8SYT2W9"
+        },
+        {
+          "asin": "B0D8SYN1KM",
+          "title": "Vaccum Sealer Bag with BPA Free, 6\"×8\" 100 Pack for Pre-Cut Vacuum Sealer for Food Bags, Commercial Grade Vacuum Food Storage Bags for Sous Vide Freezer Vac Storage Meal Prep",
+          "rating": 4.4,
+          "reviews": 9,
+          "price": 16.99,
+          "bsr": 409521,
+          "url": "https://www.amazon.com/dp/B0D8SYN1KM"
+        },
+        {
+          "asin": "B0D8T2FF8Y",
+          "title": "Vaccum Sealer Rolls with BPA Free, 2 Roll 8\"×50' for Pre-Cut Vacuum Sealer for Food Bags, Commercial Grade Vacuum Food Storage Bags for Sous Vide Freezer Vac Storage Meal Prep 8\"×50’",
+          "rating": 4.3,
+          "reviews": 9,
+          "price": 19.99,
+          "bsr": 617425,
+          "url": "https://www.amazon.com/dp/B0D8T2FF8Y"
+        },
+        {
+          "asin": "B0D8SZJJMC",
+          "title": "Vaccum Sealer Rolls with BPA Free, 2 Roll 11\"×50' for Pre-Cut Vacuum Sealer for Food Bags, Commercial Grade Vacuum Food Storage Bags for Sous Vide Freezer Vac Storage Meal Prep 11\"×50’",
+          "rating": 4.3,
+          "reviews": 9,
+          "price": 29.99,
+          "bsr": 617425,
+          "url": "https://www.amazon.com/dp/B0D8SZJJMC"
+        },
+        {
+          "asin": "B0D8SWF9NQ",
+          "title": "Vaccum Sealer Bag with BPA Free, 6\"×10\" 100 Pack for Pre-Cut Vacuum Sealer for Food Bags, Commercial Grade Vacuum Food Storage Bags for Sous Vide Freezer Vac Storage Meal Prep",
+          "rating": 4.4,
+          "reviews": 9,
+          "price": 18.99,
+          "bsr": 409521,
+          "url": "https://www.amazon.com/dp/B0D8SWF9NQ"
+        },
+        {
+          "asin": "B0FDB8CMGT",
+          "title": "Espresso Machine 20 Bar, Brush Stainless Steel Espresso Maker with Milk Frother Steam Wand, 1400W Espresso Coffee Machine with 1.8L Removable Water Tank for Latte, Cappuccino,Machiato",
+          "rating": 4,
+          "reviews": 8,
+          "price": 94.99,
+          "bsr": 3959015,
+          "url": "https://www.amazon.com/dp/B0FDB8CMGT"
+        },
+        {
+          "asin": "B0FCFMJN4H",
+          "title": "Hot Pot Electric, 3L Portable Electric Pot with Ceramic Non-stick Coating, Dual Power Multi-functional Romen Cooker for Steak, Pasta, Hot Pot, Ramen, Quick Heating and Overheat Protection",
+          "rating": 4,
+          "reviews": 8,
+          "price": 49.99,
+          "bsr": 117260,
+          "url": "https://www.amazon.com/dp/B0FCFMJN4H"
+        },
+        {
+          "asin": "B0G42BR7Y1",
+          "title": "olayks Electric Kettle with Infuser, Hot Water Kettle Electric Tea Kettle with Temperature Control, 2H Keep Warm, 1200W Fast Heating for Boiling Water Tea Coffee, 1.5L",
+          "rating": 4.5,
+          "reviews": 7,
+          "price": 79.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0G42BR7Y1"
+        },
+        {
+          "asin": "B0FC6FQXDB",
+          "title": "olayks Handheld Steamer for Clothes,Fashion Portable Handheld Garment Steamer, 15S Heat Up, Travel Mini Steamer ＆ Iron 2 In 1, 1.1lbs, Fabric Wrinkle Remover for Home Travel, White,120V",
+          "rating": 5,
+          "reviews": 6,
+          "price": 32.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FC6FQXDB"
+        },
+        {
+          "asin": "B0FJCS5FW4",
+          "title": "olayks 6 in 1 Automatic Nut Milk Maker Blender, 20oz Homemade Soy Milk Maker for Plant-Based Milk, Coconut, Oat, Almond, Non-Dairy Beverages with Timer, Keep Warm, Boil Water, Self-Cleaning",
+          "rating": 5,
+          "reviews": 4,
+          "price": 58.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FJCS5FW4"
+        },
+        {
+          "asin": "B0FS6TYJQ2",
+          "title": "olayks Electric Hot Pot, 3L Portable Electric Pot with Ceramic Non-stick Coating, Dual Power Multi-functional Romen Cooker for Steak, Pasta, Hot Pot, Ramen, Quick Heating and Overheat Protection",
+          "rating": 4,
+          "reviews": 4,
+          "price": 41.99,
+          "bsr": null,
+          "url": "https://www.amazon.com/dp/B0FS6TYJQ2"
+        }
+      ],
+      "avg_rating": 4.3,
+      "avg_reviews": 45
+    },
+    "keyword_rankings": [
+      {
+        "keyword": "Olayks electric hot pot",
+        "brand": "Olayks",
+        "brand_rank": 3,
+        "brand_products": [
+          {
+            "rank": 3,
+            "asin": "B0BJPMBWKB",
+            "title": "Olayks Hot Pot Electric, 3L Portable Electric Pot with Ceramic Non-stick Coating, Dual Power Multi-functional Romen Cooker for Steak, Pasta, Hot Pot, Ramen, Quick Heating and Overheat Protection",
+            "rating": 4.2,
+            "reviews": 239
+          },
+          {
+            "rank": 4,
+            "asin": "B0FS6TYJQ2",
+            "title": "olayks Electric Hot Pot, 3L Portable Electric Pot with Ceramic Non-stick Coating, Dual Power Multi-functional Romen Cooker for Steak, Pasta, Hot Pot, Ramen, Quick Heating and Overheat Protection",
+            "rating": 4,
+            "reviews": 4
+          },
+          {
+            "rank": 11,
+            "asin": "B0FR3WB5XP",
+            "title": "olayks Induction Cooktop, Portable Induction Cooktop with Cooking Pot and Grill Pan, 1500W Hot Plate Electric Stove with Sensor Touch 8 Power Levels, 99 Min Timer",
+            "rating": 4.1,
+            "reviews": 17
+          }
+        ],
+        "top_competitors": [
+          {
+            "rank": 1,
+            "asin": "B0FCBR7S4P",
+            "title": "olakys Electric Hot Pot,1.5L Mini Hot Pot, Ceramic Glaze Non-stick Portable Pot, Electric Pot for for Steak, Egg, Fried Rice, Oatmeal, Soup,Ramen with Dual Power Control, Electric Pot for Dorm",
+            "rating": 4.2,
+            "reviews": 40
+          },
+          {
+            "rank": 2,
+            "asin": "B0FCFMBPDT",
+            "title": "Hot Pot Electric,2L Ceramic Glaze Non-Stick Pan, Portable Hot Pot with Dual Power Adjustment, Electric Cooker for Egg, Ramen, Oatmeal,Soup Quick Heating and Overheat Protection",
+            "rating": 4.6,
+            "reviews": 61
+          },
+          {
+            "rank": 5,
+            "asin": "B0FFMDX8GC",
+            "title": "olakys Electric Hot Pot with Steamer,1.5L Ceramic Glaze Non-stick Portable Pot, Dual Power Multi-functional Electric Cooker, Suitable for Steak, Pasta, Hot Pot, Ramen, Electric Pot for Dorm",
+            "rating": 4.2,
+            "reviews": 40
+          },
+          {
+            "rank": 6,
+            "asin": "B0FCFMJN4H",
+            "title": "Hot Pot Electric, 3L Portable Electric Pot with Ceramic Non-stick Coating, Dual Power Multi-functional Romen Cooker for Steak, Pasta, Hot Pot, Ramen, Quick Heating and Overheat Protection",
+            "rating": 4,
+            "reviews": 8
+          },
+          {
+            "rank": 7,
+            "asin": "B0FCFH9ZGJ",
+            "title": "Electric Steamer for Cooking, 2L Ceramic Glaze Non-stick Pot, Dual Power Multi-functional Electric Cooker, Suitable for Steak, Pasta, Hot Pot, Ramen, Quick Heating and Overheat",
+            "rating": 4.6,
+            "reviews": 61
+          }
+        ],
+        "total_results": 122
+      }
+    ]
+  }
+}

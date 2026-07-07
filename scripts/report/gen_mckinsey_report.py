@@ -2147,7 +2147,8 @@ def build_report_html(data: dict) -> str:
         page_exec_keywords(data),
         page_exec_keywords_p2(data),
         *page_exec_video_scripts(data),        # returns [page1, page2]
-        *page_exec_comparison_faq(data),        # returns [page1, page2]
+        *page_exec_comparison_faq(data),        # returns [page1, page_faq, page_ugc]
+        page_exec_outreach_monitor(data),       # outreach email + monitoring template
         # ── Diagnosis / Conclusion ──
         page_actions_short(data),
         page_actions_mid(data),

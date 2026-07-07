@@ -165,7 +165,7 @@ export default function ZhWhyAIIgnoresYourBrandPage() {
             立即免费诊断 →
           </Link>
           <a
-            href="https://calendly.com/brivesubscription/30min"
+            href="https://cal.com/johnson-liu-avanti/30min"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium px-5 py-2.5 rounded-lg transition-colors hover:text-white"

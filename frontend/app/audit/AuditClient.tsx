@@ -6,7 +6,7 @@ import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { Check, AlertCircle } from "lucide-react";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
-const CALENDLY = "https://calendly.com/brivesubscription/30min";
+const CALENDLY = "https://cal.com/johnson-liu-avanti/30min";
 
 const CATEGORIES = [
   "Automotive accessories",

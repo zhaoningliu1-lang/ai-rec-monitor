@@ -73,17 +73,12 @@ async def search_brand(brand: str, domain: str = "amazon.com") -> dict:
     Search Amazon for a brand and return presence summary.
     Returns: product_count, top_products (title/asin/bsr/rating/reviews/price), avg_rating
     """
+    import asyncio as _asyncio
+
     ck = _cache_key("amz_brand", brand, domain)
     cached = _get_cached(ck)
     if cached is not None:
         return cached
-
-    data = await _request({
-        "type": "search",
-        "search_term": brand,
-        "amazon_domain": domain,
-        "sort_by": "featured",
-    })
 
     result: dict = {
         "available": _AVAILABLE,
@@ -94,16 +89,34 @@ async def search_brand(brand: str, domain: str = "amazon.com") -> dict:
         "avg_reviews": 0,
     }
 
-    if not data:
-        return result
+    # Fetch up to 3 pages in parallel to get all brand SKUs
+    pages_data = await _asyncio.gather(*[
+        _request({
+            "type": "search",
+            "search_term": brand,
+            "amazon_domain": domain,
+            "sort_by": "featured",
+            "page": str(pg),
+        })
+        for pg in range(1, 4)
+    ])
 
-    products = data.get("search_results", [])
     brand_lower = brand.lower()
-    matched = [
-        p for p in products
-        if brand_lower in (p.get("title", "") or "").lower()
-        or brand_lower in (p.get("brand", "") or "").lower()
-    ][:5]
+    seen_asins: set[str] = set()
+    matched = []
+
+    for data in pages_data:
+        if not data:
+            continue
+        for p in data.get("search_results", []):
+            asin = p.get("asin", "")
+            if asin and asin in seen_asins:
+                continue
+            if (brand_lower in (p.get("title", "") or "").lower()
+                    or brand_lower in (p.get("brand", "") or "").lower()):
+                if asin:
+                    seen_asins.add(asin)
+                matched.append(p)
 
     top = []
     for p in matched:
@@ -117,8 +130,11 @@ async def search_brand(brand: str, domain: str = "amazon.com") -> dict:
             "url": f"https://www.{domain}/dp/{p.get('asin', '')}",
         })
 
+    # Sort by review count descending so most established SKUs appear first
+    top.sort(key=lambda x: -(x.get("reviews") or 0))
+
     ratings = [p["rating"] for p in top if p.get("rating")]
-    result["product_count"] = len(matched)
+    result["product_count"] = len(top)
     result["top_products"] = top
     result["avg_rating"] = round(sum(ratings) / len(ratings), 1) if ratings else 0.0
     result["avg_reviews"] = int(sum(p["reviews"] for p in top) / len(top)) if top else 0
@@ -233,16 +249,39 @@ async def search_keyword_ranking(
 async def get_brand_amazon_summary(brand: str, keywords: list[str] | None = None, domain: str = "amazon.com") -> dict:
     """
     Full Amazon presence summary for a brand — used in GEO reports.
-    Combines brand search + keyword rankings.
+    Does brand-wide search (all SKUs) plus keyword rankings.
     """
     import asyncio
 
-    kws = keywords or [brand]
+    # Brand-wide search: search by brand name only to discover all SKUs
+    # Plus up to 2 category-specific keyword rankings (if provided)
+    kw_rankings = keywords[:2] if keywords else []
 
     brand_data, *kw_results = await asyncio.gather(
         search_brand(brand, domain),
-        *[search_keyword_ranking(kw, brand, domain) for kw in kws[:3]],
+        *[search_keyword_ranking(kw, brand, domain) for kw in kw_rankings],
     )
+
+    # Merge brand products from keyword searches into brand_data (deduplicate by ASIN)
+    seen_asins = {p["asin"] for p in brand_data.get("top_products", [])}
+    extra_products = []
+    for kw_result in kw_results:
+        for p in kw_result.get("brand_products", []):
+            if p.get("asin") and p["asin"] not in seen_asins:
+                seen_asins.add(p["asin"])
+                extra_products.append({
+                    "asin": p["asin"],
+                    "title": p.get("title", ""),
+                    "rating": p.get("rating", 0),
+                    "reviews": p.get("reviews", 0),
+                    "price": 0,
+                    "bsr": None,
+                    "url": f"https://www.{domain}/dp/{p['asin']}",
+                })
+
+    if extra_products:
+        brand_data["top_products"] = brand_data.get("top_products", []) + extra_products
+        brand_data["product_count"] = len(brand_data["top_products"])
 
     return {
         "available": _AVAILABLE,

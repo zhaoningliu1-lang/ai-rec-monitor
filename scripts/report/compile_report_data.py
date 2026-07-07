@@ -15,6 +15,7 @@ import asyncio
 import json
 import os
 import re
+import subprocess
 import sys
 from collections import Counter, defaultdict
 from datetime import datetime
@@ -23,13 +24,223 @@ from pathlib import Path
 import psycopg2
 import psycopg2.extras
 
+# ---------------------------------------------------------------------------
+# Auto-load .env from project root (so RAINFOREST_API_KEY etc. are available)
+# ---------------------------------------------------------------------------
+# NOTE: must be before any amazon_service import so RAINFOREST_API_KEY is set
+try:
+    from dotenv import load_dotenv
+    _env_path = Path(__file__).resolve().parents[2] / ".env"
+    if _env_path.exists():
+        load_dotenv(_env_path)
+except ImportError:
+    pass  # dotenv not installed, rely on shell environment
+
+# ---------------------------------------------------------------------------
+# KOL / YouTube via yt-dlp
+# ---------------------------------------------------------------------------
+
+_YTDLP = "/opt/anaconda3/bin/yt-dlp"
+
+
+def fetch_kol_data(brand: str, product: str, region: str = "us", n: int = 8) -> list[dict]:
+    """Search YouTube for KOL reviews using yt-dlp and return structured kol_details."""
+    queries = [
+        f"{brand} {product} review",
+        f"{brand} review unboxing",
+    ]
+    seen_ids: set[str] = set()
+    kols: list[dict] = []
+
+    for q in queries:
+        if len(kols) >= n:
+            break
+        try:
+            cmd = [_YTDLP, "--flat-playlist", "--dump-json", f"ytsearch{n}:{q}"]
+            out = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            for line in out.stdout.strip().split("\n"):
+                if not line:
+                    continue
+                try:
+                    v = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                vid_id = v.get("id", "")
+                if not vid_id or vid_id in seen_ids:
+                    continue
+                seen_ids.add(vid_id)
+                views = v.get("view_count") or 0
+                uploader = v.get("uploader") or v.get("uploader_id") or "unknown"
+                handle = v.get("uploader_id") or uploader
+                if not handle.startswith("@"):
+                    handle = f"@{handle}"
+                kols.append({
+                    "handle": handle,
+                    "platform": "YouTube",
+                    "market": region.upper() if len(region) == 2 else "US",
+                    "product": product.title(),
+                    "views": views,
+                    "likes": v.get("like_count") or 0,
+                    "badge_class": "hot" if views > 100_000 else "warm" if views > 10_000 else "cool",
+                    "badge_label": "爆款" if views > 100_000 else "优质KOL" if views > 10_000 else "带货达人",
+                    "note": (v.get("title") or "")[:80],
+                    "cited": False,
+                    "status_label": "待验证",
+                    "status_color": "#94a3b8",
+                    "citation_snippet": "",
+                    "url": f"https://youtube.com/watch?v={vid_id}",
+                    "upload_date": v.get("upload_date") or "",
+                })
+        except Exception as e:
+            print(f"[KOL] yt-dlp failed for '{q}': {e}", file=sys.stderr)
+
+    kols.sort(key=lambda x: -x["views"])
+    result = kols[:n]
+    print(f"[KOL] Found {len(result)} YouTube videos for '{brand} {product}'")
+    return result
+
 # Add project root to path for amazon_service import
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 try:
-    from app.services.amazon_service import get_brand_amazon_summary
+    from app.services.amazon_service import get_brand_amazon_summary, get_product
     _AMAZON_AVAILABLE = True
 except ImportError:
     _AMAZON_AVAILABLE = False
+
+
+# ---------------------------------------------------------------------------
+# Amazon Brand Store scraper (Playwright — gets ALL SKUs, not just search hits)
+# ---------------------------------------------------------------------------
+
+def _scrape_brand_store_asins(brand_name: str, domain: str = "amazon.com") -> list[str]:
+    """
+    Scrape the Amazon Brand Store page to get the definitive list of all ASINs.
+    Uses Scrapling basic Fetcher to find the store URL, then Playwright to
+    render the JS-heavy store pages and follow each category sub-page.
+    Returns [] gracefully if Playwright is unavailable or scraping fails.
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+        from scrapling.fetchers import Fetcher
+    except ImportError:
+        print("[Amazon Store] Playwright/Scrapling not available — skipping brand store scrape", file=sys.stderr)
+        return []
+
+    def _get_asins_from_html(html: str) -> list[str]:
+        return list(dict.fromkeys(re.findall(r'/dp/([A-Z0-9]{10})', html)))
+
+    def _render_page(pw_page, url: str, scroll_rounds: int = 6) -> str:
+        pw_page.goto(url, wait_until="domcontentloaded", timeout=30000)
+        pw_page.wait_for_timeout(2500)
+        for _ in range(scroll_rounds):
+            pw_page.evaluate("window.scrollBy(0, 700)")
+            pw_page.wait_for_timeout(500)
+        return pw_page.content()
+
+    try:
+        # ── Step 1: find brand store URL via product page ──────────────────
+        fetcher = Fetcher(auto_match=False)
+        brand_lower = brand_name.lower().replace(" ", "+")
+        search_html = fetcher.get(
+            f"https://www.{domain}/s?k={brand_lower}",
+            headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+                     "Accept-Language": "en-US,en;q=0.9"},
+        )
+        store_url: str | None = None
+
+        # Try to find a product page link and extract brand store URL from it
+        product_links = search_html.css("a[href*='/dp/']")
+        for link in product_links[:5]:
+            href = link.attrib.get("href", "")
+            m = re.search(r'/dp/([A-Z0-9]{10})', href)
+            if not m:
+                continue
+            asin = m.group(1)
+            try:
+                prod_page = fetcher.get(
+                    f"https://www.{domain}/dp/{asin}",
+                    headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"},
+                )
+                byline = prod_page.css("#bylineInfo")
+                if byline:
+                    byline_href = byline[0].attrib.get("href", "")
+                    if "/stores/" in byline_href:
+                        store_url = (
+                            f"https://www.{domain}{byline_href}"
+                            if byline_href.startswith("/")
+                            else byline_href
+                        )
+                        break
+            except Exception:
+                continue
+
+        if not store_url:
+            print(f"[Amazon Store] Could not find brand store URL for '{brand_name}'", file=sys.stderr)
+            return []
+
+        print(f"[Amazon Store] Store URL: {store_url[:80]}")
+
+        # ── Step 2: use Playwright to scrape store + all sub-pages ─────────
+        all_asins: set[str] = set()
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            ctx = browser.new_context(
+                user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+                locale="en-US",
+                viewport={"width": 1440, "height": 900},
+            )
+            pg = ctx.new_page()
+
+            # Main store home page
+            html0 = _render_page(pg, store_url)
+            all_asins.update(_get_asins_from_html(html0))
+
+            # Discover sub-pages from nav links
+            subpage_ids = list(dict.fromkeys(
+                re.findall(r'/stores/(?:[^/]+/)?page/([A-F0-9-]{36})', html0, re.IGNORECASE)
+            ))
+            main_id_m = re.search(r'/page/([A-F0-9-]{36})', store_url, re.IGNORECASE)
+            main_id = main_id_m.group(1) if main_id_m else None
+
+            for pid in subpage_ids:
+                if pid == main_id:
+                    continue
+                sub_url = f"https://www.{domain}/stores/{brand_name.lower()}/page/{pid}"
+                try:
+                    sub_html = _render_page(pg, sub_url, scroll_rounds=5)
+                    all_asins.update(_get_asins_from_html(sub_html))
+                except Exception:
+                    pass
+
+            ctx.close()
+            browser.close()
+
+        result = list(all_asins)
+        print(f"[Amazon Store] {len(result)} ASINs found across {len(subpage_ids) + 1} store pages")
+        return result
+
+    except Exception as e:
+        print(f"[Amazon Store] scrape failed (non-fatal): {e}", file=sys.stderr)
+        return []
+
+
+async def _fetch_new_products(asins: list[str], domain: str) -> list[dict]:
+    """Batch-fetch product details via Rainforest type=product for a list of ASINs."""
+    raw = await asyncio.gather(*[get_product(asin, domain) for asin in asins])
+    products = []
+    for p in raw:
+        if not p:
+            continue
+        products.append({
+            "asin": p["asin"],
+            "title": p.get("title", ""),
+            "rating": p.get("rating", 0),
+            "reviews": p.get("reviews", 0),
+            "price": p.get("price", 0),
+            "bsr": p.get("bsr_rank"),
+            "url": p.get("url", ""),
+        })
+    return products
 
 # ---------------------------------------------------------------------------
 # DB connection
@@ -122,8 +333,13 @@ def sov_level(pct: float) -> str:
 # ---------------------------------------------------------------------------
 
 def compile_data(run_id: str | None = None, brand: str | None = None,
-                 product: str | None = None, region: str | None = None) -> dict:
-    """Compile report data from database."""
+                 product: str | None = None, region: str | None = None,
+                 extra_run_ids: list[str] | None = None) -> dict:
+    """Compile report data from database.
+
+    extra_run_ids: additional run UUIDs whose prompt_results will be merged in
+                   (useful for combining runs from different providers).
+    """
 
     # Find run
     if run_id:
@@ -145,14 +361,24 @@ def compile_data(run_id: str | None = None, brand: str | None = None,
     brand_name = run["brand_name"]
     region = region or run.get("region", "us")
 
-    # Get snapshot
+    # Get snapshot (from primary run)
     snaps = query("SELECT * FROM run_snapshots WHERE run_id = %s", (run_id,))
     snap = snaps[0] if snaps else {}
 
-    # Get all prompt results
+    # Get all prompt results — primary run
     results = query("SELECT * FROM prompt_results WHERE run_id = %s", (run_id,))
 
-    # Get recommendation
+    # Merge extra runs' prompt_results
+    if extra_run_ids:
+        for extra_id in extra_run_ids:
+            extra_results = query("SELECT * FROM prompt_results WHERE run_id = %s", (extra_id,))
+            if extra_results:
+                results = results + extra_results
+                print(f"  Merged {len(extra_results)} results from extra run {extra_id}")
+            else:
+                print(f"  WARNING: No results found for extra run {extra_id}", file=sys.stderr)
+
+    # Get recommendation (from primary run)
     recs = query("SELECT * FROM recommendations WHERE run_id = %s", (run_id,))
     rec = recs[0] if recs else {}
 
@@ -400,21 +626,55 @@ def compile_data(run_id: str | None = None, brand: str | None = None,
         {"week": "第12周", "score": min(100, geo_score + 28), "action": "系统性 GEO 优化完成"},
     ]
 
-    # --------------- Amazon presence (Rainforest API) ---------------
+    # --------------- Amazon presence (search + brand store scrape) ---------------
     amazon_data: dict = {"available": False}
     if _AMAZON_AVAILABLE:
         try:
-            # Build keywords: brand name + product category
             category = (product or run.get("category", "")).lower()
-            kw_extras = [f"{brand_name} {category}".strip(), category] if category else []
+            kw_extras = [f"{brand_name} {category}".strip()] if category else None
             amazon_domain = "amazon.com" if region in ("us", "gb", "ca", "au") else "amazon.com"
+
+            # Phase 1: search-based discovery (3 pages, ~20 SKUs)
             amazon_data = asyncio.run(
-                get_brand_amazon_summary(brand_name, kw_extras or None, amazon_domain)
+                get_brand_amazon_summary(brand_name, kw_extras, amazon_domain)
             )
-            logger.info("Amazon data fetched for %s", brand_name) if False else None
-            print(f"[Amazon] brand '{brand_name}' — products: {amazon_data.get('presence', {}).get('product_count', 0)}")
+            n_search = amazon_data.get("presence", {}).get("product_count", 0)
+            print(f"[Amazon] search → {n_search} SKUs")
+
+            # Phase 2: brand store scrape for the definitive full SKU list
+            store_asins = _scrape_brand_store_asins(brand_name, amazon_domain)
+            if store_asins:
+                existing_asins = {
+                    p["asin"]
+                    for p in amazon_data.get("presence", {}).get("top_products", [])
+                    if p.get("asin")
+                }
+                new_asins = [a for a in store_asins if a not in existing_asins]
+                if new_asins:
+                    print(f"[Amazon] brand store → {len(new_asins)} additional ASINs, fetching details...")
+                    new_products = asyncio.run(_fetch_new_products(new_asins, amazon_domain))
+                    if new_products:
+                        all_products = (
+                            amazon_data.get("presence", {}).get("top_products", [])
+                            + new_products
+                        )
+                        all_products.sort(key=lambda x: -(x.get("reviews") or 0))
+                        amazon_data["presence"]["top_products"] = all_products
+                        amazon_data["presence"]["product_count"] = len(all_products)
+                        # Recompute averages
+                        ratings = [p["rating"] for p in all_products if p.get("rating")]
+                        amazon_data["presence"]["avg_rating"] = (
+                            round(sum(ratings) / len(ratings), 1) if ratings else 0.0
+                        )
+
+            n_total = amazon_data.get("presence", {}).get("product_count", 0)
+            print(f"[Amazon] brand '{brand_name}' — {n_total} SKUs total")
         except Exception as e:
             print(f"[Amazon] fetch failed (non-fatal): {e}", file=sys.stderr)
+
+    # --------------- KOL data via yt-dlp ---------------
+    product_label_for_kol = product or run.get("category", brand_name)
+    kol_details = fetch_kol_data(brand_name, product_label_for_kol, region)
 
     # --------------- Assemble ---------------
     product_label = product or run.get("category", "Product")
@@ -463,7 +723,7 @@ def compile_data(run_id: str | None = None, brand: str | None = None,
         "competitors": competitors,
         "lang_breakdown": lang_breakdown,
         "query_samples": query_samples,
-        "kol_details": [],
+        "kol_details": kol_details,
         "hallucination_total": 0,
         "hallucination_ok": 0,
         "hallucination_warn": 0,
@@ -486,6 +746,7 @@ def main():
     parser.add_argument("--product", help="Product name (e.g., pillow)")
     parser.add_argument("--region", help="Country code (e.g., th, us)")
     parser.add_argument("--run-id", help="Specific run UUID to use")
+    parser.add_argument("--extra-run-ids", nargs="+", help="Additional run UUIDs to merge results from")
     parser.add_argument("--output", help="Output JSON path (default: auto-generated)")
     args = parser.parse_args()
 
@@ -497,6 +758,7 @@ def main():
         brand=args.brand,
         product=args.product,
         region=args.region,
+        extra_run_ids=args.extra_run_ids,
     )
 
     # Write output

@@ -683,7 +683,7 @@ export default function SelectionPage() {
             style={{ background: "#ff6b35", color: "#fff" }}>
             {isLoggedIn ? "Run Audit →" : "Run Free Audit →"}
           </Link>
-          <a href="https://calendly.com/brivesubscription/30min"
+          <a href="https://cal.com/johnson-liu-avanti/30min"
             target="_blank" rel="noopener noreferrer"
             className="text-sm font-medium px-5 py-2.5 rounded-lg transition-colors hover:text-white"
             style={{ border: "1px solid #25253f", color: "#7070a0" }}>

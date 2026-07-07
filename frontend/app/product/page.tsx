@@ -675,7 +675,7 @@ export default function ProductPage() {
                     style={{ background:"#ff6b35", color:"#fff" }}>
                     {optimizerCta.label}
                   </Link>
-                  <a href="https://calendly.com/brivesubscription/30min"
+                  <a href="https://cal.com/johnson-liu-avanti/30min"
                     target="_blank" rel="noopener noreferrer"
                     className="block text-center text-sm font-medium px-4 py-2.5 rounded-lg transition-colors hover:text-white"
                     style={{ border:"1px solid #25253f", color:"#7070a0" }}>
@@ -728,7 +728,7 @@ export default function ProductPage() {
             style={{ border:"1px solid #25253f", color:"#7070a0" }}>
             See pricing
           </Link>
-          <a href="https://calendly.com/brivesubscription/30min"
+          <a href="https://cal.com/johnson-liu-avanti/30min"
             target="_blank" rel="noopener noreferrer"
             className="text-sm font-medium px-8 py-3 rounded-lg transition-colors hover:text-white"
             style={{ border:"1px solid #25253f", color:"#7070a0" }}>
