@@ -55,7 +55,8 @@ async def create_run(
 ):
     # ── Measure layer is FREE — no credits deducted for scans.
     # Free-tier users are limited to _FREE_TIER_SCANS_PER_MONTH scans/month.
-    if user:
+    ADMIN_EMAIL = "hello@avantia2a.com"
+    if user and user.email != ADMIN_EMAIL:
         tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
         if tier not in _PAID_TIERS:
             from datetime import datetime, timezone
