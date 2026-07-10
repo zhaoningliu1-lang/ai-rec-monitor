@@ -18,6 +18,7 @@ const PUBLIC_EXACT = new Set([
   "/company",
   "/audit",       // free public audit — core cold-email landing page
   "/zh/audit",
+  "/methodology", // public trust page — linked from every report
 ]);
 
 const PUBLIC_PREFIX = [
@@ -34,6 +35,11 @@ const PUBLIC_PREFIX = [
   "/opportunity-engine",
   "/hackathon",
   "/audit",       // covers /audit and any sub-paths
+  "/runs/",       // individual reports are share-by-link (UUID = unguessable);
+                  // the run page already has its own guest-blur for competitors.
+                  // Without this, the anonymous audit's "View full report" CTA
+                  // bounced straight into /login — funnel dead end.
+  "/methodology", // covers /methodology (zh is under /zh/ prefix already)
 ];
 
 export function proxy(request: NextRequest) {
