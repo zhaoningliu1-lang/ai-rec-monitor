@@ -63,6 +63,8 @@ interface Metrics {
   arrs: number;
   arrs_band: string;
   arrs_explain: string;
+  measured_category?: string;
+  category_inferred?: boolean;
   brand_table: BrandRow[];
   providers_used: string[];
   failed_count: number;
@@ -455,6 +457,16 @@ export default function RunDetailClient({
             <p className="text-sm mt-1" style={{ color: "#7070a0" }}>
               {run.category} · {run.region} · {run.providers.join(", ")}
             </p>
+            {metrics?.measured_category && metrics.measured_category !== run.category && (
+              <p className="text-xs mt-1" style={{ color: "#555580" }}>
+                {lang === "zh" ? "测量品类：" : "Measured as: "}
+                <span style={{ color: "#9a9ac0" }}>{metrics.measured_category}</span>
+                {" · "}
+                <a href={lang === "zh" ? "/zh/methodology" : "/methodology"} className="underline hover:text-white transition-colors">
+                  {lang === "zh" ? "测量方法" : "Methodology"}
+                </a>
+              </p>
+            )}
           </div>
           <span
             className="text-xs px-2.5 py-1 rounded-full font-medium"

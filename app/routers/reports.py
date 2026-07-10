@@ -528,6 +528,10 @@ async def get_metrics(
     results = result_rows.scalars().all()
 
     metrics = _compute_metrics(results, run.brand_name, run.competitor_names or [])
+    # Methodology transparency: what category the buyer queries actually used.
+    # Niche inference stashes its result in name_aliases["_niche"] (no-migration).
+    metrics["measured_category"] = (run.name_aliases or {}).get("_niche") or run.category
+    metrics["category_inferred"] = bool((run.name_aliases or {}).get("_niche"))
     return JSONResponse(content=metrics)
 
 

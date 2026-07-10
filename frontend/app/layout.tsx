@@ -92,6 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <h4 className="text-xs font-semibold mb-3 uppercase tracking-wider" style={{ color: "#7070a0" }}>Company</h4>
                 <ul className="space-y-2 text-xs" style={{ color: "#52526e" }}>
                   <li><a href="/blog" className="hover:text-white transition-colors">Research</a></li>
+                  <li><a href="/methodology" className="hover:text-white transition-colors">Methodology</a></li>
                   <li><a href="/book-demo" className="hover:text-white transition-colors">Book a Demo</a></li>
                   <li><a href="mailto:hello@avantia2a.com" className="hover:text-white transition-colors">hello@avantia2a.com</a></li>
                 </ul>

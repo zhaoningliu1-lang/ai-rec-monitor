@@ -43,27 +43,33 @@ async def health():
     return {"status": "ok"}
 
 
-_FREE_TIER_SCANS_PER_MONTH = 2  # Measure layer is free; just cap monthly volume
+# Free-scan ladder (fairness must point toward signing up):
+#   anonymous:       3 scans / day / IP   (DB-backed — survives redeploys,
+#                                          shared across instances)
+#   signed-in free:  8 scans / day / user (was 2/MONTH — worse than anon,
+#                                          an inverted incentive; fixed)
+#   paid tiers:      unlimited
+_ANON_SCANS_PER_IP_PER_DAY = 3
+_FREE_USER_SCANS_PER_DAY = 8
 
-# Anonymous scans were UNCAPPED while signed-in free users were capped —
-# an inverted incentive and an open cost tap (each dual-engine scan is ~30
-# LLM calls). Per-IP daily cap, in-memory: resets on redeploy, which is fine —
-# this is launch-day spike protection, not billing enforcement.
-_ANON_SCANS_PER_IP_PER_DAY = 5
-_anon_scan_log: dict[str, tuple[str, int]] = {}  # ip -> (YYYY-MM-DD, count)
 
-
-def _anon_cap_ok(ip: str) -> bool:
-    """True if this anonymous IP may scan; increments the counter."""
+async def _anon_cap_ok(db: AsyncSession, ip: str) -> bool:
+    """True if this anonymous IP may scan today; increments the counter."""
+    from app.models import AnonScanLog
     today = date.today().isoformat()
-    day, count = _anon_scan_log.get(ip, (today, 0))
-    if day != today:
-        day, count = today, 0
-    if count >= _ANON_SCANS_PER_IP_PER_DAY:
+    row = (
+        await db.execute(
+            select(AnonScanLog).where(AnonScanLog.ip == ip, AnonScanLog.day == today)
+        )
+    ).scalar_one_or_none()
+    if row is None:
+        db.add(AnonScanLog(ip=ip, day=today, count=1))
+        await db.commit()
+        return True
+    if row.count >= _ANON_SCANS_PER_IP_PER_DAY:
         return False
-    if len(_anon_scan_log) > 50_000:  # crude memory guard
-        _anon_scan_log.clear()
-    _anon_scan_log[ip] = (day, count + 1)
+    row.count += 1
+    await db.commit()
     return True
 
 
@@ -76,40 +82,39 @@ async def create_run(
     user: User | None = Depends(get_current_user_optional),
 ):
     # ── Measure layer is FREE — no credits deducted for scans.
-    # Free-tier users are limited to _FREE_TIER_SCANS_PER_MONTH scans/month.
     ADMIN_EMAIL = "hello@avantia2a.com"
     if user is None:
         xff = request.headers.get("x-forwarded-for")
         ip = xff.split(",")[0].strip() if xff else (request.client.host if request.client else "unknown")
-        if not _anon_cap_ok(ip):
+        if not await _anon_cap_ok(db, ip):
             raise HTTPException(
                 status_code=429,
                 detail={
                     "code": "anon_scan_limit_reached",
                     "limit": _ANON_SCANS_PER_IP_PER_DAY,
-                    "message": f"Free scans are limited to {_ANON_SCANS_PER_IP_PER_DAY}/day. Create a free account or book a call for more.",
+                    "message": f"Free scans are limited to {_ANON_SCANS_PER_IP_PER_DAY}/day. Create a free account for {_FREE_USER_SCANS_PER_DAY}/day.",
                 },
             )
     if user and user.email != ADMIN_EMAIL:
         tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
         if tier not in _PAID_TIERS:
-            from datetime import datetime, timezone
+            from datetime import datetime, timezone, timedelta
             now = datetime.now(timezone.utc)
-            month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-            monthly_count = await db.scalar(
+            day_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+            daily_count = await db.scalar(
                 select(func.count(Run.id)).where(
                     Run.user_id == user.id,
-                    Run.created_at >= month_start,
+                    Run.created_at >= day_start,
                 )
             ) or 0
-            if monthly_count >= _FREE_TIER_SCANS_PER_MONTH:
+            if daily_count >= _FREE_USER_SCANS_PER_DAY:
                 raise HTTPException(
                     status_code=429,
                     detail={
                         "code": "scan_limit_reached",
-                        "monthly_scans": monthly_count,
-                        "limit": _FREE_TIER_SCANS_PER_MONTH,
-                        "message": f"Free plan allows {_FREE_TIER_SCANS_PER_MONTH} scans/month. Upgrade to Starter for unlimited scans.",
+                        "daily_scans": daily_count,
+                        "limit": _FREE_USER_SCANS_PER_DAY,
+                        "message": f"Free plan allows {_FREE_USER_SCANS_PER_DAY} scans/day. Upgrade to Starter for unlimited scans.",
                     },
                 )
 

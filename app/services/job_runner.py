@@ -162,6 +162,18 @@ async def run_job(run_id: uuid.UUID, session_factory: async_sessionmaker[AsyncSe
                 effective_category = _niche
                 logger.info("Run %s: inferred niche %r from brand %r (was %r)",
                             run_id, _niche, brand_name, category)
+                # Persist for the methodology display ("Measured as: dash cam")
+                # — stashed in the name_aliases JSON to avoid a schema migration.
+                try:
+                    async with session_factory() as _db:
+                        await _db.execute(
+                            update(Run).where(Run.id == run_id).values(
+                                name_aliases={**(name_aliases or {}), "_niche": _niche}
+                            )
+                        )
+                        await _db.commit()
+                except Exception as _pexc:
+                    logger.warning("Niche persist failed for run %s: %s", run_id, _pexc)
         except Exception as _exc:
             logger.warning("Niche inference failed for run %s: %s — using %r", run_id, _exc, category)
 

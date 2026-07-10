@@ -33,6 +33,23 @@ class Sentiment(str, enum.Enum):
     negative = "negative"
 
 
+class AnonScanLog(Base):
+    """Per-IP daily counter for anonymous free scans.
+
+    DB-backed (not in-memory) so the cap survives redeploys and is shared
+    across instances — launch-day spike protection. Auto-created by
+    Base.metadata.create_all on startup (new table, no migration needed).
+    """
+    __tablename__ = "anon_scan_log"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    ip: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    day: Mapped[str] = mapped_column(String(10), nullable=False, index=True)  # YYYY-MM-DD
+    count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+
 class Run(Base):
     __tablename__ = "runs"
 

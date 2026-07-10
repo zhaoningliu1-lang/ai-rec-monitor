@@ -58,6 +58,8 @@ interface RunResult {
   arrs: number;            // gap-based RISK, 0 = safe — only meaningful with competitors
   arrs_explain: string;
   hasCompetitors: boolean;
+  measuredCategory: string; // niche the buyer queries actually used ("dash cam")
+  categoryInferred: boolean;
 }
 
 interface Props {
@@ -206,6 +208,8 @@ export default function AuditClient({ lang = "en" }: Props) {
               arrs: metrics.arrs ?? 0,
               arrs_explain: metrics.arrs_explain ?? "",
               hasCompetitors: form.competitors.split(",").map((s) => s.trim()).filter(Boolean).length > 0,
+              measuredCategory: metrics.measured_category ?? form.category,
+              categoryInferred: !!metrics.category_inferred,
             });
           }
           setPhase("done");
@@ -527,8 +531,16 @@ export default function AuditClient({ lang = "en" }: Props) {
             className="rounded-2xl p-8"
             style={{ background: "#0f0f17", border: "1px solid #25253f" }}
           >
-            <p className="text-xs font-semibold uppercase tracking-widest mb-6" style={{ color: "#7070a0" }}>
+            <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "#7070a0" }}>
               {tx("audit", "scoreLabel", lang)} {form.brand_name}
+            </p>
+            <p className="text-xs mb-6" style={{ color: "#555580" }}>
+              {lang === "zh" ? "测量品类：" : "Measured as: "}
+              <span style={{ color: "#9a9ac0" }}>{result.measuredCategory}</span>
+              {" · "}
+              <a href={lang === "zh" ? "/zh/methodology" : "/methodology"} className="underline hover:text-white transition-colors">
+                {lang === "zh" ? "测量方法" : "Methodology"}
+              </a>
             </p>
 
             <div className="grid grid-cols-2 gap-6 mb-6">
