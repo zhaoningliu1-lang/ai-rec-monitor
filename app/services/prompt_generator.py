@@ -223,6 +223,79 @@ _DE_INFORMATIONAL_INTENT = [
     "Welche {category} Marke hat den besten Kundendienst in Deutschland?",
 ]
 
+# ── SaaS / B2B Templates ──────────────────────────────────────────────────────
+# Software buyers do not put things "in a cart under $100" or care about
+# "unboxing vibes". These render naturally with a specific niche, e.g.
+# category="AI writing tool" → "What's the best AI writing tool right now?"
+
+_SAAS_HIGH_INTENT = [
+    "What's the best {category} right now?",
+    "Which {category} should my team adopt this quarter?",
+    "I'm ready to pay for {a} {category} — what do you recommend?",
+    "Best {category} for a small team on a budget?",
+    "Which {category} do you recommend for a startup?",
+    "Which {category} has a free plan that's actually worth upgrading?",
+    "Top {category} for a solo professional?",
+    "Which {category} is worth paying for in 2026?",
+    "We're replacing our current {category} — top recommendation?",
+    "Best {category} that doesn't require talking to sales?",
+    "Which {category} gives the best value per seat?",
+    "Recommend {a} {category} with the least onboarding friction.",
+    "What {category} would you pick if you were starting today?",
+    "Which {category} do most companies actually end up choosing?",
+    "Best {category} for someone replacing a manual workflow?",
+]
+
+_SAAS_COMPARISON_INTENT = [
+    "Compare the leading {category} options.",
+    "Which {category} wins on features vs price?",
+    "Rank the top {category} options available today.",
+    "How do the top {category} options stack up against each other?",
+    "What are the pros and cons of the leading {category} options?",
+    "Which {category} is better for startups vs enterprises?",
+    "Open-source vs paid {category} — which should I choose?",
+    "Which {category} has the best reviews on G2 and Capterra?",
+    "Which {category} has the strongest momentum right now?",
+    "Side-by-side: the two best {category} options — which one and why?",
+]
+
+_SAAS_INFORMATIONAL_INTENT = [
+    "What should I look for when choosing {a} {category}?",
+    "What features matter most in {a} {category}?",
+    "Which {category} vendors are most trusted?",
+    "What do reviewers say about the leading {category} options in 2026?",
+    "How does pricing typically differ across {category} options?",
+    "What are common complaints about {category} products?",
+    "Which {category} integrates best with existing workflows?",
+    "What security certifications should {a} {category} vendor have?",
+    "How hard is it to switch between {category} providers?",
+    "Who are the emerging players in the {category} space?",
+]
+
+
+def _article(phrase: str) -> str:
+    """'a' or 'an' for the rendered category ("ai writing tool" → "an")."""
+    p = (phrase or "").strip().lower()
+    return "an" if p[:1] in "aeiou" else "a"
+
+_SAAS_TEMPLATES: dict[str, list[str]] = {
+    "high": _SAAS_HIGH_INTENT,
+    "comparison": _SAAS_COMPARISON_INTENT,
+    "info": _SAAS_INFORMATIONAL_INTENT,
+}
+
+# Categories that must route to the SaaS/B2B family instead of consumer templates
+_SAAS_CATEGORY_MARKERS = (
+    "software", "saas", "platform", "api", "app", "tool",
+    "b2b", "service", "ai ", " ai", "analytics", "crm", "devtool",
+)
+
+
+def is_saas_category(category: str) -> bool:
+    c = (category or "").lower()
+    return any(m in c for m in _SAAS_CATEGORY_MARKERS)
+
+
 # ── Generational Templates (US only, others default to "general") ─────────────
 
 _GEN_Z_HIGH = [
@@ -392,9 +465,16 @@ def generate_prompts(
 
     Distribution: 50% high, 25% comparison, 25% info.
     Within each intent: ~48% general + generational variants.
+
+    SaaS/B2B categories route to the software template family: no price bands,
+    no cart/warranty/TikTok consumer framing, no generational variants.
     """
     band = price_band or _DEFAULT_PRICE_BANDS.get(region, "under $100")
-    intent_map = _REGION_INTENT_TEMPLATES.get(region, _REGION_INTENT_TEMPLATES["US"])
+    saas = is_saas_category(category)
+    intent_map = (
+        _SAAS_TEMPLATES if saas
+        else _REGION_INTENT_TEMPLATES.get(region, _REGION_INTENT_TEMPLATES["US"])
+    )
 
     n_high = num_prompts // 2
     n_comp = num_prompts // 4
@@ -407,16 +487,16 @@ def generate_prompts(
         ("comparison", n_comp),
         ("info", n_info),
     ]:
-        # Allocate generational slots (US region only)
+        # Allocate generational slots (US region only, consumer verticals only)
         gen_allocated = 0
-        if region == "US":
+        if region == "US" and not saas:
             for gen, pct in _GENERATION_DISTRIBUTION.items():
                 gen_n = max(1, round(n * pct))
                 gen_templates = _GENERATIONAL_TEMPLATES.get(gen, {}).get(intent_type, [])
                 if gen_templates:
                     for tmpl in _sample_cyclic(gen_templates, gen_n):
                         results.append({
-                            "prompt": tmpl.format(category=category, price_band=band),
+                            "prompt": tmpl.format(category=category, price_band=band, a=_article(category)),
                             "intent_type": intent_type,
                             "weight": _INTENT_WEIGHTS[intent_type],
                             "generation": gen,
@@ -428,7 +508,7 @@ def generate_prompts(
         templates = intent_map[intent_type]
         for tmpl in _sample_cyclic(templates, general_n):
             results.append({
-                "prompt": tmpl.format(category=category, price_band=band),
+                "prompt": tmpl.format(category=category, price_band=band, a=_article(category)),
                 "intent_type": intent_type,
                 "weight": _INTENT_WEIGHTS[intent_type],
                 "generation": "general",

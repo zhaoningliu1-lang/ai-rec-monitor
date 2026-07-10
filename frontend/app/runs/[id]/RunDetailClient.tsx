@@ -512,7 +512,8 @@ export default function RunDetailClient({
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="rounded-xl p-5" style={{ background: "#0f0f17", border: "1px solid #25253f" }}>
-              <div className="text-4xl font-black mb-1" style={{ color: "#f5a623" }}>
+              {/* Risk direction: 0 = safe (green). Never render risk in "good score" amber. */}
+              <div className="text-4xl font-black mb-1" style={{ color: metrics.arrs >= 60 ? "#ff4d6d" : metrics.arrs >= 30 ? "#f5a623" : "#22c55e" }}>
                 {metrics.arrs}
               </div>
               <div className="text-sm font-semibold mb-0.5">{tx("runs", "arrsScore", lang)}</div>

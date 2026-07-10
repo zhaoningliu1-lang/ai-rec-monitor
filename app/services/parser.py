@@ -41,25 +41,45 @@ def detect_list(text: str) -> bool:
     return bool(_LIST_RE.search(text))
 
 
+_CJK_RE = re.compile(r"[㐀-鿿぀-ヿ가-힯]")
+
+
 def find_mention_position(text: str, brand: str, aliases: list[str] | None = None) -> int | None:
     """
     Return the word index of the first occurrence of `brand` (or any alias) in `text`.
-    Case-insensitive substring match. Returns the earliest position found across all names.
+    Returns the earliest position found across all names, or None.
+
+    Matching rules:
+    - Latin-script names: whole-word/phrase match with alphanumeric boundaries.
+      ("Sudowrite" must appear as Sudowrite — the words "write", "do", "it"
+      being substrings of the brand must NOT count. The old bidirectional
+      substring check inflated mention rate to ~100% for any English brand.)
+    - CJK names: raw substring match on the text (CJK has no space-delimited
+      words, and brands like 绿联 legitimately appear embedded in longer runs).
 
     `aliases` should include the original brand name plus any alternate forms
     (e.g. ["绿联", "UGREEN"]).
     """
     all_names = aliases if aliases else [brand]
-    words = text.lower().split()
+    text_lower = text.lower()
     best: int | None = None
     for name in all_names:
-        name_lower = name.lower()
-        for i, word in enumerate(words):
-            clean_word = word.strip(".,;:!?\"'()-[]")
-            if name_lower in clean_word or clean_word in name_lower:
-                if best is None or i < best:
-                    best = i
-                break  # found earliest for this name; check next name
+        name_lower = name.strip().lower()
+        if len(name_lower) < 2:
+            continue
+        if _CJK_RE.search(name_lower):
+            idx = text_lower.find(name_lower)
+            if idx == -1:
+                continue
+            pos = len(text_lower[:idx].split())
+        else:
+            pattern = r"(?<![A-Za-z0-9])" + re.escape(name_lower) + r"(?![A-Za-z0-9])"
+            m = re.search(pattern, text_lower)
+            if m is None:
+                continue
+            pos = len(text_lower[: m.start()].split())
+        if best is None or pos < best:
+            best = pos
     return best
 
 

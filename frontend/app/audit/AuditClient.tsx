@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Lang, tx } from "@/lib/i18n";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { Check, AlertCircle } from "lucide-react";
@@ -51,9 +52,12 @@ const TYPE_LABELS: Record<AnalysisType, Record<string, string>> = {
 };
 
 interface RunResult {
-  arrs: number;
-  sov: number;
+  visibility: number;      // 0–100, higher = better (weighted SOV)
+  mentions: number;        // AI answers naming the brand
+  total: number;           // answers sampled
+  arrs: number;            // gap-based RISK, 0 = safe — only meaningful with competitors
   arrs_explain: string;
+  hasCompetitors: boolean;
 }
 
 interface Props {
@@ -123,6 +127,7 @@ const PROGRESS_STEPS = [
 ];
 
 export default function AuditClient({ lang = "en" }: Props) {
+  const searchParams = useSearchParams();
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState("");
   const [result, setResult] = useState<RunResult | null>(null);
@@ -136,6 +141,14 @@ export default function AuditClient({ lang = "en" }: Props) {
     region: "US",
     competitors: "",
   });
+
+  // The landing-page hero passes ?brand= — carry it into the form so the
+  // visitor doesn't have to type their brand twice.
+  useEffect(() => {
+    const b = searchParams.get("brand");
+    if (b) setForm((f) => (f.brand_name ? f : { ...f, brand_name: b }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [progress, setProgress] = useState(0);
 
@@ -158,7 +171,7 @@ export default function AuditClient({ lang = "en" }: Props) {
           category: form.category,
           region: form.region,
           num_prompts: 15,
-          providers: ["openai"],
+          providers: ["openai", "claude"],
           price_band: undefined,
         }),
       });
@@ -187,9 +200,12 @@ export default function AuditClient({ lang = "en" }: Props) {
             const metrics = await metricsRes.json();
             const primaryRow = (metrics.brand_table ?? []).find((r: { is_primary: boolean }) => r.is_primary);
             setResult({
+              visibility: metrics.visibility_score ?? Math.round(primaryRow?.weighted_sov ?? 0),
+              mentions: metrics.primary_mentions ?? primaryRow?.mention_count ?? 0,
+              total: metrics.total ?? 0,
               arrs: metrics.arrs ?? 0,
-              sov: primaryRow?.weighted_sov ?? 0,
               arrs_explain: metrics.arrs_explain ?? "",
+              hasCompetitors: form.competitors.split(",").map((s) => s.trim()).filter(Boolean).length > 0,
             });
           }
           setPhase("done");
@@ -208,11 +224,12 @@ export default function AuditClient({ lang = "en" }: Props) {
     }
   };
 
-  const arrsColor = (score: number) => (score >= 70 ? "#f5a623" : score >= 40 ? "#ff6b35" : "#ff4d6d");
-  const arrsLabel = (score: number) =>
-    score >= 70
+  // Visibility: higher = better. Green when strong, red when invisible.
+  const visColor = (score: number) => (score >= 55 ? "#22c55e" : score >= 25 ? "#f5a623" : "#ff4d6d");
+  const visLabel = (score: number) =>
+    score >= 55
       ? tx("audit", "arrsStrong", lang)
-      : score >= 40
+      : score >= 25
       ? tx("audit", "arrsModerate", lang)
       : tx("audit", "arrsWeak", lang);
 
@@ -516,23 +533,35 @@ export default function AuditClient({ lang = "en" }: Props) {
 
             <div className="grid grid-cols-2 gap-6 mb-6">
               <div>
-                <CountUp target={result.arrs} color={arrsColor(result.arrs)} />
+                <CountUp target={result.visibility} color={visColor(result.visibility)} />
                 <div className="text-sm font-medium mb-0.5 mt-1">{tx("audit", "arrsLabel", lang)}</div>
-                <div className="text-xs" style={{ color: arrsColor(result.arrs) }}>
-                  {arrsLabel(result.arrs)}
+                <div className="text-xs" style={{ color: visColor(result.visibility) }}>
+                  {visLabel(result.visibility)}
                 </div>
               </div>
               <div>
-                <CountUpDecimal target={result.sov} color="#f5a623" />
-                <div className="text-sm font-medium mb-0.5 mt-1">{tx("audit", "sovLabel", lang)}</div>
-                <div className="text-xs" style={{ color: "#7070a0" }}>{tx("audit", "sovNote", lang)}</div>
+                <div className="flex items-baseline gap-1">
+                  <CountUp target={result.mentions} color="#f0f0f8" />
+                  <span className="text-2xl font-bold" style={{ color: "#7070a0" }}>/ {result.total}</span>
+                </div>
+                <div className="text-sm font-medium mb-0.5 mt-1">{tx("audit", "mentionLabel", lang)}</div>
+                <div className="text-xs" style={{ color: "#7070a0" }}>{tx("audit", "mentionNote", lang)}</div>
               </div>
             </div>
 
-            {result.arrs_explain && (
+            {result.hasCompetitors ? (
               <p className="text-sm p-4 rounded-xl" style={{ background: "#161625", color: "#7070a0" }}>
-                {result.arrs_explain}
+                <span className="font-semibold" style={{ color: result.arrs >= 60 ? "#ff4d6d" : result.arrs >= 30 ? "#f5a623" : "#22c55e" }}>
+                  {tx("audit", "riskLine", lang)}: {result.arrs}/100
+                </span>
+                {result.arrs_explain ? <> — {result.arrs_explain}</> : null}
               </p>
+            ) : (
+              result.arrs_explain && (
+                <p className="text-sm p-4 rounded-xl" style={{ background: "#161625", color: "#7070a0" }}>
+                  {result.arrs_explain}
+                </p>
+              )
             )}
           </div>
 

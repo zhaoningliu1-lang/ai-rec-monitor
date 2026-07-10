@@ -388,6 +388,8 @@ def _compute_metrics(
             "arrs": 0,
             "arrs_band": "low",
             "arrs_explain": "",
+            "visibility_score": 0,
+            "primary_mentions": 0,
         }
 
     result_meta, list_pct, dominant_method, dominant_confidence = _list_meta(results)
@@ -408,6 +410,16 @@ def _compute_metrics(
     arrs, arrs_band, arrs_explain = (
         _gap_arrs(primary_row, comp_rows_all, list_pct) if primary_row else (0, "low", "")
     )
+    # Gap-based risk is meaningless without competitors — say so instead of
+    # the misleading "No gap vs competitors" (which reads as a clean bill).
+    if primary_row and not comp_rows_all:
+        arrs_explain = "No competitors provided — add competitors to unlock gap analysis and risk scoring."
+
+    # True visibility score for the primary brand (0–100, higher = better).
+    # This is what the free-audit teaser shows as "AI Visibility Score";
+    # `arrs` is a RISK score (0 = safe) and must never be labeled visibility.
+    visibility_score = round(primary_row.get("weighted_sov", 0.0)) if primary_row else 0
+    primary_mentions = primary_row.get("mention_count", 0) if primary_row else 0
 
     # Per-intent breakdown sections (simplified table without intent nesting)
     intent_sections: list[dict] = []
@@ -489,6 +501,8 @@ def _compute_metrics(
         "arrs": arrs,
         "arrs_band": arrs_band,
         "arrs_explain": arrs_explain,
+        "visibility_score": visibility_score,
+        "primary_mentions": primary_mentions,
         "generation_sections": generation_sections,
         "trust_evidence": trust_evidence,
     }

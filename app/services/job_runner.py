@@ -131,8 +131,34 @@ async def run_job(run_id: uuid.UUID, session_factory: async_sessionmaker[AsyncSe
             **{c: [c] for c in competitor_names},
         }
 
+    # ── Niche inference for coarse categories ────────────────────────────────
+    # "Software / SaaS" / "Other" are too generic to produce credible buyer
+    # queries ("best Software / SaaS under $100" convinced no one). One cheap
+    # LLM call turns the brand into the category a real buyer would type
+    # ("AI writing tool", "engineering analytics platform"). Fallback: as-is.
+    effective_category = category
+    if (category or "").strip().lower() in {"software / saas", "software/saas", "other", ""}:
+        try:
+            from app.services.claude_client import ClaudeProvider
+            _nicher = ClaudeProvider()
+            _raw = await _nicher.ask(
+                "In 2-6 lowercase words, name the product category a buyer would type "
+                f"when shopping for the brand \"{brand_name}\""
+                + (f" (competitors: {', '.join(competitor_names[:3])})" if competitor_names else "")
+                + ". Examples: 'ai writing tool', 'dash cam', 'engineering analytics platform'. "
+                "Reply with ONLY the category words — no quotes, no punctuation. "
+                "If you don't recognize the brand, reply exactly: unknown"
+            )
+            _niche = (_raw or "").strip().strip('"\'').splitlines()[0].strip()
+            if _niche and _niche.lower() != "unknown" and 2 <= len(_niche.split()) <= 8 and len(_niche) <= 60:
+                effective_category = _niche
+                logger.info("Run %s: inferred niche %r from brand %r (was %r)",
+                            run_id, _niche, brand_name, category)
+        except Exception as _exc:
+            logger.warning("Niche inference failed for run %s: %s — using %r", run_id, _exc, category)
+
     try:
-        prompt_dicts = generate_prompts(category, region, num_prompts, price_band)
+        prompt_dicts = generate_prompts(effective_category, region, num_prompts, price_band)
 
         # ── Merge active library prompts from the run's owner ────────────────
         run_user_id = existing_aliases.get("_user_id")  # fallback; we'll fetch properly

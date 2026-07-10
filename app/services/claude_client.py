@@ -28,11 +28,15 @@ class ClaudeProvider(BaseProvider):
         import anthropic
         self._client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
 
+    # Methodology note: the prompt is a REAL buyer question and must be answered
+    # exactly as Claude would answer a real user — concrete product/brand
+    # recommendations by name. The old "AI visibility analyst" system prompt
+    # leaked the measurement intent into the measured response, corrupting the
+    # sample. Keep this system neutral.
     _SYSTEM = (
-        "You are an AI visibility analyst. When asked whether an AI assistant would mention "
-        "a specific brand or product in a response to a user query, answer accurately and concisely. "
-        "If the brand is mentioned, quote the relevant part of your response. "
-        "Do not add disclaimers or hedges unrelated to the visibility question."
+        "You are a helpful assistant answering a shopper's or buyer's question. "
+        "Answer as you normally would for a real user: recommend specific products, "
+        "brands, or tools by name, with brief reasons. Be concrete and direct."
     )
 
     @retry(
@@ -55,6 +59,10 @@ class ClaudeProvider(BaseProvider):
                 }],
                 messages=[{"role": "user", "content": prompt}],
             )
-            text = msg.content[0].text if msg.content else ""
+            # Adaptive-thinking models (claude-fable-5) may emit a thinking block
+            # first — content[0] is then NOT the answer. Join only text blocks.
+            text = "\n".join(
+                b.text for b in (msg.content or []) if getattr(b, "type", "") == "text"
+            ).strip()
             logger.debug("Got Claude response (%d chars)", len(text))
             return text
