@@ -2,7 +2,7 @@ import re
 import uuid
 from datetime import date, datetime, timezone
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,10 +45,32 @@ async def health():
 
 _FREE_TIER_SCANS_PER_MONTH = 2  # Measure layer is free; just cap monthly volume
 
+# Anonymous scans were UNCAPPED while signed-in free users were capped —
+# an inverted incentive and an open cost tap (each dual-engine scan is ~30
+# LLM calls). Per-IP daily cap, in-memory: resets on redeploy, which is fine —
+# this is launch-day spike protection, not billing enforcement.
+_ANON_SCANS_PER_IP_PER_DAY = 5
+_anon_scan_log: dict[str, tuple[str, int]] = {}  # ip -> (YYYY-MM-DD, count)
+
+
+def _anon_cap_ok(ip: str) -> bool:
+    """True if this anonymous IP may scan; increments the counter."""
+    today = date.today().isoformat()
+    day, count = _anon_scan_log.get(ip, (today, 0))
+    if day != today:
+        day, count = today, 0
+    if count >= _ANON_SCANS_PER_IP_PER_DAY:
+        return False
+    if len(_anon_scan_log) > 50_000:  # crude memory guard
+        _anon_scan_log.clear()
+    _anon_scan_log[ip] = (day, count + 1)
+    return True
+
 
 @router.post("/runs", response_model=RunResponse, status_code=202)
 async def create_run(
     body: CreateRunRequest,
+    request: Request,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user: User | None = Depends(get_current_user_optional),
@@ -56,6 +78,18 @@ async def create_run(
     # ── Measure layer is FREE — no credits deducted for scans.
     # Free-tier users are limited to _FREE_TIER_SCANS_PER_MONTH scans/month.
     ADMIN_EMAIL = "hello@avantia2a.com"
+    if user is None:
+        xff = request.headers.get("x-forwarded-for")
+        ip = xff.split(",")[0].strip() if xff else (request.client.host if request.client else "unknown")
+        if not _anon_cap_ok(ip):
+            raise HTTPException(
+                status_code=429,
+                detail={
+                    "code": "anon_scan_limit_reached",
+                    "limit": _ANON_SCANS_PER_IP_PER_DAY,
+                    "message": f"Free scans are limited to {_ANON_SCANS_PER_IP_PER_DAY}/day. Create a free account or book a call for more.",
+                },
+            )
     if user and user.email != ADMIN_EMAIL:
         tier = user.subscription_tier.value if hasattr(user.subscription_tier, "value") else str(user.subscription_tier)
         if tier not in _PAID_TIERS:

@@ -132,18 +132,26 @@ async def run_job(run_id: uuid.UUID, session_factory: async_sessionmaker[AsyncSe
         }
 
     # ── Niche inference for coarse categories ────────────────────────────────
-    # "Software / SaaS" / "Other" are too generic to produce credible buyer
-    # queries ("best Software / SaaS under $100" convinced no one). One cheap
-    # LLM call turns the brand into the category a real buyer would type
-    # ("AI writing tool", "engineering analytics platform"). Fallback: as-is.
+    # The audit dropdown offers storefront DEPARTMENTS ("Automotive accessories",
+    # "Software / SaaS") — nobody shops by department. One cheap LLM call turns
+    # the brand into the category a real buyer would type ("dash cam",
+    # "ai fiction writing tool"). Specific categories passed via API skip this.
+    # Fallback on any failure: use the category as given.
+    _COARSE_CATEGORIES = {
+        "automotive accessories", "consumer electronics", "beauty & skincare",
+        "sports & outdoor", "home & kitchen", "pet supplies", "baby & kids",
+        "health & wellness", "apparel & fashion", "food & beverage",
+        "software / saas", "software/saas", "other", "",
+    }
     effective_category = category
-    if (category or "").strip().lower() in {"software / saas", "software/saas", "other", ""}:
+    if (category or "").strip().lower() in _COARSE_CATEGORIES:
         try:
             from app.services.claude_client import ClaudeProvider
             _nicher = ClaudeProvider()
             _raw = await _nicher.ask(
                 "In 2-6 lowercase words, name the product category a buyer would type "
                 f"when shopping for the brand \"{brand_name}\""
+                + (f" (department: {category})" if (category or "").strip() else "")
                 + (f" (competitors: {', '.join(competitor_names[:3])})" if competitor_names else "")
                 + ". Examples: 'ai writing tool', 'dash cam', 'engineering analytics platform'. "
                 "Reply with ONLY the category words — no quotes, no punctuation. "
