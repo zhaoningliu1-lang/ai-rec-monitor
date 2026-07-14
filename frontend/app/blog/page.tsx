@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-07-14-category-spotlight-smart-home",
+    tag: "AI Trends",
+    title: "AI Recommendations in Smart Home: Who Leads?",
+    excerpt:
+      "Analyzing AI&apos;s impact on smart home product visibility. Top brands revealed.",
+    date: "July 14, 2026",
+    readTime: "5 min read",
+  },
+  {
     slug: "2026-07-13-ai-recommendation-data-sourcing-opportunities",
     tag: "AI Strategy",
     title: "Unlock Sourcing Opportunities with AI Data",
