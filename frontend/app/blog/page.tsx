@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-07-22-deep-analysis-smart-home",
+    tag: "Smart Home",
+    title: "AI Dominance in Smart Home: Brands Leading the Charge",
+    excerpt:
+      "Explore which brands lead in AI recommendations for smart home products and why.",
+    date: "July 22, 2026",
+    readTime: "8 min read",
+  },
+  {
     slug: "2026-07-21-cross-border-ecommerce-ai-intelligence",
     tag: "AI Insight",
     title: "AI Unveils New Sourcing Goldmines for Chinese Sellers",
