@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-07-24-geo-industry-update",
+    tag: "GEO Strategies",
+    title: "Enhance AI Visibility: New GEO Strategies",
+    excerpt:
+      "Discover cutting-edge GEO strategies and tactics for Amazon sellers.",
+    date: "July 24, 2026",
+    readTime: "6 min read",
+  },
+  {
     slug: "2026-07-23-ai-recommendation-trends",
     tag: "AI Trends",
     title: "AI Recommendation Trends in Cross-Border E-commerce",
