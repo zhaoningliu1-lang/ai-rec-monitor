@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-07-26-portable-electronics-ai-analysis",
+    tag: "Portable Electronics",
+    title: "AI&apos;s Influence on Portable Electronics: Top Brand Insights",
+    excerpt:
+      "Discover how AI recommendations are shaping brand visibility in portable electronics.",
+    date: "July 26, 2026",
+    readTime: "5 min read",
+  },
+  {
     slug: "2026-07-25-ai-intelligence-chinese-amazon-sellers",
     tag: "AI &amp; eCommerce",
     title: "AI Intelligence Boosts Sourcing for Chinese Amazon Sellers",
