@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-07-31-ai-recommendation-trends",
+    tag: "AI趋势",
+    title: "AI趋势推动跨境电商销售",
+    excerpt:
+      "了解ChatGPT等AI如何驱动电商推荐。",
+    date: "2026年7月31日",
+    readTime: "5 分钟阅读",
+  },
+  {
     slug: "2026-07-30-category-spotlight-smart-home",
     tag: "智能家居",
     title: "人工智能在智能家居中的应用：顶级品牌解析",
