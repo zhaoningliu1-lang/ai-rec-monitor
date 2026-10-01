@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-10-01-ai-sourcing-opportunities",
+    tag: "Cross-Border E-commerce",
+    title: "Leverage AI for Sourcing: A Tool for Amazon Sellers",
+    excerpt:
+      "Discover AI tools to source before competitors. Key stats on GEO scores.",
+    date: "October 1, 2026",
+    readTime: "5 min read",
+  },
+  {
     slug: "2026-09-30-geo-industry-update",
     tag: "AI Technology",
     title: "New GEO Strategies Boost AI Visibility for Brands",
