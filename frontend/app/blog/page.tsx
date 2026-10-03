@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-10-03-ai-recommendation-trends",
+    tag: "AI Trends",
+    title: "AI Boosts Apparel SOV: Opportunities for Amazon Sellers",
+    excerpt:
+      "AI models favor apparel in cross-border e-commerce. Boost SOV with right strategies.",
+    date: "October 3, 2026",
+    readTime: "6 min read",
+  },
+  {
     slug: "2026-10-02-portable-electronics-ai-recommendations",
     tag: "portable electronics",
     title: "AI&apos;s Favorite Portable Electronics: Brand Dominance Revealed",
