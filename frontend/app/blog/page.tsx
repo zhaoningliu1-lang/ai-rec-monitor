@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-10-17-ai-recommendation-sourcing-chinese-sellers",
+    tag: "E-commerce Trends",
+    title: "Leverage AI for Sourcing in Cross-Border E-commerce",
+    excerpt:
+      "Use AI to identify sourcing opportunities before competitors with data.",
+    date: "October 17, 2026",
+    readTime: "8 min read",
+  },
+  {
     slug: "2026-10-16-geo-industry-update",
     tag: "GEO Strategies",
     title: "New Strategies to Boost AI Visibility in 2026",
