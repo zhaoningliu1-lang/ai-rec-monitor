@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-10-18-ai-recommendations-portable-electronics",
+    tag: "Portable Electronics",
+    title: "Top Brands in AI-Driven Portable Electronics",
+    excerpt:
+      "Explore which brands dominate AI recommendations in portable electronics.",
+    date: "October 18, 2026",
+    readTime: "5 min read",
+  },
+  {
     slug: "2026-10-17-ai-recommendation-sourcing-chinese-sellers",
     tag: "E-commerce Trends",
     title: "Leverage AI for Sourcing in Cross-Border E-commerce",
