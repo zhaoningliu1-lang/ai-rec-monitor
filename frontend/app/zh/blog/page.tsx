@@ -7,6 +7,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-10-26-category-spotlight-beauty-tech",
+    tag: "美妆科技",
+    title: "美妆科技中的AI潮流：谁是领跑者？",
+    excerpt:
+      "探讨美妆科技的AI推荐，了解当今领先品牌。",
+    date: "2026年10月26日",
+    readTime: "7 分钟阅读",
+  },
+  {
     slug: "2026-10-25-ai-sourcing-opportunities",
     tag: "AI与电商",
     title: "中国卖家AI驱动的采购洞察",
