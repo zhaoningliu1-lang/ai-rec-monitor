@@ -8,6 +8,15 @@ export const metadata = {
 
 const POSTS = [
   {
+    slug: "2026-11-23-category-spotlight-beauty-tech",
+    tag: "e-commerce strategies",
+    title: "Beauty Tech: AI Recommendations &amp; Brand Dominance",
+    excerpt:
+      "Explore AI-driven insights in Beauty Tech, revealing top brands and trends.",
+    date: "November 23, 2026",
+    readTime: "6 min read",
+  },
+  {
     slug: "2026-11-22-cross-border-ecommerce-ai-intelligence",
     tag: "E-commerce",
     title: "Boost Cross-border Sales with AI Insights for Amazon China",
